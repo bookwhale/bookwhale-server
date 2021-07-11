@@ -8,7 +8,7 @@
 
 master : prod 배포를 진행할 때 사용합니다.   
 release : dev 배포할 때 사용합니다.   
-develop : 코드 리뷰를 거쳐 개발이 끝난 부분만 merge를 진행합니다.   
+develop : 코드 리뷰를 거쳐 개발이 끝난 부분을 merge할 때 진행합니다.   
 feature : 기능 개발을 진행할 때 사용합니다.     
 bugfix : 배포를 진행한 후 발생한 버그를 수정해야 할 때 사용합니다.     
 
