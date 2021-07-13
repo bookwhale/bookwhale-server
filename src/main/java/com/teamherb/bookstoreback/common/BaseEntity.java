@@ -17,9 +17,9 @@ public abstract class BaseEntity {
     private String createdBy;
 
     @LastModifiedDate
-    private LocalDateTime updatedDate;
+    private LocalDateTime lastModifiedDate;
 
     @LastModifiedBy
-    private LocalDateTime lastModifiedDate;
+    private String lastModifiedBy;
 
 }
