@@ -46,4 +46,8 @@ public class User extends BaseEntity {
     @Embedded
     private Accounts accounts = Accounts.empty();
 
+    public String getRoleName() {
+        return this.role.name();
+    }
+
 }
