@@ -1,3 +1,8 @@
+app:
+  auth:
+    token-secret: test
+    token-expiration-msec: 9999999
+
 spring:
   profiles:
     active: dev
