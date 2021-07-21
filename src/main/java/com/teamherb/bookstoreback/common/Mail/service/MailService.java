@@ -1,19 +1,18 @@
-package com.teamherb.bookstoreback.common.Mail.Service;
+package com.teamherb.bookstoreback.common.Mail.service;
 
 import com.teamherb.bookstoreback.common.Mail.MailHandler;
-import com.teamherb.bookstoreback.common.Mail.domain.Mail;
+import com.teamherb.bookstoreback.common.Mail.dto.Maildto;
 import lombok.AllArgsConstructor;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
 public class MailService {
-    private JavaMailSender mailSender;
+    private final JavaMailSender mailSender;
     private static final String FROM_ADDRESS = "hose123@ajou.ac.kr";
 
-    public void mailSend(Mail mail) {
+    public void mailSend(Maildto maildto) {
 
         /*SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(mail.getAddress());
@@ -26,13 +25,13 @@ public class MailService {
             MailHandler mailHandler = new MailHandler(mailSender);
 
             // 받는 사람
-            mailHandler.setTo(mail.getAddress());
+            mailHandler.setTo(maildto.getAddress());
             // 보내는 사람
             mailHandler.setFrom(MailService.FROM_ADDRESS);
             // 제목
-            mailHandler.setSubject(mail.getTitle());
+            mailHandler.setSubject(maildto.getTitle());
             // HTML Layout
-            String htmlContent = "<p>" + mail.getMessage() +"<p> <img src='cid:teamherb'>";
+            String htmlContent = "<p>" + maildto.getMessage() +"<p> <img src='cid:teamherb'>";
             mailHandler.setText(htmlContent, true);
             // 첨부 파일
             //mailHandler.setAttach("newTest.txt", "static/originTest.txt");
