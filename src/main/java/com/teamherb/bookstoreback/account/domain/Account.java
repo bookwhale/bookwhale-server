@@ -1,6 +1,6 @@
 package com.teamherb.bookstoreback.account.domain;
 
-import com.teamherb.bookstoreback.common.BaseEntity;
+import com.teamherb.bookstoreback.common.domain.BaseEntity;
 import com.teamherb.bookstoreback.user.domain.User;
 import javax.persistence.Column;
 import javax.persistence.Entity;

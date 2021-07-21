@@ -1,4 +1,4 @@
-package com.teamherb.bookstoreback.common;
+package com.teamherb.bookstoreback.common.domain;
 
 import java.time.LocalDateTime;
 import javax.persistence.MappedSuperclass;
