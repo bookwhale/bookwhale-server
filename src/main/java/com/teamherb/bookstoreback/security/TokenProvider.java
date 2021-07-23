@@ -19,7 +19,7 @@ public class TokenProvider {
     private String tokenSecret;
 
     @Value("${app.auth.token-expiration-msec}")
-    private String tokenExpirationMsec;
+    private int tokenExpirationMsec;
 
     public String createToken(Authentication authentication) {
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();

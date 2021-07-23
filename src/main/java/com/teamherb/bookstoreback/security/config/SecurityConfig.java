@@ -1,4 +1,4 @@
-package com.teamherb.bookstoreback.config.security;
+package com.teamherb.bookstoreback.security.config;
 
 import com.teamherb.bookstoreback.security.CustomAuthenticationEntryPoint;
 import com.teamherb.bookstoreback.security.CustomUserDetailsService;
