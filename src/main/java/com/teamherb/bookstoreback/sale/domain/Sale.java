@@ -37,4 +37,6 @@ public class Sale extends BaseEntity {
     @OneToOne
     @JoinColumn(name = "post_id")
     private Post post;
+
+
 }

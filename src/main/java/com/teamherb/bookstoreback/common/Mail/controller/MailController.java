@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class mailtest {
+public class MailController {
 
     private final MailService mailService;
 
-    public mailtest(MailService mailService) {
+    public MailController(MailService mailService) {
         this.mailService = mailService;
     }
 
