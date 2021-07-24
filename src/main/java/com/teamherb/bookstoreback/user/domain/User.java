@@ -1,7 +1,7 @@
 package com.teamherb.bookstoreback.user.domain;
 
 import com.teamherb.bookstoreback.account.domain.Accounts;
-import com.teamherb.bookstoreback.common.BaseEntity;
+import com.teamherb.bookstoreback.common.domain.BaseEntity;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -46,4 +47,20 @@ public class User extends BaseEntity {
     @Embedded
     private Accounts accounts = Accounts.empty();
 
+    public String getRoleName() {
+        return this.role.name();
+    }
+
+    @Builder
+    public User(Long id, String identity, String password, String name, String email,
+        String phoneNumber, String address, Role role) {
+        this.id = id;
+        this.identity = identity;
+        this.password = password;
+        this.name = name;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
+        this.role = role;
+    }
 }
