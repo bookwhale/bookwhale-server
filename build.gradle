@@ -1,7 +1,7 @@
 plugins {
     id 'org.springframework.boot' version '2.5.2'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-    id "org.asciidoctor.convert" version "1.5.9.2"
+    id 'org.asciidoctor.jvm.convert' version '3.3.2'
     id 'java'
 }
 
@@ -13,6 +13,7 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
+    asciidoctorExtensions
 }
 
 repositories {
@@ -28,20 +29,14 @@ dependencies {
     implementation 'org.projectlombok:lombok:1.18.18'
     implementation group: 'com.google.guava', name: 'guava', version: '30.1.1-jre'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
-
     compileOnly 'org.projectlombok:lombok'
-
     runtimeOnly 'com.h2database:h2'
-
-    asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor'
-
+    asciidoctorExtensions 'org.springframework.restdocs:spring-restdocs-asciidoctor'
     annotationProcessor 'org.projectlombok:lombok'
-
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
     testImplementation group: 'io.rest-assured', name: 'rest-assured', version: '4.3.3'
-
 }
 
 ext {
@@ -49,11 +44,20 @@ ext {
 }
 
 test {
-    useJUnitPlatform()
     outputs.dir snippetsDir
+    useJUnitPlatform()
 }
 
 asciidoctor {
+    configurations 'asciidoctorExtensions'
     inputs.dir snippetsDir
     dependsOn test
+}
+
+bootJar {
+    dependsOn asciidoctor
+    copy {
+        from "${asciidoctor.outputDir}"
+        into 'src/main/resources/static/docs'
+    }
 }
