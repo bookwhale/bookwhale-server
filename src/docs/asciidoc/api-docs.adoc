@@ -1,0 +1,2 @@
+== 유저 회원가입
+operation::user/signup[snippets='http-request,request-fields,http-response']
