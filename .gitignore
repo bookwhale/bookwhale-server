@@ -151,6 +151,3 @@ hs_err_pid*
 
 #auth
 application-auth.yml
-
-#docs
-docs\
