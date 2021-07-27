@@ -1,2 +1,11 @@
-== 유저 회원가입
+= Herb-Bookstore API Docs
+:toc: left
+:doctype: book
+:toclevels: 2
+:source-highlighter: highlightjs
+
+== 1. 유저
+
+=== 1.1 회원가입
+
 operation::user/signup[snippets='http-request,request-fields,http-response']
