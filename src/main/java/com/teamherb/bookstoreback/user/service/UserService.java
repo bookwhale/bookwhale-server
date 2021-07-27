@@ -18,7 +18,7 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
 
-    public Long createUser(SignUpRequest signUpRequest) {
+    public void createUser(SignUpRequest signUpRequest) {
         if (userRepository.existsByIdentity(signUpRequest.getIdentity())) {
             throw new IllegalArgumentException("동일한 아이디가 존재합니다.");
         }
@@ -31,7 +31,6 @@ public class UserService {
             .role(Role.ROLE_USER)
             .build();
 
-        User savedUser = userRepository.save(user);
-        return savedUser.getId();
+        userRepository.save(user);
     }
 }
