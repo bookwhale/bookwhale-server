@@ -18,7 +18,7 @@ class MailTest {
     @DisplayName("메일을 전송한다.")
     void sendMailTest() throws Exception {
         MailDto mailDto = MailDto.builder()
-                .address("highright96@gmail.com")
+                .address("hose0728@naver.com")
                 .title("메일 테스트")
                 .message("내용 테스트")
                 .build();
