@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -33,4 +34,14 @@ public class Account extends BaseEntity {
     private String accountBank;
 
     private String accountOwner;
+
+    @Builder
+    public Account(Long id, User user, String accountNumber, String accountBank,
+        String accountOwner) {
+        this.id = id;
+        this.user = user;
+        this.accountNumber = accountNumber;
+        this.accountBank = accountBank;
+        this.accountOwner = accountOwner;
+    }
 }
