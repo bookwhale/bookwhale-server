@@ -4,6 +4,7 @@ import com.teamherb.bookstoreback.user.domain.Role;
 import com.teamherb.bookstoreback.user.domain.User;
 import com.teamherb.bookstoreback.user.domain.UserRepository;
 import com.teamherb.bookstoreback.user.dto.SignUpRequest;
+import com.teamherb.bookstoreback.user.dto.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -32,5 +33,12 @@ public class UserService {
             .build();
 
         userRepository.save(user);
+    }
+
+    @Transactional(readOnly = true)
+    public UserResponse getMyInfo(User user) {
+        User findUser = userRepository.findById(user.getId())
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
+        return null;
     }
 }

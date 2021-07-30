@@ -30,4 +30,8 @@ public class UserDocumentation {
             )
         );
     }
+
+    public static RestDocumentationResultHandler userMe() {
+        return document("user/me");
+    }
 }

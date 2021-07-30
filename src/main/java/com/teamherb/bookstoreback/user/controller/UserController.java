@@ -31,4 +31,10 @@ public class UserController {
         userService.createUser(signUpRequest);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserResponse> getMyInfo(@CurrentUser User user) {
+        UserResponse userResponse = userService.getMyInfo(user);
+        return ResponseEntity.ok(userResponse);
+    }
 }
