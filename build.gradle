@@ -2,6 +2,7 @@ plugins {
     id 'org.springframework.boot' version '2.5.2'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'org.asciidoctor.jvm.convert' version '3.3.2'
+    id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
     id 'java'
 }
 
@@ -29,6 +30,7 @@ dependencies {
     implementation 'org.projectlombok:lombok:1.18.18'
     implementation group: 'com.google.guava', name: 'guava', version: '30.1.1-jre'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'com.querydsl:querydsl-jpa'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.h2database:h2'
     asciidoctorExtensions 'org.springframework.restdocs:spring-restdocs-asciidoctor'
@@ -41,6 +43,7 @@ dependencies {
 
 ext {
     snippetsDir = file('build/generated-snippets')
+    querydslDir = "$buildDir/generated/querydsl"
 }
 
 test {
@@ -60,4 +63,21 @@ bootJar {
         from "${asciidoctor.outputDir}"
         into 'src/main/resources/static/docs'
     }
+}
+
+querydsl {
+    jpa = true
+    querydslSourcesDir = querydslDir
+}
+
+sourceSets {
+    main.java.srcDir querydslDir
+}
+
+configurations {
+    querydsl.extendsFrom compileClasspath
+}
+
+compileQuerydsl {
+    options.annotationProcessorPath = configurations.querydsl
 }
