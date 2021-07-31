@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,11 +18,12 @@ public class AccountResponse {
     private String accountBank;
     private String accountOwner;
 
-    private static AccountResponse of(Account account) {
-        return new AccountResponse(
-            account.getAccountNumber(),
-            account.getAccountBank(),
-            account.getAccountOwner()
-        );
+    public static List<AccountResponse> listOf(List<Account> accounts) {
+        return accounts.stream().map(
+                account -> new AccountResponse(
+                        account.getAccountNumber(),
+                        account.getAccountBank(),
+                        account.getAccountOwner()
+                )).collect(Collectors.toList());
     }
 }

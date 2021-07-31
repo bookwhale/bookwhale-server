@@ -5,14 +5,11 @@ import com.teamherb.bookstoreback.user.domain.User;
 import com.teamherb.bookstoreback.user.dto.SignUpRequest;
 import com.teamherb.bookstoreback.user.dto.UserResponse;
 import com.teamherb.bookstoreback.user.service.UserService;
-import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/user")
@@ -20,11 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     private final UserService userService;
-
-    @GetMapping("/access-test")
-    public ResponseEntity<UserResponse> accessTest(@CurrentUser User user) {
-        return ResponseEntity.ok(UserResponse.of(user));
-    }
 
     @PostMapping("/signup")
     public ResponseEntity<Void> signup(@Valid @RequestBody SignUpRequest signUpRequest) {
