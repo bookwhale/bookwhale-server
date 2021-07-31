@@ -18,7 +18,8 @@ import java.nio.charset.StandardCharsets;
 @RequiredArgsConstructor
 public class BookapiService {
 
-    public void bookapirequest(String keyword){
+    public void BookapiRequest(String keyword){
+
         String clientId = "JhuTF7N1bKBh_QeQzii5";//애플리케이션 클라이언트 아이디값";
         String clientSecret = "f3rZzZ9BSQ";//애플리케이션 클라이언트 시크릿값";
         try {
@@ -46,8 +47,8 @@ public class BookapiService {
             response.append(inputLine);
         }
         br.close();
-        String json =  "{\"title\": 10 }";
         String result = response.toString();
+        System.out.println("result = " + result);
         JSONObject jsonObject = new JSONObject(result);
         JSONArray jsonArray = jsonObject.getJSONArray("items");
         for (int i = 0; i < jsonArray.length(); i++) {
