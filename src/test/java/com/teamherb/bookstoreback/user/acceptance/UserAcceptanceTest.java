@@ -39,6 +39,6 @@ public class UserAcceptanceTest extends AcceptanceTest {
 
         ExtractableResponse<Response> response = UserAcceptanceStep.requestToSignUp(signUpRequest);
 
-        AcceptanceStep.assertThatStatusIsCreated(response);
+        AcceptanceStep.assertThatStatusIsOk(response);
     }
 }

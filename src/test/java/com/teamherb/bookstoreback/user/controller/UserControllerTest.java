@@ -1,13 +1,16 @@
 package com.teamherb.bookstoreback.user.controller;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doNothing;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.teamherb.bookstoreback.account.dto.AccountRequest;
 import com.teamherb.bookstoreback.common.controller.CommonApiTest;
+import com.teamherb.bookstoreback.common.security.WithMockCustomUser;
+import com.teamherb.bookstoreback.user.docs.UserDocumentation;
 import com.teamherb.bookstoreback.user.dto.SignUpRequest;
 import com.teamherb.bookstoreback.user.service.UserService;
 import org.junit.jupiter.api.DisplayName;
@@ -40,12 +43,23 @@ public class UserControllerTest extends CommonApiTest {
             .accountRequest(accountRequest)
             .build();
 
-        when(userService.createUser(any())).thenReturn(1L);
+        doNothing().when(userService).createUser(any());
 
         mockMvc.perform(post("/api/user/signup")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(signUpRequest)))
-            .andExpect(status().isCreated())
-            .andDo(print());
+            .andExpect(status().isOk())
+            .andDo(print())
+            .andDo(UserDocumentation.userSignup());
+    }
+
+    @WithMockCustomUser
+    @DisplayName("내 정보를 조회한다.")
+    @Test
+    void getMyInfo() throws Exception {
+        mockMvc.perform(get("/api/user/me"))
+            .andExpect(status().isOk())
+            .andDo(print())
+            .andDo(UserDocumentation.userMe());
     }
 }

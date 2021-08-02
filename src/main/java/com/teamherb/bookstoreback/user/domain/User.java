@@ -1,9 +1,7 @@
 package com.teamherb.bookstoreback.user.domain;
 
-import com.teamherb.bookstoreback.account.domain.Accounts;
 import com.teamherb.bookstoreback.common.domain.BaseEntity;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -43,9 +41,6 @@ public class User extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private Role role;
-
-    @Embedded
-    private Accounts accounts = Accounts.empty();
 
     public String getRoleName() {
         return this.role.name();
