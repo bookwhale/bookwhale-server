@@ -9,12 +9,11 @@ import com.teamherb.bookstoreback.user.domain.User;
 import com.teamherb.bookstoreback.user.domain.UserRepository;
 import com.teamherb.bookstoreback.user.dto.SignUpRequest;
 import com.teamherb.bookstoreback.user.dto.UserResponse;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -33,12 +32,12 @@ public class UserService {
         }
 
         User user = User.builder()
-                .identity(signUpRequest.getIdentity())
-                .password(passwordEncoder.encode(signUpRequest.getPassword()))
-                .email(signUpRequest.getEmail())
-                .name(signUpRequest.getName())
-                .role(Role.ROLE_USER)
-                .build();
+            .identity(signUpRequest.getIdentity())
+            .password(passwordEncoder.encode(signUpRequest.getPassword()))
+            .email(signUpRequest.getEmail())
+            .name(signUpRequest.getName())
+            .role(Role.ROLE_USER)
+            .build();
 
         userRepository.save(user);
     }
@@ -51,8 +50,7 @@ public class UserService {
     }
 
     private User confirmAuthorityToAccessUser(User user) {
-        User findUser = userRepository.findById(user.getId())
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_ACCESS_DENIED));
-        return findUser;
+        return userRepository.findById(user.getId())
+            .orElseThrow(() -> new CustomException(ErrorCode.USER_ACCESS_DENIED));
     }
 }
