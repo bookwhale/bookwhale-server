@@ -1,28 +1,29 @@
 package com.teamherb.bookstoreback.common.utils.bookapi;
 
+import com.teamherb.bookstoreback.common.utils.bookapi.service.BookapiServiceXml;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static com.teamherb.bookstoreback.common.utils.bookapi.BookapiService2.Keyword;
+import static com.teamherb.bookstoreback.common.utils.bookapi.service.BookapiServiceXml.Search;
 
 @DisplayName("책 api 통합 테스트(xml)")
 @SpringBootTest
 public class BookapiTest2 {
 
     @Autowired
-    BookapiService2 bookapiService2;
+    BookapiServiceXml bookapiServiceXml;
 
 
     @Test
     @DisplayName("책 정보를 가져온다.")
     void BookapiTest(){
 
-        Keyword keyword = Keyword.builder()
+        Search search = Search.builder()
                 .title("기억")
                 .isbn(null)
                 .build();
-        bookapiService2.BookapiRequest(keyword);
+        bookapiServiceXml.BookapixmlRequest(search);
     }
 }

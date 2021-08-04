@@ -1,11 +1,12 @@
 package com.teamherb.bookstoreback.common.utils.mail;
 
+import com.teamherb.bookstoreback.common.utils.mail.service.MailService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static com.teamherb.bookstoreback.common.utils.mail.MailService.MailDto;
+import static com.teamherb.bookstoreback.common.utils.mail.service.MailService.MailDto;
 
 @DisplayName("메일 통합 테스트")
 @SpringBootTest

@@ -1,5 +1,6 @@
-package com.teamherb.bookstoreback.common.utils.mail;
+package com.teamherb.bookstoreback.common.utils.mail.service;
 
+import com.teamherb.bookstoreback.common.utils.mail.MailHandler;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;

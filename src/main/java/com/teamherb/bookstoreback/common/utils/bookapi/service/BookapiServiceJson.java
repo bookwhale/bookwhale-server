@@ -1,4 +1,4 @@
-package com.teamherb.bookstoreback.common.utils.bookapi;
+package com.teamherb.bookstoreback.common.utils.bookapi.service;
 
 
 import lombok.RequiredArgsConstructor;
@@ -16,14 +16,14 @@ import java.nio.charset.StandardCharsets;
 
 @Service
 @RequiredArgsConstructor
-public class BookapiService {
+public class BookapiServiceJson {
 
-    public void BookapiRequest(String keyword){
+    public void BookapiRequest(String Search){
 
         String clientId = "JhuTF7N1bKBh_QeQzii5";//애플리케이션 클라이언트 아이디값";
         String clientSecret = "f3rZzZ9BSQ";//애플리케이션 클라이언트 시크릿값";
         try {
-        String text = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
+        String text = URLEncoder.encode(Search, StandardCharsets.UTF_8);
 
         String apiURL = "https://openapi.naver.com/v1/search/book.json?query="+text;
 
