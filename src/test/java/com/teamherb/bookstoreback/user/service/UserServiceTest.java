@@ -1,22 +1,25 @@
 package com.teamherb.bookstoreback.user.service;
 
 import static java.util.Collections.singletonList;
-import static java.util.Optional.ofNullable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.teamherb.bookstoreback.account.domain.Account;
 import com.teamherb.bookstoreback.account.domain.AccountRepository;
+import com.teamherb.bookstoreback.account.dto.AccountRequest;
 import com.teamherb.bookstoreback.common.exception.CustomException;
 import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
 import com.teamherb.bookstoreback.user.domain.User;
 import com.teamherb.bookstoreback.user.domain.UserRepository;
 import com.teamherb.bookstoreback.user.dto.SignUpRequest;
 import com.teamherb.bookstoreback.user.dto.UserResponse;
-import java.util.Optional;
+import com.teamherb.bookstoreback.user.dto.UserUpdateRequest;
+import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -67,7 +70,7 @@ public class UserServiceTest {
 
     @DisplayName("회원가입을 한다.")
     @Test
-    void createUser() {
+    void createUser_success() {
         when(userRepository.existsByIdentity(any())).thenReturn(false);
         when(passwordEncoder.encode(any())).thenReturn("1234");
         when(userRepository.save(any())).thenReturn(user);
@@ -90,13 +93,11 @@ public class UserServiceTest {
 
     @DisplayName("내 정보를 조회한다.")
     @Test
-    void getMyInfo() {
-        when(userRepository.findById(any())).thenReturn(ofNullable(user));
+    void getMyInfo_success() {
         when(accountRepository.findAllByUser(any())).thenReturn(singletonList(account));
 
         UserResponse userResponse = userService.getMyInfo(user);
 
-        verify(userRepository).findById(any());
         verify(accountRepository).findAllByUser(any());
 
         Assertions.assertAll(
@@ -110,13 +111,65 @@ public class UserServiceTest {
         );
     }
 
-    @DisplayName("내 정보를 조회할 때 접근 권한이 없으면 예외가 발생한다.")
+    @DisplayName("내 정보를 수정한다.")
     @Test
-    void getMyInfo_accessDenied_failure() {
-        when(userRepository.findById(any())).thenReturn(Optional.empty());
+    void updateMyInfo_success() {
+        AccountRequest kbAccountRequest = AccountRequest.builder()
+            .accountBank("국민은행")
+            .accountNumber("12-12345-12345")
+            .accountOwner("주호세")
+            .build();
 
-        assertThatThrownBy(() -> userService.getMyInfo(user)).
+        AccountRequest hanaAccountRequest = AccountRequest.builder()
+            .accountBank("하나은행")
+            .accountNumber("12-12345-12345")
+            .accountOwner("주호세")
+            .build();
+
+        UserUpdateRequest userUpdateRequest = UserUpdateRequest.builder()
+            .name("주호세")
+            .phoneNumber("010-0000-0000")
+            .address("경기")
+            .accounts(List.of(kbAccountRequest, hanaAccountRequest))
+            .build();
+
+        doNothing().when(accountRepository).deleteAllByUser(any());
+        when(accountRepository.saveAll(any())).thenReturn(any());
+
+        userService.updateMyInfo(user, userUpdateRequest);
+
+        verify(accountRepository).deleteAllByUser(any());
+        verify(accountRepository).saveAll(any());
+
+        Assertions.assertAll(
+            () -> assertThat(user.getName()).isEqualTo(userUpdateRequest.getName()),
+            () -> assertThat(user.getAddress()).isEqualTo(userUpdateRequest.getAddress()),
+            () -> assertThat(user.getPhoneNumber()).isEqualTo(userUpdateRequest.getPhoneNumber())
+        );
+    }
+
+    @DisplayName("내 정보를 수정할 때 빈 계좌 리스트를 받으면 예외가 발생한다.")
+    @Test
+    void updateMyInfo_emptyAccounts_failure() {
+        UserUpdateRequest userUpdateRequest = UserUpdateRequest.builder()
+            .accounts(Collections.emptyList())
+            .build();
+
+        assertThatThrownBy(() -> userService.updateMyInfo(user, userUpdateRequest)).
             isInstanceOf(CustomException.class)
-            .hasMessage(ErrorCode.USER_ACCESS_DENIED.getMessage());
+            .hasMessage(ErrorCode.MINIMUM_NUMBER_ACCOUNT.getMessage());
+    }
+
+    @DisplayName("내 정보를 수정할 때 세 개를 넘은 계좌 리스트를 받으면 예외가 발생한다.")
+    @Test
+    void updateMyInfo_overAccounts_failure() {
+        UserUpdateRequest userUpdateRequest = UserUpdateRequest.builder()
+            .accounts(List.of(new AccountRequest(), new AccountRequest(), new AccountRequest(),
+                new AccountRequest()))
+            .build();
+
+        assertThatThrownBy(() -> userService.updateMyInfo(user, userUpdateRequest)).
+            isInstanceOf(CustomException.class)
+            .hasMessage(ErrorCode.MAXIMUM_NUMBER_ACCOUNT.getMessage());
     }
 }

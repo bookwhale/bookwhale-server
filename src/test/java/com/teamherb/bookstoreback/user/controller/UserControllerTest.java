@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -17,6 +18,7 @@ import com.teamherb.bookstoreback.user.docs.UserDocumentation;
 import com.teamherb.bookstoreback.user.domain.User;
 import com.teamherb.bookstoreback.user.dto.SignUpRequest;
 import com.teamherb.bookstoreback.user.dto.UserResponse;
+import com.teamherb.bookstoreback.user.dto.UserUpdateRequest;
 import com.teamherb.bookstoreback.user.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -82,7 +84,7 @@ public class UserControllerTest extends CommonApiTest {
         mockMvc.perform(post("/api/user/signup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(signUpRequest)))
-            .andExpect(status().isOk())
+            .andExpect(status().isCreated())
             .andDo(print())
             .andDo(UserDocumentation.userSignup());
     }
@@ -99,5 +101,32 @@ public class UserControllerTest extends CommonApiTest {
             .andExpect(status().isOk())
             .andDo(print())
             .andDo(UserDocumentation.userMe());
+    }
+
+    @WithMockCustomUser
+    @DisplayName("내 정보를 수정한다.")
+    @Test
+    void updateMyInfo() throws Exception {
+
+        AccountRequest accountRequest = AccountRequest.builder()
+            .accountBank("우리은행")
+            .accountNumber("12-12345-12345")
+            .accountOwner("주호세")
+            .build();
+
+        UserUpdateRequest userUpdateRequest = UserUpdateRequest.builder()
+            .name("주호세")
+            .phoneNumber("010-1122-3344")
+            .accounts(of(accountRequest))
+            .build();
+
+        doNothing().when(userService).updateMyInfo(any(), any());
+
+        mockMvc.perform(patch("/api/user/me")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(userUpdateRequest)))
+            .andExpect(status().isOk())
+            .andDo(print());
+        //.andDo(UserDocumentation.userUpdateMe());
     }
 }
