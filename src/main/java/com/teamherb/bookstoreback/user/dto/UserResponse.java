@@ -16,6 +16,8 @@ public class UserResponse {
     private String identity;
     private String name;
     private String email;
+    private String phoneNumber;
+    private String address;
     private List<AccountResponse> accountResponse;
 
     public static UserResponse of(User user, List<Account> accounts) {
@@ -23,6 +25,8 @@ public class UserResponse {
             user.getIdentity(),
             user.getName(),
             user.getEmail(),
+            user.getPhoneNumber(),
+            user.getAddress(),
             AccountResponse.listOf(accounts)
         );
     }
