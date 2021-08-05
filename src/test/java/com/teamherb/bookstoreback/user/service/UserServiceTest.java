@@ -50,8 +50,11 @@ public class UserServiceTest {
         userService = new UserService(userRepository, accountRepository, passwordEncoder);
 
         user = User.builder()
-            .id(1L)
             .identity("highright96")
+            .name("남상우")
+            .email("highright96@email.com")
+            .phoneNumber("010-1234-1234")
+            .address("서울")
             .build();
 
         account = Account.builder()
