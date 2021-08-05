@@ -34,4 +34,8 @@ public class UserDocumentation {
     public static RestDocumentationResultHandler userMe() {
         return document("user/me");
     }
+
+    public static RestDocumentationResultHandler userUpdateMe() {
+        return document("user/updateMe");
+    }
 }

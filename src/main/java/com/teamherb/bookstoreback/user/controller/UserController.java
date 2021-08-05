@@ -4,12 +4,19 @@ import com.teamherb.bookstoreback.security.CurrentUser;
 import com.teamherb.bookstoreback.user.domain.User;
 import com.teamherb.bookstoreback.user.dto.SignUpRequest;
 import com.teamherb.bookstoreback.user.dto.UserResponse;
+import com.teamherb.bookstoreback.user.dto.UserUpdateRequest;
 import com.teamherb.bookstoreback.user.service.UserService;
+import java.net.URI;
+import java.net.URISyntaxException;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/user")
@@ -19,14 +26,22 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<Void> signup(@Valid @RequestBody SignUpRequest signUpRequest) {
+    public ResponseEntity<Void> signup(@Valid @RequestBody SignUpRequest signUpRequest)
+        throws URISyntaxException {
         userService.createUser(signUpRequest);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.created(new URI("/api/user/login")).build();
     }
 
     @GetMapping("/me")
     public ResponseEntity<UserResponse> getMyInfo(@CurrentUser User user) {
         UserResponse userResponse = userService.getMyInfo(user);
         return ResponseEntity.ok(userResponse);
+    }
+
+    @PatchMapping("/me")
+    public ResponseEntity<Void> updateMyInfo(@CurrentUser User user,
+        @RequestBody UserUpdateRequest userUpdateRequest) {
+        userService.updateMyInfo(user, userUpdateRequest);
+        return ResponseEntity.ok().build();
     }
 }

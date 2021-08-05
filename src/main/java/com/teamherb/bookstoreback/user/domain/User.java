@@ -1,6 +1,7 @@
 package com.teamherb.bookstoreback.user.domain;
 
 import com.teamherb.bookstoreback.common.domain.BaseEntity;
+import com.teamherb.bookstoreback.user.dto.UserUpdateRequest;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -57,5 +58,11 @@ public class User extends BaseEntity {
         this.phoneNumber = phoneNumber;
         this.address = address;
         this.role = role;
+    }
+
+    public void update(UserUpdateRequest request) {
+        this.name = request.getName();
+        this.address = request.getAddress();
+        this.phoneNumber = request.getPhoneNumber();
     }
 }
