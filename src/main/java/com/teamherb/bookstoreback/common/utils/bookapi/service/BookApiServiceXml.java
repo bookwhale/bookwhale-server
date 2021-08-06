@@ -1,5 +1,6 @@
 package com.teamherb.bookstoreback.common.utils.bookapi.service;
 
+import com.teamherb.bookstoreback.common.utils.bookapi.dto.SearchBook;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,27 +21,28 @@ import java.util.ArrayList;
 
 @Service
 @RequiredArgsConstructor
-public class BookapiServiceXml {
+public class BookApiServiceXml {
 
-    public ArrayList<SearchBook> BookapixmlRequest(Search Search){
+    public String BookApixmlRequest(Search search) {
         String clientId = "JhuTF7N1bKBh_QeQzii5";//애플리케이션 클라이언트 아이디값";
         String clientSecret = "f3rZzZ9BSQ";//애플리케이션 클라이언트 시크릿값";
         String apiURL;
+        String reuslt;
 
         ArrayList<SearchBook> searchBooks = new ArrayList<>();
         try {
 
             String text;
-            if (Search.title != null){
-                text = URLEncoder.encode(Search.title, StandardCharsets.UTF_8);
+            if (search.title != null){
+                text = URLEncoder.encode(search.title, StandardCharsets.UTF_8);
                 apiURL = "https://openapi.naver.com/v1/search/book_adv.xml?d_titl="+text;
             }
-            else if(Search.isbn!= null){
-                text = URLEncoder.encode(Search.isbn, StandardCharsets.UTF_8);
+            else if(search.isbn!= null){
+                text = URLEncoder.encode(search.isbn, StandardCharsets.UTF_8);
                 apiURL = "https://openapi.naver.com/v1/search/book_adv.xml?d_isbn="+text;
             }
             else{
-                text = URLEncoder.encode(Search.author, StandardCharsets.UTF_8);
+                text = URLEncoder.encode(search.author, StandardCharsets.UTF_8);
                 apiURL = "https://openapi.naver.com/v1/search/book_adv.xml?d_auth="+text;
             }
 
@@ -61,29 +63,42 @@ public class BookapiServiceXml {
                 br = new BufferedReader(new InputStreamReader(con.getErrorStream()));
             }
             String inputLine;
-            String result;
             StringBuilder response = new StringBuilder();
             while ((inputLine = br.readLine()) != null) {
                 response.append(inputLine);
             }
             br.close();
             con.disconnect();
-            result = response.toString();
+            reuslt = response.toString();
 
+
+
+        }catch (IOException e) {
+            System.out.println(e);
+            reuslt = null;
+
+        }
+        return reuslt;
+    }
+
+
+    public ArrayList<SearchBook> XmlToBooks(String XmlString){
+
+        ArrayList<SearchBook> searchBooks = new ArrayList<>();
+
+        try {
             // xml을 파싱해주는 객체를 생성
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder documentBuilder = factory.newDocumentBuilder();
 
             // xml 문자열은 InputStream으로 변환
-            InputStream is =new ByteArrayInputStream(result.getBytes());
+            InputStream is = new ByteArrayInputStream(XmlString.getBytes());
             // 파싱 시작
             Document doc = documentBuilder.parse(is);
             // 최상위 노드 찾기
             Element element = doc.getDocumentElement();
             // 원하는 태그 데이터 찾아오기
             NodeList items = element.getElementsByTagName("item");
-
-
 
             for(int i=0;i<items.getLength();i++) {
 
@@ -123,11 +138,14 @@ public class BookapiServiceXml {
 
             }
 
-        }catch (Exception e) {
+
+        }catch (Exception e){
             System.out.println(e);
         }
         return searchBooks;
     }
+
+
     @Data
     @NoArgsConstructor
     public static class Search {
@@ -145,17 +163,6 @@ public class BookapiServiceXml {
             this.author = author;
         }
     }
-    @Data
-    @NoArgsConstructor
-    public static class SearchBook{
-        private String title;
-        private String author;
-        private String isbn;
-        private String publisher;
-        private String pubdate;
-        private String price;
-        private String description;
-        private String image;
-    }
+
 
 }

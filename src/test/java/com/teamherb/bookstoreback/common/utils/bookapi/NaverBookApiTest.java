@@ -1,35 +1,42 @@
 package com.teamherb.bookstoreback.common.utils.bookapi;
 
-import com.teamherb.bookstoreback.common.utils.bookapi.service.BookapiServiceXml;
+import com.teamherb.bookstoreback.common.controller.CommonApiTest;
+import com.teamherb.bookstoreback.common.utils.bookapi.service.BookApiServiceXml;
+import com.teamherb.bookstoreback.post.controller.PostBookController;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.context.WebApplicationContext;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@DisplayName("NAVER 책 api post 통합 테스트(xml)")
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
-@AutoConfigureMockMvc
-public class NaverBookApiTest {
+@DisplayName("책 API 테스트(Controller)")
+@WebMvcTest(controllers = PostBookController.class)
+public class NaverBookApiTest extends CommonApiTest {
 
-    @Autowired
-    private MockMvc mockMvc;
 
-    @Autowired
-    private BookapiServiceXml bookapiServiceXml;
+
+    @MockBean
+    private  BookApiServiceXml bookapiServiceXml;
+
+    @BeforeEach
+    @Override
+    public void setUp(WebApplicationContext webApplicationContext) {
+        super.setUp(webApplicationContext);
+    }
 
     @Test
-    @DisplayName("Api 호출 정보를 가져온다.")
+    
     public void BookapiPostTest() throws Exception {
         String Search = "{\"title\": \"기억\"}";
 
-        mockMvc.perform(post("/requestbookapi")
-                .accept(MediaType.APPLICATION_JSON_UTF8)
+        mockMvc.perform(post("/api/bookrequest")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(Search))
                 .andExpect(status().isOk())
