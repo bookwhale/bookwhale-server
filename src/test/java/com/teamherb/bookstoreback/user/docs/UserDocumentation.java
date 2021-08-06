@@ -1,9 +1,6 @@
 package com.teamherb.bookstoreback.user.docs;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 
@@ -14,8 +11,6 @@ public class UserDocumentation {
 
     public static RestDocumentationResultHandler userSignup() {
         return document("user/signup",
-            preprocessRequest(prettyPrint()),
-            preprocessResponse(prettyPrint()),
             requestFields(
                 fieldWithPath("identity").type(JsonFieldType.STRING).description("아이디"),
                 fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호"),
