@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -27,12 +28,13 @@ public class BookApiServiceXml {
         String clientId = "JhuTF7N1bKBh_QeQzii5";//애플리케이션 클라이언트 아이디값";
         String clientSecret = "f3rZzZ9BSQ";//애플리케이션 클라이언트 시크릿값";
         String apiURL;
-        String reuslt;
+        String reuslt=null;
+        String text;
 
-        ArrayList<SearchBook> searchBooks = new ArrayList<>();
+
         try {
 
-            String text;
+
             if (search.title != null){
                 text = URLEncoder.encode(search.title, StandardCharsets.UTF_8);
                 apiURL = "https://openapi.naver.com/v1/search/book_adv.xml?d_titl="+text;
@@ -45,8 +47,6 @@ public class BookApiServiceXml {
                 text = URLEncoder.encode(search.author, StandardCharsets.UTF_8);
                 apiURL = "https://openapi.naver.com/v1/search/book_adv.xml?d_auth="+text;
             }
-
-
 
             URL url = new URL(apiURL);
             HttpURLConnection con = (HttpURLConnection)url.openConnection();
@@ -73,9 +73,10 @@ public class BookApiServiceXml {
 
 
 
+
         }catch (IOException e) {
             System.out.println(e);
-            reuslt = null;
+
 
         }
         return reuslt;
