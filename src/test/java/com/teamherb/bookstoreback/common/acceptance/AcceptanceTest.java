@@ -6,6 +6,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.teamherb.bookstoreback.user.domain.Role;
 import com.teamherb.bookstoreback.user.domain.User;
 import com.teamherb.bookstoreback.user.domain.UserRepository;
+import com.teamherb.bookstoreback.user.dto.LoginRequest;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,8 @@ public abstract class AcceptanceTest {
 
     protected User user;
 
+    protected LoginRequest loginRequest;
+
     @BeforeEach
     public void setUp() {
         if (RestAssured.port == RestAssured.UNDEFINED_PORT) {
@@ -41,6 +44,7 @@ public abstract class AcceptanceTest {
         databaseCleanUp.afterPropertiesSet();
         databaseCleanUp.cleanUp();
 
+        loginRequest = new LoginRequest("highright96", "1234");
         user = createUser();
 
         objectMapper = new ObjectMapper();
