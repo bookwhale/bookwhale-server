@@ -34,8 +34,7 @@ public class UserController {
 
     @GetMapping("/me")
     public ResponseEntity<UserResponse> getMyInfo(@CurrentUser User user) {
-        UserResponse userResponse = userService.getMyInfo(user);
-        return ResponseEntity.ok(userResponse);
+        return ResponseEntity.ok(UserResponse.of(user));
     }
 
     @PatchMapping("/me")
