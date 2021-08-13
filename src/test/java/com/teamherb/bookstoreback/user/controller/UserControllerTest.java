@@ -14,6 +14,7 @@ import com.teamherb.bookstoreback.common.controller.CommonApiTest;
 import com.teamherb.bookstoreback.common.security.WithMockCustomUser;
 import com.teamherb.bookstoreback.user.docs.UserDocumentation;
 import com.teamherb.bookstoreback.user.domain.User;
+import com.teamherb.bookstoreback.user.dto.LoginRequest;
 import com.teamherb.bookstoreback.user.dto.SignUpRequest;
 import com.teamherb.bookstoreback.user.dto.UserUpdateRequest;
 import com.teamherb.bookstoreback.user.service.UserService;
@@ -74,11 +75,25 @@ public class UserControllerTest extends CommonApiTest {
             .andDo(UserDocumentation.userSignup());
     }
 
+    @DisplayName("유저 로그인을 한다.")
+    @Test
+    void login() throws Exception {
+        LoginRequest loginRequest = new LoginRequest("highright96", "1234");
+
+        mockMvc.perform(post("/api/user/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(loginRequest)))
+            .andExpect(status().isUnauthorized())
+            .andDo(print())
+            .andDo(UserDocumentation.userLogin());
+    }
+
     @WithMockCustomUser
     @DisplayName("내 정보를 조회한다.")
     @Test
     void getMyInfo() throws Exception {
-        mockMvc.perform(get("/api/user/me"))
+        mockMvc.perform(get("/api/user/me")
+                .header("jwt", "accessToken"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.identity").value("user"))
             .andExpect(jsonPath("$.name").value("유저"))
@@ -100,10 +115,11 @@ public class UserControllerTest extends CommonApiTest {
         doNothing().when(userService).updateMyInfo(any(), any());
 
         mockMvc.perform(patch("/api/user/me")
+                .header("jwt", "accessToken")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(userUpdateRequest)))
             .andExpect(status().isOk())
-            .andDo(print());
-        //.andDo(UserDocumentation.userUpdateMe());
+            .andDo(print())
+            .andDo(UserDocumentation.userUpdateMe());
     }
 }
