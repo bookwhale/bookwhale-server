@@ -1,8 +1,8 @@
 plugins {
     id 'org.springframework.boot' version '2.5.2'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-    id 'org.asciidoctor.jvm.convert' version '3.3.2'
     id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
+    id "org.asciidoctor.convert" version "1.5.9.2"
     id 'java'
 }
 
@@ -10,11 +10,15 @@ group = 'com.teamherb'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
+ext {
+    querydslDir = "$buildDir/generated/querydsl"
+    snippetsDir = file('build/generated-snippets')
+}
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
-    asciidoctorExtensions
 }
 
 repositories {
@@ -33,17 +37,14 @@ dependencies {
     implementation 'com.querydsl:querydsl-jpa'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.h2database:h2'
-    asciidoctorExtensions 'org.springframework.restdocs:spring-restdocs-asciidoctor'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
     testImplementation group: 'io.rest-assured', name: 'rest-assured', version: '4.3.3'
-}
 
-ext {
-    snippetsDir = file('build/generated-snippets')
-    querydslDir = "$buildDir/generated/querydsl"
+    asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 }
 
 test {
@@ -52,17 +53,18 @@ test {
 }
 
 asciidoctor {
-    configurations 'asciidoctorExtensions'
     inputs.dir snippetsDir
     dependsOn test
 }
 
-bootJar {
+task copyDocument(type: Copy) {
     dependsOn asciidoctor
-    copy {
-        from "${asciidoctor.outputDir}"
-        into 'src/main/resources/static/docs'
-    }
+    from file("build/asciidoc/html5/")
+    into file("src/main/resources/static/docs")
+}
+
+build {
+    dependsOn copyDocument
 }
 
 querydsl {

@@ -139,7 +139,7 @@ fabric.properties
 .mtj.tmp/
 
 # Package Files #
-*.jar
+#*.jar
 *.war
 *.nar
 *.ear
@@ -153,4 +153,4 @@ hs_err_pid*
 application-auth.yml
 
 #docs
-docs\
+api-docs.html
