@@ -22,7 +22,7 @@ import java.util.ArrayList;
 
 @Service
 @RequiredArgsConstructor
-public class BookApiServiceXml {
+public class BookApiXmlService {
 
     public String BookApixmlRequest(Search search) {
         String clientId = "JhuTF7N1bKBh_QeQzii5";//애플리케이션 클라이언트 아이디값";
@@ -30,7 +30,6 @@ public class BookApiServiceXml {
         String apiURL;
         String reuslt=null;
         String text;
-
 
         try {
 

@@ -16,6 +16,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
@@ -37,4 +39,8 @@ public class Purchase extends BaseEntity {
     @OneToOne
     @JoinColumn(name = "post_id")
     private Post post;
+
+    private LocalDate purchasedate;
+
+    private String destination;
 }

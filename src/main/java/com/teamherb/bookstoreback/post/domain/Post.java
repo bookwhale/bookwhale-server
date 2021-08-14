@@ -16,8 +16,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -54,4 +57,18 @@ public class Post extends BaseEntity {
 
     @Embedded
     private Book book;
+
+    @Builder
+    public Post(Long id, User seller, Account account, String title, String image, Long price, String description, PostStatus postStatus, BookStatus bookStatus, Book book) {
+        this.id = id;
+        this.seller = seller;
+        this.account = account;
+        this.title = title;
+        this.image = image;
+        this.price = price;
+        this.description = description;
+        this.postStatus = postStatus;
+        this.bookStatus = bookStatus;
+        this.book = book;
+    }
 }

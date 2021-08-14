@@ -1,19 +1,19 @@
 package com.teamherb.bookstoreback.common.utils.bookapi;
 
-import com.teamherb.bookstoreback.common.utils.bookapi.service.BookApiServiceXml;
+import com.teamherb.bookstoreback.common.utils.bookapi.service.BookApiXmlService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static com.teamherb.bookstoreback.common.utils.bookapi.service.BookApiServiceXml.Search;
+import static com.teamherb.bookstoreback.common.utils.bookapi.service.BookApiXmlService.Search;
 
 @DisplayName("책 api 통합 테스트(xml)")
 @SpringBootTest
 public class BookapiTest2 {
 
     @Autowired
-    BookApiServiceXml bookapiServiceXml;
+    BookApiXmlService bookapiXmlService;
 
 
     @Test
