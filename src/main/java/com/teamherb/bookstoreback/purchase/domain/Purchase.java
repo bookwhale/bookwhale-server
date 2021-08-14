@@ -1,6 +1,5 @@
 package com.teamherb.bookstoreback.purchase.domain;
 
-import com.teamherb.bookstoreback.post.domain.Post;
 import com.teamherb.bookstoreback.common.domain.BaseEntity;
 import com.teamherb.bookstoreback.user.domain.User;
 import javax.persistence.Column;
@@ -11,12 +10,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -32,15 +28,15 @@ public class Purchase extends BaseEntity {
     @JoinColumn(name = "purchaser_id")
     private User purchaser;
 
-    @ManyToOne
-    @JoinColumn(name = "seller_id")
-    private User seller;
+    private String sellerIdentity;
 
-    @OneToOne
-    @JoinColumn(name = "post_id")
-    private Post post;
+    private String sellerName;
 
-    private LocalDate purchasedate;
+    private String postTitle;
 
-    private String destination;
+    private String postPrice;
+
+    private String bookTitle;
+
+    private String bookThumbnail;
 }

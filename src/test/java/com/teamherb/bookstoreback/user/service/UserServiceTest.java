@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.teamherb.bookstoreback.purchase.domain.PurchaseRepository;
 import com.teamherb.bookstoreback.user.domain.User;
 import com.teamherb.bookstoreback.user.domain.UserRepository;
 import com.teamherb.bookstoreback.user.dto.SignUpRequest;
@@ -23,6 +24,9 @@ public class UserServiceTest {
     private UserRepository userRepository;
 
     @Mock
+    private PurchaseRepository purchaseRepository;
+
+    @Mock
     private PasswordEncoder passwordEncoder;
 
     private UserService userService;
@@ -31,7 +35,7 @@ public class UserServiceTest {
 
     @BeforeEach
     void setUp() {
-        userService = new UserService(userRepository, passwordEncoder);
+        userService = new UserService(userRepository, purchaseRepository, passwordEncoder);
 
         user = User.builder()
             .id(1L)

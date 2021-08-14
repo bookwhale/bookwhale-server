@@ -1,9 +1,13 @@
 package com.teamherb.bookstoreback.user.service;
 
+import com.teamherb.bookstoreback.purchase.domain.Purchase;
+import com.teamherb.bookstoreback.purchase.domain.PurchaseRepository;
+import com.teamherb.bookstoreback.purchase.dto.PurchaseResponse;
 import com.teamherb.bookstoreback.user.domain.Role;
 import com.teamherb.bookstoreback.user.domain.User;
 import com.teamherb.bookstoreback.user.domain.UserRepository;
 import com.teamherb.bookstoreback.user.dto.SignUpRequest;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
+
+    private final PurchaseRepository purchaseRepository;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -33,5 +39,11 @@ public class UserService {
 
         User savedUser = userRepository.save(user);
         return savedUser.getId();
+    }
+
+    @Transactional(readOnly = true)
+    public List<PurchaseResponse> findPurchaseHistories(User user) {
+        List<Purchase> purchases = purchaseRepository.findAllByPurchaserOrderByCreatedDate(user);
+        return PurchaseResponse.listOf(purchases);
     }
 }
