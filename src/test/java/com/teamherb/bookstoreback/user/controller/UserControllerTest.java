@@ -24,6 +24,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.web.context.WebApplicationContext;
 
 @DisplayName("유저 단위 테스트(Controller)")
 @WebMvcTest(controllers = UserController.class)
@@ -36,8 +38,9 @@ public class UserControllerTest extends CommonApiTest {
 
     @BeforeEach
     @Override
-    public void setUp() {
-        super.setUp();
+    public void setUp(WebApplicationContext webApplicationContext,
+        RestDocumentationContextProvider restDocumentation) {
+        super.setUp(webApplicationContext, restDocumentation);
 
         user = User.builder()
             .identity("highright96")

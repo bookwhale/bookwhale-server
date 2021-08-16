@@ -31,7 +31,7 @@ public class UserServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
-    private UserService userService;
+    UserService userService;
 
     User user;
 
