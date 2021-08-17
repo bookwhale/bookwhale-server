@@ -6,10 +6,13 @@ import com.teamherb.bookstoreback.purchase.dto.PurchaseResponse;
 import com.teamherb.bookstoreback.sale.domain.Sale;
 import com.teamherb.bookstoreback.sale.domain.SaleRepository;
 import com.teamherb.bookstoreback.sale.dto.SaleResponse;
+import com.teamherb.bookstoreback.common.exception.CustomException;
+import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
 import com.teamherb.bookstoreback.user.domain.Role;
 import com.teamherb.bookstoreback.user.domain.User;
 import com.teamherb.bookstoreback.user.domain.UserRepository;
 import com.teamherb.bookstoreback.user.dto.SignUpRequest;
+import com.teamherb.bookstoreback.user.dto.UserUpdateRequest;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,9 +32,9 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
 
-    public Long createUser(SignUpRequest signUpRequest) {
+    public void createUser(SignUpRequest signUpRequest) {
         if (userRepository.existsByIdentity(signUpRequest.getIdentity())) {
-            throw new IllegalArgumentException("동일한 아이디가 존재합니다.");
+            throw new CustomException(ErrorCode.DUPLICATED_USER_IDENTITY);
         }
 
         User user = User.builder()
@@ -42,8 +45,12 @@ public class UserService {
             .role(Role.ROLE_USER)
             .build();
 
-        User savedUser = userRepository.save(user);
-        return savedUser.getId();
+        userRepository.save(user);
+    }
+
+    public void updateMyInfo(User user, UserUpdateRequest userUpdateRequest) {
+        user.update(userUpdateRequest);
+        userRepository.save(user);
     }
 
     @Transactional(readOnly = true)

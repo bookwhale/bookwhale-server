@@ -17,5 +17,9 @@ public @interface WithMockCustomUser {
 
     String name() default "유저";
 
+    String phoneNumber() default "010-1234-1234";
+
+    String address() default "서울";
+
     Role roles() default Role.ROLE_USER;
 }

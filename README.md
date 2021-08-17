@@ -16,7 +16,12 @@ bugfix : 배포를 진행한 후 발생한 버그를 수정해야 할 때 사용
 기능 개발 -> feat : [내용]    
 코드 리뷰 후 리팩토링 -> refactor : [내용]   
 배포 -> release : [내용]   
-prod 배포 후 수정 -> bugfix : [내용]     
+버그 수정 -> bugfix : [내용]     
+문서 수정 -> docs : [내용]     
+빌드 업무, 패키지 매니저 수정 -> chore : [내용]     
+코드 포맷팅, 세미콜론 누랑, 코드 변경이 없는 경우 -> style : [내용]     
 
 **참고 문헌**   
-우아한 형제들 기술 블로그(http://woowabros.github.io/experience/2017/10/30/baemin-mobile-git-branch-strategy.html)
+우아한 형제들 기술 블로그(http://woowabros.github.io/experience/2017/10/30/baemin-mobile-git-branch-strategy.html)   
+더블에스 블로그(https://doublesprogramming.tistory.com/256)
+

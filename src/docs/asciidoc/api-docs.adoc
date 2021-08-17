@@ -1,0 +1,51 @@
+= Herb-Bookstore API Docs
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+
+== 상태 코드
+
+API 공통적으로 사용되는 상태 코드이다.
+
+|===
+| 상태 코드(Status code) | 용례(Usage)
+
+| `200 OK`
+| 요청을 성공적으로 처리함.
+
+| `201 CREATED`
+| 요청한 리소스가 성공적으로 생성됨.
+
+| `400 BAD_REQUEST`
+| 잘못된 요청을 보낸 경우.
+응답 본문에 오류에 대한 정보가 담겨있다.
+
+| `401 UNAUTHORIZED`
+| 요구되는 인증 정보가 없어 접근이 거부된 경우.
+
+| `404 NOT_FOUND`
+| 요청한 리소스가 없음.
+
+| `405 METHOD_NOT_ALLOWED`
+| 잘못된 HTTP 메소드로 요청한 경우.
+|===
+
+== 1. 유저
+
+=== 1.1 회원가입
+
+operation::user/signup[snippets='http-request,request-fields,http-response']
+
+=== 1.2 로그인
+
+operation::user/userLogin[snippets='http-request,request-fields,http-response']
+
+=== 1.3 내 정보 조회
+
+operation::user/me[snippets='http-request,http-response']
+
+=== 1.4 내 정보 수정
+
+operation::user/updateMe[snippets='http-request,request-fields,http-response']

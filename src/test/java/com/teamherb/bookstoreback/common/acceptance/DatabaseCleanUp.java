@@ -5,18 +5,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
-import lombok.RequiredArgsConstructor;
+import javax.persistence.PersistenceContext;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@RequiredArgsConstructor
 @Profile("test")
 public class DatabaseCleanUp implements InitializingBean {
 
-    private final EntityManager em;
+    @PersistenceContext
+    private EntityManager em;
 
     private List<String> tables;
 

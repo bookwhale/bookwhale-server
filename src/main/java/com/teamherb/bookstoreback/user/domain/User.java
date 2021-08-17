@@ -1,10 +1,14 @@
 package com.teamherb.bookstoreback.user.domain;
 
-import com.teamherb.bookstoreback.account.domain.Accounts;
 import com.teamherb.bookstoreback.common.domain.BaseEntity;
-
-import javax.persistence.*;
-
+import com.teamherb.bookstoreback.user.dto.UserUpdateRequest;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -39,9 +43,6 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Embedded
-    private Accounts accounts = Accounts.empty();
-
     public String getRoleName() {
         return this.role.name();
     }
@@ -57,5 +58,11 @@ public class User extends BaseEntity {
         this.phoneNumber = phoneNumber;
         this.address = address;
         this.role = role;
+    }
+
+    public void update(UserUpdateRequest request) {
+        this.name = request.getName();
+        this.address = request.getAddress();
+        this.phoneNumber = request.getPhoneNumber();
     }
 }

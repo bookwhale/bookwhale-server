@@ -1,12 +1,19 @@
 plugins {
     id 'org.springframework.boot' version '2.5.2'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
+    id "org.asciidoctor.convert" version "1.5.9.2"
     id 'java'
 }
 
 group = 'com.teamherb'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
+
+ext {
+    querydslDir = "$buildDir/generated/querydsl"
+    snippetsDir = file('build/generated-snippets')
+}
 
 configurations {
     compileOnly {
@@ -27,19 +34,52 @@ dependencies {
     implementation 'org.projectlombok:lombok:1.18.18'
     implementation group: 'com.google.guava', name: 'guava', version: '30.1.1-jre'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
-    //implementation 'org.json:json:20190722'
-
+    implementation 'com.querydsl:querydsl-jpa'
     compileOnly 'org.projectlombok:lombok'
-
     runtimeOnly 'com.h2database:h2'
-
     annotationProcessor 'org.projectlombok:lombok'
-
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
     testImplementation group: 'io.rest-assured', name: 'rest-assured', version: '4.3.3'
+
+    asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 }
 
 test {
+    outputs.dir snippetsDir
     useJUnitPlatform()
+}
+
+asciidoctor {
+    inputs.dir snippetsDir
+    dependsOn test
+}
+
+task copyDocument(type: Copy) {
+    dependsOn asciidoctor
+    from file("build/asciidoc/html5/")
+    into file("src/main/resources/static/docs")
+}
+
+build {
+    dependsOn copyDocument
+}
+
+querydsl {
+    jpa = true
+    querydslSourcesDir = querydslDir
+}
+
+sourceSets {
+    main.java.srcDir querydslDir
+}
+
+configurations {
+    querydsl.extendsFrom compileClasspath
+}
+
+compileQuerydsl {
+    options.annotationProcessorPath = configurations.querydsl
 }
