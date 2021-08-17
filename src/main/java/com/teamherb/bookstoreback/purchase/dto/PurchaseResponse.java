@@ -50,4 +50,17 @@ public class PurchaseResponse {
                 .build()
         ).collect(Collectors.toList());
     }
+
+    @Override
+    public String toString() {
+        return "PurchaseResponse{" +
+                "sellerIdentity='" + sellerIdentity + '\'' +
+                ", sellerName='" + sellerName + '\'' +
+                ", postTitle='" + postTitle + '\'' +
+                ", postPrice='" + postPrice + '\'' +
+                ", bookTitle='" + bookTitle + '\'' +
+                ", bookThumbnail='" + bookThumbnail + '\'' +
+                ", createdDate='" + createdDate + '\'' +
+                '}';
+    }
 }

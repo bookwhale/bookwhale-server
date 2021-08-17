@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -39,4 +40,16 @@ public class Sale extends BaseEntity {
     private String bookTitle;
 
     private String bookThumbnail;
+
+    @Builder
+    public Sale(Long id, User seller, String purchaserIdentity, String purchaserName, String postTitle, String postPrice, String bookTitle, String bookThumbnail) {
+        this.id = id;
+        this.seller = seller;
+        this.purchaserIdentity = purchaserIdentity;
+        this.purchaserName = purchaserName;
+        this.postTitle = postTitle;
+        this.postPrice = postPrice;
+        this.bookTitle = bookTitle;
+        this.bookThumbnail = bookThumbnail;
+    }
 }

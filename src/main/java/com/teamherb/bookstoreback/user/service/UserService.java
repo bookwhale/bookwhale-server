@@ -3,6 +3,9 @@ package com.teamherb.bookstoreback.user.service;
 import com.teamherb.bookstoreback.purchase.domain.Purchase;
 import com.teamherb.bookstoreback.purchase.domain.PurchaseRepository;
 import com.teamherb.bookstoreback.purchase.dto.PurchaseResponse;
+import com.teamherb.bookstoreback.sale.domain.Sale;
+import com.teamherb.bookstoreback.sale.domain.SaleRepository;
+import com.teamherb.bookstoreback.sale.dto.SaleResponse;
 import com.teamherb.bookstoreback.user.domain.Role;
 import com.teamherb.bookstoreback.user.domain.User;
 import com.teamherb.bookstoreback.user.domain.UserRepository;
@@ -21,6 +24,8 @@ public class UserService {
     private final UserRepository userRepository;
 
     private final PurchaseRepository purchaseRepository;
+
+    private final SaleRepository saleRepository;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -46,4 +51,11 @@ public class UserService {
         List<Purchase> purchases = purchaseRepository.findAllByPurchaserOrderByCreatedDate(user);
         return PurchaseResponse.listOf(purchases);
     }
+
+    @Transactional(readOnly = true)
+    public List<SaleResponse> findSaleHistories(User user) {
+        List<Sale> sales = saleRepository.findAllBySellerOrderByCreatedDate(user);
+        return SaleResponse.listOf(sales);
+    }
+
 }

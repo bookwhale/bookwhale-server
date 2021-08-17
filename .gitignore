@@ -151,3 +151,4 @@ hs_err_pid*
 
 #auth
 application-auth.yml
+Sale.java
