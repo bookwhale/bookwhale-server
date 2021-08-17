@@ -81,7 +81,7 @@ public class UserDocumentation {
             fieldWithPath("postTitle").type(JsonFieldType.STRING).description("판매글 제목"),
             fieldWithPath("postPrice").type(JsonFieldType.STRING).description("판매글 가격"),
             fieldWithPath("bookTitle").type(JsonFieldType.STRING).description("책 제목"),
-            fieldWithPath("bookThumbnail").type(JsonFieldType.STRING).description("책 섬네일"),
+            fieldWithPath("bookThumbnail").type(JsonFieldType.STRING).description("책 썸네일"),
             fieldWithPath("createdDate").type(JsonFieldType.STRING).description("구매 날짜"),
         };
 

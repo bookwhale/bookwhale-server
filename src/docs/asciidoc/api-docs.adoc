@@ -50,6 +50,10 @@ operation::user/me[snippets='http-request,request-headers,http-response']
 
 operation::user/updateMe[snippets='http-request,request-headers,request-fields,http-response']
 
+=== 1.5 구매내역 조회
+
+operation::user/purchaseHistory[snippets='http-request,request-headers,http-response,response-fields']
+
 == 2. 계좌
 
 === 2.1 계좌 조회

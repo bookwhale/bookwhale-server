@@ -139,7 +139,7 @@ public class UserControllerTest extends CommonApiTest {
             .postTitle("책 팝니다.")
             .postPrice("10000")
             .bookTitle("신")
-            .bookThumbnail("섬네일")
+            .bookThumbnail("책 썸네일")
             .createdDate("2021-01-01")
             .build();
 
