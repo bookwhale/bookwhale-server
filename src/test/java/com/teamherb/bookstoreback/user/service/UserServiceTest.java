@@ -1,6 +1,5 @@
 package com.teamherb.bookstoreback.user.service;
 
-import static java.util.List.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,19 +35,18 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class UserServiceTest {
 
     @Mock
-    private UserService userService;
+    private UserRepository userRepository;
 
     @Mock
     private PasswordEncoder passwordEncoder;
-
-    @Mock
-    private UserRepository userRepository;
 
     @Mock
     private PurchaseRepository purchaseRepository;
 
     @Mock
     private SaleRepository saleRepository;
+
+    UserService userService;
 
     User user;
 
