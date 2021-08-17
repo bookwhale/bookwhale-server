@@ -1,6 +1,7 @@
 package com.teamherb.bookstoreback.user.controller;
 
 import com.teamherb.bookstoreback.purchase.dto.PurchaseResponse;
+import com.teamherb.bookstoreback.sale.dto.SaleResponse;
 import com.teamherb.bookstoreback.security.CurrentUser;
 import com.teamherb.bookstoreback.user.domain.User;
 import com.teamherb.bookstoreback.user.dto.SignUpRequest;
@@ -36,9 +37,14 @@ public class UserController {
     }
 
     @GetMapping("/purchase-history")
-    public ResponseEntity<List<PurchaseResponse>> findPurchaseHistories(
-        @CurrentUser User user) {
+    public ResponseEntity<List<PurchaseResponse>> findPurchaseHistories(@CurrentUser User user) {
         List<PurchaseResponse> res = userService.findPurchaseHistories(user);
+        return ResponseEntity.ok(res);
+    }
+
+    @GetMapping("/sale-history")
+    public ResponseEntity<List<SaleResponse>> findSaleHistories(@CurrentUser User user) {
+        List<SaleResponse> res = userService.findSaleHistories(user);
         return ResponseEntity.ok(res);
     }
 }

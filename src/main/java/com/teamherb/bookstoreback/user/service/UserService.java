@@ -57,5 +57,4 @@ public class UserService {
         List<Sale> sales = saleRepository.findAllBySellerOrderByCreatedDate(user);
         return SaleResponse.listOf(sales);
     }
-
 }
