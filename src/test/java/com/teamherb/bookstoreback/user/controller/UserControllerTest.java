@@ -1,7 +1,9 @@
 package com.teamherb.bookstoreback.user.controller;
 
+import static java.util.List.of;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -12,6 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.teamherb.bookstoreback.account.dto.AccountRequest;
 import com.teamherb.bookstoreback.common.controller.CommonApiTest;
 import com.teamherb.bookstoreback.common.security.WithMockCustomUser;
+import com.teamherb.bookstoreback.purchase.dto.PurchaseResponse;
 import com.teamherb.bookstoreback.user.docs.UserDocumentation;
 import com.teamherb.bookstoreback.user.domain.User;
 import com.teamherb.bookstoreback.user.dto.LoginRequest;
@@ -121,5 +124,28 @@ public class UserControllerTest extends CommonApiTest {
             .andExpect(status().isOk())
             .andDo(print())
             .andDo(UserDocumentation.userUpdateMe());
+    }
+
+    @WithMockCustomUser
+    @DisplayName("구매내역을 조회한다.")
+    @Test
+    void findPurchaseHistories() throws Exception {
+        PurchaseResponse response = PurchaseResponse.builder()
+            .sellerIdentity("highright96")
+            .sellerName("남상우")
+            .postTitle("책 팝니다.")
+            .postPrice("10000")
+            .bookTitle("신")
+            .bookThumbnail("섬네일")
+            .createdDate("2021-01-01")
+            .build();
+
+        when(userService.findPurchaseHistories(any())).thenReturn(of(response));
+
+        mockMvc.perform(get("/api/user/purchase-history")
+                .header("jwt", "accessToken"))
+            .andExpect(status().isOk())
+            .andDo(print())
+            .andDo(UserDocumentation.findPurchaseHistories());
     }
 }

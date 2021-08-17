@@ -89,4 +89,13 @@ public class UserAcceptanceStep {
             .then().log().all()
             .extract();
     }
+
+    public static ExtractableResponse<Response> requestToFindPurchaseHistories(String jwt) {
+        return given().log().all()
+            .header("jwt", jwt)
+            .when()
+            .get("/api/user/purchase-history")
+            .then().log().all()
+            .extract();
+    }
 }
