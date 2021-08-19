@@ -1,6 +1,6 @@
 package com.teamherb.bookstoreback.common.utils.mail;
 
-import static com.teamherb.bookstoreback.common.utils.mail.MailService.MailDto;
+import static com.teamherb.bookstoreback.common.utils.mail.MailUtil.MailDto;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -13,7 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 class MailTest {
 
     @Autowired
-    MailService mailService;
+    MailUtil mailUtil;
 
     @Disabled
     @Test
@@ -24,6 +24,6 @@ class MailTest {
             .title("메일 테스트")
             .message("내용 테스트")
             .build();
-        mailService.mailSend(mailDto);
+        mailUtil.mailSend(mailDto);
     }
 }
