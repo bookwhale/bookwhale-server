@@ -54,6 +54,10 @@ operation::user/updateMe[snippets='http-request,request-headers,request-fields,h
 
 operation::user/purchaseHistory[snippets='http-request,request-headers,http-response,response-fields']
 
+=== 1.6 판매내역 조회
+
+operation::user/saleHistory[snippets='http-request,request-headers,http-response,response-fields']
+
 == 2. 계좌
 
 === 2.1 계좌 조회

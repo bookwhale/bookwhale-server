@@ -77,4 +77,13 @@ public class UserAcceptanceTest extends AcceptanceTest {
             jwt);
         AcceptanceStep.assertThatStatusIsOk(response);
     }
+
+    @DisplayName("판매내역을 조회한다.")
+    @Test
+    void findSaleHistories(){
+        String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
+        ExtractableResponse<Response> response =  UserAcceptanceStep.requestToFindSaleHistories(
+                jwt);
+        AcceptanceStep.assertThatStatusIsOk(response);
+    }
 }

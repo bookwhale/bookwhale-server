@@ -1,5 +1,6 @@
 package com.teamherb.bookstoreback.user.controller;
 
+
 import static java.util.List.of;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
@@ -10,11 +11,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.teamherb.bookstoreback.account.dto.AccountRequest;
 import com.teamherb.bookstoreback.common.controller.CommonApiTest;
 import com.teamherb.bookstoreback.common.security.WithMockCustomUser;
 import com.teamherb.bookstoreback.purchase.dto.PurchaseResponse;
+import com.teamherb.bookstoreback.sale.dto.SaleResponse;
 import com.teamherb.bookstoreback.user.docs.UserDocumentation;
 import com.teamherb.bookstoreback.user.domain.User;
 import com.teamherb.bookstoreback.user.dto.LoginRequest;
@@ -29,6 +30,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.web.context.WebApplicationContext;
+
+
 
 @DisplayName("유저 단위 테스트(Controller)")
 @WebMvcTest(controllers = UserController.class)
@@ -151,4 +154,30 @@ public class UserControllerTest extends CommonApiTest {
             .andDo(print())
             .andDo(UserDocumentation.findPurchaseHistories());
     }
+
+    @WithMockCustomUser
+    @DisplayName("판매내역을 조회한다.")
+    @Test
+    void findSaleHistories() throws Exception{
+        SaleResponse saleResponse = SaleResponse.builder()
+                .purchaserIdentity("hose123")
+                .purchaserName("김첨지")
+                .postTitle("설렁탕 팝니다.")
+                .postPrice("6000")
+                .bookTitle("설렁탕")
+                .bookThumbnail("설렁탕 썸네일")
+                .createdDate("2021-01-01")
+                .build();
+
+        when(userService.findSaleHistories(any())).thenReturn(of(saleResponse));
+
+        mockMvc.perform(get("/api/user/sale-history")
+                .header("jwt","accessToken"))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(UserDocumentation.findSaleHistories());
+
+    }
+
+
 }

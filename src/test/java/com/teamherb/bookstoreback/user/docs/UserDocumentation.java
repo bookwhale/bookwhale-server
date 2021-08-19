@@ -95,4 +95,27 @@ public class UserDocumentation {
                 .andWithPrefix("[].", response)
         );
     }
+
+    public static RestDocumentationResultHandler findSaleHistories() {
+        FieldDescriptor[] response = new FieldDescriptor[]{
+                fieldWithPath("purchaserIdentity").type(JsonFieldType.STRING).description("구매자 아이디"),
+                fieldWithPath("purchaserName").type(JsonFieldType.STRING).description("구매자 이름"),
+                fieldWithPath("postTitle").type(JsonFieldType.STRING).description("판매글 제목"),
+                fieldWithPath("postPrice").type(JsonFieldType.STRING).description("판매글 가격"),
+                fieldWithPath("bookTitle").type(JsonFieldType.STRING).description("책 제목"),
+                fieldWithPath("bookThumbnail").type(JsonFieldType.STRING).description("책 썸네일"),
+                fieldWithPath("createdDate").type(JsonFieldType.STRING).description("구매 날짜"),
+        };
+
+        return document("user/saleHistory",
+                preprocessResponse(prettyPrint()),
+                requestHeaders(
+                        headerWithName("jwt").description("접속 인증 정보가 담긴 JWT")
+                ),
+                responseFields(
+                        fieldWithPath("[]").description("An array of books"))
+                        .andWithPrefix("[].", response)
+        );
+    }
+
 }
