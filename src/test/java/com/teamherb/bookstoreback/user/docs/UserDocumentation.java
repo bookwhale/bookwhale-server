@@ -82,7 +82,7 @@ public class UserDocumentation {
             fieldWithPath("postPrice").type(JsonFieldType.STRING).description("판매글 가격"),
             fieldWithPath("bookTitle").type(JsonFieldType.STRING).description("책 제목"),
             fieldWithPath("bookThumbnail").type(JsonFieldType.STRING).description("책 썸네일"),
-            fieldWithPath("createdDate").type(JsonFieldType.STRING).description("구매 날짜"),
+            fieldWithPath("createdDate").type(JsonFieldType.STRING).description("구매 날짜")
         };
 
         return document("user/purchaseHistory",
@@ -104,7 +104,7 @@ public class UserDocumentation {
                 fieldWithPath("postPrice").type(JsonFieldType.STRING).description("판매글 가격"),
                 fieldWithPath("bookTitle").type(JsonFieldType.STRING).description("책 제목"),
                 fieldWithPath("bookThumbnail").type(JsonFieldType.STRING).description("책 썸네일"),
-                fieldWithPath("createdDate").type(JsonFieldType.STRING).description("구매 날짜"),
+                fieldWithPath("createdDate").type(JsonFieldType.STRING).description("구매 날짜")
         };
 
         return document("user/saleHistory",
