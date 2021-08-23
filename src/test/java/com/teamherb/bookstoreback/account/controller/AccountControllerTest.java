@@ -24,6 +24,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 
@@ -47,7 +48,7 @@ class AccountControllerTest extends CommonApiTest {
         doNothing().when(accountService).createAccount(any(), any());
 
         mockMvc.perform(post("/api/account")
-                .header("jwt", "accessToken")
+                .header(HttpHeaders.AUTHORIZATION, "accessToken")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(accountRequest)))
             .andExpect(header().string("location", "/api/account"))
@@ -69,7 +70,7 @@ class AccountControllerTest extends CommonApiTest {
         when(accountService.findAccounts(any())).thenReturn(of(accountResponse));
 
         mockMvc.perform(get("/api/account")
-                .header("jwt", "accessToken"))
+                .header(HttpHeaders.AUTHORIZATION, "accessToken"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$[0].accountNumber").value(
                 accountResponse.getAccountNumber()))
@@ -95,7 +96,7 @@ class AccountControllerTest extends CommonApiTest {
         doNothing().when(accountService).updateAccount(any(), any());
 
         mockMvc.perform(patch("/api/account")
-                .header("jwt", "accessToken")
+                .header(HttpHeaders.AUTHORIZATION, "accessToken")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(req)))
             .andExpect(status().isOk())
@@ -110,7 +111,7 @@ class AccountControllerTest extends CommonApiTest {
         doNothing().when(accountService).deleteAccount(any(), any());
 
         mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/account/{accountId}", 1L)
-                .header("jwt", "accessToken"))
+                .header(HttpHeaders.AUTHORIZATION, "accessToken"))
             .andExpect(status().isOk())
             .andDo(print())
             .andDo(AccountDocumentation.deleteAccount());

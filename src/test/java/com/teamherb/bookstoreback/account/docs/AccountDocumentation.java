@@ -11,6 +11,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.restdocs.operation.preprocess.Preprocessors;
 import org.springframework.restdocs.payload.FieldDescriptor;
@@ -22,7 +23,7 @@ public class AccountDocumentation {
         return document("account/createAccount",
             preprocessRequest(prettyPrint()),
             requestHeaders(
-                headerWithName("jwt").description("접속 인증 정보가 담긴 JWT")
+                headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
             ),
             requestFields(
                 fieldWithPath("accountNumber").type(JsonFieldType.STRING).description("계좌 번호"),
@@ -42,7 +43,7 @@ public class AccountDocumentation {
         return document("account/findAccounts",
             Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
             requestHeaders(
-                headerWithName("jwt").description("접속 인증 정보가 담긴 JWT")
+                headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
             ),
             responseFields(fieldWithPath("[]").description("An arrays of accounts"))
                 .andWithPrefix("[].", account)
@@ -53,13 +54,16 @@ public class AccountDocumentation {
         return document("account/updateAccount",
             preprocessRequest(prettyPrint()),
             requestHeaders(
-                headerWithName("jwt").description("접속 인증 정보가 담긴 JWT")
+                headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
             ),
             requestFields(
                 fieldWithPath("accountId").type(JsonFieldType.NUMBER).description("수정할 계좌 ID"),
-                fieldWithPath("accountNumber").type(JsonFieldType.STRING).description("계좌 번호").optional(),
-                fieldWithPath("accountBank").type(JsonFieldType.STRING).description("은행").optional(),
-                fieldWithPath("accountOwner").type(JsonFieldType.STRING).description("이름").optional()
+                fieldWithPath("accountNumber").type(JsonFieldType.STRING).description("계좌 번호")
+                    .optional(),
+                fieldWithPath("accountBank").type(JsonFieldType.STRING).description("은행")
+                    .optional(),
+                fieldWithPath("accountOwner").type(JsonFieldType.STRING).description("이름")
+                    .optional()
             )
         );
     }
@@ -67,7 +71,7 @@ public class AccountDocumentation {
     public static RestDocumentationResultHandler deleteAccount() {
         return document("account/deleteAccount",
             requestHeaders(
-                headerWithName("jwt").description("접속 인증 정보가 담긴 JWT")
+                headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
             ),
             pathParameters(
                 parameterWithName("accountId").description("삭제할 계좌 ID")
