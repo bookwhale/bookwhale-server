@@ -67,3 +67,9 @@ operation::account/updateAccount[snippets='http-request,request-headers,request-
 === 2.4 계좌 삭제
 
 operation::account/deleteAccount[snippets='http-request,request-headers,path-parameters,http-response']
+
+== 3. 중고책 게시글
+
+=== 3.1 중고책 게시글 등록
+
+operation::post/createPost[snippets='http-request,request-headers,request-part-postRequest-fields,http-response']
