@@ -2,10 +2,12 @@ package com.teamherb.bookstoreback.post.acceptance;
 
 import com.teamherb.bookstoreback.account.dto.AccountRequest;
 import com.teamherb.bookstoreback.common.acceptance.AcceptanceTest;
+import com.teamherb.bookstoreback.common.acceptance.AcceptanceUtils;
 import com.teamherb.bookstoreback.common.acceptance.step.AcceptanceStep;
 import com.teamherb.bookstoreback.post.acceptance.step.PostAcceptanceStep;
 import com.teamherb.bookstoreback.post.dto.BookRequest;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
+import com.teamherb.bookstoreback.post.dto.PostResponse;
 import com.teamherb.bookstoreback.user.acceptance.step.UserAcceptanceStep;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -23,27 +25,27 @@ public class PostAcceptanceTest extends AcceptanceTest {
     public void setUp() {
         super.setUp();
         AccountRequest accountRequest = AccountRequest.builder()
-            .accountBank("국민은행")
-            .accountOwner("남상우")
+            .accountBank("Hankook Bank")
+            .accountOwner("Nam Sang woo")
             .accountNumber("123-1234-12345")
             .build();
 
         BookRequest bookRequest = BookRequest.builder()
-            .bookSummary("책 설명")
+            .bookSummary("book summary")
             .bookPubDate("2021-12-12")
             .bookIsbn("12345678910")
             .bookListPrice("10000")
-            .bookThumbnail("썸네일")
-            .bookTitle("책 제목")
-            .bookPublisher("출판사")
-            .bookAuthor("작가")
+            .bookThumbnail("thumbnail")
+            .bookTitle("book title")
+            .bookPublisher("book publisher")
+            .bookAuthor("book author")
             .build();
 
         postRequest = PostRequest.builder()
             .accountRequest(accountRequest)
             .bookRequest(bookRequest)
-            .title("책 팝니다~")
-            .description("쿨 거래시 1000원 할인해드려요~")
+            .title("post title")
+            .description("post description")
             .bookStatus("BEST")
             .price("5000")
             .build();
@@ -57,5 +59,20 @@ public class PostAcceptanceTest extends AcceptanceTest {
             postRequest);
 
         AcceptanceStep.assertThatStatusIsCreated(response);
+    }
+
+    @DisplayName("중고책 게시글을 상세 조회한다.")
+    @Test
+    void findPost() {
+        String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
+
+        Long postId = AcceptanceUtils.getIdFromResponse(
+            PostAcceptanceStep.requestToCreatePost(jwt, postRequest));
+
+        ExtractableResponse<Response> response = PostAcceptanceStep.requestToFindPost(jwt, postId);
+        PostResponse postResponse = response.jsonPath().getObject(".", PostResponse.class);
+
+        AcceptanceStep.assertThatStatusIsOk(response);
+        PostAcceptanceStep.assertThatFindPost(postResponse, postRequest);
     }
 }

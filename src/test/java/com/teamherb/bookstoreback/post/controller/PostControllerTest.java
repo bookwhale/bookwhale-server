@@ -8,13 +8,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.teamherb.bookstoreback.account.dto.AccountRequest;
+import com.teamherb.bookstoreback.account.dto.AccountResponse;
 import com.teamherb.bookstoreback.common.controller.CommonApiTest;
 import com.teamherb.bookstoreback.common.security.WithMockCustomUser;
 import com.teamherb.bookstoreback.post.docs.PostDocumentation;
+import com.teamherb.bookstoreback.post.domain.BookStatus;
+import com.teamherb.bookstoreback.post.domain.PostStatus;
 import com.teamherb.bookstoreback.post.dto.BookRequest;
+import com.teamherb.bookstoreback.post.dto.BookResponse;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
+import com.teamherb.bookstoreback.post.dto.PostResponse;
 import com.teamherb.bookstoreback.post.service.PostService;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,8 +29,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 
-@DisplayName("게시글 단위 테스트(Controller")
+@DisplayName("게시글 단위 테스트(Controller)")
 @WebMvcTest(controllers = PostController.class)
 public class PostControllerTest extends CommonApiTest {
 
@@ -85,5 +92,48 @@ public class PostControllerTest extends CommonApiTest {
             .andExpect(status().isCreated())
             .andDo(print())
             .andDo(PostDocumentation.createPost());
+    }
+
+    @WithMockCustomUser
+    @DisplayName("게시글을 상세 조회한다.")
+    @Test
+    void findPost() throws Exception {
+        AccountResponse accountResponse = AccountResponse.builder()
+            .accountBank("국민은행")
+            .accountOwner("남상우")
+            .accountNumber("123-1234-12345")
+            .build();
+
+        BookResponse bookResponse = BookResponse.builder()
+            .bookSummary("설명")
+            .bookPubDate("2021-12-12")
+            .bookIsbn("12398128745902")
+            .bookListPrice("10000")
+            .bookThumbnail("썸네일")
+            .bookTitle("책 제목")
+            .bookPublisher("출판사")
+            .bookAuthor("작가")
+            .build();
+
+        PostResponse postResponse = PostResponse.builder()
+            .accountResponse(accountResponse)
+            .bookResponse(bookResponse)
+            .postId(1L)
+            .title("책 팝니다~")
+            .price("5000")
+            .description("쿨 거래시 1000원 할인해드려요~")
+            .bookStatus(BookStatus.BEST)
+            .postStatus(PostStatus.SALE)
+            .images(List.of("image1", "image2"))
+            .isMyPost(true)
+            .build();
+
+        when(postService.findPost(any(), any())).thenReturn(postResponse);
+
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/post/{postId}", 1L)
+                .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+            .andExpect(status().isOk())
+            .andDo(print())
+            .andDo(PostDocumentation.findPost());
     }
 }
