@@ -1,6 +1,7 @@
 package com.teamherb.bookstoreback.post.controller;
 
 import com.teamherb.bookstoreback.post.dto.PostRequest;
+import com.teamherb.bookstoreback.post.dto.PostResponse;
 import com.teamherb.bookstoreback.post.service.PostService;
 import com.teamherb.bookstoreback.security.CurrentUser;
 import com.teamherb.bookstoreback.user.domain.User;
@@ -10,6 +11,8 @@ import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -26,8 +29,16 @@ public class PostController {
     @PostMapping
     public ResponseEntity<Void> createPost(@CurrentUser User user,
         @Valid @RequestPart("postRequest") PostRequest postRequest,
-        @RequestPart(name = "images", required = false) List<MultipartFile> images) throws URISyntaxException {
+        @RequestPart(name = "images", required = false) List<MultipartFile> images)
+        throws URISyntaxException {
         Long postId = postService.createPost(user, postRequest, images);
         return ResponseEntity.created(new URI("/api/post/" + postId)).build();
+    }
+
+    @GetMapping("/{postId}")
+    public ResponseEntity<PostResponse> findPost(@CurrentUser User user,
+        @PathVariable Long postId) {
+        PostResponse postResponse = postService.findPost(user, postId);
+        return ResponseEntity.ok(postResponse);
     }
 }

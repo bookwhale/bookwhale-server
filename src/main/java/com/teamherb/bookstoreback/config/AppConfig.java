@@ -7,6 +7,7 @@ import javax.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.filter.CharacterEncodingFilter;
 
 @Configuration
 @RequiredArgsConstructor
@@ -22,5 +23,13 @@ public class AppConfig {
     @Bean
     public FileStoreUtil fileStoreUtil() {
         return new FileStoreOnServerUtil();
+    }
+
+    @Bean
+    public CharacterEncodingFilter characterEncodingFilter() {
+        CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
+        characterEncodingFilter.setEncoding("UTF-8");
+        characterEncodingFilter.setForceEncoding(true);
+        return characterEncodingFilter;
     }
 }

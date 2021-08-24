@@ -87,4 +87,8 @@ public class Post extends BaseEntity {
             .book(Book.create(req.getBookRequest()))
             .build();
     }
+
+    public boolean isMyPost(User user) {
+        return this.seller.getId().equals(user.getId());
+    }
 }

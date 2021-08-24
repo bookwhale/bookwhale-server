@@ -1,11 +1,14 @@
 package com.teamherb.bookstoreback.post.service;
 
+import com.teamherb.bookstoreback.common.exception.CustomException;
+import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
 import com.teamherb.bookstoreback.common.utils.upload.FileStoreUtil;
 import com.teamherb.bookstoreback.image.domain.Image;
 import com.teamherb.bookstoreback.image.domain.ImageRepository;
 import com.teamherb.bookstoreback.post.domain.Post;
 import com.teamherb.bookstoreback.post.domain.PostRepository;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
+import com.teamherb.bookstoreback.post.dto.PostResponse;
 import com.teamherb.bookstoreback.user.domain.User;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -38,5 +41,15 @@ public class PostService {
 
     private List<String> getUploadFilePaths(List<MultipartFile> files) {
         return files.size() > 0 ? fileStoreUtil.storeFiles(files) : null;
+    }
+
+    @Transactional(readOnly = true)
+    public PostResponse findPost(User user, Long postId) {
+        Post findPost = postRepository.findById(postId)
+            .orElseThrow(() -> new CustomException(ErrorCode.INVALID_POST_ID));
+
+        List<Image> findImages = imageRepository.findAllByPost(findPost);
+
+        return PostResponse.of(findPost, findImages, findPost.isMyPost(user));
     }
 }
