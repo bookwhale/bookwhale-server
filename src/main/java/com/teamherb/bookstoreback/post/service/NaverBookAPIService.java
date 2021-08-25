@@ -1,7 +1,7 @@
 package com.teamherb.bookstoreback.post.service;
 
+import com.teamherb.bookstoreback.post.dto.BookResponse;
 import com.teamherb.bookstoreback.post.dto.NaverBookRequest;
-import com.teamherb.bookstoreback.post.dto.SearchBook;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -16,6 +16,7 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -25,13 +26,14 @@ import org.w3c.dom.NodeList;
 @RequiredArgsConstructor
 public class NaverBookAPIService {
 
-    public String getNaverBooksXml(NaverBookRequest req) {
-        String clientId = "JhuTF7N1bKBh_QeQzii5";//애플리케이션 클라이언트 아이디값";
-        String clientSecret = "f3rZzZ9BSQ";//애플리케이션 클라이언트 시크릿값";
-        String apiURL;
-        String result = null;
-        String text;
+    @Value("${app.naver-book.client-id}")
+    String clientId;
 
+    @Value("${app.naver-book.client-secret}")
+    String clientSecret;
+
+    public List<BookResponse> getNaverBooks(NaverBookRequest req) {
+        String apiURL, text, result = null;
         try {
             if (req.getTitle() != null) {
                 text = URLEncoder.encode(req.getTitle(), StandardCharsets.UTF_8);
@@ -69,19 +71,18 @@ public class NaverBookAPIService {
         } catch (IOException e) {
             System.out.println(e);
         }
-        return result;
+        return convertXmlToBookResponses(result);
     }
 
-
-    public List<SearchBook> convertXmlToNaverBookResponse(String XmlString) {
-        List<SearchBook> searchBooks = new ArrayList<>();
+    private List<BookResponse> convertXmlToBookResponses(String xml) {
+        List<BookResponse> bookResponses = new ArrayList<>();
         try {
             // xml 을 파싱해주는 객체를 생성
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder documentBuilder = factory.newDocumentBuilder();
 
             // xml 문자열은 InputStream 으로 변환
-            InputStream is = new ByteArrayInputStream(XmlString.getBytes());
+            InputStream is = new ByteArrayInputStream(xml.getBytes());
             // 파싱 시작
             Document doc = documentBuilder.parse(is);
             // 최상위 노드 찾기
@@ -90,41 +91,41 @@ public class NaverBookAPIService {
             NodeList items = element.getElementsByTagName("item");
 
             for (int i = 0; i < items.getLength(); i++) {
-                SearchBook searchBook = new SearchBook();
+                BookResponse bookResponse = new BookResponse();
                 NodeList childNodes = items.item(i).getChildNodes();
                 for (int j = 0; j < childNodes.getLength(); ++j) {
                     switch (childNodes.item(j).getNodeName()) {
                         case "title":
-                            searchBook.setTitle(childNodes.item(j).getTextContent());
+                            bookResponse.setBookTitle(childNodes.item(j).getTextContent());
                             break;
                         case "price":
-                            searchBook.setPrice(childNodes.item(j).getTextContent());
+                            bookResponse.setBookListPrice(childNodes.item(j).getTextContent());
                             break;
                         case "isbn":
-                            searchBook.setIsbn(childNodes.item(j).getTextContent());
+                            bookResponse.setBookIsbn(childNodes.item(j).getTextContent());
                             break;
                         case "publisher":
-                            searchBook.setPublisher(childNodes.item(j).getTextContent());
+                            bookResponse.setBookPublisher(childNodes.item(j).getTextContent());
                             break;
                         case "pubDate":
-                            searchBook.setPubdate(childNodes.item(j).getTextContent());
+                            bookResponse.setBookPubDate(childNodes.item(j).getTextContent());
                             break;
                         case "author":
-                            searchBook.setAuthor(childNodes.item(j).getTextContent());
+                            bookResponse.setBookAuthor(childNodes.item(j).getTextContent());
                             break;
                         case "description":
-                            searchBook.setDescription(childNodes.item(j).getTextContent());
+                            bookResponse.setBookSummary(childNodes.item(j).getTextContent());
                             break;
                         case "image":
-                            searchBook.setImage(childNodes.item(j).getTextContent());
+                            bookResponse.setBookThumbnail(childNodes.item(j).getTextContent());
                             break;
                     }
                 }
-                searchBooks.add(searchBook);
+                bookResponses.add(bookResponse);
             }
         } catch (Exception e) {
             System.out.println(e);
         }
-        return searchBooks;
+        return bookResponses;
     }
 }

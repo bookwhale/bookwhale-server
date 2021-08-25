@@ -9,9 +9,7 @@ import lombok.NoArgsConstructor;
 public class NaverBookRequest {
 
     private String title;
-
     private String isbn;
-
     private String author;
 
     @Builder
