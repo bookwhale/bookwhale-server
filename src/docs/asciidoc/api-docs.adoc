@@ -75,3 +75,9 @@ operation::account/updateAccount[snippets='http-request,request-headers,request-
 === 2.4 계좌 삭제
 
 operation::account/deleteAccount[snippets='http-request,request-headers,path-parameters,http-response']
+
+== 3. 중고책 게시글
+
+=== 3.1 네이버 책 API
+
+operation::post/findNaverBooks[snippets='http-request,request-headers,request-fields,http-response,response-fields']
