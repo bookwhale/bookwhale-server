@@ -1,4 +1,4 @@
-package com.teamherb.bookstoreback.common.utils.bookapi.dto;
+package com.teamherb.bookstoreback.post.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

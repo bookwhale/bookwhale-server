@@ -1,31 +1,27 @@
 package com.teamherb.bookstoreback.post.controller;
 
-import com.teamherb.bookstoreback.common.utils.bookapi.dto.SearchBook;
-import com.teamherb.bookstoreback.common.utils.bookapi.service.BookApiXmlService;
+import com.teamherb.bookstoreback.post.dto.NaverBookRequest;
+import com.teamherb.bookstoreback.post.dto.SearchBook;
+import com.teamherb.bookstoreback.post.service.NaverBookAPIService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.ArrayList;
-
-import static com.teamherb.bookstoreback.common.utils.bookapi.service.BookApiXmlService.*;
 
 
 @RestController
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class PostController {
 
-    private final BookApiXmlService bookApiXmlService;
+    private final NaverBookAPIService naverBookAPIService;
 
-    @PostMapping("/api/bookrequest")
-    public ArrayList<SearchBook> Bookapirequest(@RequestBody Search search) {
-
-        String XmlString = bookApiXmlService.BookApixmlRequest(search);
-        if (XmlString != null) //정상적으로 Api를 호출하여 Xml String을 받아왔다면
-            return bookApiXmlService.XmlToBooks(XmlString);
-        else
-            return null;
-
+    @PostMapping("/NaverBookAPI")
+    public ResponseEntity<SearchBook> findNaverBooks(
+        @RequestBody NaverBookRequest naverBookRequest) {
+        String XmlString = naverBookAPIService.getNaverBooksXml(naverBookRequest);
+        return null;
     }
 }

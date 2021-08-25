@@ -1,24 +1,13 @@
 package com.teamherb.bookstoreback.post.controller;
 
 
-import static com.teamherb.bookstoreback.common.utils.bookapi.service.BookApiXmlService.Search;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.teamherb.bookstoreback.common.controller.CommonApiTest;
-import com.teamherb.bookstoreback.common.security.WithMockCustomUser;
-import com.teamherb.bookstoreback.common.utils.bookapi.service.BookApiXmlService;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 
-@DisplayName("책 API 통합 테스트")
 @WebMvcTest(controllers = PostController.class)
 public class PostControllerTest extends CommonApiTest {
 
+    /*
     @MockBean
     BookApiXmlService bookapiXmlService;
 
@@ -37,4 +26,5 @@ public class PostControllerTest extends CommonApiTest {
             .andExpect(status().isOk())
             .andDo(print());
     }
+     */
 }
