@@ -80,4 +80,4 @@ operation::account/deleteAccount[snippets='http-request,request-headers,path-par
 
 === 3.1 네이버 책 API
 
-operation::post/findNaverBooks[snippets='http-request,request-headers,request-fields,http-response,response-fields']
+operation::post/findNaverBooks[snippets='http-request,request-headers,request-parameters,http-response,response-fields']

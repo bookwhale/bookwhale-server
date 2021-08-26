@@ -6,8 +6,8 @@ import com.teamherb.bookstoreback.post.service.NaverBookAPIService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,9 +19,9 @@ public class PostController {
 
     private final NaverBookAPIService naverBookAPIService;
 
-    @PostMapping("/naverBookAPI")
+    @GetMapping("/naverBookAPI")
     public ResponseEntity<List<BookResponse>> findNaverBooks(
-        @RequestBody NaverBookRequest naverBookRequest) {
+        @ModelAttribute NaverBookRequest naverBookRequest) {
         List<BookResponse> bookResponses = naverBookAPIService.getNaverBooks(naverBookRequest);
         return ResponseEntity.ok(bookResponses);
     }

@@ -1,10 +1,11 @@
 package com.teamherb.bookstoreback.post.controller;
 
 
+import static java.lang.String.format;
 import static java.util.List.of;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -19,7 +20,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 
 @WebMvcTest(controllers = PostController.class)
 public class PostControllerTest extends CommonApiTest {
@@ -48,10 +48,8 @@ public class PostControllerTest extends CommonApiTest {
 
         when(naverBookAPIService.getNaverBooks(any())).thenReturn(of(bookResponse));
 
-        mockMvc.perform(post("/api/post/naverBookAPI")
-                .header(HttpHeaders.AUTHORIZATION, "accessToken")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(naverBookRequest)))
+        mockMvc.perform(get(format("/api/post/naverBookAPI?title=%s", naverBookRequest.getTitle()))
+                .header(HttpHeaders.AUTHORIZATION, "accessToken"))
             .andExpect(status().isOk())
             .andDo(print())
             .andDo(PostDocumentation.findNaverBooks());

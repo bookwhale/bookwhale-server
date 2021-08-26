@@ -7,8 +7,9 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
@@ -35,10 +36,10 @@ public class PostDocumentation {
             requestHeaders(
                 headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
             ),
-            requestFields(
-                fieldWithPath("title").type(JsonFieldType.STRING).description("제목").optional(),
-                fieldWithPath("isbn").type(JsonFieldType.STRING).description("ISBN").optional(),
-                fieldWithPath("author").type(JsonFieldType.STRING).description("저자명").optional()
+            requestParameters(
+                parameterWithName("title").description("제목").optional(),
+                parameterWithName("isbn").description("ISBN").optional(),
+                parameterWithName("author").description("저자명").optional()
             ),
             responseFields(
                 fieldWithPath("[]").description("An array of books"))
