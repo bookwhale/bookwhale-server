@@ -1,5 +1,7 @@
 package com.teamherb.bookstoreback.post.acceptance;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.teamherb.bookstoreback.account.dto.AccountRequest;
 import com.teamherb.bookstoreback.common.Pagination;
 import com.teamherb.bookstoreback.common.acceptance.AcceptanceTest;
@@ -7,8 +9,10 @@ import com.teamherb.bookstoreback.common.acceptance.AcceptanceUtils;
 import com.teamherb.bookstoreback.common.acceptance.step.AcceptanceStep;
 import com.teamherb.bookstoreback.post.acceptance.step.PostAcceptanceStep;
 import com.teamherb.bookstoreback.post.dto.BookRequest;
+import com.teamherb.bookstoreback.post.dto.BookResponse;
 import com.teamherb.bookstoreback.post.dto.FullPostRequest;
 import com.teamherb.bookstoreback.post.dto.FullPostResponse;
+import com.teamherb.bookstoreback.post.dto.NaverBookRequest;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.post.dto.PostResponse;
 import com.teamherb.bookstoreback.user.acceptance.step.UserAcceptanceStep;

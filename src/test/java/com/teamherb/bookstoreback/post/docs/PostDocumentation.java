@@ -121,7 +121,7 @@ public class PostDocumentation {
   public static RestDocumentationResultHandler findPosts() {
     FieldDescriptor[] response = new FieldDescriptor[]{
         fieldWithPath("postId").type(JsonFieldType.NUMBER).description("게시글 ID"),
-        fieldWithPath("postTitle").type(JsonFieldType.STRING).description("게시글 ID"),
+        fieldWithPath("postTitle").type(JsonFieldType.STRING).description("게시글 제목"),
         fieldWithPath("postPrice").type(JsonFieldType.STRING).description("게시글 가격"),
         fieldWithPath("bookTitle").type(JsonFieldType.STRING).description("책 제목"),
         fieldWithPath("createdDate").type(JsonFieldType.STRING).description("게시글 등록일"),

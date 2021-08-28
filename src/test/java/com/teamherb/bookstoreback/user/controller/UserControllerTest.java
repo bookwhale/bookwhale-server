@@ -39,144 +39,144 @@ import org.springframework.web.context.WebApplicationContext;
 @WebMvcTest(controllers = UserController.class)
 public class UserControllerTest extends CommonApiTest {
 
-    @MockBean
-    UserService userService;
+  @MockBean
+  UserService userService;
 
-    User user;
+  User user;
 
-    @BeforeEach
-    @Override
-    public void setUp(WebApplicationContext webApplicationContext,
-        RestDocumentationContextProvider restDocumentation) {
-        super.setUp(webApplicationContext, restDocumentation);
+  @BeforeEach
+  @Override
+  public void setUp(WebApplicationContext webApplicationContext,
+      RestDocumentationContextProvider restDocumentation) {
+    super.setUp(webApplicationContext, restDocumentation);
 
-        user = User.builder()
-            .identity("highright96")
-            .name("남상우")
-            .email("highright96@email.com")
-            .phoneNumber("010-1234-1234")
-            .address("서울")
-            .build();
-    }
+    user = User.builder()
+        .identity("highright96")
+        .name("남상우")
+        .email("highright96@email.com")
+        .phoneNumber("010-1234-1234")
+        .address("서울")
+        .build();
+  }
 
-    @DisplayName("유저 회원가입을 한다.")
-    @Test
-    void createUser() throws Exception {
-        AccountRequest accountRequest = AccountRequest.builder()
-            .accountBank("국민은행")
-            .accountNumber("123-1234-12345")
-            .accountOwner("남상우")
-            .build();
+  @DisplayName("유저 회원가입을 한다.")
+  @Test
+  void createUser() throws Exception {
+    AccountRequest accountRequest = AccountRequest.builder()
+        .accountBank("국민은행")
+        .accountNumber("123-1234-12345")
+        .accountOwner("남상우")
+        .build();
 
-        SignUpRequest signUpRequest = SignUpRequest.builder()
-            .identity("highright96")
-            .password("1234")
-            .name("남상우")
-            .email("highright96@email.com")
-            .accountRequest(accountRequest)
-            .build();
+    SignUpRequest signUpRequest = SignUpRequest.builder()
+        .identity("highright96")
+        .password("1234")
+        .name("남상우")
+        .email("highright96@email.com")
+        .accountRequest(accountRequest)
+        .build();
 
-        doNothing().when(userService).createUser(any());
+    doNothing().when(userService).createUser(any());
 
-        mockMvc.perform(post("/api/user/signup")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(signUpRequest)))
-            .andExpect(status().isCreated())
-            .andDo(print())
-            .andDo(UserDocumentation.userSignup());
-    }
+    mockMvc.perform(post("/api/user/signup")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(signUpRequest)))
+        .andExpect(status().isCreated())
+        .andDo(print())
+        .andDo(UserDocumentation.userSignup());
+  }
 
-    @DisplayName("유저 로그인을 한다.")
-    @Test
-    void login() throws Exception {
-        LoginRequest loginRequest = new LoginRequest("highright96", "1234");
+  @DisplayName("유저 로그인을 한다.")
+  @Test
+  void login() throws Exception {
+    LoginRequest loginRequest = new LoginRequest("highright96", "1234");
 
-        mockMvc.perform(post("/api/user/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(loginRequest)))
-            .andExpect(status().isUnauthorized())
-            .andDo(print())
-            .andDo(UserDocumentation.userLogin());
-    }
+    mockMvc.perform(post("/api/user/login")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(loginRequest)))
+        .andExpect(status().isUnauthorized())
+        .andDo(print())
+        .andDo(UserDocumentation.userLogin());
+  }
 
-    @WithMockCustomUser
-    @DisplayName("내 정보를 조회한다.")
-    @Test
-    void getMyInfo() throws Exception {
-        mockMvc.perform(get("/api/user/me")
-                .header(HttpHeaders.AUTHORIZATION, "accessToken"))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.identity").value("user"))
-            .andExpect(jsonPath("$.name").value("유저"))
-            .andExpect(jsonPath("$.email").value("user@email.com"))
-            .andDo(print())
-            .andDo(UserDocumentation.userMe());
-    }
+  @WithMockCustomUser
+  @DisplayName("내 정보를 조회한다.")
+  @Test
+  void getMyInfo() throws Exception {
+    mockMvc.perform(get("/api/user/me")
+            .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.identity").value("user"))
+        .andExpect(jsonPath("$.name").value("유저"))
+        .andExpect(jsonPath("$.email").value("user@email.com"))
+        .andDo(print())
+        .andDo(UserDocumentation.userMe());
+  }
 
-    @WithMockCustomUser
-    @DisplayName("내 정보를 수정한다.")
-    @Test
-    void updateMyInfo() throws Exception {
-        UserUpdateRequest userUpdateRequest = UserUpdateRequest.builder()
-            .name("주호세")
-            .phoneNumber("010-1122-3344")
-            .address("경기")
-            .build();
+  @WithMockCustomUser
+  @DisplayName("내 정보를 수정한다.")
+  @Test
+  void updateMyInfo() throws Exception {
+    UserUpdateRequest userUpdateRequest = UserUpdateRequest.builder()
+        .name("주호세")
+        .phoneNumber("010-1122-3344")
+        .address("경기")
+        .build();
 
-        doNothing().when(userService).updateMyInfo(any(), any());
+    doNothing().when(userService).updateMyInfo(any(), any());
 
-        mockMvc.perform(patch("/api/user/me")
-                .header(HttpHeaders.AUTHORIZATION, "accessToken")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(userUpdateRequest)))
-            .andExpect(status().isOk())
-            .andDo(print())
-            .andDo(UserDocumentation.userUpdateMe());
-    }
+    mockMvc.perform(patch("/api/user/me")
+            .header(HttpHeaders.AUTHORIZATION, "accessToken")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(userUpdateRequest)))
+        .andExpect(status().isOk())
+        .andDo(print())
+        .andDo(UserDocumentation.userUpdateMe());
+  }
 
-    @WithMockCustomUser
-    @DisplayName("구매내역을 조회한다.")
-    @Test
-    void findPurchaseHistories() throws Exception {
-        PurchaseResponse response = PurchaseResponse.builder()
-            .sellerIdentity("highright96")
-            .sellerName("남상우")
-            .postTitle("책 팝니다.")
-            .postPrice("10000")
-            .bookTitle("신")
-            .bookThumbnail("책 썸네일")
-            .createdDate(LocalDateTime.now())
-            .build();
+  @WithMockCustomUser
+  @DisplayName("구매내역을 조회한다.")
+  @Test
+  void findPurchaseHistories() throws Exception {
+    PurchaseResponse response = PurchaseResponse.builder()
+        .sellerIdentity("highright96")
+        .sellerName("남상우")
+        .postTitle("책 팝니다.")
+        .postPrice("10000")
+        .bookTitle("신")
+        .bookThumbnail("책 썸네일")
+        .createdDate(LocalDateTime.now())
+        .build();
 
-        when(userService.findPurchaseHistories(any())).thenReturn(of(response));
+    when(userService.findPurchaseHistories(any())).thenReturn(of(response));
 
-        mockMvc.perform(get("/api/user/purchase-history")
-                .header("jwt", "accessToken"))
-            .andExpect(status().isOk())
-            .andDo(print())
-            .andDo(UserDocumentation.findPurchaseHistories());
-    }
+    mockMvc.perform(get("/api/user/purchase-history")
+            .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+        .andExpect(status().isOk())
+        .andDo(print())
+        .andDo(UserDocumentation.findPurchaseHistories());
+  }
 
-    @WithMockCustomUser
-    @DisplayName("판매내역을 조회한다.")
-    @Test
-    void findSaleHistories() throws Exception {
-        SaleResponse saleResponse = SaleResponse.builder()
-            .purchaserIdentity("hose123")
-            .purchaserName("김첨지")
-            .postTitle("설렁탕 팝니다.")
-            .postPrice("6000")
-            .bookTitle("설렁탕")
-            .bookThumbnail("설렁탕 썸네일")
-            .createdDate(LocalDateTime.now())
-            .build();
+  @WithMockCustomUser
+  @DisplayName("판매내역을 조회한다.")
+  @Test
+  void findSaleHistories() throws Exception {
+    SaleResponse saleResponse = SaleResponse.builder()
+        .purchaserIdentity("hose123")
+        .purchaserName("김첨지")
+        .postTitle("설렁탕 팝니다.")
+        .postPrice("6000")
+        .bookTitle("설렁탕")
+        .bookThumbnail("설렁탕 썸네일")
+        .createdDate(LocalDateTime.now())
+        .build();
 
-        when(userService.findSaleHistories(any())).thenReturn(of(saleResponse));
+    when(userService.findSaleHistories(any())).thenReturn(of(saleResponse));
 
-        mockMvc.perform(get("/api/user/sale-history")
-                .header("jwt", "accessToken"))
-            .andExpect(status().isOk())
-            .andDo(print())
-            .andDo(UserDocumentation.findSaleHistories());
-    }
+    mockMvc.perform(get("/api/user/sale-history")
+            .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+        .andExpect(status().isOk())
+        .andDo(print())
+        .andDo(UserDocumentation.findSaleHistories());
+  }
 }
