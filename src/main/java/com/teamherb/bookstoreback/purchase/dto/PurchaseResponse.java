@@ -1,6 +1,7 @@
 package com.teamherb.bookstoreback.purchase.dto;
 
 import com.teamherb.bookstoreback.purchase.domain.Purchase;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.Builder;
@@ -23,11 +24,11 @@ public class PurchaseResponse {
 
     private String bookThumbnail;
 
-    private String createdDate;
+    private LocalDateTime createdDate;
 
     @Builder
     public PurchaseResponse(String sellerIdentity, String sellerName, String postTitle,
-        String postPrice, String bookTitle, String bookThumbnail, String createdDate) {
+        String postPrice, String bookTitle, String bookThumbnail, LocalDateTime createdDate) {
         this.sellerIdentity = sellerIdentity;
         this.sellerName = sellerName;
         this.postTitle = postTitle;
@@ -46,21 +47,8 @@ public class PurchaseResponse {
                 .bookThumbnail(v.getBookThumbnail())
                 .postTitle(v.getPostTitle())
                 .postPrice(v.getPostPrice())
-                .createdDate(String.valueOf(v.getCreatedDate()))
+                .createdDate(v.getCreatedDate())
                 .build()
         ).collect(Collectors.toList());
-    }
-
-    @Override
-    public String toString() {
-        return "PurchaseResponse{" +
-                "sellerIdentity='" + sellerIdentity + '\'' +
-                ", sellerName='" + sellerName + '\'' +
-                ", postTitle='" + postTitle + '\'' +
-                ", postPrice='" + postPrice + '\'' +
-                ", bookTitle='" + bookTitle + '\'' +
-                ", bookThumbnail='" + bookThumbnail + '\'' +
-                ", createdDate='" + createdDate + '\'' +
-                '}';
     }
 }

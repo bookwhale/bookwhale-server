@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.teamherb.bookstoreback.account.dto.AccountRequest;
 import com.teamherb.bookstoreback.common.controller.CommonApiTest;
 import com.teamherb.bookstoreback.common.security.WithMockCustomUser;
@@ -22,6 +23,7 @@ import com.teamherb.bookstoreback.user.dto.LoginRequest;
 import com.teamherb.bookstoreback.user.dto.SignUpRequest;
 import com.teamherb.bookstoreback.user.dto.UserUpdateRequest;
 import com.teamherb.bookstoreback.user.service.UserService;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,7 +32,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.web.context.WebApplicationContext;
-
 
 
 @DisplayName("유저 단위 테스트(Controller)")
@@ -143,7 +144,7 @@ public class UserControllerTest extends CommonApiTest {
             .postPrice("10000")
             .bookTitle("신")
             .bookThumbnail("책 썸네일")
-            .createdDate("2021-01-01")
+            .createdDate(LocalDateTime.now())
             .build();
 
         when(userService.findPurchaseHistories(any())).thenReturn(of(response));
@@ -158,26 +159,23 @@ public class UserControllerTest extends CommonApiTest {
     @WithMockCustomUser
     @DisplayName("판매내역을 조회한다.")
     @Test
-    void findSaleHistories() throws Exception{
+    void findSaleHistories() throws Exception {
         SaleResponse saleResponse = SaleResponse.builder()
-                .purchaserIdentity("hose123")
-                .purchaserName("김첨지")
-                .postTitle("설렁탕 팝니다.")
-                .postPrice("6000")
-                .bookTitle("설렁탕")
-                .bookThumbnail("설렁탕 썸네일")
-                .createdDate("2021-01-01")
-                .build();
+            .purchaserIdentity("hose123")
+            .purchaserName("김첨지")
+            .postTitle("설렁탕 팝니다.")
+            .postPrice("6000")
+            .bookTitle("설렁탕")
+            .bookThumbnail("설렁탕 썸네일")
+            .createdDate(LocalDateTime.now())
+            .build();
 
         when(userService.findSaleHistories(any())).thenReturn(of(saleResponse));
 
         mockMvc.perform(get("/api/user/sale-history")
-                .header("jwt","accessToken"))
-                .andExpect(status().isOk())
-                .andDo(print())
-                .andDo(UserDocumentation.findSaleHistories());
-
+                .header("jwt", "accessToken"))
+            .andExpect(status().isOk())
+            .andDo(print())
+            .andDo(UserDocumentation.findSaleHistories());
     }
-
-
 }
