@@ -3,6 +3,7 @@ package com.teamherb.bookstoreback.post.docs;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
@@ -10,9 +11,11 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestP
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
+import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.JsonFieldType;
 
 public class PostDocumentation {
@@ -28,7 +31,7 @@ public class PostDocumentation {
                 fieldWithPath("accountRequest.accountBank").description("은행명"),
                 fieldWithPath("bookRequest.bookIsbn").description("책 ISBN"),
                 fieldWithPath("bookRequest.bookTitle").description("책 이름(네이버 책 API)"),
-                fieldWithPath("bookRequest.bookAuthor").description("작가(네이버 책 API)"),
+                fieldWithPath("bookRequest.bookAuthor").description("저자(네이버 책 API)"),
                 fieldWithPath("bookRequest.bookPublisher").description("출판사(네이버 책 API)"),
                 fieldWithPath("bookRequest.bookThumbnail").description("책 썸네일(네이버 책 API)"),
                 fieldWithPath("bookRequest.bookListPrice").description("책 정가(네이버 책 API)"),
@@ -84,5 +87,36 @@ public class PostDocumentation {
                 fieldWithPath("postStatus").type(JsonFieldType.STRING)
                     .description("게시글 상태 [SALE, PROCEEDING, COMPLETE]")
             ));
+    }
+
+    public static RestDocumentationResultHandler findPosts() {
+        FieldDescriptor[] response = new FieldDescriptor[]{
+            fieldWithPath("postId").type(JsonFieldType.NUMBER).description("게시글 ID"),
+            fieldWithPath("postTitle").type(JsonFieldType.STRING).description("게시글 ID"),
+            fieldWithPath("postPrice").type(JsonFieldType.STRING).description("게시글 가격"),
+            fieldWithPath("bookTitle").type(JsonFieldType.STRING).description("책 제목"),
+            fieldWithPath("createdDate").type(JsonFieldType.STRING).description("게시글 등록일"),
+            fieldWithPath("bookThumbnail").type(JsonFieldType.STRING).description(
+                "책 썸네일(네이버 책 API)"),
+            fieldWithPath("postStatus").type(JsonFieldType.STRING).description(
+                "게시글 상태 [SALE, PROCEEDING, COMPLETE]")
+        };
+
+        return document("post/findPosts",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestHeaders(
+                headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
+            ),
+            requestParameters(
+                parameterWithName("title").description("책 제목").optional(),
+                parameterWithName("author").description("저자").optional(),
+                parameterWithName("publisher").description("출판사").optional(),
+                parameterWithName("page").description("페이지(0부터 시작) [필수값]"),
+                parameterWithName("size").description("한 페이지 내의 사이즈 [필수값]")
+            ),
+            responseFields(fieldWithPath("[]").description("An arrays of fullPostResponse"))
+                .andWithPrefix("[].", response)
+        );
     }
 }

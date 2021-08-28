@@ -74,6 +74,10 @@ operation::account/deleteAccount[snippets='http-request,request-headers,path-par
 
 operation::post/createPost[snippets='http-request,request-headers,request-part-postRequest-fields,http-response']
 
-=== 3.1 중고책 게시글 상세 조회
+=== 3.2 계좌 조회
 
-operation::post/findPost[snippets='http-request,request-headers,path-parameters,http-response,response-fields']
+operation::account/findAccounts[snippets='http-request,request-headers,http-response']
+
+=== 3.3 중고책 게시글 전체 조회
+
+operation::post/findPosts[snippets='http-request,request-headers,request-parameters,http-response,response-fields']
