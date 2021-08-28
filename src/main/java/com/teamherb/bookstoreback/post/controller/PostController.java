@@ -1,5 +1,8 @@
 package com.teamherb.bookstoreback.post.controller;
 
+import com.teamherb.bookstoreback.common.Pagination;
+import com.teamherb.bookstoreback.post.dto.FullPostRequest;
+import com.teamherb.bookstoreback.post.dto.FullPostResponse;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.post.dto.PostResponse;
 import com.teamherb.bookstoreback.post.service.PostService;
@@ -40,5 +43,12 @@ public class PostController {
         @PathVariable Long postId) {
         PostResponse postResponse = postService.findPost(user, postId);
         return ResponseEntity.ok(postResponse);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<FullPostResponse>> findPosts(FullPostRequest fullPostRequest,
+        @Valid Pagination pagination) {
+        List<FullPostResponse> responses = postService.findPosts(fullPostRequest, pagination);
+        return ResponseEntity.ok(responses);
     }
 }
