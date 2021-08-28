@@ -10,6 +10,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.restdocs.payload.JsonFieldType;
 
@@ -46,7 +47,7 @@ public class UserDocumentation {
         return document("user/me",
             preprocessResponse(prettyPrint()),
             requestHeaders(
-                headerWithName("jwt").description("접속 인증 정보가 담긴 JWT")
+                headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
             ),
             responseFields(
                 fieldWithPath("identity").type(JsonFieldType.STRING).description("아이디"),
@@ -61,7 +62,7 @@ public class UserDocumentation {
         return document("user/updateMe",
             preprocessRequest(prettyPrint()),
             requestHeaders(
-                headerWithName("jwt").description("접속 인증 정보가 담긴 JWT")
+                headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
             ),
             requestFields(
                 fieldWithPath("name").type(JsonFieldType.STRING).description("이름").optional(),

@@ -1,5 +1,6 @@
 package com.teamherb.bookstoreback.account.domain;
 
+import com.teamherb.bookstoreback.account.dto.AccountRequest;
 import com.teamherb.bookstoreback.account.dto.AccountUpdateRequest;
 import com.teamherb.bookstoreback.common.domain.BaseEntity;
 import com.teamherb.bookstoreback.user.domain.User;
@@ -44,6 +45,15 @@ public class Account extends BaseEntity {
         this.accountNumber = accountNumber;
         this.accountBank = accountBank;
         this.accountOwner = accountOwner;
+    }
+
+    public static Account create(User user, AccountRequest req) {
+        return Account.builder()
+            .user(user)
+            .accountBank(req.getAccountBank())
+            .accountNumber(req.getAccountNumber())
+            .accountOwner(req.getAccountOwner())
+            .build();
     }
 
     public void update(AccountUpdateRequest req) {

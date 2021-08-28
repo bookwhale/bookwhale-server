@@ -154,3 +154,6 @@ application-auth.yml
 
 #docs
 api-docs.html
+
+#image
+images\

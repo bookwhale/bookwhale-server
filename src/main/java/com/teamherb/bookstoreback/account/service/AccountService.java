@@ -24,7 +24,7 @@ public class AccountService {
         if (accountRepository.countByUser(user) >= 3) {
             throw new CustomException(ErrorCode.MAXIMUM_NUMBER_ACCOUNT);
         }
-        Account account = accountRequest.toAccount(user);
+        Account account = Account.create(user, accountRequest);
         accountRepository.save(account);
     }
 

@@ -1,7 +1,5 @@
 package com.teamherb.bookstoreback.account.dto;
 
-import com.teamherb.bookstoreback.account.domain.Account;
-import com.teamherb.bookstoreback.user.domain.User;
 import javax.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;
@@ -25,14 +23,5 @@ public class AccountRequest {
         this.accountNumber = accountNumber;
         this.accountBank = accountBank;
         this.accountOwner = accountOwner;
-    }
-
-    public Account toAccount(User user) {
-        return Account.builder()
-            .user(user)
-            .accountBank(accountBank)
-            .accountNumber(accountNumber)
-            .accountOwner(accountOwner)
-            .build();
     }
 }

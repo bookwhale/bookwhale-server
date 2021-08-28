@@ -12,6 +12,7 @@ import com.teamherb.bookstoreback.user.dto.UserUpdateRequest;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Assertions;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
 public class UserAcceptanceStep {
@@ -69,9 +70,9 @@ public class UserAcceptanceStep {
         return loginResponse.getTokenType() + " " + loginResponse.getAccessToken();
     }
 
-    public static ExtractableResponse<Response> requestToGetMyInfo(String accessToken) {
+    public static ExtractableResponse<Response> requestToGetMyInfo(String jwt) {
         return given().log().all()
-            .header("jwt", accessToken)
+            .header(HttpHeaders.AUTHORIZATION, jwt)
             .when()
             .get("/api/user/me")
             .then().log().all()
@@ -81,7 +82,7 @@ public class UserAcceptanceStep {
     public static ExtractableResponse<Response> requestToUpdateMyInfo(String jwt,
         UserUpdateRequest userUpdateRequest) {
         return given().log().all()
-            .header("jwt", jwt)
+            .header(HttpHeaders.AUTHORIZATION, jwt)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .body(userUpdateRequest)
             .when()
