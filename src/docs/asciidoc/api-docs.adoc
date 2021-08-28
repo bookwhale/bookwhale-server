@@ -50,6 +50,14 @@ operation::user/me[snippets='http-request,request-headers,http-response']
 
 operation::user/updateMe[snippets='http-request,request-headers,request-fields,http-response']
 
+=== 1.5 구매내역 조회
+
+operation::user/purchaseHistory[snippets='http-request,request-headers,http-response,response-fields']
+
+=== 1.6 판매내역 조회
+
+operation::user/saleHistory[snippets='http-request,request-headers,http-response,response-fields']
+
 == 2. 계좌
 
 === 2.1 계좌 조회
@@ -70,14 +78,18 @@ operation::account/deleteAccount[snippets='http-request,request-headers,path-par
 
 == 3. 중고책 게시글
 
-=== 3.1 중고책 게시글 등록
+=== 3.1 네이버 책 API
+
+operation::post/findNaverBooks[snippets='http-request,request-headers,request-parameters,http-response,response-fields']
+
+=== 3.2 중고책 게시글 등록
 
 operation::post/createPost[snippets='http-request,request-headers,request-part-postRequest-fields,http-response']
 
-=== 3.2 계좌 조회
+=== 3.3 중고책 게시글 상세 조회
 
-operation::account/findAccounts[snippets='http-request,request-headers,http-response']
+operation::post/findPost[snippets='http-request,request-headers,path-parameters,http-response,response-fields']
 
-=== 3.3 중고책 게시글 전체 조회
+=== 3.4 중고책 게시글 전체 조회
 
 operation::post/findPosts[snippets='http-request,request-headers,request-parameters,http-response,response-fields']

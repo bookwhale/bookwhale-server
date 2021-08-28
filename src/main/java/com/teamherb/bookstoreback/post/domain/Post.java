@@ -34,11 +34,9 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "seller_id")
     private User seller;
 
-    private String accountNumber;
-
-    private String accountBank;
-
-    private String accountOwner;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id")
+    private Account account;
 
     private String title;
 

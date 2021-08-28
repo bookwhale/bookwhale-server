@@ -22,81 +22,115 @@ import org.junit.jupiter.api.Test;
 @DisplayName("게시글 통합 테스트")
 public class PostAcceptanceTest extends AcceptanceTest {
 
-    PostRequest postRequest;
+  PostRequest postRequest;
 
-    @BeforeEach
-    @Override
-    public void setUp() {
-        super.setUp();
-        AccountRequest accountRequest = AccountRequest.builder()
-            .accountBank("국민은행")
-            .accountOwner("남상우")
-            .accountNumber("123-1234-12345")
-            .build();
+  @BeforeEach
+  @Override
+  public void setUp() {
+    super.setUp();
+    AccountRequest accountRequest = AccountRequest.builder()
+        .accountBank("국민은행")
+        .accountOwner("남상우")
+        .accountNumber("123-1234-12345")
+        .build();
 
-        BookRequest bookRequest = BookRequest.builder()
-            .bookSummary("책 설명")
-            .bookPubDate("2021-12-12")
-            .bookIsbn("12345678910")
-            .bookListPrice("10000")
-            .bookThumbnail("썸네일")
-            .bookTitle("토비의 스프링")
-            .bookPublisher("허브출판사")
-            .bookAuthor("이일민")
-            .build();
+    BookRequest bookRequest = BookRequest.builder()
+        .bookSummary("책 설명")
+        .bookPubDate("2021-12-12")
+        .bookIsbn("12345678910")
+        .bookListPrice("10000")
+        .bookThumbnail("썸네일")
+        .bookTitle("토비의 스프링")
+        .bookPublisher("허브출판사")
+        .bookAuthor("이일민")
+        .build();
 
-        postRequest = PostRequest.builder()
-            .accountRequest(accountRequest)
-            .bookRequest(bookRequest)
-            .title("토비의 스프링 팝니다~")
-            .description("책 설명")
-            .bookStatus("BEST")
-            .price("5000")
-            .build();
-    }
+    postRequest = PostRequest.builder()
+        .accountRequest(accountRequest)
+        .bookRequest(bookRequest)
+        .title("토비의 스프링 팝니다~")
+        .description("책 설명")
+        .bookStatus("BEST")
+        .price("5000")
+        .build();
+  }
 
-    @DisplayName("게시글을 등록한다.")
-    @Test
-    void createPost() {
-        String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
-        ExtractableResponse<Response> response = PostAcceptanceStep.requestToCreatePost(jwt,
-            postRequest);
+  @DisplayName("게시글을 등록한다.")
+  @Test
+  void createPost() {
+    String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
+    ExtractableResponse<Response> response = PostAcceptanceStep.requestToCreatePost(jwt,
+        postRequest);
 
-        AcceptanceStep.assertThatStatusIsCreated(response);
-    }
+    AcceptanceStep.assertThatStatusIsCreated(response);
+  }
 
-    @DisplayName("게시글을 상세 조회한다.")
-    @Test
-    void findPost() {
-        String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
+  @DisplayName("게시글을 상세 조회한다.")
+  @Test
+  void findPost() {
+    String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
 
-        Long postId = AcceptanceUtils.getIdFromResponse(
-            PostAcceptanceStep.requestToCreatePost(jwt, postRequest));
+    Long postId = AcceptanceUtils.getIdFromResponse(
+        PostAcceptanceStep.requestToCreatePost(jwt, postRequest));
 
-        ExtractableResponse<Response> response = PostAcceptanceStep.requestToFindPost(jwt, postId);
-        PostResponse postResponse = response.jsonPath().getObject(".", PostResponse.class);
+    ExtractableResponse<Response> response = PostAcceptanceStep.requestToFindPost(jwt, postId);
+    PostResponse postResponse = response.jsonPath().getObject(".", PostResponse.class);
 
-        AcceptanceStep.assertThatStatusIsOk(response);
-        PostAcceptanceStep.assertThatFindPost(postResponse, postRequest);
-    }
+    AcceptanceStep.assertThatStatusIsOk(response);
+    PostAcceptanceStep.assertThatFindPost(postResponse, postRequest);
+  }
 
-    @DisplayName("게시글을 전체 조회한다.")
-    @Test
-    void findPosts() {
-        FullPostRequest fullPostRequest = FullPostRequest.builder()
-            .title("스프링")
-            .build();
-        Pagination pagination = new Pagination(0, 10);
+  @DisplayName("게시글을 전체 조회한다.")
+  @Test
+  void findPosts() {
+    FullPostRequest fullPostRequest = FullPostRequest.builder()
+        .title("스프링")
+        .build();
+    Pagination pagination = new Pagination(0, 10);
 
-        String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
-        PostAcceptanceStep.requestToCreatePost(jwt, postRequest);
+    String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
+    PostAcceptanceStep.requestToCreatePost(jwt, postRequest);
 
-        ExtractableResponse<Response> response = PostAcceptanceStep.requestToFindPosts(jwt,
-            fullPostRequest, pagination);
-        List<FullPostResponse> fullPostResponses = response.jsonPath()
-            .getList(".", FullPostResponse.class);
+    ExtractableResponse<Response> response = PostAcceptanceStep.requestToFindPosts(jwt,
+        fullPostRequest, pagination);
+    List<FullPostResponse> fullPostResponses = response.jsonPath()
+        .getList(".", FullPostResponse.class);
 
-        AcceptanceStep.assertThatStatusIsOk(response);
-        PostAcceptanceStep.assertThatFindPosts(fullPostResponses, postRequest);
-    }
+    AcceptanceStep.assertThatStatusIsOk(response);
+    PostAcceptanceStep.assertThatFindPosts(fullPostResponses, postRequest);
+  }
+
+  @DisplayName("ISBN 으로 책을 검색한다.")
+  @Test
+  void findNaverBooks_isbn() {
+    NaverBookRequest naverBookRequest = NaverBookRequest.builder()
+        .isbn("8960773433")
+        .build();
+
+    String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
+
+    ExtractableResponse<Response> response = PostAcceptanceStep.requestToFindNaverBooks(
+        jwt, naverBookRequest);
+    BookResponse bookResponse = response.jsonPath().getList(".", BookResponse.class).get(0);
+
+    AcceptanceStep.assertThatStatusIsOk(response);
+    PostAcceptanceStep.assertThatFindNaverBooks(bookResponse);
+  }
+
+  @DisplayName("제목으로 책을 검색한다.")
+  @Test
+  void findNaverBooks_title() {
+    NaverBookRequest naverBookRequest = NaverBookRequest.builder()
+        .title("토비")
+        .build();
+
+    String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
+
+    ExtractableResponse<Response> response = PostAcceptanceStep.requestToFindNaverBooks(
+        jwt, naverBookRequest);
+    List<BookResponse> bookResponses = response.jsonPath().getList(".", BookResponse.class);
+
+    AcceptanceStep.assertThatStatusIsOk(response);
+    assertThat(bookResponses.size()).isGreaterThan(1);
+  }
 }

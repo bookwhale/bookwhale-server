@@ -27,28 +27,37 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class PostController {
 
-    private final PostService postService;
+  private final PostService postService;
 
-    @PostMapping
-    public ResponseEntity<Void> createPost(@CurrentUser User user,
-        @Valid @RequestPart("postRequest") PostRequest postRequest,
-        @RequestPart(name = "images", required = false) List<MultipartFile> images)
-        throws URISyntaxException {
-        Long postId = postService.createPost(user, postRequest, images);
-        return ResponseEntity.created(new URI("/api/post/" + postId)).build();
-    }
+  private final NaverBookAPIService naverBookAPIService;
 
-    @GetMapping("/{postId}")
-    public ResponseEntity<PostResponse> findPost(@CurrentUser User user,
-        @PathVariable Long postId) {
-        PostResponse postResponse = postService.findPost(user, postId);
-        return ResponseEntity.ok(postResponse);
-    }
+  @GetMapping("/naverBookAPI")
+  public ResponseEntity<List<BookResponse>> findNaverBooks(
+      @ModelAttribute NaverBookRequest naverBookRequest) {
+    List<BookResponse> bookResponses = naverBookAPIService.getNaverBooks(naverBookRequest);
+    return ResponseEntity.ok(bookResponses);
+  }
 
-    @GetMapping
-    public ResponseEntity<List<FullPostResponse>> findPosts(FullPostRequest fullPostRequest,
-        @Valid Pagination pagination) {
-        List<FullPostResponse> responses = postService.findPosts(fullPostRequest, pagination);
-        return ResponseEntity.ok(responses);
-    }
+  @PostMapping
+  public ResponseEntity<Void> createPost(@CurrentUser User user,
+      @Valid @RequestPart("postRequest") PostRequest postRequest,
+      @RequestPart(name = "images", required = false) List<MultipartFile> images)
+      throws URISyntaxException {
+    Long postId = postService.createPost(user, postRequest, images);
+    return ResponseEntity.created(new URI("/api/post/" + postId)).build();
+  }
+
+  @GetMapping("/{postId}")
+  public ResponseEntity<PostResponse> findPost(@CurrentUser User user,
+      @PathVariable Long postId) {
+    PostResponse postResponse = postService.findPost(user, postId);
+    return ResponseEntity.ok(postResponse);
+  }
+
+  @GetMapping
+  public ResponseEntity<List<FullPostResponse>> findPosts(FullPostRequest fullPostRequest,
+      @Valid Pagination pagination) {
+    List<FullPostResponse> responses = postService.findPosts(fullPostRequest, pagination);
+    return ResponseEntity.ok(responses);
+  }
 }

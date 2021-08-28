@@ -3,19 +3,16 @@ package com.teamherb.bookstoreback.orders.domain;
 import com.teamherb.bookstoreback.post.domain.Post;
 import com.teamherb.bookstoreback.common.domain.BaseEntity;
 import com.teamherb.bookstoreback.user.domain.User;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+
+import javax.persistence.*;
+
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -44,4 +41,17 @@ public class Orders extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
+
+    private LocalDateTime completedate;
+
+    @Builder
+    public Orders(Long id, User purchaser, User seller, Post post, DeliveryInfo deliveryInfo, OrderStatus orderStatus, LocalDateTime completedate) {
+        this.id = id;
+        this.purchaser = purchaser;
+        this.seller = seller;
+        this.post = post;
+        this.deliveryInfo = deliveryInfo;
+        this.orderStatus = orderStatus;
+        this.completedate = completedate;
+    }
 }
