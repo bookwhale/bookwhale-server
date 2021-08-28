@@ -1,7 +1,10 @@
 package com.teamherb.bookstoreback.post.controller;
 
+import static java.lang.String.format;
+import static java.util.List.of;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -9,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.teamherb.bookstoreback.account.dto.AccountRequest;
 import com.teamherb.bookstoreback.account.dto.AccountResponse;
+import com.teamherb.bookstoreback.common.Pagination;
 import com.teamherb.bookstoreback.common.controller.CommonApiTest;
 import com.teamherb.bookstoreback.common.security.WithMockCustomUser;
 import com.teamherb.bookstoreback.post.docs.PostDocumentation;
@@ -16,11 +20,13 @@ import com.teamherb.bookstoreback.post.domain.BookStatus;
 import com.teamherb.bookstoreback.post.domain.PostStatus;
 import com.teamherb.bookstoreback.post.dto.BookRequest;
 import com.teamherb.bookstoreback.post.dto.BookResponse;
+import com.teamherb.bookstoreback.post.dto.FullPostRequest;
+import com.teamherb.bookstoreback.post.dto.FullPostResponse;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.post.dto.PostResponse;
 import com.teamherb.bookstoreback.post.service.PostService;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
+import java.time.LocalDateTime;
 import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -124,7 +130,7 @@ public class PostControllerTest extends CommonApiTest {
             .description("쿨 거래시 1000원 할인해드려요~")
             .bookStatus(BookStatus.BEST)
             .postStatus(PostStatus.SALE)
-            .images(List.of("image1", "image2"))
+            .images(of("image1", "image2"))
             .isMyPost(true)
             .build();
 
@@ -135,5 +141,35 @@ public class PostControllerTest extends CommonApiTest {
             .andExpect(status().isOk())
             .andDo(print())
             .andDo(PostDocumentation.findPost());
+    }
+
+    @WithMockCustomUser
+    @DisplayName("게시글을 전체 조회한다.")
+    @Test
+    void findPosts() throws Exception {
+        Pagination pagination = new Pagination(0, 10);
+
+        FullPostRequest fullPostRequest = FullPostRequest.builder()
+            .title("책 제목")
+            .build();
+
+        FullPostResponse fullPostResponse = FullPostResponse.builder()
+            .postId(1L)
+            .bookThumbnail("이미지")
+            .postTitle("책 팝니다.")
+            .bookTitle("토비의 스프링")
+            .postPrice("20000원")
+            .postStatus(PostStatus.SALE)
+            .createdDate(LocalDateTime.now())
+            .build();
+
+        when(postService.findPosts(any(), any())).thenReturn(of(fullPostResponse));
+
+        mockMvc.perform(get(format("/api/post?title=%s&page=%d&size=%d", fullPostRequest.getTitle(),
+                pagination.getPage(), pagination.getSize()))
+                .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+            .andExpect(status().isOk())
+            .andDo(print())
+            .andDo(PostDocumentation.findPosts());
     }
 }

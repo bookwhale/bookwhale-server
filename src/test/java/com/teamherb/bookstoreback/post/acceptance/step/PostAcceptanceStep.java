@@ -3,13 +3,18 @@ package com.teamherb.bookstoreback.post.acceptance.step;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.teamherb.bookstoreback.common.Pagination;
 import com.teamherb.bookstoreback.post.domain.PostStatus;
+import com.teamherb.bookstoreback.post.dto.FullPostRequest;
+import com.teamherb.bookstoreback.post.dto.FullPostResponse;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.post.dto.PostResponse;
 import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import io.restassured.specification.MultiPartSpecification;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -29,6 +34,20 @@ public class PostAcceptanceStep {
         );
     }
 
+    public static void assertThatFindPosts(List<FullPostResponse> res, PostRequest req) {
+        Assertions.assertAll(
+            () -> assertThat(res.size()).isEqualTo(1),
+            () -> assertThat(res.get(0).getPostPrice()).isEqualTo(req.getPrice()),
+            () -> assertThat(res.get(0).getPostTitle()).isEqualTo(req.getTitle()),
+            () -> assertThat(res.get(0).getPostPrice()).isEqualTo(req.getPrice()),
+            () -> assertThat(res.get(0).getPostStatus()).isEqualTo(PostStatus.SALE),
+            () -> assertThat(res.get(0).getBookTitle()).isEqualTo(
+                req.getBookRequest().getBookTitle()),
+            () -> assertThat(res.get(0).getBookThumbnail()).isEqualTo(
+                req.getBookRequest().getBookThumbnail())
+        );
+    }
+
     public static ExtractableResponse<Response> requestToCreatePost(String jwt,
         PostRequest postRequest) {
         MultiPartSpecification image = new MultiPartSpecBuilder(
@@ -38,8 +57,9 @@ public class PostAcceptanceStep {
             .fileName("image.jpg")
             .build();
 
-        MultiPartSpecification json = new MultiPartSpecBuilder(postRequest).controlName(
-                "postRequest")
+        MultiPartSpecification json = new MultiPartSpecBuilder(postRequest)
+            .controlName("postRequest")
+            .charset(StandardCharsets.UTF_8)
             .mimeType(MimeTypeUtils.APPLICATION_JSON_VALUE).build();
 
         return given().log().all()
@@ -59,6 +79,23 @@ public class PostAcceptanceStep {
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .when()
             .get("/api/post/{postId}", postId)
+            .then().log().all()
+            .extract();
+    }
+
+    public static ExtractableResponse<Response> requestToFindPosts(String jwt, FullPostRequest req,
+        Pagination page) {
+        String path = "/api/post"
+            + (req.getTitle() != null ? "?title=" + req.getTitle() : "")
+            + (req.getAuthor() != null ? "?author=" + req.getAuthor() : "")
+            + (req.getPublisher() != null ? "?publisher=" + req.getPublisher() : "")
+            + "&page=" + page.getPage()
+            + "&size=" + page.getSize();
+
+        return given().log().all()
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .when()
+            .get(path)
             .then().log().all()
             .extract();
     }
