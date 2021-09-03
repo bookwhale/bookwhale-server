@@ -108,4 +108,25 @@ public class UserAcceptanceStep {
         .then().log().all()
         .extract();
   }
+
+  public static ExtractableResponse<Response> requestToFindSaleOrders(String jwt) {
+    return given().log().all()
+        .header(HttpHeaders.AUTHORIZATION, jwt)
+        .when()
+        .get("/api/user/saleOrders")
+        .then().log().all()
+        .extract();
+  }
+
+
+  public static ExtractableResponse<Response> requestToFindPurchaseOrders(String jwt) {
+    return given().log().all()
+        .header(HttpHeaders.AUTHORIZATION, jwt)
+        .when()
+        .get("/api/user/purchaseOrders")
+        .then().log().all()
+        .extract();
+  }
+
+
 }

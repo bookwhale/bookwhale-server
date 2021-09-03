@@ -1,5 +1,7 @@
 package com.teamherb.bookstoreback.user.controller;
 
+import com.teamherb.bookstoreback.orders.dto.PurchaseOrder;
+import com.teamherb.bookstoreback.orders.dto.SaleOrder;
 import com.teamherb.bookstoreback.purchase.dto.PurchaseResponse;
 import com.teamherb.bookstoreback.sale.dto.SaleResponse;
 import com.teamherb.bookstoreback.security.CurrentUser;
@@ -26,36 +28,48 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserService userService;
+  private final UserService userService;
 
-    @PostMapping("/signup")
-    public ResponseEntity<Void> signup(@Valid @RequestBody SignUpRequest signUpRequest)
-        throws URISyntaxException {
-        userService.createUser(signUpRequest);
-        return ResponseEntity.created(new URI("/api/user/login")).build();
-    }
+  @PostMapping("/signup")
+  public ResponseEntity<Void> signup(@Valid @RequestBody SignUpRequest signUpRequest)
+      throws URISyntaxException {
+    userService.createUser(signUpRequest);
+    return ResponseEntity.created(new URI("/api/user/login")).build();
+  }
 
-    @GetMapping("/me")
-    public ResponseEntity<UserResponse> getMyInfo(@CurrentUser User user) {
-        return ResponseEntity.ok(UserResponse.of(user));
-    }
+  @GetMapping("/me")
+  public ResponseEntity<UserResponse> getMyInfo(@CurrentUser User user) {
+    return ResponseEntity.ok(UserResponse.of(user));
+  }
 
-    @PatchMapping("/me")
-    public ResponseEntity<Void> updateMyInfo(@CurrentUser User user,
-        @RequestBody UserUpdateRequest userUpdateRequest) {
-        userService.updateMyInfo(user, userUpdateRequest);
-        return ResponseEntity.ok().build();
-    }
+  @PatchMapping("/me")
+  public ResponseEntity<Void> updateMyInfo(@CurrentUser User user,
+      @RequestBody UserUpdateRequest userUpdateRequest) {
+    userService.updateMyInfo(user, userUpdateRequest);
+    return ResponseEntity.ok().build();
+  }
 
-    @GetMapping("/purchase-history")
-    public ResponseEntity<List<PurchaseResponse>> findPurchaseHistories(@CurrentUser User user) {
-        List<PurchaseResponse> res = userService.findPurchaseHistories(user);
-        return ResponseEntity.ok(res);
-    }
+  @GetMapping("/purchase-history")
+  public ResponseEntity<List<PurchaseResponse>> findPurchaseHistories(@CurrentUser User user) {
+    List<PurchaseResponse> res = userService.findPurchaseHistories(user);
+    return ResponseEntity.ok(res);
+  }
 
-    @GetMapping("/sale-history")
-    public ResponseEntity<List<SaleResponse>> findSaleHistories(@CurrentUser User user) {
-        List<SaleResponse> res = userService.findSaleHistories(user);
-        return ResponseEntity.ok(res);
-    }
+  @GetMapping("/sale-history")
+  public ResponseEntity<List<SaleResponse>> findSaleHistories(@CurrentUser User user) {
+    List<SaleResponse> res = userService.findSaleHistories(user);
+    return ResponseEntity.ok(res);
+  }
+
+  @GetMapping("/saleOrders")
+  public ResponseEntity<List<SaleOrder>> findSaleOrders(@CurrentUser User user) {
+    List<SaleOrder> res = userService.findSaleOrders(user);
+    return ResponseEntity.ok(res);
+  }
+
+  @GetMapping("/purchaseOrders")
+  public ResponseEntity<List<PurchaseOrder>> findPurchaseOrders(@CurrentUser User user) {
+    List<PurchaseOrder> res = userService.findPurchaseOrders(user);
+    return ResponseEntity.ok(res);
+  }
 }

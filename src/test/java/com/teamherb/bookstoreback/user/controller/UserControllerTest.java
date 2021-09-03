@@ -15,6 +15,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.teamherb.bookstoreback.account.dto.AccountRequest;
 import com.teamherb.bookstoreback.common.controller.CommonApiTest;
 import com.teamherb.bookstoreback.common.security.WithMockCustomUser;
+import com.teamherb.bookstoreback.orders.domain.OrderStatus;
+import com.teamherb.bookstoreback.orders.dto.PurchaseOrder;
+import com.teamherb.bookstoreback.orders.dto.SaleOrder;
 import com.teamherb.bookstoreback.purchase.dto.PurchaseResponse;
 import com.teamherb.bookstoreback.sale.dto.SaleResponse;
 import com.teamherb.bookstoreback.user.docs.UserDocumentation;
@@ -79,8 +82,8 @@ public class UserControllerTest extends CommonApiTest {
     doNothing().when(userService).createUser(any());
 
     mockMvc.perform(post("/api/user/signup")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(signUpRequest)))
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(signUpRequest)))
         .andExpect(status().isCreated())
         .andDo(print())
         .andDo(UserDocumentation.userSignup());
@@ -92,8 +95,8 @@ public class UserControllerTest extends CommonApiTest {
     LoginRequest loginRequest = new LoginRequest("highright96", "1234");
 
     mockMvc.perform(post("/api/user/login")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(loginRequest)))
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(loginRequest)))
         .andExpect(status().isUnauthorized())
         .andDo(print())
         .andDo(UserDocumentation.userLogin());
@@ -104,7 +107,7 @@ public class UserControllerTest extends CommonApiTest {
   @Test
   void getMyInfo() throws Exception {
     mockMvc.perform(get("/api/user/me")
-            .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+        .header(HttpHeaders.AUTHORIZATION, "accessToken"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.identity").value("user"))
         .andExpect(jsonPath("$.name").value("유저"))
@@ -126,9 +129,9 @@ public class UserControllerTest extends CommonApiTest {
     doNothing().when(userService).updateMyInfo(any(), any());
 
     mockMvc.perform(patch("/api/user/me")
-            .header(HttpHeaders.AUTHORIZATION, "accessToken")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(userUpdateRequest)))
+        .header(HttpHeaders.AUTHORIZATION, "accessToken")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(userUpdateRequest)))
         .andExpect(status().isOk())
         .andDo(print())
         .andDo(UserDocumentation.userUpdateMe());
@@ -151,7 +154,7 @@ public class UserControllerTest extends CommonApiTest {
     when(userService.findPurchaseHistories(any())).thenReturn(of(response));
 
     mockMvc.perform(get("/api/user/purchase-history")
-            .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+        .header(HttpHeaders.AUTHORIZATION, "accessToken"))
         .andExpect(status().isOk())
         .andDo(print())
         .andDo(UserDocumentation.findPurchaseHistories());
@@ -174,9 +177,58 @@ public class UserControllerTest extends CommonApiTest {
     when(userService.findSaleHistories(any())).thenReturn(of(saleResponse));
 
     mockMvc.perform(get("/api/user/sale-history")
-            .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+        .header(HttpHeaders.AUTHORIZATION, "accessToken"))
         .andExpect(status().isOk())
         .andDo(print())
         .andDo(UserDocumentation.findSaleHistories());
   }
+
+  @WithMockCustomUser
+  @DisplayName("판매자 주문정보를 조회한다.")
+  @Test
+  void findSaleOrders() throws Exception {
+    SaleOrder saleOrder = SaleOrder.builder()
+        .id(1L)
+        .bookPrice("10000")
+        .orderStatus(OrderStatus.ACCEPT.name())
+        .bookThumbnail("설렁탕사진")
+        .bookTitle("설렁탕 요리비법")
+        .postTitle("설렁탕 요리책 팔아요")
+        .purchaserIdentity("blackcow")
+        .build();
+
+    when(userService.findSaleOrders(any())).thenReturn(of(saleOrder));
+
+    mockMvc.perform(get("/api/user/saleOrders")
+        .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+        .andExpect(status().isOk())
+        .andDo(print())
+        .andDo(UserDocumentation.findSaleOrders());
+  }
+
+  @WithMockCustomUser
+  @DisplayName("구매자 주문정보를 조회한다.")
+  @Test
+  void findPurchaseOrders() throws Exception {
+    PurchaseOrder purchaseOrder = PurchaseOrder.builder()
+        .id(1L)
+        .bookPrice("10000")
+        .orderStatus(OrderStatus.ACCEPT.name())
+        .bookThumbnail("설렁탕사진")
+        .bookTitle("설렁탕 요리비법")
+        .postTitle("설렁탕 요리책 팔아요")
+        .sellerIdentity("blackcow")
+        .build();
+
+    when(userService.findPurchaseOrders(any())).thenReturn(of(purchaseOrder));
+
+    mockMvc.perform(get("/api/user/purchaseOrders")
+        .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+        .andExpect(status().isOk())
+        .andDo(print())
+        .andDo(UserDocumentation.findPurchaseOrders());
+  }
+
+
+
 }

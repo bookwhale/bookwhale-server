@@ -10,6 +10,13 @@ import static org.mockito.Mockito.when;
 
 import com.teamherb.bookstoreback.common.exception.CustomException;
 import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
+import com.teamherb.bookstoreback.orders.domain.OrderRepository;
+import com.teamherb.bookstoreback.orders.domain.OrderStatus;
+import com.teamherb.bookstoreback.orders.domain.Orders;
+import com.teamherb.bookstoreback.orders.dto.PurchaseOrder;
+import com.teamherb.bookstoreback.orders.dto.SaleOrder;
+import com.teamherb.bookstoreback.post.domain.Book;
+import com.teamherb.bookstoreback.post.domain.Post;
 import com.teamherb.bookstoreback.purchase.domain.Purchase;
 import com.teamherb.bookstoreback.purchase.domain.PurchaseRepository;
 import com.teamherb.bookstoreback.purchase.dto.PurchaseResponse;
@@ -46,6 +53,9 @@ public class UserServiceTest {
   @Mock
   private SaleRepository saleRepository;
 
+  @Mock
+  private OrderRepository orderRepository;
+
   UserService userService;
 
   User user;
@@ -53,7 +63,7 @@ public class UserServiceTest {
   @BeforeEach
   void setUp() {
     userService = new UserService(userRepository, purchaseRepository, saleRepository,
-        passwordEncoder);
+        passwordEncoder, orderRepository);
 
     user = User.builder()
         .identity("highright96")
@@ -145,4 +155,104 @@ public class UserServiceTest {
             sale.getPostTitle())
     );
   }
+
+
+  @Test
+  @DisplayName("판매자 주문 정보를 조회한다.")
+  public void findSaleOrders() {
+    User user2 = User.builder()
+        .identity("luckyday")
+        .name("김첨지")
+        .email("kim@sul.com")
+        .phoneNumber("010-1234-1234")
+        .address("조선")
+        .build();
+
+    Book book = Book.builder()
+        .bookThumbnail("설렁탕")
+        .bookTitle("설렁탕맛잇게 끊이는 법")
+        .build();
+
+    Post post = Post.builder()
+        .book(book)
+        .price("10000")
+        .title("설렁탕 비법서 팔아요")
+        .build();
+
+    Orders orders = Orders.builder()
+        .id(1L)
+        .post(post)
+        .orderStatus(OrderStatus.ACCEPT)
+        .purchaser(user)
+        .seller(user2)
+        .orderStatus(OrderStatus.ACCEPT)
+        .build();
+
+    when(orderRepository.findAllBySellerOrderByCreatedDate(any())).thenReturn(
+        of(orders));
+
+    List<SaleOrder> saleOrders = userService.findSaleOrders(user);
+    assertAll(
+        () -> assertThat(saleOrders.get(0).getBookTitle()).isEqualTo(
+            orders.getPost().getBook().getBookTitle()),
+        () -> assertThat(saleOrders.get(0).getPostTitle()).isEqualTo(
+            orders.getPost().getTitle()),
+        () -> assertThat(saleOrders.get(0).getOrderStatus()).isEqualTo(
+            orders.getOrderStatus().name()),
+        () -> assertThat(saleOrders.get(0).getPurchaserIdentity()).isEqualTo(
+            orders.getPurchaser().getIdentity())
+
+    );
+  }
+
+
+  @Test
+  @DisplayName("구매자 주문 정보를 조회한다.")
+  public void findPurchaseOrders() {
+    User user2 = User.builder()
+        .identity("luckyday")
+        .name("김첨지")
+        .email("kim@sul.com")
+        .phoneNumber("010-1234-1234")
+        .address("조선")
+        .build();
+
+    Book book = Book.builder()
+        .bookThumbnail("설렁탕")
+        .bookTitle("설렁탕맛잇게 끊이는 법")
+        .build();
+
+    Post post = Post.builder()
+        .book(book)
+        .price("10000")
+        .title("설렁탕 비법서 팔아요")
+        .build();
+
+    Orders orders = Orders.builder()
+        .id(1L)
+        .post(post)
+        .orderStatus(OrderStatus.ACCEPT)
+        .purchaser(user)
+        .seller(user2)
+        .orderStatus(OrderStatus.ACCEPT)
+        .build();
+
+    when(orderRepository.findAllByPurchaserOrderByCreatedDate(any())).thenReturn(
+        of(orders));
+
+    List<PurchaseOrder> purchaseOrders = userService.findPurchaseOrders(user);
+    assertAll(
+        () -> assertThat(purchaseOrders.get(0).getBookTitle()).isEqualTo(
+            orders.getPost().getBook().getBookTitle()),
+        () -> assertThat(purchaseOrders.get(0).getPostTitle()).isEqualTo(
+            orders.getPost().getTitle()),
+        () -> assertThat(purchaseOrders.get(0).getOrderStatus()).isEqualTo(
+            orders.getOrderStatus().name()),
+        () -> assertThat(purchaseOrders.get(0).getSellerIdentity()).isEqualTo(
+            orders.getSeller().getIdentity())
+
+    );
+  }
+
+
 }

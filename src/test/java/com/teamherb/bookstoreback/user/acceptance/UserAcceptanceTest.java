@@ -82,7 +82,26 @@ public class UserAcceptanceTest extends AcceptanceTest {
   @Test
   void findSaleHistories() {
     String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
+    ExtractableResponse<Response> response = UserAcceptanceStep.requestToFindSaleOrders(
+        jwt);
+    AcceptanceStep.assertThatStatusIsOk(response);
+  }
+
+
+  @DisplayName("판매자 주문정보를 조회한다.")
+  @Test
+  void findSaleOrders() {
+    String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
     ExtractableResponse<Response> response = UserAcceptanceStep.requestToFindSaleHistories(
+        jwt);
+    AcceptanceStep.assertThatStatusIsOk(response);
+  }
+
+  @DisplayName("구매자 주문정보를 조회한다.")
+  @Test
+  void findPurchaseOrders() {
+    String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
+    ExtractableResponse<Response> response = UserAcceptanceStep.requestToFindPurchaseOrders(
         jwt);
     AcceptanceStep.assertThatStatusIsOk(response);
   }
