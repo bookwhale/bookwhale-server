@@ -1,6 +1,5 @@
 package com.teamherb.bookstoreback.post.domain;
 
-import com.teamherb.bookstoreback.account.domain.Account;
 import com.teamherb.bookstoreback.common.domain.BaseEntity;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.user.domain.User;
@@ -35,12 +34,6 @@ public class Post extends BaseEntity {
   @JoinColumn(name = "seller_id")
   private User seller;
 
-  private String accountNumber;
-
-  private String accountBank;
-
-  private String accountOwner;
-
   private String title;
 
   private String price;
@@ -58,14 +51,10 @@ public class Post extends BaseEntity {
   private Book book;
 
   @Builder
-  public Post(Long id, User seller, String accountNumber, String accountBank,
-      String accountOwner, String title, String price, String description,
+  public Post(Long id, User seller, String title, String price, String description,
       PostStatus postStatus, BookStatus bookStatus, Book book) {
     this.id = id;
     this.seller = seller;
-    this.accountNumber = accountNumber;
-    this.accountBank = accountBank;
-    this.accountOwner = accountOwner;
     this.title = title;
     this.price = price;
     this.description = description;
@@ -82,9 +71,6 @@ public class Post extends BaseEntity {
         .postStatus(PostStatus.SALE)
         .bookStatus(BookStatus.valueOf(req.getBookStatus()))
         .description(req.getDescription())
-        .accountBank(req.getAccountRequest().getAccountBank())
-        .accountOwner(req.getAccountRequest().getAccountOwner())
-        .accountNumber(req.getAccountRequest().getAccountNumber())
         .book(Book.create(req.getBookRequest()))
         .build();
   }

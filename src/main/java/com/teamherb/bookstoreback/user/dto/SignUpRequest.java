@@ -1,6 +1,5 @@
 package com.teamherb.bookstoreback.user.dto;
 
-import com.teamherb.bookstoreback.account.dto.AccountRequest;
 import javax.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;
@@ -10,27 +9,27 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SignUpRequest {
 
-    @NotBlank
-    private String identity;
+  @NotBlank
+  private String identity;
 
-    @NotBlank
-    private String password;
+  @NotBlank
+  private String password;
 
-    @NotBlank
-    private String name;
+  @NotBlank
+  private String name;
 
-    @NotBlank
-    private String email;
+  @NotBlank
+  private String email;
 
-    private AccountRequest accountRequest;
+  private String phoneNumber;
 
-    @Builder
-    public SignUpRequest(String identity, String password, String name, String email,
-        AccountRequest accountRequest) {
-        this.identity = identity;
-        this.password = password;
-        this.name = name;
-        this.email = email;
-        this.accountRequest = accountRequest;
-    }
+  @Builder
+  public SignUpRequest(String identity, String password, String name, String email,
+      String phoneNumber) {
+    this.identity = identity;
+    this.password = password;
+    this.name = name;
+    this.email = email;
+    this.phoneNumber = phoneNumber;
+  }
 }

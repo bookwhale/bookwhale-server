@@ -2,7 +2,6 @@ package com.teamherb.bookstoreback.post.acceptance;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.teamherb.bookstoreback.account.dto.AccountRequest;
 import com.teamherb.bookstoreback.common.Pagination;
 import com.teamherb.bookstoreback.common.acceptance.AcceptanceTest;
 import com.teamherb.bookstoreback.common.acceptance.AcceptanceUtils;
@@ -32,12 +31,6 @@ public class PostAcceptanceTest extends AcceptanceTest {
   @Override
   public void setUp() {
     super.setUp();
-    AccountRequest accountRequest = AccountRequest.builder()
-        .accountBank("국민은행")
-        .accountOwner("남상우")
-        .accountNumber("123-1234-12345")
-        .build();
-
     BookRequest bookRequest = BookRequest.builder()
         .bookSummary("책 설명")
         .bookPubDate("2021-12-12")
@@ -50,7 +43,6 @@ public class PostAcceptanceTest extends AcceptanceTest {
         .build();
 
     postRequest = PostRequest.builder()
-        .accountRequest(accountRequest)
         .bookRequest(bookRequest)
         .title("토비의 스프링 팝니다~")
         .description("책 설명")
@@ -63,10 +55,8 @@ public class PostAcceptanceTest extends AcceptanceTest {
   @Test
   void createPost() {
     String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
-    ExtractableResponse<Response> response = PostAcceptanceStep.requestToCreatePost(jwt,
-        postRequest);
-
-    AcceptanceStep.assertThatStatusIsCreated(response);
+    ExtractableResponse<Response> res = PostAcceptanceStep.requestToCreatePost(jwt, postRequest);
+    AcceptanceStep.assertThatStatusIsCreated(res);
   }
 
   @DisplayName("게시글을 상세 조회한다.")
@@ -104,7 +94,7 @@ public class PostAcceptanceTest extends AcceptanceTest {
     PostAcceptanceStep.assertThatFindPosts(fullPostResponses, postRequest);
   }
 
-  @DisplayName("ISBN 으로 책을 검색한다.")
+  @DisplayName("ISBN 으로 네이버 책(API)을 검색한다.")
   @Test
   void findNaverBooks_isbn() {
     NaverBookRequest naverBookRequest = NaverBookRequest.builder()
@@ -121,7 +111,7 @@ public class PostAcceptanceTest extends AcceptanceTest {
     PostAcceptanceStep.assertThatFindNaverBooks(bookResponse);
   }
 
-  @DisplayName("제목으로 책을 검색한다.")
+  @DisplayName("제목으로 네이버 책(API)을 검색한다.")
   @Test
   void findNaverBooks_title() {
     NaverBookRequest naverBookRequest = NaverBookRequest.builder()
