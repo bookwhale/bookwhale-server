@@ -8,10 +8,13 @@ import static org.mockito.Mockito.when;
 
 import com.teamherb.bookstoreback.common.exception.CustomException;
 import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
+import com.teamherb.bookstoreback.common.utils.upload.FileStoreUtil;
 import com.teamherb.bookstoreback.user.domain.User;
 import com.teamherb.bookstoreback.user.domain.UserRepository;
+import com.teamherb.bookstoreback.user.dto.ProfileResponse;
 import com.teamherb.bookstoreback.user.dto.SignUpRequest;
 import com.teamherb.bookstoreback.user.dto.UserUpdateRequest;
+import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,13 +35,16 @@ public class UserServiceTest {
   @Mock
   private PasswordEncoder passwordEncoder;
 
+  @Mock
+  private FileStoreUtil fileStoreUtil;
+
   UserService userService;
 
   User user;
 
   @BeforeEach
   void setUp() {
-    userService = new UserService(userRepository, passwordEncoder);
+    userService = new UserService(userRepository, passwordEncoder, fileStoreUtil);
 
     user = User.builder()
         .identity("highright96")
@@ -102,5 +109,27 @@ public class UserServiceTest {
         () -> assertThat(user.getEmail()).isEqualTo(userUpdateRequest.getEmail()),
         () -> assertThat(user.getPhoneNumber()).isEqualTo(userUpdateRequest.getPhoneNumber())
     );
+  }
+
+  @DisplayName("프로필 사진을 업로드한다.")
+  @Test
+  void uploadProfileImage_success() {
+    MockMultipartFile image = new MockMultipartFile("profileImage", "profileImage.jpg",
+        ContentType.IMAGE_JPEG.getMimeType(),
+        "프로필 이미지 입니다.".getBytes());
+    String uploadedImage = "uploadImage";
+
+    when(fileStoreUtil.storeFile(any())).thenReturn(uploadedImage);
+
+    ProfileResponse profileResponse = userService.uploadProfileImage(user, image);
+
+    assertThat(profileResponse.getProfileImage()).isEqualTo(uploadedImage);
+  }
+
+  @DisplayName("프로필 사진을 삭제한다.")
+  @Test
+  void deleteProfileImage_success() {
+    userService.deleteProfileImage(user);
+    assertThat(user.getProfileImage()).isEqualTo(null);
   }
 }

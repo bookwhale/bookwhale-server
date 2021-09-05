@@ -11,24 +11,25 @@ import org.springframework.security.test.context.support.WithSecurityContextFact
 public class WithMockCustomUserSecurityContextFactory implements
     WithSecurityContextFactory<WithMockCustomUser> {
 
-    @Override
-    public SecurityContext createSecurityContext(WithMockCustomUser customUser) {
-        SecurityContext context = SecurityContextHolder.createEmptyContext();
+  @Override
+  public SecurityContext createSecurityContext(WithMockCustomUser customUser) {
+    SecurityContext context = SecurityContextHolder.createEmptyContext();
 
-        User user = User.builder()
-            .identity(customUser.identity())
-            .password(customUser.password())
-            .name(customUser.name())
-            .email(customUser.email())
-            .role(customUser.roles())
-            .phoneNumber(customUser.phoneNumber())
-            .role(customUser.roles())
-            .build();
+    User user = User.builder()
+        .identity(customUser.identity())
+        .password(customUser.password())
+        .name(customUser.name())
+        .email(customUser.email())
+        .role(customUser.roles())
+        .phoneNumber(customUser.phoneNumber())
+        .profileImage(customUser.profileImage())
+        .role(customUser.roles())
+        .build();
 
-        UserPrincipal principal = UserPrincipal.create(user);
-        Authentication auth = new UsernamePasswordAuthenticationToken(principal, user.getPassword(),
-            principal.getAuthorities());
-        context.setAuthentication(auth);
-        return context;
-    }
+    UserPrincipal principal = UserPrincipal.create(user);
+    Authentication auth = new UsernamePasswordAuthenticationToken(principal, user.getPassword(),
+        principal.getAuthorities());
+    context.setAuthentication(auth);
+    return context;
+  }
 }

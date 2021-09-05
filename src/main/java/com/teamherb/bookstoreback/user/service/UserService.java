@@ -49,9 +49,6 @@ public class UserService {
   }
 
   public ProfileResponse uploadProfileImage(User user, MultipartFile profileImage) {
-    if (profileImage.isEmpty()) {
-      return ProfileResponse.of(user.getProfileImage());
-    }
     deleteProfile(user);
     String uploadFile = fileStoreUtil.storeFile(profileImage);
     user.uploadProfile(uploadFile);

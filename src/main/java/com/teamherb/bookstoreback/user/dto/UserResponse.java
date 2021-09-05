@@ -14,13 +14,15 @@ public class UserResponse {
   private String name;
   private String email;
   private String phoneNumber;
+  private String profileImage;
 
   public static UserResponse of(User user) {
     return new UserResponse(
         user.getIdentity(),
         user.getName(),
         user.getEmail(),
-        user.getPhoneNumber()
+        user.getPhoneNumber(),
+        user.getProfileImage()
     );
   }
 }

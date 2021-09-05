@@ -11,9 +11,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
@@ -22,25 +26,37 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 @ExtendWith(RestDocumentationExtension.class)
 public class CommonApiTest {
 
-    @MockBean
-    protected UserRepository userRepository;
+  @MockBean
+  protected UserRepository userRepository;
 
-    protected MockMvc mockMvc;
+  protected MockMvc mockMvc;
 
-    protected ObjectMapper objectMapper;
+  protected ObjectMapper objectMapper;
 
-    @BeforeEach
-    public void setUp(WebApplicationContext webApplicationContext,
-        RestDocumentationContextProvider restDocumentation) {
-        objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+  @BeforeEach
+  public void setUp(WebApplicationContext webApplicationContext,
+      RestDocumentationContextProvider restDocumentation) {
+    objectMapper = new ObjectMapper();
+    objectMapper.registerModule(new JavaTimeModule());
+    objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-        this.mockMvc = MockMvcBuilders
-            .webAppContextSetup(webApplicationContext)
-            .addFilters(new CharacterEncodingFilter("UTF-8", true))
-            .apply(documentationConfiguration(restDocumentation))
-            .apply(springSecurity())
-            .build();
-    }
+    this.mockMvc = MockMvcBuilders
+        .webAppContextSetup(webApplicationContext)
+        .addFilters(new CharacterEncodingFilter("UTF-8", true))
+        .apply(documentationConfiguration(restDocumentation))
+        .apply(springSecurity())
+        .build();
+  }
+
+  protected MockMultipartHttpServletRequestBuilder MockMultipartPatchBuilder(String url) {
+    MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart(url);
+    builder.with(new RequestPostProcessor() {
+      @Override
+      public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+        request.setMethod("PATCH");
+        return request;
+      }
+    });
+    return builder;
+  }
 }
