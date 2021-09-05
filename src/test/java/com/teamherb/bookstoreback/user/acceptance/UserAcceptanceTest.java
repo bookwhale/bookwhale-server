@@ -1,6 +1,5 @@
 package com.teamherb.bookstoreback.user.acceptance;
 
-import com.teamherb.bookstoreback.account.dto.AccountRequest;
 import com.teamherb.bookstoreback.common.acceptance.AcceptanceTest;
 import com.teamherb.bookstoreback.common.acceptance.step.AcceptanceStep;
 import com.teamherb.bookstoreback.user.acceptance.step.UserAcceptanceStep;
@@ -18,18 +17,12 @@ public class UserAcceptanceTest extends AcceptanceTest {
   @DisplayName("회원가입을 한다.")
   @Test
   void signUpTest() {
-    AccountRequest accountRequest = AccountRequest.builder()
-        .accountBank("국민은행")
-        .accountNumber("123-1234-12345")
-        .accountOwner("남상우")
-        .build();
-
     SignUpRequest signUpRequest = SignUpRequest.builder()
         .identity("highright9696")
         .password("1234")
         .name("남상우")
         .email("highright96@email.com")
-        .accountRequest(accountRequest)
+        .phoneNumber("010-1234-1234")
         .build();
 
     ExtractableResponse<Response> response = UserAcceptanceStep.requestToSignUp(signUpRequest);
@@ -54,8 +47,8 @@ public class UserAcceptanceTest extends AcceptanceTest {
   void updateMyInfo() {
     UserUpdateRequest userUpdateRequest = UserUpdateRequest.builder()
         .name("주호세")
-        .phoneNumber("010-0000-0000")
-        .address("경기")
+        .phoneNumber("010-5678-5678")
+        .email("hose@email.com")
         .build();
 
     String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
@@ -67,23 +60,5 @@ public class UserAcceptanceTest extends AcceptanceTest {
 
     AcceptanceStep.assertThatStatusIsOk(response);
     UserAcceptanceStep.assertThatUpdateMyInfo(userResponse, userUpdateRequest);
-  }
-
-  @DisplayName("구매내역을 조회한다.")
-  @Test
-  void findPurchaseHistories() {
-    String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
-    ExtractableResponse<Response> response = UserAcceptanceStep.requestToFindPurchaseHistories(
-        jwt);
-    AcceptanceStep.assertThatStatusIsOk(response);
-  }
-
-  @DisplayName("판매내역을 조회한다.")
-  @Test
-  void findSaleHistories() {
-    String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
-    ExtractableResponse<Response> response = UserAcceptanceStep.requestToFindSaleHistories(
-        jwt);
-    AcceptanceStep.assertThatStatusIsOk(response);
   }
 }

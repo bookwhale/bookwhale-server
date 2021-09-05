@@ -61,7 +61,7 @@ public class PostController {
   @GetMapping
   public ResponseEntity<List<FullPostResponse>> findPosts(FullPostRequest fullPostRequest,
       @Valid Pagination pagination) {
-    List<FullPostResponse> responses = postService.findPosts(fullPostRequest, pagination);
-    return ResponseEntity.ok(responses);
+    List<FullPostResponse> res = postService.findPosts(fullPostRequest, pagination);
+    return ResponseEntity.ok(res);
   }
 }

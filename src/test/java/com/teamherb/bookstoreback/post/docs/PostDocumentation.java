@@ -55,9 +55,6 @@ public class PostDocumentation {
             headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
         ),
         requestPartFields("postRequest",
-            fieldWithPath("accountRequest.accountNumber").description("계좌번호"),
-            fieldWithPath("accountRequest.accountOwner").description("예금주 이름"),
-            fieldWithPath("accountRequest.accountBank").description("은행명"),
             fieldWithPath("bookRequest.bookIsbn").description("책 ISBN"),
             fieldWithPath("bookRequest.bookTitle").description("책 이름(네이버 책 API)"),
             fieldWithPath("bookRequest.bookAuthor").description("저자(네이버 책 API)"),
@@ -83,12 +80,6 @@ public class PostDocumentation {
             parameterWithName("postId").description("게시글 ID")
         ),
         responseFields(
-            fieldWithPath("accountResponse.accountNumber").type(JsonFieldType.STRING)
-                .description("계좌번호"),
-            fieldWithPath("accountResponse.accountOwner").type(JsonFieldType.STRING)
-                .description("예금주 이름"),
-            fieldWithPath("accountResponse.accountBank").type(JsonFieldType.STRING)
-                .description("은행명"),
             fieldWithPath("bookResponse.bookIsbn").type(JsonFieldType.STRING)
                 .description("책 ISBN"),
             fieldWithPath("bookResponse.bookTitle").type(JsonFieldType.STRING)
@@ -114,7 +105,7 @@ public class PostDocumentation {
             fieldWithPath("bookStatus").type(JsonFieldType.STRING)
                 .description("책 상태 [LOWER, MIDDLE, UPPER, BEST]"),
             fieldWithPath("postStatus").type(JsonFieldType.STRING)
-                .description("게시글 상태 [SALE, PROCEEDING, COMPLETE]")
+                .description("게시글 상태 [SALE, RESERVED, SOLD_OUT]")
         ));
   }
 
@@ -128,7 +119,7 @@ public class PostDocumentation {
         fieldWithPath("bookThumbnail").type(JsonFieldType.STRING).description(
             "책 썸네일(네이버 책 API)"),
         fieldWithPath("postStatus").type(JsonFieldType.STRING).description(
-            "게시글 상태 [SALE, PROCEEDING, COMPLETE]")
+            "게시글 상태 [SALE, RESERVED, SOLD_OUT]")
     };
 
     return document("post/findPosts",

@@ -10,19 +10,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserResponse {
 
-    private String identity;
-    private String name;
-    private String email;
-    private String phoneNumber;
-    private String address;
+  private String identity;
+  private String name;
+  private String email;
+  private String phoneNumber;
 
-    public static UserResponse of(User user) {
-        return new UserResponse(
-            user.getIdentity(),
-            user.getName(),
-            user.getEmail(),
-            user.getPhoneNumber(),
-            user.getAddress()
-        );
-    }
+  public static UserResponse of(User user) {
+    return new UserResponse(
+        user.getIdentity(),
+        user.getName(),
+        user.getEmail(),
+        user.getPhoneNumber()
+    );
+  }
 }

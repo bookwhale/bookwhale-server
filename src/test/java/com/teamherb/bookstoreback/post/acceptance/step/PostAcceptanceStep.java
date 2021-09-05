@@ -4,6 +4,7 @@ import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.teamherb.bookstoreback.common.Pagination;
+import com.teamherb.bookstoreback.post.domain.BookStatus;
 import com.teamherb.bookstoreback.post.domain.PostStatus;
 import com.teamherb.bookstoreback.post.dto.BookResponse;
 import com.teamherb.bookstoreback.post.dto.FullPostRequest;
@@ -27,12 +28,29 @@ public class PostAcceptanceStep {
   public static void assertThatFindPost(PostResponse res, PostRequest req) {
     Assertions.assertAll(
         () -> assertThat(res.getTitle()).isEqualTo(req.getTitle()),
+        () -> assertThat(res.getPrice()).isEqualTo(req.getPrice()),
+        () -> assertThat(res.getDescription()).isEqualTo(req.getDescription()),
         () -> assertThat(res.getPostStatus()).isEqualTo(PostStatus.SALE),
+        () -> assertThat(res.getTitle()).isEqualTo(req.getTitle()),
         () -> assertThat(res.isMyPost()).isEqualTo(true),
-        () -> assertThat(res.getAccountResponse().getAccountBank()).isEqualTo(
-            req.getAccountRequest().getAccountBank()),
+        () -> assertThat(res.getBookStatus()).isEqualTo(
+            BookStatus.valueOf(req.getBookStatus())),
         () -> assertThat(res.getBookResponse().getBookIsbn()).isEqualTo(
-            req.getBookRequest().getBookIsbn())
+            req.getBookRequest().getBookIsbn()),
+        () -> assertThat(res.getBookResponse().getBookAuthor()).isEqualTo(
+            req.getBookRequest().getBookAuthor()),
+        () -> assertThat(res.getBookResponse().getBookTitle()).isEqualTo(
+            req.getBookRequest().getBookTitle()),
+        () -> assertThat(res.getBookResponse().getBookPublisher()).isEqualTo(
+            req.getBookRequest().getBookPublisher()),
+        () -> assertThat(res.getBookResponse().getBookSummary()).isEqualTo(
+            req.getBookRequest().getBookSummary()),
+        () -> assertThat(res.getBookResponse().getBookThumbnail()).isEqualTo(
+            req.getBookRequest().getBookThumbnail()),
+        () -> assertThat(res.getBookResponse().getBookPubDate()).isEqualTo(
+            req.getBookRequest().getBookPubDate()),
+        () -> assertThat(res.getBookResponse().getBookListPrice()).isEqualTo(
+            req.getBookRequest().getBookListPrice())
     );
   }
 
@@ -95,17 +113,15 @@ public class PostAcceptanceStep {
 
   public static ExtractableResponse<Response> requestToFindPosts(String jwt, FullPostRequest req,
       Pagination page) {
-    String path = "/api/post"
-        + (req.getTitle() != null ? "?title=" + req.getTitle() : "")
-        + (req.getAuthor() != null ? "?author=" + req.getAuthor() : "")
-        + (req.getPublisher() != null ? "?publisher=" + req.getPublisher() : "")
-        + "&page=" + page.getPage()
-        + "&size=" + page.getSize();
-
     return given().log().all()
         .header(HttpHeaders.AUTHORIZATION, jwt)
         .when()
-        .get(path)
+        .get("/api/post"
+            + (req.getTitle() != null ? "?title=" + req.getTitle() : "")
+            + (req.getAuthor() != null ? "?author=" + req.getAuthor() : "")
+            + (req.getPublisher() != null ? "?publisher=" + req.getPublisher() : "")
+            + "&page=" + page.getPage()
+            + "&size=" + page.getSize())
         .then().log().all()
         .extract();
   }

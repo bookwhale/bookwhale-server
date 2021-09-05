@@ -27,7 +27,6 @@ public class UserAcceptanceStep {
   public static void assertThatGetMyInfo(UserResponse userResponse, User user) {
     Assertions.assertAll(
         () -> assertThat(userResponse.getIdentity()).isEqualTo(user.getIdentity()),
-        () -> assertThat(userResponse.getAddress()).isEqualTo(user.getAddress()),
         () -> assertThat(userResponse.getName()).isEqualTo(user.getName()),
         () -> assertThat(userResponse.getPhoneNumber()).isEqualTo(user.getPhoneNumber()),
         () -> assertThat(userResponse.getEmail()).isEqualTo(user.getEmail())
@@ -37,7 +36,7 @@ public class UserAcceptanceStep {
   public static void assertThatUpdateMyInfo(UserResponse userResponse,
       UserUpdateRequest userUpdateRequest) {
     Assertions.assertAll(
-        () -> assertThat(userResponse.getAddress()).isEqualTo(userUpdateRequest.getAddress()),
+        () -> assertThat(userResponse.getEmail()).isEqualTo(userUpdateRequest.getEmail()),
         () -> assertThat(userResponse.getName()).isEqualTo(userUpdateRequest.getName()),
         () -> assertThat(userResponse.getPhoneNumber()).isEqualTo(
             userUpdateRequest.getPhoneNumber())
@@ -68,6 +67,7 @@ public class UserAcceptanceStep {
     LoginResponse loginResponse = requestToLogin(loginRequest).jsonPath()
         .getObject(".", LoginResponse.class);
     return loginResponse.getTokenType() + " " + loginResponse.getAccessToken();
+
   }
 
   public static ExtractableResponse<Response> requestToGetMyInfo(String jwt) {
@@ -87,24 +87,6 @@ public class UserAcceptanceStep {
         .body(userUpdateRequest)
         .when()
         .patch("/api/user/me")
-        .then().log().all()
-        .extract();
-  }
-
-  public static ExtractableResponse<Response> requestToFindPurchaseHistories(String jwt) {
-    return given().log().all()
-        .header(HttpHeaders.AUTHORIZATION, jwt)
-        .when()
-        .get("/api/user/purchase-history")
-        .then().log().all()
-        .extract();
-  }
-
-  public static ExtractableResponse<Response> requestToFindSaleHistories(String jwt) {
-    return given().log().all()
-        .header(HttpHeaders.AUTHORIZATION, jwt)
-        .when()
-        .get("/api/user/sale-history")
         .then().log().all()
         .extract();
   }

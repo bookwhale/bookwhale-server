@@ -9,17 +9,15 @@ import org.springframework.security.test.context.support.WithSecurityContext;
 @WithSecurityContext(factory = WithMockCustomUserSecurityContextFactory.class)
 public @interface WithMockCustomUser {
 
-    String identity() default "user";
+  String identity() default "highright96";
 
-    String password() default "1234";
+  String password() default "1234";
 
-    String email() default "user@email.com";
+  String email() default "highright96@email.com";
 
-    String name() default "유저";
+  String name() default "남상우";
 
-    String phoneNumber() default "010-1234-1234";
+  String phoneNumber() default "010-1234-1234";
 
-    String address() default "서울";
-
-    Role roles() default Role.ROLE_USER;
+  Role roles() default Role.ROLE_USER;
 }
