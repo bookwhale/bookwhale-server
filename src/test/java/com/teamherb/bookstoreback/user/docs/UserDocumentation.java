@@ -64,4 +64,27 @@ public class UserDocumentation {
             fieldWithPath("email").type(JsonFieldType.STRING).description("이메일").optional()
         ));
   }
+
+  public static RestDocumentationResultHandler userUploadProfileImage() {
+    return document("user/uploadProfileImage",
+        preprocessRequest(prettyPrint()),
+        preprocessResponse(prettyPrint()),
+        requestHeaders(
+            headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
+        ),
+        responseFields(
+            fieldWithPath("profileImage").type(JsonFieldType.STRING).description("업로드된 유저 이미지")
+        )
+    );
+  }
+
+  public static RestDocumentationResultHandler userDeleteProfileImage() {
+    return document("user/deleteProfileImage",
+        preprocessRequest(prettyPrint()),
+        preprocessResponse(prettyPrint()),
+        requestHeaders(
+            headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
+        )
+    );
+  }
 }
