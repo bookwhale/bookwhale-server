@@ -140,7 +140,9 @@ public class PostControllerTest extends CommonApiTest {
         .build();
 
     PostResponse postResponse = PostResponse.builder()
-        .bookResponse(bookResponse)
+        .sellerId(1L)
+        .sellerIdentity("sellerIdentity")
+        .sellerProfileImage("sellerProfileImage")
         .postId(1L)
         .title("책 팝니다~")
         .price("5000원")
@@ -148,7 +150,10 @@ public class PostControllerTest extends CommonApiTest {
         .bookStatus(BookStatus.BEST)
         .postStatus(PostStatus.SALE)
         .images(of("image1", "image2"))
+        .bookResponse(bookResponse)
         .isMyPost(true)
+        .createdDate(LocalDateTime.now())
+        .lastModifiedDate(LocalDateTime.now())
         .build();
 
     when(postService.findPost(any(), any())).thenReturn(postResponse);

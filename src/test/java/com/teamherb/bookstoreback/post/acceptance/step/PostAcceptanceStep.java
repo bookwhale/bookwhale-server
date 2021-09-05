@@ -12,6 +12,7 @@ import com.teamherb.bookstoreback.post.dto.FullPostResponse;
 import com.teamherb.bookstoreback.post.dto.NaverBookRequest;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.post.dto.PostResponse;
+import com.teamherb.bookstoreback.user.domain.User;
 import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -25,14 +26,19 @@ import org.springframework.util.MimeTypeUtils;
 
 public class PostAcceptanceStep {
 
-  public static void assertThatFindPost(PostResponse res, PostRequest req) {
+  public static void assertThatFindPost(PostResponse res, PostRequest req, User seller) {
     Assertions.assertAll(
+        () -> assertThat(res.getSellerId()).isEqualTo(seller.getId()),
+        () -> assertThat(res.getSellerIdentity()).isEqualTo(seller.getIdentity()),
+        () -> assertThat(res.getSellerProfileImage()).isEqualTo(seller.getProfileImage()),
         () -> assertThat(res.getTitle()).isEqualTo(req.getTitle()),
         () -> assertThat(res.getPrice()).isEqualTo(req.getPrice()),
         () -> assertThat(res.getDescription()).isEqualTo(req.getDescription()),
         () -> assertThat(res.getPostStatus()).isEqualTo(PostStatus.SALE),
         () -> assertThat(res.getTitle()).isEqualTo(req.getTitle()),
         () -> assertThat(res.isMyPost()).isEqualTo(true),
+        () -> assertThat(res.getCreatedDate()).isNotNull(),
+        () -> assertThat(res.getLastModifiedDate()).isNotNull(),
         () -> assertThat(res.getBookStatus()).isEqualTo(
             BookStatus.valueOf(req.getBookStatus())),
         () -> assertThat(res.getBookResponse().getBookIsbn()).isEqualTo(

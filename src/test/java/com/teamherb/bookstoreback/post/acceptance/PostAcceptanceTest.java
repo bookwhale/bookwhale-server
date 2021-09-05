@@ -71,7 +71,7 @@ public class PostAcceptanceTest extends AcceptanceTest {
     PostResponse postResponse = response.jsonPath().getObject(".", PostResponse.class);
 
     AcceptanceStep.assertThatStatusIsOk(response);
-    PostAcceptanceStep.assertThatFindPost(postResponse, postRequest);
+    PostAcceptanceStep.assertThatFindPost(postResponse, postRequest, user);
   }
 
   @DisplayName("게시글을 전체 조회한다.")

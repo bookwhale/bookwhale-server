@@ -9,6 +9,8 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParts;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
@@ -72,6 +74,9 @@ public class UserDocumentation {
         preprocessResponse(prettyPrint()),
         requestHeaders(
             headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
+        ),
+        requestParts(
+            partWithName("profileImage").description("업로드할 프로필 사진")
         ),
         responseFields(
             fieldWithPath("profileImage").type(JsonFieldType.STRING).description("업로드된 유저 이미지")

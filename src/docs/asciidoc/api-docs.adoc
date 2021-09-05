@@ -52,7 +52,7 @@ operation::user/updateMe[snippets='http-request,request-headers,request-fields,h
 
 === 1.5 프로필 업로드
 
-operation::user/uploadProfileImage[snippets='http-request,request-headers,http-response']
+operation::user/uploadProfileImage[snippets='http-request,request-headers,request-parts,http-response,response-fields']
 
 === 1.6 프로필 삭제
 

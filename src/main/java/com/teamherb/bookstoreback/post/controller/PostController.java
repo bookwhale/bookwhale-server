@@ -54,14 +54,12 @@ public class PostController {
   @GetMapping("/{postId}")
   public ResponseEntity<PostResponse> findPost(@CurrentUser User user,
       @PathVariable Long postId) {
-    PostResponse postResponse = postService.findPost(user, postId);
-    return ResponseEntity.ok(postResponse);
+    return ResponseEntity.ok(postService.findPost(user, postId));
   }
 
   @GetMapping
   public ResponseEntity<List<FullPostResponse>> findPosts(FullPostRequest fullPostRequest,
       @Valid Pagination pagination) {
-    List<FullPostResponse> res = postService.findPosts(fullPostRequest, pagination);
-    return ResponseEntity.ok(res);
+    return ResponseEntity.ok(postService.findPosts(fullPostRequest, pagination));
   }
 }
