@@ -160,6 +160,28 @@ public class UserDocumentation {
     );
   }
 
+  public static RestDocumentationResultHandler findBaskets() {
+    FieldDescriptor[] response = new FieldDescriptor[]{
+        fieldWithPath("id").type(JsonFieldType.NUMBER).description("관심목록 ID"),
+        fieldWithPath("bookThumbnail").type(JsonFieldType.STRING).description("책 이미지"),
+        fieldWithPath("postTitle").type(JsonFieldType.STRING).description("게시글 제목"),
+        fieldWithPath("bookTitle").type(JsonFieldType.STRING).description("책 제목"),
+        fieldWithPath("bookPrice").type(JsonFieldType.STRING).description("게시글 가격"),
+        fieldWithPath("sellerIdentity").type(JsonFieldType.STRING).description("판매자 ID"),
+        fieldWithPath("postStatus").type(JsonFieldType.STRING).description("게시글 상태")
+    };
+
+    return document("user/baskets",
+        preprocessResponse(prettyPrint()),
+        requestHeaders(
+            headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
+        ),
+        responseFields(
+            fieldWithPath("[]").description("An array of Basket"))
+            .andWithPrefix("[].", response)
+    );
+  }
+
 
 
 }

@@ -137,5 +137,14 @@ public class UserAcceptanceStep {
         .extract();
   }
 
+  public static ExtractableResponse<Response> requestToFindBaskets(String jwt) {
+    return given().log().all()
+        .header(HttpHeaders.AUTHORIZATION, jwt)
+        .when()
+        .get("/api/user/baskets")
+        .then().log().all()
+        .extract();
+  }
+
 
 }

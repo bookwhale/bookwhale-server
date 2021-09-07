@@ -8,6 +8,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.teamherb.bookstoreback.basket.domain.Basket;
+import com.teamherb.bookstoreback.basket.domain.BasketRepository;
+import com.teamherb.bookstoreback.basket.dto.BasketResponse;
 import com.teamherb.bookstoreback.common.exception.CustomException;
 import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
 import com.teamherb.bookstoreback.orders.domain.OrderRepository;
@@ -62,6 +65,9 @@ public class UserServiceTest {
   @Mock
   private PostRepository postRepository;
 
+  @Mock
+  private BasketRepository basketRepository;
+
   UserService userService;
 
   User user;
@@ -69,7 +75,7 @@ public class UserServiceTest {
   @BeforeEach
   void setUp() {
     userService = new UserService(userRepository, purchaseRepository, saleRepository,
-        passwordEncoder, orderRepository, postRepository);
+        passwordEncoder, orderRepository, postRepository,basketRepository);
 
     user = User.builder()
         .identity("highright96")
@@ -251,6 +257,58 @@ public class UserServiceTest {
             post.getBook().getBookThumbnail()),
         () -> assertThat(saleOrders.get(0).getPostStatus()).isEqualTo(
             post.getPostStatus().name())
+
+    );
+  }
+
+  @Test
+  @DisplayName("user2의 관심목록을 조회한다.")
+  public void findBaskets() {
+    User user2 = User.builder()
+        .identity("luckyday")
+        .name("김첨지")
+        .email("kim@sul.com")
+        .phoneNumber("010-1234-1234")
+        .address("조선")
+        .build();
+
+    Book book = Book.builder()
+        .bookThumbnail("설렁탕")
+        .bookTitle("설렁탕맛잇게 끊이는 법")
+        .build();
+
+    Post post = Post.builder()
+        .id(1L)
+        .book(book)
+        .seller(user2)
+        .price("10000")
+        .title("설렁탕 비법서 팔아요")
+        .postStatus(PostStatus.SALE)
+        .build();
+
+    Basket basket = Basket.builder()
+        .id(1L)
+        .purchaser(user2)
+        .post(post)
+        .build();
+
+    when(basketRepository.findAllByPurchaserOrderByCreatedDate(any())).thenReturn(
+        of(basket));
+
+    List<BasketResponse> baskets = userService.findBaskets(user);
+    assertAll(
+        () -> assertThat(baskets.get(0).getId()).isEqualTo(
+            basket.getId()),
+        () -> assertThat(baskets.get(0).getBookTitle()).isEqualTo(
+            basket.getPost().getBook().getBookTitle()),
+        () -> assertThat(baskets.get(0).getPostTitle()).isEqualTo(
+            basket.getPost().getTitle()),
+        () -> assertThat(baskets.get(0).getBookThumbnail()).isEqualTo(
+            basket.getPost().getBook().getBookThumbnail()),
+        () -> assertThat(baskets.get(0).getPostStatus()).isEqualTo(
+            basket.getPost().getPostStatus().name()),
+        () -> assertThat(baskets.get(0).getSellerIdentity()).isEqualTo(
+            basket.getPost().getSeller().getIdentity())
 
     );
   }

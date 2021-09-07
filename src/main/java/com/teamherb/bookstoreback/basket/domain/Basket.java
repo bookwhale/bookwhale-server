@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -32,4 +33,10 @@ public class Basket extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;
+    @Builder
+    public Basket(Long id, User purchaser, Post post) {
+        this.id = id;
+        this.purchaser = purchaser;
+        this.post = post;
+    }
 }

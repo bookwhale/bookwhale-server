@@ -13,6 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.teamherb.bookstoreback.account.dto.AccountRequest;
+import com.teamherb.bookstoreback.basket.dto.BasketResponse;
 import com.teamherb.bookstoreback.common.controller.CommonApiTest;
 import com.teamherb.bookstoreback.common.security.WithMockCustomUser;
 import com.teamherb.bookstoreback.orders.domain.OrderStatus;
@@ -228,6 +229,29 @@ public class UserControllerTest extends CommonApiTest {
         .andExpect(status().isOk())
         .andDo(print())
         .andDo(UserDocumentation.findSalePosts());
+  }
+
+  @WithMockCustomUser
+  @DisplayName("관심목록을 조회한다.")
+  @Test
+  void findBaskets() throws Exception {
+    BasketResponse basketResponse= BasketResponse.builder()
+        .id(1L)
+        .bookPrice("10000")
+        .postStatus(PostStatus.SALE.name())
+        .bookThumbnail("설렁탕사진")
+        .bookTitle("설렁탕 요리비법")
+        .postTitle("설렁탕 요리책 팔아요")
+        .sellerIdentity("luckyday")
+        .build();
+
+    when(userService.findBaskets(any())).thenReturn(of(basketResponse));
+
+    mockMvc.perform(get("/api/user/baskets")
+        .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+        .andExpect(status().isOk())
+        .andDo(print())
+        .andDo(UserDocumentation.findBaskets());
   }
 
 

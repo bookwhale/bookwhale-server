@@ -114,4 +114,13 @@ public class UserAcceptanceTest extends AcceptanceTest {
         jwt);
     AcceptanceStep.assertThatStatusIsOk(response);
   }
+
+  @DisplayName("관심목록을 조회한다.")
+  @Test
+  void findBaskets() {
+    String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
+    ExtractableResponse<Response> response = UserAcceptanceStep.requestToFindBaskets(
+        jwt);
+    AcceptanceStep.assertThatStatusIsOk(response);
+  }
 }

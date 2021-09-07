@@ -1,5 +1,8 @@
 package com.teamherb.bookstoreback.user.service;
 
+import com.teamherb.bookstoreback.basket.domain.Basket;
+import com.teamherb.bookstoreback.basket.domain.BasketRepository;
+import com.teamherb.bookstoreback.basket.dto.BasketResponse;
 import com.teamherb.bookstoreback.orders.domain.OrderRepository;
 import com.teamherb.bookstoreback.orders.domain.Orders;
 import com.teamherb.bookstoreback.orders.dto.PurchaseOrder;
@@ -43,6 +46,8 @@ public class UserService {
 
   private final PostRepository postRepository;
 
+  private final BasketRepository basketRepository;
+
   public void createUser(SignUpRequest signUpRequest) {
     if (userRepository.existsByIdentity(signUpRequest.getIdentity())) {
       throw new CustomException(ErrorCode.DUPLICATED_USER_IDENTITY);
@@ -85,10 +90,14 @@ public class UserService {
 
   @Transactional(readOnly = true)
   public List<SalePostResponse> findSalePosts(User user) {
-    List<Post> result = postRepository
-        .findAllBySellerOrderByCreatedDate(user);
+    List<Post> result = postRepository.findAllBySellerOrderByCreatedDate(user);
     return SalePostResponse.listOf(result);
   }
 
+  @Transactional(readOnly = true)
+  public List<BasketResponse> findBaskets(User user) {
+    List<Basket> result = basketRepository.findAllByPurchaserOrderByCreatedDate(user);
+    return BasketResponse.listOf(result);
 
+  }
 }

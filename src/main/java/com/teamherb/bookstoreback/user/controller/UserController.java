@@ -1,5 +1,6 @@
 package com.teamherb.bookstoreback.user.controller;
 
+import com.teamherb.bookstoreback.basket.dto.BasketResponse;
 import com.teamherb.bookstoreback.orders.dto.PurchaseOrder;
 import com.teamherb.bookstoreback.orders.dto.SaleOrder;
 import com.teamherb.bookstoreback.post.dto.SalePostResponse;
@@ -71,6 +72,12 @@ public class UserController {
   @GetMapping("/salePosts")
   public ResponseEntity<List<SalePostResponse>> findSalePosts(@CurrentUser User user) {
     List<SalePostResponse> res = userService.findSalePosts(user);
+    return ResponseEntity.ok(res);
+  }
+
+  @GetMapping("/baskets")
+  public ResponseEntity<List<BasketResponse>> findBaskets(@CurrentUser User user) {
+    List<BasketResponse> res = userService.findBaskets(user);
     return ResponseEntity.ok(res);
   }
 
