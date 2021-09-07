@@ -24,6 +24,7 @@ import com.teamherb.bookstoreback.user.domain.UserRepository;
 import com.teamherb.bookstoreback.user.dto.SignUpRequest;
 import com.teamherb.bookstoreback.user.dto.UserUpdateRequest;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -99,5 +100,11 @@ public class UserService {
     List<Basket> result = basketRepository.findAllByPurchaserOrderByCreatedDate(user);
     return BasketResponse.listOf(result);
 
+  }
+
+  @Transactional
+  public void delBasket(Long id) {
+    Optional<Basket> result = basketRepository.findById(id);
+    result.ifPresent(basketRepository::delete);
   }
 }

@@ -123,4 +123,13 @@ public class UserAcceptanceTest extends AcceptanceTest {
         jwt);
     AcceptanceStep.assertThatStatusIsOk(response);
   }
+
+  @DisplayName("관심목록을 삭제한다.")
+  @Test
+  void deleteBasket() {
+    String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
+    ExtractableResponse<Response> response = UserAcceptanceStep.requestDeleteBasket(
+        jwt);
+    AcceptanceStep.assertThatStatusIsOk(response);
+  }
 }

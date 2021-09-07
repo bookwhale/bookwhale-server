@@ -146,5 +146,15 @@ public class UserAcceptanceStep {
         .extract();
   }
 
+  public static ExtractableResponse<Response> requestDeleteBasket(String jwt) {
+    return given().log().all()
+        .header(HttpHeaders.AUTHORIZATION, jwt)
+        .when()
+        .get("/api/user/delBasket?"
+        +"id=1")
+        .then().log().all()
+        .extract();
+  }
+
 
 }

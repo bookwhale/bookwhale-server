@@ -75,7 +75,7 @@ public class UserServiceTest {
   @BeforeEach
   void setUp() {
     userService = new UserService(userRepository, purchaseRepository, saleRepository,
-        passwordEncoder, orderRepository, postRepository,basketRepository);
+        passwordEncoder, orderRepository, postRepository, basketRepository);
 
     user = User.builder()
         .identity("highright96")
@@ -311,6 +311,17 @@ public class UserServiceTest {
             basket.getPost().getSeller().getIdentity())
 
     );
+  }
+
+  @Test
+  @DisplayName("관심목록을 삭제한다.")
+  public void delBasket() {
+
+    Basket basket = Basket.builder()
+        .id(1L)
+        .build();
+    when(basketRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(basket));
+    userService.delBasket(1L);
   }
 
 

@@ -182,6 +182,18 @@ public class UserDocumentation {
     );
   }
 
+  public static RestDocumentationResultHandler delBasket() {
+    FieldDescriptor[] response = new FieldDescriptor[]{
+        fieldWithPath("id").type(JsonFieldType.NUMBER).description("관심목록 ID")
+    };
+
+    return document("user/delBasket",
+        preprocessResponse(prettyPrint()),
+        requestHeaders(
+            headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
+        )
+    );
+  }
 
 
 }

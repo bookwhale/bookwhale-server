@@ -1,7 +1,6 @@
 package com.teamherb.bookstoreback.user.controller;
 
 import com.teamherb.bookstoreback.basket.dto.BasketResponse;
-import com.teamherb.bookstoreback.orders.dto.PurchaseOrder;
 import com.teamherb.bookstoreback.orders.dto.SaleOrder;
 import com.teamherb.bookstoreback.post.dto.SalePostResponse;
 import com.teamherb.bookstoreback.purchase.dto.PurchaseResponse;
@@ -23,6 +22,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -79,6 +79,12 @@ public class UserController {
   public ResponseEntity<List<BasketResponse>> findBaskets(@CurrentUser User user) {
     List<BasketResponse> res = userService.findBaskets(user);
     return ResponseEntity.ok(res);
+  }
+
+  @GetMapping("/delBasket")
+  public ResponseEntity<Void> delBasket(@RequestParam Long id) {
+    userService.delBasket(id);
+    return ResponseEntity.ok().build();
   }
 
 }

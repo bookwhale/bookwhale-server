@@ -13,6 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.teamherb.bookstoreback.account.dto.AccountRequest;
+import com.teamherb.bookstoreback.basket.domain.Basket;
 import com.teamherb.bookstoreback.basket.dto.BasketResponse;
 import com.teamherb.bookstoreback.common.controller.CommonApiTest;
 import com.teamherb.bookstoreback.common.security.WithMockCustomUser;
@@ -254,5 +255,20 @@ public class UserControllerTest extends CommonApiTest {
         .andDo(UserDocumentation.findBaskets());
   }
 
+  @WithMockCustomUser
+  @DisplayName("관심목록을 삭제한다.")
+  @Test
+  void delBasket() throws Exception {
+    Basket basket = Basket.builder()
+        .id(1L)
+        .build();
+
+    mockMvc.perform(get("/api/user/baskets")
+        .param("id","1")
+        .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+        .andExpect(status().isOk())
+        .andDo(print())
+        .andDo(UserDocumentation.delBasket());
+  }
 
 }
