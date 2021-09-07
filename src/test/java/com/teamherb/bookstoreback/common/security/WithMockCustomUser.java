@@ -19,5 +19,7 @@ public @interface WithMockCustomUser {
 
   String phoneNumber() default "010-1234-1234";
 
+  String profileImage() default "profileImage";
+
   Role roles() default Role.ROLE_USER;
 }

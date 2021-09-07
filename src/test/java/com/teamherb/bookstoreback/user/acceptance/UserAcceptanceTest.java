@@ -3,13 +3,17 @@ package com.teamherb.bookstoreback.user.acceptance;
 import com.teamherb.bookstoreback.common.acceptance.AcceptanceTest;
 import com.teamherb.bookstoreback.common.acceptance.step.AcceptanceStep;
 import com.teamherb.bookstoreback.user.acceptance.step.UserAcceptanceStep;
+import com.teamherb.bookstoreback.user.dto.ProfileResponse;
 import com.teamherb.bookstoreback.user.dto.SignUpRequest;
 import com.teamherb.bookstoreback.user.dto.UserResponse;
 import com.teamherb.bookstoreback.user.dto.UserUpdateRequest;
+import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import io.restassured.specification.MultiPartSpecification;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.util.MimeTypeUtils;
 
 @DisplayName("유저 통합 테스트")
 public class UserAcceptanceTest extends AcceptanceTest {
@@ -60,5 +64,47 @@ public class UserAcceptanceTest extends AcceptanceTest {
 
     AcceptanceStep.assertThatStatusIsOk(response);
     UserAcceptanceStep.assertThatUpdateMyInfo(userResponse, userUpdateRequest);
+  }
+
+  @DisplayName("프로필 사진을 업로드한다.")
+  @Test
+  void uploadProfileImage() {
+    MultiPartSpecification image = new MultiPartSpecBuilder(
+        "profileImage".getBytes())
+        .mimeType(MimeTypeUtils.IMAGE_JPEG.toString())
+        .controlName("profileImage")
+        .fileName("profileImage.jpg")
+        .build();
+
+    String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
+
+    ExtractableResponse<Response> response = UserAcceptanceStep.uploadProfileImage(jwt, image);
+    ProfileResponse profileResponse = response.jsonPath().getObject(".", ProfileResponse.class);
+    UserResponse userResponse = UserAcceptanceStep.requestToGetMyInfo(jwt).jsonPath()
+        .getObject(".", UserResponse.class);
+
+    AcceptanceStep.assertThatStatusIsOk(response);
+    UserAcceptanceStep.assertThatUploadProfileImage(profileResponse, userResponse);
+  }
+
+  @DisplayName("프로필 사진을 삭제한다.")
+  @Test
+  void deleteProfileImage() {
+    MultiPartSpecification image = new MultiPartSpecBuilder(
+        "profileImage".getBytes())
+        .mimeType(MimeTypeUtils.IMAGE_JPEG.toString())
+        .controlName("profileImage")
+        .fileName("profileImage.jpg")
+        .build();
+
+    String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
+
+    UserAcceptanceStep.uploadProfileImage(jwt, image);
+    ExtractableResponse<Response> response = UserAcceptanceStep.deleteProfileImage(jwt);
+    UserResponse userResponse = UserAcceptanceStep.requestToGetMyInfo(jwt).jsonPath()
+        .getObject(".", UserResponse.class);
+
+    AcceptanceStep.assertThatStatusIsOk(response);
+    UserAcceptanceStep.assertThatDeleteProfileImage(userResponse);
   }
 }

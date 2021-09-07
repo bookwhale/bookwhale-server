@@ -36,7 +36,10 @@ public class User extends BaseEntity {
   @Column(nullable = false)
   private String email;
 
+  @Column(nullable = false)
   private String phoneNumber;
+
+  private String profileImage;
 
   @Enumerated(EnumType.STRING)
   private Role role;
@@ -47,13 +50,14 @@ public class User extends BaseEntity {
 
   @Builder
   public User(Long id, String identity, String password, String name, String email,
-      String phoneNumber, Role role) {
+      String phoneNumber, String profileImage, Role role) {
     this.id = id;
     this.identity = identity;
     this.password = password;
     this.name = name;
     this.email = email;
     this.phoneNumber = phoneNumber;
+    this.profileImage = profileImage;
     this.role = role;
   }
 
@@ -61,5 +65,13 @@ public class User extends BaseEntity {
     this.name = request.getName();
     this.phoneNumber = request.getPhoneNumber();
     this.email = request.getEmail();
+  }
+
+  public void uploadProfile(String profileImage) {
+    this.profileImage = profileImage;
+  }
+
+  public void deleteProfile() {
+    this.profileImage = null;
   }
 }

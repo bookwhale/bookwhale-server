@@ -9,6 +9,8 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParts;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
@@ -48,7 +50,8 @@ public class UserDocumentation {
             fieldWithPath("identity").type(JsonFieldType.STRING).description("아이디"),
             fieldWithPath("name").type(JsonFieldType.STRING).description("이름"),
             fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
-            fieldWithPath("phoneNumber").type(JsonFieldType.STRING).description("전화번호")
+            fieldWithPath("phoneNumber").type(JsonFieldType.STRING).description("전화번호"),
+            fieldWithPath("profileImage").type(JsonFieldType.STRING).description("프로필 이미지")
         ));
   }
 
@@ -63,5 +66,31 @@ public class UserDocumentation {
             fieldWithPath("phoneNumber").type(JsonFieldType.STRING).description("전화번호").optional(),
             fieldWithPath("email").type(JsonFieldType.STRING).description("이메일").optional()
         ));
+  }
+
+  public static RestDocumentationResultHandler userUploadProfileImage() {
+    return document("user/uploadProfileImage",
+        preprocessRequest(prettyPrint()),
+        preprocessResponse(prettyPrint()),
+        requestHeaders(
+            headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
+        ),
+        requestParts(
+            partWithName("profileImage").description("업로드할 프로필 사진")
+        ),
+        responseFields(
+            fieldWithPath("profileImage").type(JsonFieldType.STRING).description("업로드된 유저 이미지")
+        )
+    );
+  }
+
+  public static RestDocumentationResultHandler userDeleteProfileImage() {
+    return document("user/deleteProfileImage",
+        preprocessRequest(prettyPrint()),
+        preprocessResponse(prettyPrint()),
+        requestHeaders(
+            headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
+        )
+    );
   }
 }
