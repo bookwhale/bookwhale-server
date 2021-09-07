@@ -2,6 +2,7 @@ package com.teamherb.bookstoreback.user.controller;
 
 import com.teamherb.bookstoreback.security.CurrentUser;
 import com.teamherb.bookstoreback.user.domain.User;
+import com.teamherb.bookstoreback.user.dto.PasswordUpdateRequest;
 import com.teamherb.bookstoreback.user.dto.ProfileResponse;
 import com.teamherb.bookstoreback.user.dto.SignUpRequest;
 import com.teamherb.bookstoreback.user.dto.UserResponse;
@@ -48,13 +49,20 @@ public class UserController {
     return ResponseEntity.ok().build();
   }
 
-  @PatchMapping("/me/profile")
+  @PatchMapping("/password")
+  public ResponseEntity<Void> updatePassword(@CurrentUser User user,
+      @Valid @RequestBody PasswordUpdateRequest request) {
+    userService.updatePassword(user, request);
+    return ResponseEntity.ok().build();
+  }
+
+  @PatchMapping("/profile")
   public ResponseEntity<ProfileResponse> uploadProfileImage(@CurrentUser User user,
       @RequestParam MultipartFile profileImage) {
     return ResponseEntity.ok(userService.uploadProfileImage(user, profileImage));
   }
 
-  @DeleteMapping("/me/profile")
+  @DeleteMapping("/profile")
   public ResponseEntity<Void> deleteProfileImage(@CurrentUser User user) {
     userService.deleteProfileImage(user);
     return ResponseEntity.ok().build();
