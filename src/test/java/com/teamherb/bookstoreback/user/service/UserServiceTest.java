@@ -17,6 +17,9 @@ import com.teamherb.bookstoreback.orders.dto.PurchaseOrder;
 import com.teamherb.bookstoreback.orders.dto.SaleOrder;
 import com.teamherb.bookstoreback.post.domain.Book;
 import com.teamherb.bookstoreback.post.domain.Post;
+import com.teamherb.bookstoreback.post.domain.PostRepository;
+import com.teamherb.bookstoreback.post.domain.PostStatus;
+import com.teamherb.bookstoreback.post.dto.SalePostResponse;
 import com.teamherb.bookstoreback.purchase.domain.Purchase;
 import com.teamherb.bookstoreback.purchase.domain.PurchaseRepository;
 import com.teamherb.bookstoreback.purchase.dto.PurchaseResponse;
@@ -56,6 +59,9 @@ public class UserServiceTest {
   @Mock
   private OrderRepository orderRepository;
 
+  @Mock
+  private PostRepository postRepository;
+
   UserService userService;
 
   User user;
@@ -63,7 +69,7 @@ public class UserServiceTest {
   @BeforeEach
   void setUp() {
     userService = new UserService(userRepository, purchaseRepository, saleRepository,
-        passwordEncoder, orderRepository);
+        passwordEncoder, orderRepository, postRepository);
 
     user = User.builder()
         .identity("highright96")
@@ -205,10 +211,9 @@ public class UserServiceTest {
     );
   }
 
-
   @Test
-  @DisplayName("구매자 주문 정보를 조회한다.")
-  public void findPurchaseOrders() {
+  @DisplayName("user2가 등록한 게시글을 조회한다.")
+  public void findSalePosts() {
     User user2 = User.builder()
         .identity("luckyday")
         .name("김첨지")
@@ -223,33 +228,29 @@ public class UserServiceTest {
         .build();
 
     Post post = Post.builder()
+        .id(1L)
         .book(book)
+        .seller(user2)
         .price("10000")
         .title("설렁탕 비법서 팔아요")
+        .postStatus(PostStatus.SALE)
         .build();
 
-    Orders orders = Orders.builder()
-        .id(1L)
-        .post(post)
-        .orderStatus(OrderStatus.ACCEPT)
-        .purchaser(user)
-        .seller(user2)
-        .orderStatus(OrderStatus.ACCEPT)
-        .build();
+    when(postRepository.findAllBySellerOrderByCreatedDate(any())).thenReturn(
+        of(post));
 
-    when(orderRepository.findAllByPurchaserOrderByCreatedDate(any())).thenReturn(
-        of(orders));
-
-    List<PurchaseOrder> purchaseOrders = userService.findPurchaseOrders(user);
+    List<SalePostResponse> saleOrders = userService.findSalePosts(user);
     assertAll(
-        () -> assertThat(purchaseOrders.get(0).getBookTitle()).isEqualTo(
-            orders.getPost().getBook().getBookTitle()),
-        () -> assertThat(purchaseOrders.get(0).getPostTitle()).isEqualTo(
-            orders.getPost().getTitle()),
-        () -> assertThat(purchaseOrders.get(0).getOrderStatus()).isEqualTo(
-            orders.getOrderStatus().name()),
-        () -> assertThat(purchaseOrders.get(0).getSellerIdentity()).isEqualTo(
-            orders.getSeller().getIdentity())
+        () -> assertThat(saleOrders.get(0).getId()).isEqualTo(
+            post.getId()),
+        () -> assertThat(saleOrders.get(0).getBookTitle()).isEqualTo(
+            post.getBook().getBookTitle()),
+        () -> assertThat(saleOrders.get(0).getPostTitle()).isEqualTo(
+            post.getTitle()),
+        () -> assertThat(saleOrders.get(0).getBookThumbnail()).isEqualTo(
+            post.getBook().getBookThumbnail()),
+        () -> assertThat(saleOrders.get(0).getPostStatus()).isEqualTo(
+            post.getPostStatus().name())
 
     );
   }

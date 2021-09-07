@@ -4,6 +4,9 @@ import com.teamherb.bookstoreback.orders.domain.OrderRepository;
 import com.teamherb.bookstoreback.orders.domain.Orders;
 import com.teamherb.bookstoreback.orders.dto.PurchaseOrder;
 import com.teamherb.bookstoreback.orders.dto.SaleOrder;
+import com.teamherb.bookstoreback.post.domain.Post;
+import com.teamherb.bookstoreback.post.domain.PostRepository;
+import com.teamherb.bookstoreback.post.dto.SalePostResponse;
 import com.teamherb.bookstoreback.purchase.domain.Purchase;
 import com.teamherb.bookstoreback.purchase.domain.PurchaseRepository;
 import com.teamherb.bookstoreback.purchase.dto.PurchaseResponse;
@@ -37,6 +40,8 @@ public class UserService {
   private final PasswordEncoder passwordEncoder;
 
   private final OrderRepository orderRepository;
+
+  private final PostRepository postRepository;
 
   public void createUser(SignUpRequest signUpRequest) {
     if (userRepository.existsByIdentity(signUpRequest.getIdentity())) {
@@ -78,11 +83,12 @@ public class UserService {
     return SaleOrder.listOf(saleOrders);
   }
 
-
   @Transactional(readOnly = true)
-  public List<PurchaseOrder> findPurchaseOrders(User user) {
-    List<Orders> purchaseOrders = orderRepository
-        .findAllByPurchaserOrderByCreatedDate(user);
-    return PurchaseOrder.listOf(purchaseOrders);
+  public List<SalePostResponse> findSalePosts(User user) {
+    List<Post> result = postRepository
+        .findAllBySellerOrderByCreatedDate(user);
+    return SalePostResponse.listOf(result);
   }
+
+
 }

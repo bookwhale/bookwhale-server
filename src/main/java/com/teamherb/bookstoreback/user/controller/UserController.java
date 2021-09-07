@@ -2,6 +2,7 @@ package com.teamherb.bookstoreback.user.controller;
 
 import com.teamherb.bookstoreback.orders.dto.PurchaseOrder;
 import com.teamherb.bookstoreback.orders.dto.SaleOrder;
+import com.teamherb.bookstoreback.post.dto.SalePostResponse;
 import com.teamherb.bookstoreback.purchase.dto.PurchaseResponse;
 import com.teamherb.bookstoreback.sale.dto.SaleResponse;
 import com.teamherb.bookstoreback.security.CurrentUser;
@@ -67,9 +68,10 @@ public class UserController {
     return ResponseEntity.ok(res);
   }
 
-  @GetMapping("/purchaseOrders")
-  public ResponseEntity<List<PurchaseOrder>> findPurchaseOrders(@CurrentUser User user) {
-    List<PurchaseOrder> res = userService.findPurchaseOrders(user);
+  @GetMapping("/salePosts")
+  public ResponseEntity<List<SalePostResponse>> findSalePosts(@CurrentUser User user) {
+    List<SalePostResponse> res = userService.findSalePosts(user);
     return ResponseEntity.ok(res);
   }
+
 }

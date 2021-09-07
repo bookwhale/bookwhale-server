@@ -18,6 +18,8 @@ import com.teamherb.bookstoreback.common.security.WithMockCustomUser;
 import com.teamherb.bookstoreback.orders.domain.OrderStatus;
 import com.teamherb.bookstoreback.orders.dto.PurchaseOrder;
 import com.teamherb.bookstoreback.orders.dto.SaleOrder;
+import com.teamherb.bookstoreback.post.domain.PostStatus;
+import com.teamherb.bookstoreback.post.dto.SalePostResponse;
 import com.teamherb.bookstoreback.purchase.dto.PurchaseResponse;
 import com.teamherb.bookstoreback.sale.dto.SaleResponse;
 import com.teamherb.bookstoreback.user.docs.UserDocumentation;
@@ -207,28 +209,26 @@ public class UserControllerTest extends CommonApiTest {
   }
 
   @WithMockCustomUser
-  @DisplayName("구매자 주문정보를 조회한다.")
+  @DisplayName("중고책 게시글을 조회한다.")
   @Test
-  void findPurchaseOrders() throws Exception {
-    PurchaseOrder purchaseOrder = PurchaseOrder.builder()
+  void findSalePosts() throws Exception {
+    SalePostResponse  salePostResponse= SalePostResponse.builder()
         .id(1L)
         .bookPrice("10000")
-        .orderStatus(OrderStatus.ACCEPT.name())
+        .postStatus(PostStatus.SALE.name())
         .bookThumbnail("설렁탕사진")
         .bookTitle("설렁탕 요리비법")
         .postTitle("설렁탕 요리책 팔아요")
-        .sellerIdentity("blackcow")
         .build();
 
-    when(userService.findPurchaseOrders(any())).thenReturn(of(purchaseOrder));
+    when(userService.findSalePosts(any())).thenReturn(of(salePostResponse));
 
-    mockMvc.perform(get("/api/user/purchaseOrders")
+    mockMvc.perform(get("/api/user/salePosts")
         .header(HttpHeaders.AUTHORIZATION, "accessToken"))
         .andExpect(status().isOk())
         .andDo(print())
-        .andDo(UserDocumentation.findPurchaseOrders());
+        .andDo(UserDocumentation.findSalePosts());
   }
-
 
 
 }

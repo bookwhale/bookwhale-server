@@ -128,5 +128,14 @@ public class UserAcceptanceStep {
         .extract();
   }
 
+  public static ExtractableResponse<Response> requestToFindSalePosts(String jwt) {
+    return given().log().all()
+        .header(HttpHeaders.AUTHORIZATION, jwt)
+        .when()
+        .get("/api/user/salePosts")
+        .then().log().all()
+        .extract();
+  }
+
 
 }
