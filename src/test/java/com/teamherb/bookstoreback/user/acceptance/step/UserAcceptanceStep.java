@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.teamherb.bookstoreback.user.domain.User;
 import com.teamherb.bookstoreback.user.dto.LoginRequest;
 import com.teamherb.bookstoreback.user.dto.LoginResponse;
+import com.teamherb.bookstoreback.user.dto.PasswordUpdateRequest;
 import com.teamherb.bookstoreback.user.dto.ProfileResponse;
 import com.teamherb.bookstoreback.user.dto.SignUpRequest;
 import com.teamherb.bookstoreback.user.dto.UserResponse;
@@ -102,6 +103,18 @@ public class UserAcceptanceStep {
         .extract();
   }
 
+  public static ExtractableResponse<Response> requestToUpdatePassword(String jwt,
+      PasswordUpdateRequest request) {
+    return given().log().all()
+        .header(HttpHeaders.AUTHORIZATION, jwt)
+        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        .body(request)
+        .when()
+        .patch("/api/user/password")
+        .then().log().all()
+        .extract();
+  }
+
   public static ExtractableResponse<Response> uploadProfileImage(String jwt,
       MultiPartSpecification image) {
     return given().log().all()
@@ -109,7 +122,7 @@ public class UserAcceptanceStep {
         .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
         .multiPart(image)
         .when()
-        .patch("/api/user/me/profile")
+        .patch("/api/user/profile")
         .then().log().all()
         .extract();
   }
@@ -118,7 +131,7 @@ public class UserAcceptanceStep {
     return given().log().all()
         .header(HttpHeaders.AUTHORIZATION, jwt)
         .when()
-        .delete("/api/user/me/profile")
+        .delete("/api/user/profile")
         .then().log().all()
         .extract();
   }

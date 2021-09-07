@@ -16,6 +16,7 @@ import com.teamherb.bookstoreback.common.controller.CommonApiTest;
 import com.teamherb.bookstoreback.common.security.WithMockCustomUser;
 import com.teamherb.bookstoreback.user.docs.UserDocumentation;
 import com.teamherb.bookstoreback.user.dto.LoginRequest;
+import com.teamherb.bookstoreback.user.dto.PasswordUpdateRequest;
 import com.teamherb.bookstoreback.user.dto.ProfileResponse;
 import com.teamherb.bookstoreback.user.dto.SignUpRequest;
 import com.teamherb.bookstoreback.user.dto.UserUpdateRequest;
@@ -109,6 +110,23 @@ public class UserControllerTest extends CommonApiTest {
   }
 
   @WithMockCustomUser
+  @DisplayName("비밀번호를 수정한다.")
+  @Test
+  void updatePassword() throws Exception {
+    PasswordUpdateRequest request = new PasswordUpdateRequest("old password", "new password");
+
+    doNothing().when(userService).updatePassword(any(), any());
+
+    mockMvc.perform(patch("/api/user/password")
+            .header(HttpHeaders.AUTHORIZATION, "accessToken")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isOk())
+        .andDo(print())
+        .andDo(UserDocumentation.userUpdatePassword());
+  }
+
+  @WithMockCustomUser
   @DisplayName("프로필 사진을 업로드한다.")
   @Test
   void uploadProfileImage() throws Exception {
@@ -119,7 +137,7 @@ public class UserControllerTest extends CommonApiTest {
 
     when(userService.uploadProfileImage(any(), any())).thenReturn(new ProfileResponse(path));
 
-    mockMvc.perform(MockMultipartPatchBuilder("/api/user/me/profile")
+    mockMvc.perform(MockMultipartPatchBuilder("/api/user/profile")
             .file(image)
             .header(HttpHeaders.AUTHORIZATION, "accessToken")
             .contentType(MediaType.MULTIPART_FORM_DATA))
@@ -136,7 +154,7 @@ public class UserControllerTest extends CommonApiTest {
 
     when(userService.uploadProfileImage(any(), any())).thenReturn(new ProfileResponse());
 
-    mockMvc.perform(MockMultipartPatchBuilder("/api/user/me/profile")
+    mockMvc.perform(MockMultipartPatchBuilder("/api/user/profile")
             .header(HttpHeaders.AUTHORIZATION, "accessToken")
             .contentType(MediaType.MULTIPART_FORM_DATA))
         .andExpect(status().isBadRequest())
@@ -149,7 +167,7 @@ public class UserControllerTest extends CommonApiTest {
   void deleteProfileImage() throws Exception {
     doNothing().when(userService).deleteProfileImage(any());
 
-    mockMvc.perform(delete("/api/user/me/profile")
+    mockMvc.perform(delete("/api/user/profile")
             .header(HttpHeaders.AUTHORIZATION, "accessToken"))
         .andExpect(status().isOk())
         .andDo(print())
