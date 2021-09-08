@@ -8,12 +8,15 @@ import com.teamherb.bookstoreback.image.domain.Image;
 import com.teamherb.bookstoreback.image.domain.ImageRepository;
 import com.teamherb.bookstoreback.post.domain.Post;
 import com.teamherb.bookstoreback.post.domain.PostRepository;
+import com.teamherb.bookstoreback.post.domain.PostStatus;
 import com.teamherb.bookstoreback.post.dto.FullPostRequest;
 import com.teamherb.bookstoreback.post.dto.FullPostResponse;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.post.dto.PostResponse;
+import com.teamherb.bookstoreback.post.dto.StatusChangeRequest;
 import com.teamherb.bookstoreback.user.domain.User;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -62,5 +65,14 @@ public class PostService {
         PageRequest pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
         return postRepository.findAllByFullPostReqOrderByCreatedDateDesc(req, pageable)
             .getContent();
+    }
+
+    @Transactional
+    public void changeStatus(StatusChangeRequest req) {
+        Optional<Post> res = postRepository.findById(req.getId());
+        res.ifPresent(post -> {
+            boolean result = post.changeStatus(req.getStatus());
+            postRepository.save(res.get());
+        });
     }
 }

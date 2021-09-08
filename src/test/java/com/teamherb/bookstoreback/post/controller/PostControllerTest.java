@@ -24,6 +24,7 @@ import com.teamherb.bookstoreback.post.dto.FullPostRequest;
 import com.teamherb.bookstoreback.post.dto.FullPostResponse;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.post.dto.PostResponse;
+import com.teamherb.bookstoreback.post.dto.StatusChangeRequest;
 import com.teamherb.bookstoreback.post.service.PostService;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -213,4 +214,24 @@ public class PostControllerTest extends CommonApiTest {
         .andDo(print())
         .andDo(PostDocumentation.findPosts());
   }
+
+  @WithMockCustomUser
+  @DisplayName("게시글 상태를 변경한다.")
+  @Test
+  void changePostStatus() throws Exception {
+
+    StatusChangeRequest req = StatusChangeRequest.builder()
+        .id(1L)
+        .status("SALE")
+        .build();
+
+    mockMvc.perform(get(format("/api/post/changeStatus?id=%d&status=%s", req.getId(),
+        req.getStatus()))
+        .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+        .andExpect(status().isOk())
+        .andDo(print())
+        .andDo(PostDocumentation.changeStatus());
+  }
+
+
 }
