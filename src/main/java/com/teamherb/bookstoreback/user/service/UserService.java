@@ -6,10 +6,12 @@ import com.teamherb.bookstoreback.common.utils.upload.FileStoreUtil;
 import com.teamherb.bookstoreback.user.domain.Role;
 import com.teamherb.bookstoreback.user.domain.User;
 import com.teamherb.bookstoreback.user.domain.UserRepository;
+import com.teamherb.bookstoreback.user.dto.PasswordUpdateRequest;
 import com.teamherb.bookstoreback.user.dto.ProfileResponse;
 import com.teamherb.bookstoreback.user.dto.SignUpRequest;
 import com.teamherb.bookstoreback.user.dto.UserUpdateRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class UserService {
 
   private final UserRepository userRepository;
@@ -64,5 +67,17 @@ public class UserService {
   private void deleteProfile(User user) {
     //TODO : S3 연동하면 기존의 프로필 사진을 삭제해주는 로직을 추가해야합니다.
     user.deleteProfile();
+  }
+
+  public void updatePassword(User user, PasswordUpdateRequest req) {
+    validateIsCorrectPassword(req.getOldPassword(), user.getPassword());
+    user.updatePassword(passwordEncoder.encode(req.getNewPassword()));
+    userRepository.save(user);
+  }
+
+  private void validateIsCorrectPassword(String password, String encodedPassword) {
+    if (!passwordEncoder.matches(password, encodedPassword)) {
+      throw new CustomException(ErrorCode.INVALID_USER_PASSWORD);
+    }
   }
 }

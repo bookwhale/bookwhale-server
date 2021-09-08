@@ -62,9 +62,21 @@ public class UserDocumentation {
             headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
         ),
         requestFields(
-            fieldWithPath("name").type(JsonFieldType.STRING).description("이름").optional(),
-            fieldWithPath("phoneNumber").type(JsonFieldType.STRING).description("전화번호").optional(),
-            fieldWithPath("email").type(JsonFieldType.STRING).description("이메일").optional()
+            fieldWithPath("name").type(JsonFieldType.STRING).description("이름"),
+            fieldWithPath("phoneNumber").type(JsonFieldType.STRING).description("전화번호"),
+            fieldWithPath("email").type(JsonFieldType.STRING).description("이메일")
+        ));
+  }
+
+  public static RestDocumentationResultHandler userUpdatePassword() {
+    return document("user/updatePassword",
+        preprocessRequest(prettyPrint()),
+        requestHeaders(
+            headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
+        ),
+        requestFields(
+            fieldWithPath("oldPassword").type(JsonFieldType.STRING).description("기존 비밀번호"),
+            fieldWithPath("newPassword").type(JsonFieldType.STRING).description("변경할 비밀번호")
         ));
   }
 

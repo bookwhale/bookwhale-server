@@ -11,6 +11,7 @@ import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
 import com.teamherb.bookstoreback.common.utils.upload.FileStoreUtil;
 import com.teamherb.bookstoreback.user.domain.User;
 import com.teamherb.bookstoreback.user.domain.UserRepository;
+import com.teamherb.bookstoreback.user.dto.PasswordUpdateRequest;
 import com.teamherb.bookstoreback.user.dto.ProfileResponse;
 import com.teamherb.bookstoreback.user.dto.SignUpRequest;
 import com.teamherb.bookstoreback.user.dto.UserUpdateRequest;
@@ -48,6 +49,7 @@ public class UserServiceTest {
 
     user = User.builder()
         .identity("highright96")
+        .password("1234")
         .name("남상우")
         .email("highright96@email.com")
         .phoneNumber("010-1234-1234")
@@ -109,6 +111,30 @@ public class UserServiceTest {
         () -> assertThat(user.getEmail()).isEqualTo(userUpdateRequest.getEmail()),
         () -> assertThat(user.getPhoneNumber()).isEqualTo(userUpdateRequest.getPhoneNumber())
     );
+  }
+
+  @DisplayName("비밀번호를 수정한다.")
+  @Test
+  void updatePassword_success() {
+    PasswordUpdateRequest request = new PasswordUpdateRequest("1234", "12345");
+
+    when(passwordEncoder.matches(any(), any())).thenReturn(true);
+    when(passwordEncoder.encode(any())).thenReturn("encodedPassword");
+    userService.updatePassword(user, request);
+
+    assertThat(user.getPassword()).isEqualTo(passwordEncoder.encode(request.getNewPassword()));
+  }
+
+  @DisplayName("비밀번호를 수정을 할 때 기존 비밀번호가 틀리면 예외가 발생한다.")
+  @Test
+  void updatePassword_failure() {
+    PasswordUpdateRequest req = new PasswordUpdateRequest("invalidPassword", "12345");
+
+    when(passwordEncoder.matches(any(), any())).thenReturn(false);
+
+    assertThatThrownBy(() -> userService.updatePassword(user, req))
+        .isInstanceOf(CustomException.class)
+        .hasMessage(ErrorCode.INVALID_USER_PASSWORD.getMessage());
   }
 
   @DisplayName("프로필 사진을 업로드한다.")

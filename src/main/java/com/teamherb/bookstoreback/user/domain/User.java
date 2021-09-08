@@ -74,4 +74,8 @@ public class User extends BaseEntity {
   public void deleteProfile() {
     this.profileImage = null;
   }
+
+  public void updatePassword(String encodedNewPassword) {
+    this.password = encodedNewPassword;
+  }
 }

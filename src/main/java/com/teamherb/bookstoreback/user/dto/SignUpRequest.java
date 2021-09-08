@@ -1,5 +1,6 @@
 package com.teamherb.bookstoreback.user.dto;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;
@@ -19,6 +20,7 @@ public class SignUpRequest {
   private String name;
 
   @NotBlank
+  @Email
   private String email;
 
   @NotBlank
