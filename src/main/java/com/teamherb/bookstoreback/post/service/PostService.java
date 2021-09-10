@@ -12,6 +12,7 @@ import com.teamherb.bookstoreback.post.dto.FullPostRequest;
 import com.teamherb.bookstoreback.post.dto.FullPostResponse;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.post.dto.PostResponse;
+import com.teamherb.bookstoreback.post.dto.PostUpdateRequest;
 import com.teamherb.bookstoreback.user.domain.User;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -38,18 +39,6 @@ public class PostService {
     return savedPost.getId();
   }
 
-  public void saveImages(List<MultipartFile> images, Post savedPost) {
-    List<String> uploadFilePaths = getUploadFilePaths(images);
-    if (uploadFilePaths != null) {
-      List<Image> postImages = Image.createPostImage(savedPost, uploadFilePaths);
-      imageRepository.saveAll(postImages);
-    }
-  }
-
-  public List<String> getUploadFilePaths(List<MultipartFile> images) {
-    return images.size() > 0 ? fileStoreUtil.storeFiles(images) : null;
-  }
-
   @Transactional(readOnly = true)
   public PostResponse findPost(User user, Long postId) {
     Post findPost = postRepository.findById(postId)
@@ -61,8 +50,38 @@ public class PostService {
   }
 
   @Transactional(readOnly = true)
-  public List<FullPostResponse> findPosts(FullPostRequest req, Pagination pagination) {
+  public List<FullPostResponse> findPosts(FullPostRequest request, Pagination pagination) {
     PageRequest pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
-    return postRepository.findAllByFullPostReqOrderByCreatedDateDesc(req, pageable).getContent();
+    return postRepository.findAllByFullPostReqOrderByCreatedDateDesc(request, pageable)
+        .getContent();
+  }
+
+  public void updatePost(User user, PostUpdateRequest request, List<MultipartFile> updateImages) {
+    Post findPost = postRepository.findById(request.getPostId())
+        .orElseThrow(() -> new CustomException(ErrorCode.INVALID_POST_ID));
+
+    if (!findPost.isMyPost(user)) {
+      throw new CustomException(ErrorCode.USER_ACCESS_DENIED);
+    }
+
+    findPost.update(request);
+    updateImages(findPost, updateImages);
+  }
+
+  public void updateImages(Post post, List<MultipartFile> updateImages) {
+    imageRepository.deleteAllByPost(post);
+    saveImages(updateImages, post);
+  }
+
+  public void saveImages(List<MultipartFile> images, Post post) {
+    List<String> uploadFilePaths = getUploadFilePaths(images);
+    if (uploadFilePaths != null) {
+      List<Image> postImages = Image.createPostImage(post, uploadFilePaths);
+      imageRepository.saveAll(postImages);
+    }
+  }
+
+  public List<String> getUploadFilePaths(List<MultipartFile> images) {
+    return images == null || images.isEmpty() ? null : fileStoreUtil.storeFiles(images);
   }
 }

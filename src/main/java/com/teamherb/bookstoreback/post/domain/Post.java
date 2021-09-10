@@ -2,6 +2,7 @@ package com.teamherb.bookstoreback.post.domain;
 
 import com.teamherb.bookstoreback.common.domain.BaseEntity;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
+import com.teamherb.bookstoreback.post.dto.PostUpdateRequest;
 import com.teamherb.bookstoreback.user.domain.User;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -73,6 +74,13 @@ public class Post extends BaseEntity {
         .description(req.getDescription())
         .book(Book.create(req.getBookRequest()))
         .build();
+  }
+
+  public void update(PostUpdateRequest req) {
+    this.title = req.getTitle();
+    this.price = req.getPrice();
+    this.description = req.getDescription();
+    this.bookStatus = BookStatus.valueOf(req.getBookStatus());
   }
 
   public boolean isMyPost(User user) {
