@@ -92,4 +92,19 @@ public class Post extends BaseEntity {
   public boolean isMyPost(User user) {
     return this.seller.getId().equals(user.getId());
   }
+
+  public boolean changeStatus(String status){
+    if (status.equals(PostStatus.SALE.name())){
+      this.postStatus = PostStatus.SALE;
+    }
+    else if (status.equals(PostStatus.PROCEEDING.name())){
+      this.postStatus = PostStatus.PROCEEDING;
+    }
+    else if (status.equals(PostStatus.COMPLETE.name())){
+      this.postStatus = PostStatus.COMPLETE;
+    }
+    else
+      return false;
+    return true;
+  }
 }

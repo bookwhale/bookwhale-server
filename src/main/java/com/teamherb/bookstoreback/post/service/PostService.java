@@ -12,8 +12,10 @@ import com.teamherb.bookstoreback.post.dto.FullPostRequest;
 import com.teamherb.bookstoreback.post.dto.FullPostResponse;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.post.dto.PostResponse;
+import com.teamherb.bookstoreback.post.dto.StatusChangeRequest;
 import com.teamherb.bookstoreback.user.domain.User;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -25,42 +27,51 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional
 public class PostService {
 
-    private final PostRepository postRepository;
+  private final PostRepository postRepository;
 
-    private final ImageRepository imageRepository;
+  private final ImageRepository imageRepository;
 
-    private final FileStoreUtil fileStoreUtil;
+  private final FileStoreUtil fileStoreUtil;
 
-    public Long createPost(User user, PostRequest postRequest, List<MultipartFile> images) {
-        Post post = Post.create(user, postRequest);
-        Post savedPost = postRepository.save(post);
+  public Long createPost(User user, PostRequest postRequest, List<MultipartFile> images) {
+    Post post = Post.create(user, postRequest);
+    Post savedPost = postRepository.save(post);
 
-        List<String> uploadFilePaths = getUploadFilePaths(images);
-        if (uploadFilePaths != null) {
-            List<Image> postImages = Image.createPostImage(savedPost, uploadFilePaths);
-            imageRepository.saveAll(postImages);
-        }
-        return savedPost.getId();
+    List<String> uploadFilePaths = getUploadFilePaths(images);
+    if (uploadFilePaths != null) {
+      List<Image> postImages = Image.createPostImage(savedPost, uploadFilePaths);
+      imageRepository.saveAll(postImages);
     }
+    return savedPost.getId();
+  }
 
-    private List<String> getUploadFilePaths(List<MultipartFile> files) {
-        return files.size() > 0 ? fileStoreUtil.storeFiles(files) : null;
-    }
+  private List<String> getUploadFilePaths(List<MultipartFile> files) {
+    return files.size() > 0 ? fileStoreUtil.storeFiles(files) : null;
+  }
 
-    @Transactional(readOnly = true)
-    public PostResponse findPost(User user, Long postId) {
-        Post findPost = postRepository.findById(postId)
-            .orElseThrow(() -> new CustomException(ErrorCode.INVALID_POST_ID));
+  @Transactional(readOnly = true)
+  public PostResponse findPost(User user, Long postId) {
+    Post findPost = postRepository.findById(postId)
+        .orElseThrow(() -> new CustomException(ErrorCode.INVALID_POST_ID));
 
-        List<Image> findImages = imageRepository.findAllByPost(findPost);
+    List<Image> findImages = imageRepository.findAllByPost(findPost);
 
-        return PostResponse.of(findPost, findImages, findPost.isMyPost(user));
-    }
+    return PostResponse.of(findPost, findImages, findPost.isMyPost(user));
+  }
 
-    @Transactional(readOnly = true)
-    public List<FullPostResponse> findPosts(FullPostRequest req, Pagination pagination) {
-        PageRequest pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
-        return postRepository.findAllByFullPostReqOrderByCreatedDateDesc(req, pageable)
-            .getContent();
-    }
+  @Transactional(readOnly = true)
+  public List<FullPostResponse> findPosts(FullPostRequest req, Pagination pagination) {
+    PageRequest pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
+    return postRepository.findAllByFullPostReqOrderByCreatedDateDesc(req, pageable)
+        .getContent();
+  }
+
+  @Transactional
+  public void changeStatus(StatusChangeRequest req) {
+    Optional<Post> res = postRepository.findById(req.getId());
+    res.ifPresent(post -> {
+      boolean result = post.changeStatus(req.getStatus());
+      postRepository.save(res.get());
+    });
+  }
 }

@@ -7,6 +7,7 @@ import com.teamherb.bookstoreback.post.dto.FullPostResponse;
 import com.teamherb.bookstoreback.post.dto.NaverBookRequest;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.post.dto.PostResponse;
+import com.teamherb.bookstoreback.post.dto.StatusChangeRequest;
 import com.teamherb.bookstoreback.post.service.NaverBookAPIService;
 import com.teamherb.bookstoreback.post.service.PostService;
 import com.teamherb.bookstoreback.security.CurrentUser;
@@ -64,4 +65,12 @@ public class PostController {
     List<FullPostResponse> responses = postService.findPosts(fullPostRequest, pagination);
     return ResponseEntity.ok(responses);
   }
+
+  @GetMapping("/changeStatus")
+  public ResponseEntity<Void> changePostStatus(StatusChangeRequest statusChangeRequest) {
+    postService.changeStatus(statusChangeRequest);
+    return ResponseEntity.ok().build();
+  }
+
+
 }

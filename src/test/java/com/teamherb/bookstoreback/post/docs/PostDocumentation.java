@@ -148,4 +148,21 @@ public class PostDocumentation {
             .andWithPrefix("[].", response)
     );
   }
+
+  public static RestDocumentationResultHandler changeStatus() {
+
+    return document("post/changeStatus",
+        preprocessRequest(prettyPrint()),
+        preprocessResponse(prettyPrint()),
+        requestHeaders(
+            headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
+        ),
+        requestParameters(
+            parameterWithName("id").description("변경할 게시글 ID"),
+            parameterWithName("status").description("변경할 게시글 상태 [SALE, PROCEEDING, COMPLETE]")
+        )
+    );
+  }
+
+
 }

@@ -24,6 +24,7 @@ import com.teamherb.bookstoreback.post.dto.FullPostRequest;
 import com.teamherb.bookstoreback.post.dto.FullPostResponse;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.post.dto.PostResponse;
+import com.teamherb.bookstoreback.post.dto.StatusChangeRequest;
 import com.teamherb.bookstoreback.post.service.PostService;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -79,7 +80,7 @@ public class PostControllerTest extends CommonApiTest {
     when(naverBookAPIService.getNaverBooks(any())).thenReturn(of(bookResponse));
 
     mockMvc.perform(get(format("/api/post/naverBookAPI?title=%s", naverBookRequest.getTitle()))
-            .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+        .header(HttpHeaders.AUTHORIZATION, "accessToken"))
         .andExpect(status().isOk())
         .andDo(print())
         .andDo(PostDocumentation.findNaverBooks());
@@ -130,11 +131,11 @@ public class PostControllerTest extends CommonApiTest {
     when(postService.createPost(any(), any(), any())).thenReturn(1L);
 
     mockMvc.perform(multipart("/api/post")
-            .file(image1)
-            .file(image2)
-            .file(json)
-            .header(HttpHeaders.AUTHORIZATION, "accessToken")
-            .contentType(MediaType.MULTIPART_MIXED))
+        .file(image1)
+        .file(image2)
+        .file(json)
+        .header(HttpHeaders.AUTHORIZATION, "accessToken")
+        .contentType(MediaType.MULTIPART_MIXED))
         .andExpect(header().string("location", "/api/post/1"))
         .andExpect(status().isCreated())
         .andDo(print())
@@ -178,7 +179,7 @@ public class PostControllerTest extends CommonApiTest {
     when(postService.findPost(any(), any())).thenReturn(postResponse);
 
     mockMvc.perform(RestDocumentationRequestBuilders.get("/api/post/{postId}", 1L)
-            .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+        .header(HttpHeaders.AUTHORIZATION, "accessToken"))
         .andExpect(status().isOk())
         .andDo(print())
         .andDo(PostDocumentation.findPost());
@@ -207,10 +208,28 @@ public class PostControllerTest extends CommonApiTest {
     when(postService.findPosts(any(), any())).thenReturn(of(fullPostResponse));
 
     mockMvc.perform(get(format("/api/post?title=%s&page=%d&size=%d", fullPostRequest.getTitle(),
-            pagination.getPage(), pagination.getSize()))
-            .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+        pagination.getPage(), pagination.getSize()))
+        .header(HttpHeaders.AUTHORIZATION, "accessToken"))
         .andExpect(status().isOk())
         .andDo(print())
         .andDo(PostDocumentation.findPosts());
+  }
+
+  @WithMockCustomUser
+  @DisplayName("게시글 상태를 변경한다.")
+  @Test
+  void changePostStatus() throws Exception {
+
+    StatusChangeRequest req = StatusChangeRequest.builder()
+        .id(1L)
+        .status("SALE")
+        .build();
+
+    mockMvc.perform(get(format("/api/post/changeStatus?id=%d&status=%s", req.getId(),
+        req.getStatus()))
+        .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+        .andExpect(status().isOk())
+        .andDo(print())
+        .andDo(PostDocumentation.changeStatus());
   }
 }

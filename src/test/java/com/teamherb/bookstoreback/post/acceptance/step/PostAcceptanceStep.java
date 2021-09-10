@@ -11,6 +11,7 @@ import com.teamherb.bookstoreback.post.dto.FullPostResponse;
 import com.teamherb.bookstoreback.post.dto.NaverBookRequest;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.post.dto.PostResponse;
+import com.teamherb.bookstoreback.post.dto.StatusChangeRequest;
 import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -121,6 +122,19 @@ public class PostAcceptanceStep {
             + (req.getTitle() == null ? "" : "title=" + req.getTitle())
             + (req.getIsbn() == null ? "" : "isbn=" + req.getIsbn())
             + (req.getAuthor() == null ? "" : "author=" + req.getAuthor()))
+        .then().log().all()
+        .extract();
+  }
+
+  public static ExtractableResponse<Response> requestToChangePostStatus(String jwt,
+      StatusChangeRequest req) {
+    return given().log().all()
+        .header(HttpHeaders.AUTHORIZATION, jwt)
+        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        .when()
+        .get("/api/post/changeStatus?"
+            + (req.getId() == null ? "" : "id=" + req.getId() + "&")
+            + (req.getStatus() == null ? "" : "status=" + req.getStatus()))
         .then().log().all()
         .extract();
   }
