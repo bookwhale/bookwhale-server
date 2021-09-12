@@ -138,11 +138,27 @@ public class PostDocumentation {
             parameterWithName("title").description("책 제목").optional(),
             parameterWithName("author").description("저자").optional(),
             parameterWithName("publisher").description("출판사").optional(),
-            parameterWithName("page").description("페이지(0부터 시작) [필수값]"),
-            parameterWithName("size").description("한 페이지 내의 사이즈 [필수값]")
+            parameterWithName("page").description("페이지(0부터 시작) (필수)"),
+            parameterWithName("size").description("한 페이지 내의 사이즈 (필수)")
         ),
         responseFields(fieldWithPath("[]").description("An arrays of fullPostResponse"))
             .andWithPrefix("[].", response)
+    );
+  }
+
+  public static RestDocumentationResultHandler updatePost() {
+    return document("post/updatePost",
+        preprocessRequest(prettyPrint()),
+        preprocessResponse(prettyPrint()),
+        requestHeaders(
+            headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
+        ),
+        requestPartFields("postUpdateRequest",
+            fieldWithPath("title").description("게시글 제목 (필수)"),
+            fieldWithPath("price").description("게시글 가격 (필수)"),
+            fieldWithPath("description").description("게시글 설명 (필수)"),
+            fieldWithPath("bookStatus").description("책 상태 [LOWER, MIDDLE, UPPER, BEST] (필수)")
+        )
     );
   }
 }
