@@ -1,6 +1,8 @@
 package com.teamherb.bookstoreback.post.domain;
 
 import com.teamherb.bookstoreback.common.domain.BaseEntity;
+import com.teamherb.bookstoreback.common.exception.CustomException;
+import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.post.dto.PostUpdateRequest;
 import com.teamherb.bookstoreback.user.domain.User;
@@ -85,5 +87,11 @@ public class Post extends BaseEntity {
 
   public boolean isMyPost(User user) {
     return this.seller.getId().equals(user.getId());
+  }
+
+  public void validateIsMyPost(User user) {
+    if (!this.isMyPost(user)) {
+      throw new CustomException(ErrorCode.USER_ACCESS_DENIED);
+    }
   }
 }

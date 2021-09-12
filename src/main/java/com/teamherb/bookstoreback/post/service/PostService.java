@@ -32,21 +32,18 @@ public class PostService {
 
   private final FileStoreUtil fileStoreUtil;
 
-  public Long createPost(User user, PostRequest postRequest, List<MultipartFile> images) {
-    Post newPost = Post.create(user, postRequest);
+  public Long createPost(User loginUser, PostRequest postRequest, List<MultipartFile> images) {
+    Post newPost = Post.create(loginUser, postRequest);
     Post savedPost = postRepository.save(newPost);
-    saveImages(images, savedPost);
+    saveImages(savedPost, images);
     return savedPost.getId();
   }
 
   @Transactional(readOnly = true)
-  public PostResponse findPost(User user, Long postId) {
-    Post findPost = postRepository.findById(postId)
-        .orElseThrow(() -> new CustomException(ErrorCode.INVALID_POST_ID));
-
+  public PostResponse findPost(User loginUser, Long postId) {
+    Post findPost = validatePostIdAndGetPost(postId);
     List<Image> findImages = imageRepository.findAllByPost(findPost);
-
-    return PostResponse.of(findPost, findImages, findPost.isMyPost(user));
+    return PostResponse.of(findPost, findImages, findPost.isMyPost(loginUser));
   }
 
   @Transactional(readOnly = true)
@@ -56,28 +53,36 @@ public class PostService {
         .getContent();
   }
 
-  public void updatePost(User user, PostUpdateRequest request, List<MultipartFile> updateImages) {
-    Post findPost = postRepository.findById(request.getPostId())
+  public void updatePost(User loginUser, Long postId, PostUpdateRequest request,
+      List<MultipartFile> updateImages) {
+    Post post = validatePostIdAndGetPost(postId);
+    post.validateIsMyPost(loginUser);
+    post.update(request);
+    updateImages(post, updateImages);
+  }
+
+  private Post validatePostIdAndGetPost(Long postId) {
+    return postRepository.findById(postId)
         .orElseThrow(() -> new CustomException(ErrorCode.INVALID_POST_ID));
-
-    if (!findPost.isMyPost(user)) {
-      throw new CustomException(ErrorCode.USER_ACCESS_DENIED);
-    }
-
-    findPost.update(request);
-    updateImages(findPost, updateImages);
   }
 
   public void updateImages(Post post, List<MultipartFile> updateImages) {
-    imageRepository.deleteAllByPost(post);
-    saveImages(updateImages, post);
+    deleteImages(post);
+    saveImages(post, updateImages);
   }
 
-  public void saveImages(List<MultipartFile> images, Post post) {
+  public void deleteImages(Post post) {
+    List<Image> images = imageRepository.findAllByPost(post);
+    if (!images.isEmpty()) {
+      //TODO : S3 연동하면 S3 이미지를 삭제하는 로직을 추가해야합니다.
+      imageRepository.deleteAll(images);
+    }
+  }
+
+  public void saveImages(Post post, List<MultipartFile> images) {
     List<String> uploadFilePaths = getUploadFilePaths(images);
     if (uploadFilePaths != null) {
-      List<Image> postImages = Image.createPostImage(post, uploadFilePaths);
-      imageRepository.saveAll(postImages);
+      imageRepository.saveAll(Image.createPostImage(post, uploadFilePaths));
     }
   }
 

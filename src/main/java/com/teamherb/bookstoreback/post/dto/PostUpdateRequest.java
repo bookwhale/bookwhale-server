@@ -3,7 +3,6 @@ package com.teamherb.bookstoreback.post.dto;
 import com.teamherb.bookstoreback.common.validator.ValueOfEnum;
 import com.teamherb.bookstoreback.post.domain.BookStatus;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,9 +10,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class PostUpdateRequest {
-
-  @NotNull
-  private Long postId;
 
   @NotBlank
   private String title;
@@ -29,9 +25,7 @@ public class PostUpdateRequest {
   private String bookStatus;
 
   @Builder
-  public PostUpdateRequest(Long postId, String title, String price, String description,
-      String bookStatus) {
-    this.postId = postId;
+  public PostUpdateRequest(String title, String price, String description, String bookStatus) {
     this.title = title;
     this.price = price;
     this.description = description;

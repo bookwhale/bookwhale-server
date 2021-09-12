@@ -65,11 +65,12 @@ public class PostController {
     return ResponseEntity.ok(postService.findPosts(fullPostRequest, pagination));
   }
 
-  @PatchMapping
+  @PatchMapping("/{postId}")
   public ResponseEntity<Void> updatePost(@CurrentUser User user,
+      @PathVariable Long postId,
       @Valid @RequestPart("postUpdateRequest") PostUpdateRequest request,
       @RequestPart(name = "updateImages", required = false) List<MultipartFile> updateImages) {
-    postService.updatePost(user, request, updateImages);
+    postService.updatePost(user, postId, request, updateImages);
     return ResponseEntity.ok().build();
   }
 }
