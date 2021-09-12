@@ -1,5 +1,6 @@
 package com.teamherb.bookstoreback.post.service;
 
+import static java.util.List.of;
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -7,6 +8,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.util.Lists.emptyList;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -22,9 +25,11 @@ import com.teamherb.bookstoreback.post.domain.PostStatus;
 import com.teamherb.bookstoreback.post.dto.BookRequest;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.post.dto.PostResponse;
+import com.teamherb.bookstoreback.post.dto.PostUpdateRequest;
 import com.teamherb.bookstoreback.user.domain.User;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,6 +37,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("게시글 단위 테스트(Service)")
@@ -88,7 +94,7 @@ public class PostServiceTest {
   @Test
   void createPost() {
     Post post = Post.create(user, postRequest);
-    List<String> uploadFilePaths = List.of("image1", "image2");
+    List<String> uploadFilePaths = of("image1", "image2");
     List<Image> images = Image.createPostImage(post, uploadFilePaths);
 
     when(postRepository.save(any())).thenReturn(post);
@@ -96,7 +102,7 @@ public class PostServiceTest {
     when(imageRepository.saveAll(any())).thenReturn(images);
 
     postService.createPost(user, postRequest,
-        List.of(new MockMultipartFile("images", "image".getBytes(StandardCharsets.UTF_8))));
+        of(new MockMultipartFile("images", "image".getBytes(StandardCharsets.UTF_8))));
 
     verify(postRepository).save(any());
     verify(fileStoreUtil).storeFiles(any());
@@ -107,7 +113,7 @@ public class PostServiceTest {
   @Test
   void findMyPost_success() {
     Post post = Post.create(user, postRequest);
-    List<String> uploadFilePaths = List.of("image1", "image2");
+    List<String> uploadFilePaths = of("image1", "image2");
     List<Image> images = Image.createPostImage(post, uploadFilePaths);
 
     when(postRepository.findById(any())).thenReturn(ofNullable(post));
@@ -170,11 +176,126 @@ public class PostServiceTest {
 
   @DisplayName("잘못된 게시글 ID로 상세 조회하면 예외가 발생한다.")
   @Test
-  void findPost_invalid_postId_failure() {
+  void findPost_invalidPostId_failure() {
     when(postRepository.findById(any())).thenReturn(empty());
 
     assertThatThrownBy(() -> postService.findPost(user, 1L))
         .isInstanceOf(CustomException.class)
         .hasMessage(ErrorCode.INVALID_POST_ID.getMessage());
+  }
+
+  @DisplayName("게시글을 수정한다.")
+  @Test
+  void updatePost_success() {
+    Post post = Post.create(user, postRequest);
+    PostUpdateRequest request = PostUpdateRequest.builder()
+        .title("이펙티브 자바")
+        .description("이펙티브 자바입니다.")
+        .price("15000")
+        .bookStatus("BEST")
+        .build();
+    List<MultipartFile> images = of(
+        new MockMultipartFile("updateImages", "image1".getBytes(StandardCharsets.UTF_8)),
+        new MockMultipartFile("updateImages", "image2".getBytes(StandardCharsets.UTF_8))
+    );
+
+    when(postRepository.findById(any())).thenReturn(Optional.ofNullable(post));
+    when(fileStoreUtil.storeFiles(any())).thenReturn(of("image1", "image2"));
+    when(imageRepository.findAllByPost(any())).thenReturn(Image.createPostImage(post, of("image")));
+    doNothing().when(imageRepository).deleteAll(any());
+    when(imageRepository.saveAll(any())).thenReturn(
+        Image.createPostImage(post, of("image1", "image2")));
+
+    postService.updatePost(user, 1L, request, images);
+
+    verify(postRepository).findById(any());
+    verify(imageRepository).findAllByPost(any());
+    verify(imageRepository).deleteAll(any());
+    verify(fileStoreUtil).storeFiles(any());
+    verify(imageRepository).saveAll(any());
+    assertAll(
+        () -> assertThat(post.getTitle()).isEqualTo(request.getTitle()),
+        () -> assertThat(post.getPrice()).isEqualTo(request.getPrice()),
+        () -> assertThat(post.getDescription()).isEqualTo(request.getDescription()),
+        () -> assertThat(post.getBookStatus()).isEqualTo(
+            BookStatus.valueOf(request.getBookStatus()))
+    );
+  }
+
+  @DisplayName("게시글을 수정한다. (빈 이미지 리스트를 보내는 경우)")
+  @Test
+  void updatePost_emptyImageList_success() {
+    Post post = Post.create(user, postRequest);
+    PostUpdateRequest request = PostUpdateRequest.builder()
+        .title("이펙티브 자바")
+        .description("이펙티브 자바입니다.")
+        .price("15000")
+        .bookStatus("BEST")
+        .build();
+    List<MultipartFile> images = emptyList();
+
+    when(postRepository.findById(any())).thenReturn(Optional.ofNullable(post));
+    when(imageRepository.findAllByPost(any())).thenReturn(Image.createPostImage(post, of("image")));
+    doNothing().when(imageRepository).deleteAll(any());
+
+    postService.updatePost(user, 1L, request, images);
+
+    verify(postRepository).findById(any());
+    verify(imageRepository).findAllByPost(any());
+    verify(imageRepository).deleteAll(any());
+    verify(fileStoreUtil, never()).storeFiles(any());
+    verify(imageRepository, never()).saveAll(any());
+  }
+
+  @DisplayName("게시글을 수정한다. (null 을 보내는 경우)")
+  @Test
+  void updatePost_nullImageList_success() {
+    Post post = Post.create(user, postRequest);
+    PostUpdateRequest request = PostUpdateRequest.builder()
+        .title("이펙티브 자바")
+        .description("이펙티브 자바입니다.")
+        .price("15000")
+        .bookStatus("BEST")
+        .build();
+
+    when(postRepository.findById(any())).thenReturn(Optional.ofNullable(post));
+    when(imageRepository.findAllByPost(any())).thenReturn(Image.createPostImage(post, of("image")));
+    doNothing().when(imageRepository).deleteAll(any());
+
+    postService.updatePost(user, 1L, request, null);
+
+    verify(postRepository).findById(any());
+    verify(imageRepository).findAllByPost(any());
+    verify(imageRepository).deleteAll(any());
+    verify(fileStoreUtil, never()).storeFiles(any());
+    verify(imageRepository, never()).saveAll(any());
+  }
+
+  @DisplayName("잘못된 post_id로 게시글을 수정하면 예외가 발생한다.")
+  @Test
+  void updatePost_invalidPostId_failure() {
+    PostUpdateRequest request = PostUpdateRequest.builder().build();
+    List<MultipartFile> images = emptyList();
+
+    when(postRepository.findById(any())).thenReturn(empty());
+
+    assertThatThrownBy(() -> postService.updatePost(user, 1L, request, images))
+        .isInstanceOf(CustomException.class)
+        .hasMessage(ErrorCode.INVALID_POST_ID.getMessage());
+  }
+
+  @DisplayName("권한이 없는 유저가 게시글을 수정하면 예외가 발생한다.")
+  @Test
+  void updatePost_invalidUser_failure() {
+    User otherUser = User.builder().id(2L).build();
+    Post post = Post.create(otherUser, postRequest);
+    PostUpdateRequest request = PostUpdateRequest.builder().build();
+    List<MultipartFile> images = emptyList();
+
+    when(postRepository.findById(any())).thenReturn(Optional.ofNullable(post));
+
+    assertThatThrownBy(() -> postService.updatePost(user, 1L, request, images))
+        .isInstanceOf(CustomException.class)
+        .hasMessage(ErrorCode.USER_ACCESS_DENIED.getMessage());
   }
 }

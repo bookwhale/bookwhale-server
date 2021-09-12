@@ -3,6 +3,7 @@ package com.teamherb.bookstoreback.post.controller;
 import static java.lang.String.format;
 import static java.util.List.of;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
@@ -23,6 +24,7 @@ import com.teamherb.bookstoreback.post.dto.FullPostResponse;
 import com.teamherb.bookstoreback.post.dto.NaverBookRequest;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.post.dto.PostResponse;
+import com.teamherb.bookstoreback.post.dto.PostUpdateRequest;
 import com.teamherb.bookstoreback.post.service.NaverBookAPIService;
 import com.teamherb.bookstoreback.post.service.PostService;
 import java.nio.charset.StandardCharsets;
@@ -193,5 +195,36 @@ public class PostControllerTest extends CommonApiTest {
         .andExpect(status().isOk())
         .andDo(print())
         .andDo(PostDocumentation.findPosts());
+  }
+
+  @WithMockCustomUser
+  @DisplayName("게시글을 수정한다.")
+  @Test
+  void updatePost_success() throws Exception {
+    MockMultipartFile updateImage = new MockMultipartFile("updateImages", "updateImage.jpg",
+        ContentType.IMAGE_JPEG.getMimeType(),
+        "수정된 이미지입니다.".getBytes());
+
+    PostUpdateRequest request = PostUpdateRequest.builder()
+        .title("책 팝니다~ (가격 내림)")
+        .description("쿨 거래시 1000원 할인해드려요~ (가격 내림)")
+        .bookStatus("LOWER")
+        .price("2000")
+        .build();
+
+    String content = objectMapper.writeValueAsString(request);
+    MockMultipartFile json = new MockMultipartFile("postUpdateRequest", "jsonData",
+        "application/json", content.getBytes(StandardCharsets.UTF_8));
+
+    doNothing().when(postService).updatePost(any(), any(), any(), any());
+
+    mockMvc.perform(MockMultipartPatchBuilder("/api/post/1")
+            .file(updateImage)
+            .file(json)
+            .header(HttpHeaders.AUTHORIZATION, "accessToken")
+            .contentType(MediaType.MULTIPART_MIXED))
+        .andExpect(status().isOk())
+        .andDo(print())
+        .andDo(PostDocumentation.updatePost());
   }
 }
