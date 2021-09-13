@@ -12,6 +12,7 @@ import com.teamherb.bookstoreback.post.dto.FullPostRequest;
 import com.teamherb.bookstoreback.post.dto.FullPostResponse;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.post.dto.PostResponse;
+import com.teamherb.bookstoreback.post.dto.PostUpdateRequest;
 import com.teamherb.bookstoreback.post.dto.StatusChangeRequest;
 import com.teamherb.bookstoreback.user.domain.User;
 import java.util.List;
@@ -33,45 +34,61 @@ public class PostService {
 
   private final FileStoreUtil fileStoreUtil;
 
-  public Long createPost(User user, PostRequest postRequest, List<MultipartFile> images) {
-    Post post = Post.create(user, postRequest);
-    Post savedPost = postRepository.save(post);
-
-    List<String> uploadFilePaths = getUploadFilePaths(images);
-    if (uploadFilePaths != null) {
-      List<Image> postImages = Image.createPostImage(savedPost, uploadFilePaths);
-      imageRepository.saveAll(postImages);
-    }
+  public Long createPost(User loginUser, PostRequest postRequest, List<MultipartFile> images) {
+    Post newPost = Post.create(loginUser, postRequest);
+    Post savedPost = postRepository.save(newPost);
+    saveImages(savedPost, images);
     return savedPost.getId();
   }
 
-  private List<String> getUploadFilePaths(List<MultipartFile> files) {
-    return files.size() > 0 ? fileStoreUtil.storeFiles(files) : null;
-  }
-
   @Transactional(readOnly = true)
-  public PostResponse findPost(User user, Long postId) {
-    Post findPost = postRepository.findById(postId)
-        .orElseThrow(() -> new CustomException(ErrorCode.INVALID_POST_ID));
-
+  public PostResponse findPost(User loginUser, Long postId) {
+    Post findPost = validatePostIdAndGetPost(postId);
     List<Image> findImages = imageRepository.findAllByPost(findPost);
-
-    return PostResponse.of(findPost, findImages, findPost.isMyPost(user));
+    return PostResponse.of(findPost, findImages, findPost.isMyPost(loginUser));
   }
 
   @Transactional(readOnly = true)
-  public List<FullPostResponse> findPosts(FullPostRequest req, Pagination pagination) {
+  public List<FullPostResponse> findPosts(FullPostRequest request, Pagination pagination) {
     PageRequest pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
-    return postRepository.findAllByFullPostReqOrderByCreatedDateDesc(req, pageable)
+    return postRepository.findAllByFullPostReqOrderByCreatedDateDesc(request, pageable)
         .getContent();
   }
 
-  @Transactional
-  public void changeStatus(StatusChangeRequest req) {
-    Optional<Post> res = postRepository.findById(req.getId());
-    res.ifPresent(post -> {
-      boolean result = post.changeStatus(req.getStatus());
-      postRepository.save(res.get());
-    });
+  public void updatePost(User loginUser, Long postId, PostUpdateRequest request,
+      List<MultipartFile> updateImages) {
+    Post post = validatePostIdAndGetPost(postId);
+    post.validateIsMyPost(loginUser);
+    post.update(request);
+    updateImages(post, updateImages);
+  }
+
+  private Post validatePostIdAndGetPost(Long postId) {
+    return postRepository.findById(postId)
+        .orElseThrow(() -> new CustomException(ErrorCode.INVALID_POST_ID));
+  }
+
+  public void updateImages(Post post, List<MultipartFile> updateImages) {
+    deleteImages(post);
+    saveImages(post, updateImages);
+  }
+
+  public void deleteImages(Post post) {
+    List<Image> images = imageRepository.findAllByPost(post);
+    if (!images.isEmpty()) {
+      //TODO : S3 연동하면 S3 이미지를 삭제하는 로직을 추가해야합니다.
+      imageRepository.deleteAll(images);
+    }
+  }
+
+  public void saveImages(Post post, List<MultipartFile> images) {
+    List<String> uploadFilePaths = getUploadFilePaths(images);
+    if (uploadFilePaths != null) {
+      imageRepository.saveAll(Image.createPostImage(post, uploadFilePaths));
+    }
+  }
+
+  public List<String> getUploadFilePaths(List<MultipartFile> images) {
+    return images == null || images.isEmpty() ? null : fileStoreUtil.storeFiles(images);
   }
 }

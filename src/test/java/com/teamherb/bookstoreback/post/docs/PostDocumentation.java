@@ -55,9 +55,6 @@ public class PostDocumentation {
             headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
         ),
         requestPartFields("postRequest",
-            fieldWithPath("accountRequest.accountNumber").description("계좌번호"),
-            fieldWithPath("accountRequest.accountOwner").description("예금주 이름"),
-            fieldWithPath("accountRequest.accountBank").description("은행명"),
             fieldWithPath("bookRequest.bookIsbn").description("책 ISBN"),
             fieldWithPath("bookRequest.bookTitle").description("책 이름(네이버 책 API)"),
             fieldWithPath("bookRequest.bookAuthor").description("저자(네이버 책 API)"),
@@ -83,12 +80,6 @@ public class PostDocumentation {
             parameterWithName("postId").description("게시글 ID")
         ),
         responseFields(
-            fieldWithPath("accountResponse.accountNumber").type(JsonFieldType.STRING)
-                .description("계좌번호"),
-            fieldWithPath("accountResponse.accountOwner").type(JsonFieldType.STRING)
-                .description("예금주 이름"),
-            fieldWithPath("accountResponse.accountBank").type(JsonFieldType.STRING)
-                .description("은행명"),
             fieldWithPath("bookResponse.bookIsbn").type(JsonFieldType.STRING)
                 .description("책 ISBN"),
             fieldWithPath("bookResponse.bookTitle").type(JsonFieldType.STRING)
@@ -105,6 +96,10 @@ public class PostDocumentation {
                 .description("책 출판일(네이버 책 API)"),
             fieldWithPath("bookResponse.bookSummary").type(JsonFieldType.STRING)
                 .description("책 설명(네이버 책 API)"),
+            fieldWithPath("sellerId").type(JsonFieldType.NUMBER).description("판매자 ID"),
+            fieldWithPath("sellerIdentity").type(JsonFieldType.STRING).description("판매자 아이디"),
+            fieldWithPath("sellerProfileImage").type(JsonFieldType.STRING)
+                .description("판매자 프로필 사진"),
             fieldWithPath("postId").type(JsonFieldType.NUMBER).description("게시글 ID"),
             fieldWithPath("title").type(JsonFieldType.STRING).description("게시글 제목"),
             fieldWithPath("price").type(JsonFieldType.STRING).description("게시글 가격"),
@@ -114,7 +109,9 @@ public class PostDocumentation {
             fieldWithPath("bookStatus").type(JsonFieldType.STRING)
                 .description("책 상태 [LOWER, MIDDLE, UPPER, BEST]"),
             fieldWithPath("postStatus").type(JsonFieldType.STRING)
-                .description("게시글 상태 [SALE, PROCEEDING, COMPLETE]")
+                .description("게시글 상태 [SALE, RESERVED, SOLD_OUT]"),
+            fieldWithPath("createdDate").type(JsonFieldType.STRING).description("게시글 등록일"),
+            fieldWithPath("lastModifiedDate").type(JsonFieldType.STRING).description("게시글 최근 수정일")
         ));
   }
 
@@ -128,7 +125,7 @@ public class PostDocumentation {
         fieldWithPath("bookThumbnail").type(JsonFieldType.STRING).description(
             "책 썸네일(네이버 책 API)"),
         fieldWithPath("postStatus").type(JsonFieldType.STRING).description(
-            "게시글 상태 [SALE, PROCEEDING, COMPLETE]")
+            "게시글 상태 [SALE, RESERVED, SOLD_OUT]")
     };
 
     return document("post/findPosts",
@@ -141,11 +138,27 @@ public class PostDocumentation {
             parameterWithName("title").description("책 제목").optional(),
             parameterWithName("author").description("저자").optional(),
             parameterWithName("publisher").description("출판사").optional(),
-            parameterWithName("page").description("페이지(0부터 시작) [필수값]"),
-            parameterWithName("size").description("한 페이지 내의 사이즈 [필수값]")
+            parameterWithName("page").description("페이지(0부터 시작) (필수)"),
+            parameterWithName("size").description("한 페이지 내의 사이즈 (필수)")
         ),
         responseFields(fieldWithPath("[]").description("An arrays of fullPostResponse"))
             .andWithPrefix("[].", response)
+    );
+  }
+
+  public static RestDocumentationResultHandler updatePost() {
+    return document("post/updatePost",
+        preprocessRequest(prettyPrint()),
+        preprocessResponse(prettyPrint()),
+        requestHeaders(
+            headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
+        ),
+        requestPartFields("postUpdateRequest",
+            fieldWithPath("title").description("게시글 제목 (필수)"),
+            fieldWithPath("price").description("게시글 가격 (필수)"),
+            fieldWithPath("description").description("게시글 설명 (필수)"),
+            fieldWithPath("bookStatus").description("책 상태 [LOWER, MIDDLE, UPPER, BEST] (필수)")
+        )
     );
   }
 

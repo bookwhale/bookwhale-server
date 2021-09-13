@@ -4,6 +4,7 @@ import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.teamherb.bookstoreback.common.Pagination;
+import com.teamherb.bookstoreback.post.domain.BookStatus;
 import com.teamherb.bookstoreback.post.domain.PostStatus;
 import com.teamherb.bookstoreback.post.dto.BookResponse;
 import com.teamherb.bookstoreback.post.dto.FullPostRequest;
@@ -11,7 +12,8 @@ import com.teamherb.bookstoreback.post.dto.FullPostResponse;
 import com.teamherb.bookstoreback.post.dto.NaverBookRequest;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.post.dto.PostResponse;
-import com.teamherb.bookstoreback.post.dto.StatusChangeRequest;
+import com.teamherb.bookstoreback.post.dto.PostUpdateRequest;
+import com.teamherb.bookstoreback.user.domain.User;
 import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -25,15 +27,37 @@ import org.springframework.util.MimeTypeUtils;
 
 public class PostAcceptanceStep {
 
-  public static void assertThatFindPost(PostResponse res, PostRequest req) {
+  public static void assertThatFindPost(PostResponse res, PostRequest req, User seller) {
     Assertions.assertAll(
+        () -> assertThat(res.getSellerId()).isEqualTo(seller.getId()),
+        () -> assertThat(res.getSellerIdentity()).isEqualTo(seller.getIdentity()),
+        () -> assertThat(res.getSellerProfileImage()).isEqualTo(seller.getProfileImage()),
         () -> assertThat(res.getTitle()).isEqualTo(req.getTitle()),
+        () -> assertThat(res.getPrice()).isEqualTo(req.getPrice()),
+        () -> assertThat(res.getDescription()).isEqualTo(req.getDescription()),
         () -> assertThat(res.getPostStatus()).isEqualTo(PostStatus.SALE),
+        () -> assertThat(res.getTitle()).isEqualTo(req.getTitle()),
         () -> assertThat(res.isMyPost()).isEqualTo(true),
-        () -> assertThat(res.getAccountResponse().getAccountBank()).isEqualTo(
-            req.getAccountRequest().getAccountBank()),
+        () -> assertThat(res.getCreatedDate()).isNotNull(),
+        () -> assertThat(res.getLastModifiedDate()).isNotNull(),
+        () -> assertThat(res.getBookStatus()).isEqualTo(
+            BookStatus.valueOf(req.getBookStatus())),
         () -> assertThat(res.getBookResponse().getBookIsbn()).isEqualTo(
-            req.getBookRequest().getBookIsbn())
+            req.getBookRequest().getBookIsbn()),
+        () -> assertThat(res.getBookResponse().getBookAuthor()).isEqualTo(
+            req.getBookRequest().getBookAuthor()),
+        () -> assertThat(res.getBookResponse().getBookTitle()).isEqualTo(
+            req.getBookRequest().getBookTitle()),
+        () -> assertThat(res.getBookResponse().getBookPublisher()).isEqualTo(
+            req.getBookRequest().getBookPublisher()),
+        () -> assertThat(res.getBookResponse().getBookSummary()).isEqualTo(
+            req.getBookRequest().getBookSummary()),
+        () -> assertThat(res.getBookResponse().getBookThumbnail()).isEqualTo(
+            req.getBookRequest().getBookThumbnail()),
+        () -> assertThat(res.getBookResponse().getBookPubDate()).isEqualTo(
+            req.getBookRequest().getBookPubDate()),
+        () -> assertThat(res.getBookResponse().getBookListPrice()).isEqualTo(
+            req.getBookRequest().getBookListPrice())
     );
   }
 
@@ -59,13 +83,30 @@ public class PostAcceptanceStep {
     );
   }
 
+  public static void assertThatUpdatePost(PostResponse res, PostUpdateRequest req, int size) {
+    Assertions.assertAll(
+        () -> assertThat(res.getTitle()).isEqualTo(req.getTitle()),
+        () -> assertThat(res.getDescription()).isEqualTo(req.getDescription()),
+        () -> assertThat(res.getPrice()).isEqualTo(req.getPrice()),
+        () -> assertThat(res.getBookStatus()).isEqualTo(BookStatus.valueOf(req.getBookStatus())),
+        () -> assertThat(res.getImages().size()).isEqualTo(size)
+    );
+  }
+
   public static ExtractableResponse<Response> requestToCreatePost(String jwt,
       PostRequest postRequest) {
-    MultiPartSpecification image = new MultiPartSpecBuilder(
-        "image".getBytes())
+    MultiPartSpecification image1 = new MultiPartSpecBuilder(
+        "image1".getBytes())
         .mimeType(MimeTypeUtils.IMAGE_JPEG.toString())
         .controlName("images")
-        .fileName("image.jpg")
+        .fileName("image1.jpg")
+        .build();
+
+    MultiPartSpecification image2 = new MultiPartSpecBuilder(
+        "image2".getBytes())
+        .mimeType(MimeTypeUtils.IMAGE_JPEG.toString())
+        .controlName("images")
+        .fileName("image2.jpg")
         .build();
 
     MultiPartSpecification json = new MultiPartSpecBuilder(postRequest)
@@ -76,7 +117,8 @@ public class PostAcceptanceStep {
     return given().log().all()
         .header(HttpHeaders.AUTHORIZATION, jwt)
         .contentType(MediaType.MULTIPART_MIXED_VALUE)
-        .multiPart(image)
+        .multiPart(image1)
+        .multiPart(image2)
         .multiPart(json)
         .when()
         .post("/api/post")
@@ -96,17 +138,15 @@ public class PostAcceptanceStep {
 
   public static ExtractableResponse<Response> requestToFindPosts(String jwt, FullPostRequest req,
       Pagination page) {
-    String path = "/api/post"
-        + (req.getTitle() != null ? "?title=" + req.getTitle() : "")
-        + (req.getAuthor() != null ? "?author=" + req.getAuthor() : "")
-        + (req.getPublisher() != null ? "?publisher=" + req.getPublisher() : "")
-        + "&page=" + page.getPage()
-        + "&size=" + page.getSize();
-
     return given().log().all()
         .header(HttpHeaders.AUTHORIZATION, jwt)
         .when()
-        .get(path)
+        .get("/api/post"
+            + (req.getTitle() != null ? "?title=" + req.getTitle() : "")
+            + (req.getAuthor() != null ? "?author=" + req.getAuthor() : "")
+            + (req.getPublisher() != null ? "?publisher=" + req.getPublisher() : "")
+            + "&page=" + page.getPage()
+            + "&size=" + page.getSize())
         .then().log().all()
         .extract();
   }
@@ -126,15 +166,21 @@ public class PostAcceptanceStep {
         .extract();
   }
 
-  public static ExtractableResponse<Response> requestToChangePostStatus(String jwt,
-      StatusChangeRequest req) {
+  public static ExtractableResponse<Response> requestToUpdatePost(String jwt,
+      Long postId, PostUpdateRequest request, List<MultiPartSpecification> images) {
+
+    MultiPartSpecification json = new MultiPartSpecBuilder(request)
+        .controlName("postUpdateRequest")
+        .charset(StandardCharsets.UTF_8)
+        .mimeType(MimeTypeUtils.APPLICATION_JSON_VALUE).build();
+
     return given().log().all()
         .header(HttpHeaders.AUTHORIZATION, jwt)
-        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        .contentType(MediaType.MULTIPART_MIXED_VALUE)
+        .multiPart(images.get(0))
+        .multiPart(json)
         .when()
-        .get("/api/post/changeStatus?"
-            + (req.getId() == null ? "" : "id=" + req.getId() + "&")
-            + (req.getStatus() == null ? "" : "status=" + req.getStatus()))
+        .patch("/api/post/{postId}", postId)
         .then().log().all()
         .extract();
   }

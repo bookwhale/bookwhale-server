@@ -19,50 +19,63 @@ import lombok.NoArgsConstructor;
 @Getter
 public class User extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "user_id")
+  private Long id;
 
-    @Column(nullable = false)
-    private String identity;
+  @Column(nullable = false)
+  private String identity;
 
-    @Column(nullable = false)
-    private String password;
+  @Column(nullable = false)
+  private String password;
 
-    @Column(nullable = false)
-    private String name;
+  @Column(nullable = false)
+  private String name;
 
-    @Column(nullable = false)
-    private String email;
+  @Column(nullable = false)
+  private String email;
 
-    private String phoneNumber;
+  @Column(nullable = false)
+  private String phoneNumber;
 
-    private String address;
+  private String profileImage;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
+  @Enumerated(EnumType.STRING)
+  private Role role;
 
-    public String getRoleName() {
-        return this.role.name();
-    }
+  public String getRoleName() {
+    return this.role.name();
+  }
 
-    @Builder
-    public User(Long id, String identity, String password, String name, String email,
-        String phoneNumber, String address, Role role) {
-        this.id = id;
-        this.identity = identity;
-        this.password = password;
-        this.name = name;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.address = address;
-        this.role = role;
-    }
+  @Builder
+  public User(Long id, String identity, String password, String name, String email,
+      String phoneNumber, String profileImage, Role role) {
+    this.id = id;
+    this.identity = identity;
+    this.password = password;
+    this.name = name;
+    this.email = email;
+    this.phoneNumber = phoneNumber;
+    this.profileImage = profileImage;
+    this.role = role;
+  }
 
-    public void update(UserUpdateRequest request) {
-        this.name = request.getName();
-        this.address = request.getAddress();
-        this.phoneNumber = request.getPhoneNumber();
-    }
+  public void update(UserUpdateRequest request) {
+    this.name = request.getName();
+    this.phoneNumber = request.getPhoneNumber();
+    this.email = request.getEmail();
+  }
+
+  public void uploadProfile(String profileImage) {
+    this.profileImage = profileImage;
+  }
+
+  public void deleteProfile() {
+    this.profileImage = null;
+  }
+
+  public void updatePassword(String encodedNewPassword) {
+    this.password = encodedNewPassword;
+  }
 }

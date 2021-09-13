@@ -7,6 +7,7 @@ import com.teamherb.bookstoreback.post.dto.FullPostResponse;
 import com.teamherb.bookstoreback.post.dto.NaverBookRequest;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.post.dto.PostResponse;
+import com.teamherb.bookstoreback.post.dto.PostUpdateRequest;
 import com.teamherb.bookstoreback.post.dto.StatusChangeRequest;
 import com.teamherb.bookstoreback.post.service.NaverBookAPIService;
 import com.teamherb.bookstoreback.post.service.PostService;
@@ -20,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,15 +57,22 @@ public class PostController {
   @GetMapping("/{postId}")
   public ResponseEntity<PostResponse> findPost(@CurrentUser User user,
       @PathVariable Long postId) {
-    PostResponse postResponse = postService.findPost(user, postId);
-    return ResponseEntity.ok(postResponse);
+    return ResponseEntity.ok(postService.findPost(user, postId));
   }
 
   @GetMapping
   public ResponseEntity<List<FullPostResponse>> findPosts(FullPostRequest fullPostRequest,
       @Valid Pagination pagination) {
-    List<FullPostResponse> responses = postService.findPosts(fullPostRequest, pagination);
-    return ResponseEntity.ok(responses);
+    return ResponseEntity.ok(postService.findPosts(fullPostRequest, pagination));
+  }
+
+  @PatchMapping("/{postId}")
+  public ResponseEntity<Void> updatePost(@CurrentUser User user,
+      @PathVariable Long postId,
+      @Valid @RequestPart("postUpdateRequest") PostUpdateRequest request,
+      @RequestPart(name = "updateImages", required = false) List<MultipartFile> updateImages) {
+    postService.updatePost(user, postId, request, updateImages);
+    return ResponseEntity.ok().build();
   }
 
   @GetMapping("/changeStatus")

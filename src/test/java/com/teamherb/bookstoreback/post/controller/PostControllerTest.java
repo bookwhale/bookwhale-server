@@ -3,6 +3,7 @@ package com.teamherb.bookstoreback.post.controller;
 import static java.lang.String.format;
 import static java.util.List.of;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
@@ -10,8 +11,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.teamherb.bookstoreback.account.dto.AccountRequest;
-import com.teamherb.bookstoreback.account.dto.AccountResponse;
 import com.teamherb.bookstoreback.common.Pagination;
 import com.teamherb.bookstoreback.common.controller.CommonApiTest;
 import com.teamherb.bookstoreback.common.security.WithMockCustomUser;
@@ -22,23 +21,16 @@ import com.teamherb.bookstoreback.post.dto.BookRequest;
 import com.teamherb.bookstoreback.post.dto.BookResponse;
 import com.teamherb.bookstoreback.post.dto.FullPostRequest;
 import com.teamherb.bookstoreback.post.dto.FullPostResponse;
+import com.teamherb.bookstoreback.post.dto.NaverBookRequest;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.post.dto.PostResponse;
+import com.teamherb.bookstoreback.post.dto.PostUpdateRequest;
+import com.teamherb.bookstoreback.post.service.NaverBookAPIService;
 import com.teamherb.bookstoreback.post.dto.StatusChangeRequest;
 import com.teamherb.bookstoreback.post.service.PostService;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import org.apache.http.entity.ContentType;
-
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import com.teamherb.bookstoreback.common.controller.CommonApiTest;
-import com.teamherb.bookstoreback.common.security.WithMockCustomUser;
-import com.teamherb.bookstoreback.post.docs.PostDocumentation;
-import com.teamherb.bookstoreback.post.dto.BookResponse;
-import com.teamherb.bookstoreback.post.dto.NaverBookRequest;
-import com.teamherb.bookstoreback.post.service.NaverBookAPIService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -98,12 +90,6 @@ public class PostControllerTest extends CommonApiTest {
         ContentType.IMAGE_JPEG.getMimeType(),
         "이미지2 입니다.".getBytes());
 
-    AccountRequest accountRequest = AccountRequest.builder()
-        .accountBank("국민은행")
-        .accountOwner("남상우")
-        .accountNumber("123-1234-12345")
-        .build();
-
     BookRequest bookRequest = BookRequest.builder()
         .bookSummary("설명")
         .bookPubDate("2021-12-12")
@@ -116,7 +102,6 @@ public class PostControllerTest extends CommonApiTest {
         .build();
 
     PostRequest postRequest = PostRequest.builder()
-        .accountRequest(accountRequest)
         .bookRequest(bookRequest)
         .title("책 팝니다~")
         .description("쿨 거래시 1000원 할인해드려요~")
@@ -125,7 +110,7 @@ public class PostControllerTest extends CommonApiTest {
         .build();
 
     String content = objectMapper.writeValueAsString(postRequest);
-    MockMultipartFile json = new MockMultipartFile("postRequest", "jsondata",
+    MockMultipartFile json = new MockMultipartFile("postRequest", "jsonData",
         "application/json", content.getBytes(StandardCharsets.UTF_8));
 
     when(postService.createPost(any(), any(), any())).thenReturn(1L);
@@ -146,34 +131,32 @@ public class PostControllerTest extends CommonApiTest {
   @DisplayName("게시글을 상세 조회한다.")
   @Test
   void findPost() throws Exception {
-    AccountResponse accountResponse = AccountResponse.builder()
-        .accountBank("국민은행")
-        .accountOwner("남상우")
-        .accountNumber("123-1234-12345")
-        .build();
-
     BookResponse bookResponse = BookResponse.builder()
         .bookSummary("설명")
         .bookPubDate("2021-12-12")
         .bookIsbn("12398128745902")
         .bookListPrice("10000")
         .bookThumbnail("썸네일")
-        .bookTitle("책 제목")
+        .bookTitle("토비의 스프링")
         .bookPublisher("출판사")
-        .bookAuthor("작가")
+        .bookAuthor("이일민")
         .build();
 
     PostResponse postResponse = PostResponse.builder()
-        .accountResponse(accountResponse)
-        .bookResponse(bookResponse)
+        .sellerId(1L)
+        .sellerIdentity("sellerIdentity")
+        .sellerProfileImage("sellerProfileImage")
         .postId(1L)
         .title("책 팝니다~")
-        .price("5000")
+        .price("5000원")
         .description("쿨 거래시 1000원 할인해드려요~")
         .bookStatus(BookStatus.BEST)
         .postStatus(PostStatus.SALE)
         .images(of("image1", "image2"))
+        .bookResponse(bookResponse)
         .isMyPost(true)
+        .createdDate(LocalDateTime.now())
+        .lastModifiedDate(LocalDateTime.now())
         .build();
 
     when(postService.findPost(any(), any())).thenReturn(postResponse);
@@ -198,7 +181,7 @@ public class PostControllerTest extends CommonApiTest {
     FullPostResponse fullPostResponse = FullPostResponse.builder()
         .postId(1L)
         .bookThumbnail("이미지")
-        .postTitle("책 팝니다.")
+        .postTitle("책 팝니다~")
         .bookTitle("토비의 스프링")
         .postPrice("20000원")
         .postStatus(PostStatus.SALE)
@@ -213,6 +196,37 @@ public class PostControllerTest extends CommonApiTest {
         .andExpect(status().isOk())
         .andDo(print())
         .andDo(PostDocumentation.findPosts());
+  }
+
+  @WithMockCustomUser
+  @DisplayName("게시글을 수정한다.")
+  @Test
+  void updatePost_success() throws Exception {
+    MockMultipartFile updateImage = new MockMultipartFile("updateImages", "updateImage.jpg",
+        ContentType.IMAGE_JPEG.getMimeType(),
+        "수정된 이미지입니다.".getBytes());
+
+    PostUpdateRequest request = PostUpdateRequest.builder()
+        .title("책 팝니다~ (가격 내림)")
+        .description("쿨 거래시 1000원 할인해드려요~ (가격 내림)")
+        .bookStatus("LOWER")
+        .price("2000")
+        .build();
+
+    String content = objectMapper.writeValueAsString(request);
+    MockMultipartFile json = new MockMultipartFile("postUpdateRequest", "jsonData",
+        "application/json", content.getBytes(StandardCharsets.UTF_8));
+
+    doNothing().when(postService).updatePost(any(), any(), any(), any());
+
+    mockMvc.perform(MockMultipartPatchBuilder("/api/post/1")
+            .file(updateImage)
+            .file(json)
+            .header(HttpHeaders.AUTHORIZATION, "accessToken")
+            .contentType(MediaType.MULTIPART_MIXED))
+        .andExpect(status().isOk())
+        .andDo(print())
+        .andDo(PostDocumentation.updatePost());
   }
 
   @WithMockCustomUser

@@ -4,6 +4,8 @@ import com.teamherb.bookstoreback.Interest.dto.InterestRequest;
 import com.teamherb.bookstoreback.Interest.dto.InterestResponse;
 import com.teamherb.bookstoreback.security.CurrentUser;
 import com.teamherb.bookstoreback.user.domain.User;
+import com.teamherb.bookstoreback.user.dto.PasswordUpdateRequest;
+import com.teamherb.bookstoreback.user.dto.ProfileResponse;
 import com.teamherb.bookstoreback.user.dto.SignUpRequest;
 import com.teamherb.bookstoreback.user.dto.UserResponse;
 import com.teamherb.bookstoreback.user.dto.UserUpdateRequest;
@@ -21,7 +23,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/user")
@@ -44,8 +48,27 @@ public class UserController {
 
   @PatchMapping("/me")
   public ResponseEntity<Void> updateMyInfo(@CurrentUser User user,
-      @RequestBody UserUpdateRequest userUpdateRequest) {
+      @Valid @RequestBody UserUpdateRequest userUpdateRequest) {
     userService.updateMyInfo(user, userUpdateRequest);
+    return ResponseEntity.ok().build();
+  }
+
+  @PatchMapping("/password")
+  public ResponseEntity<Void> updatePassword(@CurrentUser User user,
+      @Valid @RequestBody PasswordUpdateRequest request) {
+    userService.updatePassword(user, request);
+    return ResponseEntity.ok().build();
+  }
+
+  @PatchMapping("/profile")
+  public ResponseEntity<ProfileResponse> uploadProfileImage(@CurrentUser User user,
+      @RequestParam MultipartFile profileImage) {
+    return ResponseEntity.ok(userService.uploadProfileImage(user, profileImage));
+  }
+
+  @DeleteMapping("/profile")
+  public ResponseEntity<Void> deleteProfileImage(@CurrentUser User user) {
+    userService.deleteProfileImage(user);
     return ResponseEntity.ok().build();
   }
 
@@ -67,5 +90,4 @@ public class UserController {
     userService.deleteInterest(user, interestId);
     return ResponseEntity.ok().build();
   }
-
 }
