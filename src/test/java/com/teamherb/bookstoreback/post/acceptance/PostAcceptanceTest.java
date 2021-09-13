@@ -16,7 +16,6 @@ import com.teamherb.bookstoreback.post.dto.NaverBookRequest;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.post.dto.PostResponse;
 import com.teamherb.bookstoreback.post.dto.PostUpdateRequest;
-import com.teamherb.bookstoreback.post.dto.StatusChangeRequest;
 import com.teamherb.bookstoreback.user.acceptance.step.UserAcceptanceStep;
 import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.response.ExtractableResponse;
@@ -164,20 +163,5 @@ public class PostAcceptanceTest extends AcceptanceTest {
 
     AcceptanceStep.assertThatStatusIsOk(response);
     PostAcceptanceStep.assertThatUpdatePost(postResponse, updateRequest, updateImages.size());
-  }
-
-  @DisplayName("게시글 상태를 변경한다.")
-  @Test
-  void changePostStatus() {
-    StatusChangeRequest req = StatusChangeRequest.builder()
-        .id(1L)
-        .status("COMPLETE")
-        .build();
-
-    String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
-
-    ExtractableResponse<Response> response = PostAcceptanceStep.requestToChangePostStatus(
-        jwt, req);
-    AcceptanceStep.assertThatStatusIsOk(response);
   }
 }

@@ -1,6 +1,8 @@
 package com.teamherb.bookstoreback.Interest.domain;
 
 import com.teamherb.bookstoreback.common.domain.BaseEntity;
+import com.teamherb.bookstoreback.common.exception.CustomException;
+import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
 import com.teamherb.bookstoreback.post.domain.Post;
 import com.teamherb.bookstoreback.user.domain.User;
 import javax.persistence.Column;
@@ -33,12 +35,22 @@ public class Interest extends BaseEntity {
   @JoinColumn(name = "post_id")
   private Post post;
 
-  public Interest(User user, Post post) {
+  private Interest(User user, Post post) {
     this.user = user;
     this.post = post;
   }
 
-  public static Interest create(User user, Post post) {
-    return new Interest(user, post);
+  public static Interest create(User loginUser, Post post) {
+    return new Interest(loginUser, post);
+  }
+
+  public void validateIsMyInterest(User loginUser) {
+    if (!isMyInterest(loginUser)) {
+      throw new CustomException(ErrorCode.USER_ACCESS_DENIED);
+    }
+  }
+
+  public boolean isMyInterest(User loginUser) {
+    return this.getUser().getId().equals(loginUser.getId());
   }
 }

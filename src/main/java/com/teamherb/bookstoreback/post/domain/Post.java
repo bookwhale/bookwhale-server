@@ -66,9 +66,9 @@ public class Post extends BaseEntity {
     this.book = book;
   }
 
-  public static Post create(User user, PostRequest req) {
+  public static Post create(User loginUser, PostRequest req) {
     return Post.builder()
-        .seller(user)
+        .seller(loginUser)
         .title(req.getTitle())
         .price(req.getPrice())
         .postStatus(PostStatus.SALE)
@@ -85,13 +85,17 @@ public class Post extends BaseEntity {
     this.bookStatus = BookStatus.valueOf(req.getBookStatus());
   }
 
-  public boolean isMyPost(User user) {
-    return this.seller.getId().equals(user.getId());
-  }
-
-  public void validateIsMyPost(User user) {
-    if (!this.isMyPost(user)) {
+  public void validateIsMyPost(User loginUser) {
+    if (!this.isMyPost(loginUser)) {
       throw new CustomException(ErrorCode.USER_ACCESS_DENIED);
     }
+  }
+
+  public boolean isMyPost(User loginUser) {
+    return this.seller.getId().equals(loginUser.getId());
+  }
+
+  public void updatePostStatus(String postStatus) {
+    this.postStatus = PostStatus.valueOf(postStatus);
   }
 }

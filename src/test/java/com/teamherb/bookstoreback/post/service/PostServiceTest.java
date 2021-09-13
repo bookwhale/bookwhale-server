@@ -25,8 +25,8 @@ import com.teamherb.bookstoreback.post.domain.PostStatus;
 import com.teamherb.bookstoreback.post.dto.BookRequest;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.post.dto.PostResponse;
+import com.teamherb.bookstoreback.post.dto.PostStatusUpdateRequest;
 import com.teamherb.bookstoreback.post.dto.PostUpdateRequest;
-import com.teamherb.bookstoreback.post.dto.StatusChangeRequest;
 import com.teamherb.bookstoreback.user.domain.User;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -39,7 +39,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.transaction.annotation.Transactional;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("게시글 단위 테스트(Service)")
@@ -297,6 +296,46 @@ public class PostServiceTest {
     when(postRepository.findById(any())).thenReturn(Optional.ofNullable(post));
 
     assertThatThrownBy(() -> postService.updatePost(user, 1L, request, images))
+        .isInstanceOf(CustomException.class)
+        .hasMessage(ErrorCode.USER_ACCESS_DENIED.getMessage());
+  }
+
+  @DisplayName("게시글 상태를 변경한다.")
+  @Test
+  void updatePostStatus_success() {
+    Post post = Post.create(user, postRequest);
+    PostStatusUpdateRequest request = new PostStatusUpdateRequest(PostStatus.SOLD_OUT.toString());
+
+    when(postRepository.findById(any())).thenReturn(Optional.ofNullable(post));
+
+    postService.updatePostStatus(user, 1L, request);
+
+    verify(postRepository).findById(any());
+    assertThat(post.getPostStatus()).isEqualTo(PostStatus.valueOf(request.getPostStatus()));
+  }
+
+  @DisplayName("잘못된 post_id 로 게시글 상태를 변경하면 예외가 발생한다.")
+  @Test
+  void updatePostStatus_invalidPostId_failure() {
+    PostStatusUpdateRequest request = new PostStatusUpdateRequest(PostStatus.SOLD_OUT.toString());
+
+    when(postRepository.findById(any())).thenReturn(Optional.empty());
+
+    assertThatThrownBy(() -> postService.updatePostStatus(user, 1L, request))
+        .isInstanceOf(CustomException.class)
+        .hasMessage(ErrorCode.INVALID_POST_ID.getMessage());
+  }
+
+  @DisplayName("권한이 없는 유저가 게시글 상태를 변경하면 예외가 발생한다.")
+  @Test
+  void updatePostStatus_invalidUser_failure() {
+    Post post = Post.create(user, postRequest);
+    PostStatusUpdateRequest request = new PostStatusUpdateRequest(PostStatus.SOLD_OUT.toString());
+    User otherUser = User.builder().id(2L).build();
+
+    when(postRepository.findById(any())).thenReturn(Optional.ofNullable(post));
+
+    assertThatThrownBy(() -> postService.updatePostStatus(otherUser, 1L, request))
         .isInstanceOf(CustomException.class)
         .hasMessage(ErrorCode.USER_ACCESS_DENIED.getMessage());
   }

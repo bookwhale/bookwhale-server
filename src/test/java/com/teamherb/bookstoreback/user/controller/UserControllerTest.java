@@ -12,8 +12,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.teamherb.bookstoreback.Interest.dto.InterestRequest;
+import com.teamherb.bookstoreback.Interest.dto.InterestResponse;
 import com.teamherb.bookstoreback.common.controller.CommonApiTest;
 import com.teamherb.bookstoreback.common.security.WithMockCustomUser;
+import com.teamherb.bookstoreback.post.domain.PostStatus;
 import com.teamherb.bookstoreback.user.docs.UserDocumentation;
 import com.teamherb.bookstoreback.user.dto.LoginRequest;
 import com.teamherb.bookstoreback.user.dto.PasswordUpdateRequest;
@@ -21,6 +24,7 @@ import com.teamherb.bookstoreback.user.dto.ProfileResponse;
 import com.teamherb.bookstoreback.user.dto.SignUpRequest;
 import com.teamherb.bookstoreback.user.dto.UserUpdateRequest;
 import com.teamherb.bookstoreback.user.service.UserService;
+import java.util.List;
 import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -172,5 +176,60 @@ public class UserControllerTest extends CommonApiTest {
         .andExpect(status().isOk())
         .andDo(print())
         .andDo(UserDocumentation.userDeleteProfileImage());
+  }
+
+  @WithMockCustomUser
+  @DisplayName("관심목록을 조회한다.")
+  @Test
+  void findInterests() throws Exception {
+    List<InterestResponse> responses = List.of(
+        InterestResponse.builder()
+            .interestId(1L)
+            .postId(1L)
+            .bookTitle("토비의 스프링")
+            .postTitle("토비의 스프링 팝니다.")
+            .bookThumbnail("이미지")
+            .postPrice("10000")
+            .postStatus(PostStatus.SALE)
+            .build()
+    );
+
+    when(userService.findInterests(any())).thenReturn(responses);
+
+    mockMvc.perform(get("/api/user/me/interests")
+            .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+        .andExpect(status().isOk())
+        .andDo(print());
+    //.andDo(UserDocumentation.userDeleteProfileImage());
+  }
+
+  @WithMockCustomUser
+  @DisplayName("관심목록에 추가한다.")
+  @Test
+  void addInterest() throws Exception {
+    InterestRequest interestRequest = new InterestRequest(1L);
+
+    doNothing().when(userService).addInterest(any(), any());
+
+    mockMvc.perform(post("/api/user/me/interest")
+            .header(HttpHeaders.AUTHORIZATION, "accessToken")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(interestRequest)))
+        .andExpect(status().isOk())
+        .andDo(print());
+    //.andDo(UserDocumentation.userDeleteProfileImage());
+  }
+
+  @WithMockCustomUser
+  @DisplayName("관심목록에서 삭제한다.")
+  @Test
+  void deleteInterest() throws Exception {
+    doNothing().when(userService).deleteInterest(any(), any());
+
+    mockMvc.perform(delete("/api/user/me/interest/{interestId}", 1L)
+            .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+        .andExpect(status().isOk())
+        .andDo(print());
+    //.andDo(UserDocumentation.userDeleteProfileImage());
   }
 }

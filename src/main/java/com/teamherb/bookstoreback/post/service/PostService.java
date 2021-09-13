@@ -12,11 +12,10 @@ import com.teamherb.bookstoreback.post.dto.FullPostRequest;
 import com.teamherb.bookstoreback.post.dto.FullPostResponse;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.post.dto.PostResponse;
+import com.teamherb.bookstoreback.post.dto.PostStatusUpdateRequest;
 import com.teamherb.bookstoreback.post.dto.PostUpdateRequest;
-import com.teamherb.bookstoreback.post.dto.StatusChangeRequest;
 import com.teamherb.bookstoreback.user.domain.User;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -63,11 +62,6 @@ public class PostService {
     updateImages(post, updateImages);
   }
 
-  private Post validatePostIdAndGetPost(Long postId) {
-    return postRepository.findById(postId)
-        .orElseThrow(() -> new CustomException(ErrorCode.INVALID_POST_ID));
-  }
-
   public void updateImages(Post post, List<MultipartFile> updateImages) {
     deleteImages(post);
     saveImages(post, updateImages);
@@ -90,5 +84,16 @@ public class PostService {
 
   public List<String> getUploadFilePaths(List<MultipartFile> images) {
     return images == null || images.isEmpty() ? null : fileStoreUtil.storeFiles(images);
+  }
+
+  public void updatePostStatus(User loginUser, Long postId, PostStatusUpdateRequest request) {
+    Post post = validatePostIdAndGetPost(postId);
+    post.validateIsMyPost(loginUser);
+    post.updatePostStatus(request.getPostStatus());
+  }
+
+  private Post validatePostIdAndGetPost(Long postId) {
+    return postRepository.findById(postId)
+        .orElseThrow(() -> new CustomException(ErrorCode.INVALID_POST_ID));
   }
 }

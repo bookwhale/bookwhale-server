@@ -7,6 +7,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -24,9 +25,9 @@ import com.teamherb.bookstoreback.post.dto.FullPostResponse;
 import com.teamherb.bookstoreback.post.dto.NaverBookRequest;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.post.dto.PostResponse;
+import com.teamherb.bookstoreback.post.dto.PostStatusUpdateRequest;
 import com.teamherb.bookstoreback.post.dto.PostUpdateRequest;
 import com.teamherb.bookstoreback.post.service.NaverBookAPIService;
-import com.teamherb.bookstoreback.post.dto.StatusChangeRequest;
 import com.teamherb.bookstoreback.post.service.PostService;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -72,7 +73,7 @@ public class PostControllerTest extends CommonApiTest {
     when(naverBookAPIService.getNaverBooks(any())).thenReturn(of(bookResponse));
 
     mockMvc.perform(get(format("/api/post/naverBookAPI?title=%s", naverBookRequest.getTitle()))
-        .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+            .header(HttpHeaders.AUTHORIZATION, "accessToken"))
         .andExpect(status().isOk())
         .andDo(print())
         .andDo(PostDocumentation.findNaverBooks());
@@ -116,11 +117,11 @@ public class PostControllerTest extends CommonApiTest {
     when(postService.createPost(any(), any(), any())).thenReturn(1L);
 
     mockMvc.perform(multipart("/api/post")
-        .file(image1)
-        .file(image2)
-        .file(json)
-        .header(HttpHeaders.AUTHORIZATION, "accessToken")
-        .contentType(MediaType.MULTIPART_MIXED))
+            .file(image1)
+            .file(image2)
+            .file(json)
+            .header(HttpHeaders.AUTHORIZATION, "accessToken")
+            .contentType(MediaType.MULTIPART_MIXED))
         .andExpect(header().string("location", "/api/post/1"))
         .andExpect(status().isCreated())
         .andDo(print())
@@ -162,7 +163,7 @@ public class PostControllerTest extends CommonApiTest {
     when(postService.findPost(any(), any())).thenReturn(postResponse);
 
     mockMvc.perform(RestDocumentationRequestBuilders.get("/api/post/{postId}", 1L)
-        .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+            .header(HttpHeaders.AUTHORIZATION, "accessToken"))
         .andExpect(status().isOk())
         .andDo(print())
         .andDo(PostDocumentation.findPost());
@@ -191,8 +192,8 @@ public class PostControllerTest extends CommonApiTest {
     when(postService.findPosts(any(), any())).thenReturn(of(fullPostResponse));
 
     mockMvc.perform(get(format("/api/post?title=%s&page=%d&size=%d", fullPostRequest.getTitle(),
-        pagination.getPage(), pagination.getSize()))
-        .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+            pagination.getPage(), pagination.getSize()))
+            .header(HttpHeaders.AUTHORIZATION, "accessToken"))
         .andExpect(status().isOk())
         .andDo(print())
         .andDo(PostDocumentation.findPosts());
@@ -232,18 +233,15 @@ public class PostControllerTest extends CommonApiTest {
   @WithMockCustomUser
   @DisplayName("게시글 상태를 변경한다.")
   @Test
-  void changePostStatus() throws Exception {
+  void updatePostStatus() throws Exception {
+    PostStatusUpdateRequest request = new PostStatusUpdateRequest(PostStatus.SOLD_OUT.toString());
 
-    StatusChangeRequest req = StatusChangeRequest.builder()
-        .id(1L)
-        .status("SALE")
-        .build();
-
-    mockMvc.perform(get(format("/api/post/changeStatus?id=%d&status=%s", req.getId(),
-        req.getStatus()))
-        .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+    mockMvc.perform(patch("/api/post/postStatus/{postId}", 1L)
+            .header(HttpHeaders.AUTHORIZATION, "accessToken")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request)))
         .andExpect(status().isOk())
-        .andDo(print())
-        .andDo(PostDocumentation.changeStatus());
+        .andDo(print());
+    //.andDo(PostDocumentation.changeStatus());
   }
 }

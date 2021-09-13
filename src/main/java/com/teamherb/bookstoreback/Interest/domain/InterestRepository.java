@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface InterestRepository extends JpaRepository<Interest, Long> {
 
-  List<Interest> findAllByUserOrderByCreatedDate(User user);
+  List<Interest> findAllByUser(User user);
 }

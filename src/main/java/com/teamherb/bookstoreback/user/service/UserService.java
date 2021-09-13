@@ -9,7 +9,6 @@ import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
 import com.teamherb.bookstoreback.common.utils.upload.FileStoreUtil;
 import com.teamherb.bookstoreback.post.domain.Post;
 import com.teamherb.bookstoreback.post.domain.PostRepository;
-import com.teamherb.bookstoreback.user.domain.Role;
 import com.teamherb.bookstoreback.user.domain.User;
 import com.teamherb.bookstoreback.user.domain.UserRepository;
 import com.teamherb.bookstoreback.user.dto.PasswordUpdateRequest;
@@ -18,7 +17,6 @@ import com.teamherb.bookstoreback.user.dto.SignUpRequest;
 import com.teamherb.bookstoreback.user.dto.UserUpdateRequest;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,39 +37,34 @@ public class UserService {
 
   private final InterestRepository interestRepository;
 
-  public void createUser(SignUpRequest signUpRequest) {
-    if (userRepository.existsByIdentity(signUpRequest.getIdentity())) {
+  public void createUser(SignUpRequest request) {
+    validateIsDuplicateIdentity(request);
+    User user = User.create(request, passwordEncoder.encode(request.getPassword()));
+    userRepository.save(user);
+  }
+
+  private void validateIsDuplicateIdentity(SignUpRequest request) {
+    if (userRepository.existsByIdentity(request.getIdentity())) {
       throw new CustomException(ErrorCode.DUPLICATED_USER_IDENTITY);
     }
-
-    User user = User.builder()
-        .identity(signUpRequest.getIdentity())
-        .password(passwordEncoder.encode(signUpRequest.getPassword()))
-        .email(signUpRequest.getEmail())
-        .name(signUpRequest.getName())
-        .phoneNumber(signUpRequest.getPhoneNumber())
-        .role(Role.ROLE_USER)
-        .build();
-
-    userRepository.save(user);
   }
 
-  public void updateMyInfo(User user, UserUpdateRequest userUpdateRequest) {
-    user.update(userUpdateRequest);
-    userRepository.save(user);
+  public void updateMyInfo(User loginUser, UserUpdateRequest userUpdateRequest) {
+    loginUser.update(userUpdateRequest);
+    userRepository.save(loginUser);
   }
 
-  public ProfileResponse uploadProfileImage(User user, MultipartFile profileImage) {
-    deleteProfile(user);
-    String uploadFile = fileStoreUtil.storeFile(profileImage);
-    user.uploadProfile(uploadFile);
-    userRepository.save(user);
-    return ProfileResponse.of(uploadFile);
+  public ProfileResponse uploadProfileImage(User loginUser, MultipartFile profileImage) {
+    deleteProfile(loginUser);
+    String uploadImage = fileStoreUtil.storeFile(profileImage);
+    loginUser.uploadProfile(uploadImage);
+    userRepository.save(loginUser);
+    return ProfileResponse.of(uploadImage);
   }
 
-  public void deleteProfileImage(User user) {
-    deleteProfile(user);
-    userRepository.save(user);
+  public void deleteProfileImage(User loginUser) {
+    deleteProfile(loginUser);
+    userRepository.save(loginUser);
   }
 
   private void deleteProfile(User user) {
@@ -79,10 +72,10 @@ public class UserService {
     user.deleteProfile();
   }
 
-  public void updatePassword(User user, PasswordUpdateRequest req) {
-    validateIsCorrectPassword(req.getOldPassword(), user.getPassword());
-    user.updatePassword(passwordEncoder.encode(req.getNewPassword()));
-    userRepository.save(user);
+  public void updatePassword(User loginUser, PasswordUpdateRequest req) {
+    validateIsCorrectPassword(req.getOldPassword(), loginUser.getPassword());
+    loginUser.updatePassword(passwordEncoder.encode(req.getNewPassword()));
+    userRepository.save(loginUser);
   }
 
   private void validateIsCorrectPassword(String password, String encodedPassword) {
@@ -93,25 +86,28 @@ public class UserService {
 
   @Transactional(readOnly = true)
   public List<InterestResponse> findInterests(User user) {
-    List<Interest> interests = interestRepository.findAllByUserOrderByCreatedDate(user);
+    List<Interest> interests = interestRepository.findAllByUser(user);
     return InterestResponse.listOf(interests);
-
   }
 
   public void addInterest(User loginUser, InterestRequest request) {
-    Post post = postRepository.findById(request.getPostId())
+    Post post = validatePostIdAndGetPost(request.getPostId());
+    interestRepository.save(Interest.create(loginUser, post));
+  }
+
+  private Post validatePostIdAndGetPost(Long postId) {
+    return postRepository.findById(postId)
         .orElseThrow(() -> new CustomException(ErrorCode.INVALID_POST_ID));
-    Interest.create(loginUser, post);
   }
 
   public void deleteInterest(User loginUser, Long interestId) {
-    Interest interest = interestRepository.findById(interestId)
-        .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INTEREST_ID));
-
-    if (!interest.getUser().getId().equals(loginUser.getId())) {
-      throw new CustomException(ErrorCode.USER_ACCESS_DENIED);
-    }
-
+    Interest interest = validateInterestIdAndGetInterest(interestId);
+    interest.validateIsMyInterest(loginUser);
     interestRepository.delete(interest);
+  }
+
+  private Interest validateInterestIdAndGetInterest(Long interestId) {
+    return interestRepository.findById(interestId)
+        .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INTEREST_ID));
   }
 }

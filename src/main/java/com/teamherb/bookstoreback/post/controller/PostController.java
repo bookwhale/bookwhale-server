@@ -7,8 +7,8 @@ import com.teamherb.bookstoreback.post.dto.FullPostResponse;
 import com.teamherb.bookstoreback.post.dto.NaverBookRequest;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.post.dto.PostResponse;
+import com.teamherb.bookstoreback.post.dto.PostStatusUpdateRequest;
 import com.teamherb.bookstoreback.post.dto.PostUpdateRequest;
-import com.teamherb.bookstoreback.post.dto.StatusChangeRequest;
 import com.teamherb.bookstoreback.post.service.NaverBookAPIService;
 import com.teamherb.bookstoreback.post.service.PostService;
 import com.teamherb.bookstoreback.security.CurrentUser;
@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -75,11 +76,10 @@ public class PostController {
     return ResponseEntity.ok().build();
   }
 
-  @GetMapping("/changeStatus")
-  public ResponseEntity<Void> changePostStatus(StatusChangeRequest statusChangeRequest) {
-    postService.changeStatus(statusChangeRequest);
+  @PatchMapping("/postStatus/{postId}")
+  public ResponseEntity<Void> updatePostStatus(@CurrentUser User user, @PathVariable Long postId,
+      @Valid @RequestBody PostStatusUpdateRequest request) {
+    postService.updatePostStatus(user, postId, request);
     return ResponseEntity.ok().build();
   }
-
-
 }

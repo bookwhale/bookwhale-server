@@ -1,6 +1,7 @@
 package com.teamherb.bookstoreback.user.domain;
 
 import com.teamherb.bookstoreback.common.domain.BaseEntity;
+import com.teamherb.bookstoreback.user.dto.SignUpRequest;
 import com.teamherb.bookstoreback.user.dto.UserUpdateRequest;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -59,6 +60,17 @@ public class User extends BaseEntity {
     this.phoneNumber = phoneNumber;
     this.profileImage = profileImage;
     this.role = role;
+  }
+
+  public static User create(SignUpRequest req, String encodedPassword) {
+    return User.builder()
+        .identity(req.getIdentity())
+        .password(encodedPassword)
+        .email(req.getEmail())
+        .name(req.getName())
+        .phoneNumber(req.getPhoneNumber())
+        .role(Role.ROLE_USER)
+        .build();
   }
 
   public void update(UserUpdateRequest request) {

@@ -22,26 +22,19 @@ public class InterestResponse {
 
   private String bookTitle;
 
-  private String bookPrice;
-
-  private String sellerIdentity;
-
-  private String sellerProfileImage;
+  private String postPrice;
 
   private PostStatus postStatus;
 
   @Builder
   public InterestResponse(Long interestId, Long postId, String bookThumbnail,
-      String postTitle, String bookTitle, String bookPrice, String sellerIdentity,
-      String sellerProfileImage, PostStatus postStatus) {
+      String postTitle, String bookTitle, String postPrice, PostStatus postStatus) {
     this.interestId = interestId;
     this.postId = postId;
     this.bookThumbnail = bookThumbnail;
     this.postTitle = postTitle;
     this.bookTitle = bookTitle;
-    this.bookPrice = bookPrice;
-    this.sellerIdentity = sellerIdentity;
-    this.sellerProfileImage = sellerProfileImage;
+    this.postPrice = postPrice;
     this.postStatus = postStatus;
   }
 
@@ -52,9 +45,9 @@ public class InterestResponse {
         .bookThumbnail(v.getPost().getBook().getBookThumbnail())
         .postTitle(v.getPost().getTitle())
         .bookTitle(v.getPost().getBook().getBookTitle())
-        .bookPrice(v.getPost().getPrice())
+        .postPrice(v.getPost().getPrice())
         .postStatus(v.getPost().getPostStatus())
-        .sellerIdentity(v.getPost().getSeller().getIdentity())
-        .build()).collect(Collectors.toList());
+        .build()
+    ).collect(Collectors.toList());
   }
 }

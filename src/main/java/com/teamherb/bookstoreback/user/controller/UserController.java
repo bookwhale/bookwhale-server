@@ -79,8 +79,8 @@ public class UserController {
 
   @PostMapping("/me/interest")
   public ResponseEntity<Void> addInterest(@CurrentUser User user,
-      @Valid @RequestBody InterestRequest interestRequest) {
-    userService.addInterest(user, interestRequest);
+      @Valid @RequestBody InterestRequest request) {
+    userService.addInterest(user, request);
     return ResponseEntity.ok().build();
   }
 
