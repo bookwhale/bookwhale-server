@@ -7,6 +7,7 @@ import com.teamherb.bookstoreback.common.acceptance.AcceptanceTest;
 import com.teamherb.bookstoreback.common.acceptance.AcceptanceUtils;
 import com.teamherb.bookstoreback.common.acceptance.step.AcceptanceStep;
 import com.teamherb.bookstoreback.post.acceptance.step.PostAcceptanceStep;
+import com.teamherb.bookstoreback.post.domain.BookStatus;
 import com.teamherb.bookstoreback.post.dto.BookRequest;
 import com.teamherb.bookstoreback.post.dto.BookResponse;
 import com.teamherb.bookstoreback.post.dto.FullPostRequest;
@@ -14,13 +15,17 @@ import com.teamherb.bookstoreback.post.dto.FullPostResponse;
 import com.teamherb.bookstoreback.post.dto.NaverBookRequest;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.post.dto.PostResponse;
+import com.teamherb.bookstoreback.post.dto.PostUpdateRequest;
 import com.teamherb.bookstoreback.user.acceptance.step.UserAcceptanceStep;
+import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import io.restassured.specification.MultiPartSpecification;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.util.MimeTypeUtils;
 
 @DisplayName("게시글 통합 테스트")
 public class PostAcceptanceTest extends AcceptanceTest {
@@ -126,5 +131,37 @@ public class PostAcceptanceTest extends AcceptanceTest {
 
     AcceptanceStep.assertThatStatusIsOk(response);
     assertThat(bookResponses.size()).isGreaterThan(1);
+  }
+
+  @DisplayName("게시글을 수정한다.")
+  @Test
+  void updatePost() {
+    PostUpdateRequest updateRequest = PostUpdateRequest.builder()
+        .title("토비의 스프링 팝니다~ (수정)")
+        .description("책 설명 (수정)")
+        .bookStatus(BookStatus.MIDDLE.toString())
+        .price("25000")
+        .build();
+    MultiPartSpecification updateImage = new MultiPartSpecBuilder(
+        "updateImage1".getBytes())
+        .mimeType(MimeTypeUtils.IMAGE_JPEG.toString())
+        .controlName("updateImages")
+        .fileName("updateImage1.jpg")
+        .build();
+    List<MultiPartSpecification> updateImages = List.of(updateImage);
+
+    String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
+
+    Long postId = AcceptanceUtils.getIdFromResponse(
+        PostAcceptanceStep.requestToCreatePost(jwt, postRequest));
+
+    ExtractableResponse<Response> response = PostAcceptanceStep.requestToUpdatePost(
+        jwt, postId, updateRequest, updateImages);
+
+    PostResponse postResponse = PostAcceptanceStep.requestToFindPost(jwt, postId).jsonPath()
+        .getObject(".", PostResponse.class);
+
+    AcceptanceStep.assertThatStatusIsOk(response);
+    PostAcceptanceStep.assertThatUpdatePost(postResponse, updateRequest, updateImages.size());
   }
 }

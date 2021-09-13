@@ -49,7 +49,8 @@ public class GlobalExceptionHandler {
   }
 
   @ExceptionHandler(value = MissingServletRequestPartException.class)
-  public ResponseEntity<ErrorResponse> handleMissingServletRequestPartException(BindException e) {
+  public ResponseEntity<ErrorResponse> handleMissingServletRequestPartException(
+      MissingServletRequestPartException e) {
     log.error(e.getMessage(), e);
     ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.INVALID_INPUT_VALUE);
     return ResponseEntity.status(errorResponse.getStatus()).body(errorResponse);

@@ -65,7 +65,7 @@ public class UserService {
   }
 
   private void deleteProfile(User user) {
-    //TODO : S3 연동하면 기존의 프로필 사진을 삭제해주는 로직을 추가해야합니다.
+    //TODO : S3 연동하면 S3 이미지를 삭제하는 로직을 추가해야합니다.
     user.deleteProfile();
   }
 
