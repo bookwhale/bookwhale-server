@@ -72,16 +72,16 @@ public class UserController {
     return ResponseEntity.ok().build();
   }
 
-  @GetMapping("/me/interests")
-  public ResponseEntity<List<InterestResponse>> findInterests(@CurrentUser User user) {
-    return ResponseEntity.ok(userService.findInterests(user));
-  }
-
   @PostMapping("/me/interest")
   public ResponseEntity<Void> addInterest(@CurrentUser User user,
       @Valid @RequestBody InterestRequest request) {
     userService.addInterest(user, request);
     return ResponseEntity.ok().build();
+  }
+
+  @GetMapping("/me/interests")
+  public ResponseEntity<List<InterestResponse>> findInterests(@CurrentUser User user) {
+    return ResponseEntity.ok(userService.findInterests(user));
   }
 
   @DeleteMapping("/me/interest/{interestId}")

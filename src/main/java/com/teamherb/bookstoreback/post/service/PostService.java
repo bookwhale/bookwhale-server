@@ -42,6 +42,7 @@ public class PostService {
 
   @Transactional(readOnly = true)
   public PostResponse findPost(User loginUser, Long postId) {
+    // TODO : select user 쿼리가 한 번더 나감. 확인 필요
     Post findPost = validatePostIdAndGetPost(postId);
     List<Image> findImages = imageRepository.findAllByPost(findPost);
     return PostResponse.of(findPost, findImages, findPost.isMyPost(loginUser));

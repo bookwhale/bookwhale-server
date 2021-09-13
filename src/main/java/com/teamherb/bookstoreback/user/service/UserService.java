@@ -86,6 +86,7 @@ public class UserService {
 
   @Transactional(readOnly = true)
   public List<InterestResponse> findInterests(User user) {
+    // TODO: findAllByUser join 쿼리가 나가지 않음 ---> 해결이 필요함
     List<Interest> interests = interestRepository.findAllByUser(user);
     return InterestResponse.listOf(interests);
   }

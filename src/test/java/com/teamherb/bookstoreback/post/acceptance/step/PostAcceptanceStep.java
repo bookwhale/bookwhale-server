@@ -12,6 +12,7 @@ import com.teamherb.bookstoreback.post.dto.FullPostResponse;
 import com.teamherb.bookstoreback.post.dto.NaverBookRequest;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.post.dto.PostResponse;
+import com.teamherb.bookstoreback.post.dto.PostStatusUpdateRequest;
 import com.teamherb.bookstoreback.post.dto.PostUpdateRequest;
 import com.teamherb.bookstoreback.user.domain.User;
 import io.restassured.builder.MultiPartSpecBuilder;
@@ -181,6 +182,18 @@ public class PostAcceptanceStep {
         .multiPart(json)
         .when()
         .patch("/api/post/{postId}", postId)
+        .then().log().all()
+        .extract();
+  }
+
+  public static ExtractableResponse<Response> requestToUpdatePostStatus(String jwt, Long postId,
+      PostStatusUpdateRequest request) {
+    return given().log().all()
+        .header(HttpHeaders.AUTHORIZATION, jwt)
+        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        .body(request)
+        .when()
+        .patch("/api/post/postStatus/{postId}", postId)
         .then().log().all()
         .extract();
   }
