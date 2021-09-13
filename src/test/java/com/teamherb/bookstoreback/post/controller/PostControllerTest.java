@@ -7,7 +7,6 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -236,12 +235,12 @@ public class PostControllerTest extends CommonApiTest {
   void updatePostStatus() throws Exception {
     PostStatusUpdateRequest request = new PostStatusUpdateRequest(PostStatus.SOLD_OUT.toString());
 
-    mockMvc.perform(patch("/api/post/postStatus/{postId}", 1L)
+    mockMvc.perform(RestDocumentationRequestBuilders.patch("/api/post/postStatus/{postId}", 1L)
             .header(HttpHeaders.AUTHORIZATION, "accessToken")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request)))
         .andExpect(status().isOk())
-        .andDo(print());
-    //.andDo(PostDocumentation.changeStatus());
+        .andDo(print())
+        .andDo(PostDocumentation.updatePostStatus());
   }
 }

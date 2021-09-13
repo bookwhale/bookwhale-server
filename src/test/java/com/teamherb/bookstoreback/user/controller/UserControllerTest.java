@@ -33,6 +33,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 
 
 @DisplayName("유저 단위 테스트(Controller)")
@@ -199,8 +200,8 @@ public class UserControllerTest extends CommonApiTest {
     mockMvc.perform(get("/api/user/me/interests")
             .header(HttpHeaders.AUTHORIZATION, "accessToken"))
         .andExpect(status().isOk())
-        .andDo(print());
-    //.andDo(UserDocumentation.userDeleteProfileImage());
+        .andDo(print())
+        .andDo(UserDocumentation.userFindInterests());
   }
 
   @WithMockCustomUser
@@ -216,8 +217,8 @@ public class UserControllerTest extends CommonApiTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(interestRequest)))
         .andExpect(status().isOk())
-        .andDo(print());
-    //.andDo(UserDocumentation.userDeleteProfileImage());
+        .andDo(print())
+        .andDo(UserDocumentation.userAddInterest());
   }
 
   @WithMockCustomUser
@@ -226,10 +227,11 @@ public class UserControllerTest extends CommonApiTest {
   void deleteInterest() throws Exception {
     doNothing().when(userService).deleteInterest(any(), any());
 
-    mockMvc.perform(delete("/api/user/me/interest/{interestId}", 1L)
-            .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+    mockMvc.perform(
+            RestDocumentationRequestBuilders.delete("/api/user/me/interest/{interestId}", 1L)
+                .header(HttpHeaders.AUTHORIZATION, "accessToken"))
         .andExpect(status().isOk())
-        .andDo(print());
-    //.andDo(UserDocumentation.userDeleteProfileImage());
+        .andDo(print())
+        .andDo(UserDocumentation.userDeleteInterest());
   }
 }

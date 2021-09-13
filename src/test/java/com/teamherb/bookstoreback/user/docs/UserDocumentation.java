@@ -9,11 +9,14 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.requestParts;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
+import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.JsonFieldType;
 
 public class UserDocumentation {
@@ -102,6 +105,54 @@ public class UserDocumentation {
         preprocessResponse(prettyPrint()),
         requestHeaders(
             headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
+        )
+    );
+  }
+
+  public static RestDocumentationResultHandler userFindInterests() {
+    FieldDescriptor[] response = new FieldDescriptor[]{
+        fieldWithPath("interestId").type(JsonFieldType.NUMBER).description("관심목록 ID"),
+        fieldWithPath("postId").type(JsonFieldType.NUMBER).description("게시글 ID"),
+        fieldWithPath("postTitle").type(JsonFieldType.STRING).description("게시글 제목"),
+        fieldWithPath("postPrice").type(JsonFieldType.STRING).description("게시글 가격"),
+        fieldWithPath("bookTitle").type(JsonFieldType.STRING).description("책 제목"),
+        fieldWithPath("bookThumbnail").type(JsonFieldType.STRING).description(
+            "책 썸네일(네이버 책 API)"),
+        fieldWithPath("postStatus").type(JsonFieldType.STRING).description(
+            "게시글 상태 [SALE, RESERVED, SOLD_OUT]")
+    };
+
+    return document("user/findInterests",
+        preprocessRequest(prettyPrint()),
+        preprocessResponse(prettyPrint()),
+        requestHeaders(
+            headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
+        ),
+        responseFields(fieldWithPath("[]").description("An arrays of interest"))
+            .andWithPrefix("[].", response)
+    );
+  }
+
+  public static RestDocumentationResultHandler userAddInterest() {
+    return document("user/addInterest",
+        preprocessRequest(prettyPrint()),
+        preprocessResponse(prettyPrint()),
+        requestHeaders(
+            headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
+        ), requestFields(
+            fieldWithPath("postId").type(JsonFieldType.NUMBER).description("게시글 ID")
+        )
+    );
+  }
+
+  public static RestDocumentationResultHandler userDeleteInterest() {
+    return document("user/deleteInterest",
+        preprocessResponse(prettyPrint()),
+        requestHeaders(
+            headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
+        ),
+        pathParameters(
+            parameterWithName("interestId").description("관심목록 ID")
         )
     );
   }

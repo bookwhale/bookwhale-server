@@ -7,6 +7,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestPartFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
@@ -158,6 +159,21 @@ public class PostDocumentation {
             fieldWithPath("price").description("게시글 가격 (필수)"),
             fieldWithPath("description").description("게시글 설명 (필수)"),
             fieldWithPath("bookStatus").description("책 상태 [LOWER, MIDDLE, UPPER, BEST] (필수)")
+        )
+    );
+  }
+
+  public static RestDocumentationResultHandler updatePostStatus() {
+    return document("post/updatePostStatus",
+        preprocessRequest(prettyPrint()),
+        requestHeaders(
+            headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
+        ),
+        pathParameters(
+            parameterWithName("postId").description("게시글 ID")
+        ), requestFields(
+            fieldWithPath("postStatus").type(JsonFieldType.STRING)
+                .description("게시글 상태 [SALE, RESERVED, SOLD_OUT]")
         )
     );
   }
