@@ -1,30 +1,19 @@
 package com.teamherb.bookstoreback.user.service;
 
-import com.teamherb.bookstoreback.basket.domain.Basket;
-import com.teamherb.bookstoreback.basket.domain.BasketRepository;
-import com.teamherb.bookstoreback.basket.dto.BasketResponse;
-import com.teamherb.bookstoreback.orders.domain.OrderRepository;
-import com.teamherb.bookstoreback.orders.domain.Orders;
-import com.teamherb.bookstoreback.orders.dto.PurchaseOrder;
-import com.teamherb.bookstoreback.orders.dto.SaleOrder;
-import com.teamherb.bookstoreback.post.domain.Post;
-import com.teamherb.bookstoreback.post.domain.PostRepository;
-import com.teamherb.bookstoreback.post.dto.SalePostResponse;
-import com.teamherb.bookstoreback.purchase.domain.Purchase;
-import com.teamherb.bookstoreback.purchase.domain.PurchaseRepository;
-import com.teamherb.bookstoreback.purchase.dto.PurchaseResponse;
-import com.teamherb.bookstoreback.sale.domain.Sale;
-import com.teamherb.bookstoreback.sale.domain.SaleRepository;
-import com.teamherb.bookstoreback.sale.dto.SaleResponse;
+import com.teamherb.bookstoreback.Interest.domain.Interest;
+import com.teamherb.bookstoreback.Interest.domain.InterestRepository;
+import com.teamherb.bookstoreback.Interest.dto.InterestRequest;
+import com.teamherb.bookstoreback.Interest.dto.InterestResponse;
 import com.teamherb.bookstoreback.common.exception.CustomException;
 import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
+import com.teamherb.bookstoreback.post.domain.Post;
+import com.teamherb.bookstoreback.post.domain.PostRepository;
 import com.teamherb.bookstoreback.user.domain.Role;
 import com.teamherb.bookstoreback.user.domain.User;
 import com.teamherb.bookstoreback.user.domain.UserRepository;
 import com.teamherb.bookstoreback.user.dto.SignUpRequest;
 import com.teamherb.bookstoreback.user.dto.UserUpdateRequest;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -37,17 +26,11 @@ public class UserService {
 
   private final UserRepository userRepository;
 
-  private final PurchaseRepository purchaseRepository;
-
-  private final SaleRepository saleRepository;
-
   private final PasswordEncoder passwordEncoder;
-
-  private final OrderRepository orderRepository;
 
   private final PostRepository postRepository;
 
-  private final BasketRepository basketRepository;
+  private final InterestRepository interestRepository;
 
   public void createUser(SignUpRequest signUpRequest) {
     if (userRepository.existsByIdentity(signUpRequest.getIdentity())) {
@@ -71,40 +54,26 @@ public class UserService {
   }
 
   @Transactional(readOnly = true)
-  public List<PurchaseResponse> findPurchaseHistories(User user) {
-    List<Purchase> purchases = purchaseRepository.findAllByPurchaserOrderByCreatedDate(user);
-    return PurchaseResponse.listOf(purchases);
-  }
-
-  @Transactional(readOnly = true)
-  public List<SaleResponse> findSaleHistories(User user) {
-    List<Sale> sales = saleRepository.findAllBySellerOrderByCreatedDate(user);
-    return SaleResponse.listOf(sales);
-  }
-
-  @Transactional(readOnly = true)
-  public List<SaleOrder> findSaleOrders(User user) {
-    List<Orders> saleOrders = orderRepository
-        .findAllBySellerOrderByCreatedDate(user);
-    return SaleOrder.listOf(saleOrders);
-  }
-
-  @Transactional(readOnly = true)
-  public List<SalePostResponse> findSalePosts(User user) {
-    List<Post> result = postRepository.findAllBySellerOrderByCreatedDate(user);
-    return SalePostResponse.listOf(result);
-  }
-
-  @Transactional(readOnly = true)
-  public List<BasketResponse> findBaskets(User user) {
-    List<Basket> result = basketRepository.findAllByPurchaserOrderByCreatedDate(user);
-    return BasketResponse.listOf(result);
+  public List<InterestResponse> findInterests(User user) {
+    List<Interest> interests = interestRepository.findAllByUserOrderByCreatedDate(user);
+    return InterestResponse.listOf(interests);
 
   }
 
-  @Transactional
-  public void delBasket(Long id) {
-    Optional<Basket> result = basketRepository.findById(id);
-    result.ifPresent(basketRepository::delete);
+  public void addInterest(User loginUser, InterestRequest request) {
+    Post post = postRepository.findById(request.getPostId())
+        .orElseThrow(() -> new CustomException(ErrorCode.INVALID_POST_ID));
+    Interest.create(loginUser, post);
+  }
+
+  public void deleteInterest(User loginUser, Long interestId) {
+    Interest interest = interestRepository.findById(interestId)
+        .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INTEREST_ID));
+
+    if (!interest.getUser().getId().equals(loginUser.getId())) {
+      throw new CustomException(ErrorCode.USER_ACCESS_DENIED);
+    }
+
+    interestRepository.delete(interest);
   }
 }

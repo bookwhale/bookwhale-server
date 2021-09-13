@@ -1,10 +1,7 @@
 package com.teamherb.bookstoreback.user.controller;
 
-import com.teamherb.bookstoreback.basket.dto.BasketResponse;
-import com.teamherb.bookstoreback.orders.dto.SaleOrder;
-import com.teamherb.bookstoreback.post.dto.SalePostResponse;
-import com.teamherb.bookstoreback.purchase.dto.PurchaseResponse;
-import com.teamherb.bookstoreback.sale.dto.SaleResponse;
+import com.teamherb.bookstoreback.Interest.dto.InterestRequest;
+import com.teamherb.bookstoreback.Interest.dto.InterestResponse;
 import com.teamherb.bookstoreback.security.CurrentUser;
 import com.teamherb.bookstoreback.user.domain.User;
 import com.teamherb.bookstoreback.user.dto.SignUpRequest;
@@ -17,12 +14,13 @@ import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -51,39 +49,22 @@ public class UserController {
     return ResponseEntity.ok().build();
   }
 
-  @GetMapping("/purchase-history")
-  public ResponseEntity<List<PurchaseResponse>> findPurchaseHistories(@CurrentUser User user) {
-    List<PurchaseResponse> res = userService.findPurchaseHistories(user);
-    return ResponseEntity.ok(res);
+  @GetMapping("/me/interests")
+  public ResponseEntity<List<InterestResponse>> findInterests(@CurrentUser User user) {
+    return ResponseEntity.ok(userService.findInterests(user));
   }
 
-  @GetMapping("/sale-history")
-  public ResponseEntity<List<SaleResponse>> findSaleHistories(@CurrentUser User user) {
-    List<SaleResponse> res = userService.findSaleHistories(user);
-    return ResponseEntity.ok(res);
+  @PostMapping("/me/interest")
+  public ResponseEntity<Void> addInterest(@CurrentUser User user,
+      @Valid @RequestBody InterestRequest interestRequest) {
+    userService.addInterest(user, interestRequest);
+    return ResponseEntity.ok().build();
   }
 
-  @GetMapping("/saleOrders")
-  public ResponseEntity<List<SaleOrder>> findSaleOrders(@CurrentUser User user) {
-    List<SaleOrder> res = userService.findSaleOrders(user);
-    return ResponseEntity.ok(res);
-  }
-
-  @GetMapping("/salePosts")
-  public ResponseEntity<List<SalePostResponse>> findSalePosts(@CurrentUser User user) {
-    List<SalePostResponse> res = userService.findSalePosts(user);
-    return ResponseEntity.ok(res);
-  }
-
-  @GetMapping("/baskets")
-  public ResponseEntity<List<BasketResponse>> findBaskets(@CurrentUser User user) {
-    List<BasketResponse> res = userService.findBaskets(user);
-    return ResponseEntity.ok(res);
-  }
-
-  @GetMapping("/delBasket")
-  public ResponseEntity<Void> delBasket(@RequestParam Long id) {
-    userService.delBasket(id);
+  @DeleteMapping("/me/interest/{interestId}")
+  public ResponseEntity<Void> deleteInterest(@CurrentUser User user,
+      @PathVariable Long interestId) {
+    userService.deleteInterest(user, interestId);
     return ResponseEntity.ok().build();
   }
 
