@@ -13,6 +13,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.teamherb.bookstoreback.Interest.domain.InterestRepository;
 import com.teamherb.bookstoreback.common.exception.CustomException;
 import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
 import com.teamherb.bookstoreback.common.utils.upload.FileStoreUtil;
@@ -53,6 +54,9 @@ public class PostServiceTest {
   @Mock
   private FileStoreUtil fileStoreUtil;
 
+  @Mock
+  private InterestRepository interestRepository;
+
   PostService postService;
 
   PostRequest postRequest;
@@ -61,7 +65,8 @@ public class PostServiceTest {
 
   @BeforeEach
   void setUp() {
-    postService = new PostService(postRepository, imageRepository, fileStoreUtil);
+    postService = new PostService(postRepository, imageRepository, fileStoreUtil,
+        interestRepository);
 
     BookRequest bookRequest = BookRequest.builder()
         .bookSummary("설명")
@@ -119,6 +124,7 @@ public class PostServiceTest {
 
     when(postRepository.findById(any())).thenReturn(ofNullable(post));
     when(imageRepository.findAllByPost(any())).thenReturn(images);
+    when(interestRepository.existsByUserAndPost(any(), any())).thenReturn(true);
 
     PostResponse response = postService.findPost(user, 1L);
 
@@ -131,6 +137,7 @@ public class PostServiceTest {
         () -> assertThat(response.getPostStatus()).isEqualTo(PostStatus.SALE),
         () -> assertThat(response.getTitle()).isEqualTo(postRequest.getTitle()),
         () -> assertThat(response.isMyPost()).isEqualTo(true),
+        () -> assertThat(response.isMyInterest()).isEqualTo(true),
         () -> assertThat(response.getBookStatus()).isEqualTo(
             BookStatus.valueOf(postRequest.getBookStatus())),
         () -> assertThat(response.getBookResponse().getBookIsbn()).isEqualTo(
