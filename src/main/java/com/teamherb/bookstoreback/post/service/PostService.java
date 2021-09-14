@@ -45,12 +45,16 @@ public class PostService {
 
   @Transactional(readOnly = true)
   public PostResponse findPost(User loginUser, Long postId) {
-    // TODO : select user 쿼리가 한 번더 나감. 확인 필요
-    Post post = validatePostIdAndGetPost(postId);
+    Post post = validatePostIdAndGetPostWithSeller(postId);
     List<Image> findImages = imageRepository.findAllByPost(post);
     boolean isMyPost = post.isMyPost(loginUser);
     boolean isMyInterest = interestRepository.existsByUserAndPost(loginUser, post);
     return PostResponse.of(post, findImages, isMyPost, isMyInterest);
+  }
+
+  private Post validatePostIdAndGetPostWithSeller(Long postId) {
+    return postRepository.findWithSellerById(postId)
+        .orElseThrow(() -> new CustomException(ErrorCode.INVALID_POST_ID));
   }
 
   @Transactional(readOnly = true)
