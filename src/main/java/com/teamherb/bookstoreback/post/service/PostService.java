@@ -1,5 +1,6 @@
 package com.teamherb.bookstoreback.post.service;
 
+import com.teamherb.bookstoreback.Interest.domain.InterestRepository;
 import com.teamherb.bookstoreback.common.Pagination;
 import com.teamherb.bookstoreback.common.exception.CustomException;
 import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
@@ -33,6 +34,8 @@ public class PostService {
 
   private final FileStoreUtil fileStoreUtil;
 
+  private final InterestRepository interestRepository;
+
   public Long createPost(User loginUser, PostRequest postRequest, List<MultipartFile> images) {
     Post newPost = Post.create(loginUser, postRequest);
     Post savedPost = postRepository.save(newPost);
@@ -43,9 +46,11 @@ public class PostService {
   @Transactional(readOnly = true)
   public PostResponse findPost(User loginUser, Long postId) {
     // TODO : select user 쿼리가 한 번더 나감. 확인 필요
-    Post findPost = validatePostIdAndGetPost(postId);
-    List<Image> findImages = imageRepository.findAllByPost(findPost);
-    return PostResponse.of(findPost, findImages, findPost.isMyPost(loginUser));
+    Post post = validatePostIdAndGetPost(postId);
+    List<Image> findImages = imageRepository.findAllByPost(post);
+    boolean isMyPost = post.isMyPost(loginUser);
+    boolean isMyInterest = interestRepository.existsByUserAndPost(loginUser, post);
+    return PostResponse.of(post, findImages, isMyPost, isMyInterest);
   }
 
   @Transactional(readOnly = true)
