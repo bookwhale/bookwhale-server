@@ -7,6 +7,7 @@ import com.teamherb.bookstoreback.post.dto.FullPostResponse;
 import com.teamherb.bookstoreback.post.dto.NaverBookRequest;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.post.dto.PostResponse;
+import com.teamherb.bookstoreback.post.dto.PostStatusUpdateRequest;
 import com.teamherb.bookstoreback.post.dto.PostUpdateRequest;
 import com.teamherb.bookstoreback.post.service.NaverBookAPIService;
 import com.teamherb.bookstoreback.post.service.PostService;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -71,6 +73,13 @@ public class PostController {
       @Valid @RequestPart("postUpdateRequest") PostUpdateRequest request,
       @RequestPart(name = "updateImages", required = false) List<MultipartFile> updateImages) {
     postService.updatePost(user, postId, request, updateImages);
+    return ResponseEntity.ok().build();
+  }
+
+  @PatchMapping("/postStatus/{postId}")
+  public ResponseEntity<Void> updatePostStatus(@CurrentUser User user, @PathVariable Long postId,
+      @Valid @RequestBody PostStatusUpdateRequest request) {
+    postService.updatePostStatus(user, postId, request);
     return ResponseEntity.ok().build();
   }
 }

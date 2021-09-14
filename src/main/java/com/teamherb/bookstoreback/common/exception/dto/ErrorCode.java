@@ -16,7 +16,9 @@ public enum ErrorCode {
   DUPLICATED_USER_IDENTITY(400, "US_001", "이미 존재하는 아이디입니다."),
   INVALID_USER_PASSWORD(400, "US_002", "잘못된 비밀번호입니다."),
 
-  INVALID_POST_ID(400, "P_001", "잘못된 게시글 ID 입니다.");
+  INVALID_POST_ID(400, "P_001", "잘못된 게시글 ID 입니다."),
+
+  INVALID_INTEREST_ID(400, "IN_001", "잘못된 관심목록 ID 입니다.");
 
   private final int status;
   private final String code;

@@ -24,6 +24,7 @@ import com.teamherb.bookstoreback.post.dto.FullPostResponse;
 import com.teamherb.bookstoreback.post.dto.NaverBookRequest;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.post.dto.PostResponse;
+import com.teamherb.bookstoreback.post.dto.PostStatusUpdateRequest;
 import com.teamherb.bookstoreback.post.dto.PostUpdateRequest;
 import com.teamherb.bookstoreback.post.service.NaverBookAPIService;
 import com.teamherb.bookstoreback.post.service.PostService;
@@ -226,5 +227,20 @@ public class PostControllerTest extends CommonApiTest {
         .andExpect(status().isOk())
         .andDo(print())
         .andDo(PostDocumentation.updatePost());
+  }
+
+  @WithMockCustomUser
+  @DisplayName("게시글 상태를 변경한다.")
+  @Test
+  void updatePostStatus() throws Exception {
+    PostStatusUpdateRequest request = new PostStatusUpdateRequest(PostStatus.SOLD_OUT.toString());
+
+    mockMvc.perform(RestDocumentationRequestBuilders.patch("/api/post/postStatus/{postId}", 1L)
+            .header(HttpHeaders.AUTHORIZATION, "accessToken")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isOk())
+        .andDo(print())
+        .andDo(PostDocumentation.updatePostStatus());
   }
 }

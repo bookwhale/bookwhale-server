@@ -3,6 +3,9 @@ package com.teamherb.bookstoreback.user.acceptance.step;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.teamherb.bookstoreback.Interest.dto.InterestRequest;
+import com.teamherb.bookstoreback.Interest.dto.InterestResponse;
+import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.user.domain.User;
 import com.teamherb.bookstoreback.user.dto.LoginRequest;
 import com.teamherb.bookstoreback.user.dto.LoginResponse;
@@ -14,6 +17,7 @@ import com.teamherb.bookstoreback.user.dto.UserUpdateRequest;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import io.restassured.specification.MultiPartSpecification;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -36,13 +40,11 @@ public class UserAcceptanceStep {
     );
   }
 
-  public static void assertThatUpdateMyInfo(UserResponse userResponse,
-      UserUpdateRequest userUpdateRequest) {
+  public static void assertThatUpdateMyInfo(UserResponse res, UserUpdateRequest req) {
     Assertions.assertAll(
-        () -> assertThat(userResponse.getEmail()).isEqualTo(userUpdateRequest.getEmail()),
-        () -> assertThat(userResponse.getName()).isEqualTo(userUpdateRequest.getName()),
-        () -> assertThat(userResponse.getPhoneNumber()).isEqualTo(
-            userUpdateRequest.getPhoneNumber())
+        () -> assertThat(res.getEmail()).isEqualTo(req.getEmail()),
+        () -> assertThat(res.getName()).isEqualTo(req.getName()),
+        () -> assertThat(res.getPhoneNumber()).isEqualTo(req.getPhoneNumber())
     );
   }
 
@@ -53,6 +55,17 @@ public class UserAcceptanceStep {
 
   public static void assertThatDeleteProfileImage(UserResponse res) {
     assertThat(res.getProfileImage()).isNull();
+  }
+
+  public static void assertThatAddInterest(List<InterestResponse> res, PostRequest req) {
+    Assertions.assertAll(
+        () -> assertThat(res.size()).isEqualTo(1),
+        () -> assertThat(res.get(0).getPostTitle()).isEqualTo(req.getTitle()),
+        () -> assertThat(res.get(0).getPostPrice()).isEqualTo(req.getPrice()),
+        () -> assertThat(res.get(0).getBookTitle()).isEqualTo(req.getBookRequest().getBookTitle()),
+        () -> assertThat(res.get(0).getBookThumbnail()).isEqualTo(
+            req.getBookRequest().getBookThumbnail())
+    );
   }
 
   public static ExtractableResponse<Response> requestToSignUp(SignUpRequest signUpRequest) {
@@ -132,6 +145,35 @@ public class UserAcceptanceStep {
         .header(HttpHeaders.AUTHORIZATION, jwt)
         .when()
         .delete("/api/user/profile")
+        .then().log().all()
+        .extract();
+  }
+
+  public static ExtractableResponse<Response> addInterest(String jwt, InterestRequest request) {
+    return given().log().all()
+        .header(HttpHeaders.AUTHORIZATION, jwt)
+        .contentType(MediaType.APPLICATION_JSON_VALUE)
+        .body(request)
+        .when()
+        .post("/api/user/me/interest")
+        .then().log().all()
+        .extract();
+  }
+
+  public static ExtractableResponse<Response> findInterests(String jwt) {
+    return given().log().all()
+        .header(HttpHeaders.AUTHORIZATION, jwt)
+        .when()
+        .get("/api/user/me/interests")
+        .then().log().all()
+        .extract();
+  }
+
+  public static ExtractableResponse<Response> deleteInterest(String jwt, Long interestId) {
+    return given().log().all()
+        .header(HttpHeaders.AUTHORIZATION, jwt)
+        .when()
+        .delete("/api/user/me/interest/{interestId}", interestId)
         .then().log().all()
         .extract();
   }

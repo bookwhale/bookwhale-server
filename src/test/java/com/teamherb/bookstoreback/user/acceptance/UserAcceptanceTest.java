@@ -1,7 +1,15 @@
 package com.teamherb.bookstoreback.user.acceptance;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import com.teamherb.bookstoreback.Interest.dto.InterestRequest;
+import com.teamherb.bookstoreback.Interest.dto.InterestResponse;
 import com.teamherb.bookstoreback.common.acceptance.AcceptanceTest;
+import com.teamherb.bookstoreback.common.acceptance.AcceptanceUtils;
 import com.teamherb.bookstoreback.common.acceptance.step.AcceptanceStep;
+import com.teamherb.bookstoreback.post.acceptance.step.PostAcceptanceStep;
+import com.teamherb.bookstoreback.post.dto.BookRequest;
+import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.user.acceptance.step.UserAcceptanceStep;
 import com.teamherb.bookstoreback.user.dto.LoginRequest;
 import com.teamherb.bookstoreback.user.dto.PasswordUpdateRequest;
@@ -13,6 +21,7 @@ import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import io.restassured.specification.MultiPartSpecification;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.MimeTypeUtils;
@@ -135,5 +144,78 @@ public class UserAcceptanceTest extends AcceptanceTest {
 
     AcceptanceStep.assertThatStatusIsOk(response);
     UserAcceptanceStep.assertThatDeleteProfileImage(userResponse);
+  }
+
+  @DisplayName("관심목록에 추가한다.")
+  @Test
+  void addInterest() {
+    BookRequest bookRequest = BookRequest.builder()
+        .bookSummary("책 설명")
+        .bookPubDate("2021-12-12")
+        .bookIsbn("12345678910")
+        .bookListPrice("10000")
+        .bookThumbnail("썸네일")
+        .bookTitle("토비의 스프링")
+        .bookPublisher("허브출판사")
+        .bookAuthor("이일민")
+        .build();
+
+    PostRequest postRequest = PostRequest.builder()
+        .bookRequest(bookRequest)
+        .title("토비의 스프링 팝니다~")
+        .description("책 설명")
+        .bookStatus("BEST")
+        .price("5000")
+        .build();
+
+    String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
+    Long postId = AcceptanceUtils.getIdFromResponse(
+        PostAcceptanceStep.requestToCreatePost(jwt, postRequest));
+
+    ExtractableResponse<Response> response = UserAcceptanceStep.addInterest(jwt,
+        new InterestRequest(postId));
+    List<InterestResponse> interestResponses = UserAcceptanceStep.findInterests(jwt).jsonPath()
+        .getList(".", InterestResponse.class);
+
+    AcceptanceStep.assertThatStatusIsOk(response);
+    UserAcceptanceStep.assertThatAddInterest(interestResponses, postRequest);
+  }
+
+  @DisplayName("관심목록에서 삭제한다.")
+  @Test
+  void deleteInterest() {
+    BookRequest bookRequest = BookRequest.builder()
+        .bookSummary("책 설명")
+        .bookPubDate("2021-12-12")
+        .bookIsbn("12345678910")
+        .bookListPrice("10000")
+        .bookThumbnail("썸네일")
+        .bookTitle("토비의 스프링")
+        .bookPublisher("허브출판사")
+        .bookAuthor("이일민")
+        .build();
+
+    PostRequest postRequest = PostRequest.builder()
+        .bookRequest(bookRequest)
+        .title("토비의 스프링 팝니다~")
+        .description("책 설명")
+        .bookStatus("BEST")
+        .price("5000")
+        .build();
+
+    String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
+    Long postId = AcceptanceUtils.getIdFromResponse(
+        PostAcceptanceStep.requestToCreatePost(jwt, postRequest));
+    UserAcceptanceStep.addInterest(jwt, new InterestRequest(postId));
+    Long interestId = UserAcceptanceStep.findInterests(jwt).jsonPath()
+        .getList(".", InterestResponse.class).get(0).getInterestId();
+
+    ExtractableResponse<Response> response = UserAcceptanceStep.deleteInterest(
+        jwt, interestId);
+    List<InterestResponse> interestResponses = UserAcceptanceStep.findInterests(jwt).jsonPath()
+        .getList(".", InterestResponse.class);
+
+    AcceptanceStep.assertThatStatusIsOk(response);
+    assertThat(interestResponses.size()).isEqualTo(0);
   }
 }

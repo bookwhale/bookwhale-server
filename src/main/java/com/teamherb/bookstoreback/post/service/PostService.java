@@ -12,6 +12,7 @@ import com.teamherb.bookstoreback.post.dto.FullPostRequest;
 import com.teamherb.bookstoreback.post.dto.FullPostResponse;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.post.dto.PostResponse;
+import com.teamherb.bookstoreback.post.dto.PostStatusUpdateRequest;
 import com.teamherb.bookstoreback.post.dto.PostUpdateRequest;
 import com.teamherb.bookstoreback.user.domain.User;
 import java.util.List;
@@ -41,6 +42,7 @@ public class PostService {
 
   @Transactional(readOnly = true)
   public PostResponse findPost(User loginUser, Long postId) {
+    // TODO : select user 쿼리가 한 번더 나감. 확인 필요
     Post findPost = validatePostIdAndGetPost(postId);
     List<Image> findImages = imageRepository.findAllByPost(findPost);
     return PostResponse.of(findPost, findImages, findPost.isMyPost(loginUser));
@@ -59,11 +61,6 @@ public class PostService {
     post.validateIsMyPost(loginUser);
     post.update(request);
     updateImages(post, updateImages);
-  }
-
-  private Post validatePostIdAndGetPost(Long postId) {
-    return postRepository.findById(postId)
-        .orElseThrow(() -> new CustomException(ErrorCode.INVALID_POST_ID));
   }
 
   public void updateImages(Post post, List<MultipartFile> updateImages) {
@@ -88,5 +85,16 @@ public class PostService {
 
   public List<String> getUploadFilePaths(List<MultipartFile> images) {
     return images == null || images.isEmpty() ? null : fileStoreUtil.storeFiles(images);
+  }
+
+  public void updatePostStatus(User loginUser, Long postId, PostStatusUpdateRequest request) {
+    Post post = validatePostIdAndGetPost(postId);
+    post.validateIsMyPost(loginUser);
+    post.updatePostStatus(request.getPostStatus());
+  }
+
+  private Post validatePostIdAndGetPost(Long postId) {
+    return postRepository.findById(postId)
+        .orElseThrow(() -> new CustomException(ErrorCode.INVALID_POST_ID));
   }
 }

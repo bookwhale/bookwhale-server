@@ -8,6 +8,7 @@ import com.teamherb.bookstoreback.common.acceptance.AcceptanceUtils;
 import com.teamherb.bookstoreback.common.acceptance.step.AcceptanceStep;
 import com.teamherb.bookstoreback.post.acceptance.step.PostAcceptanceStep;
 import com.teamherb.bookstoreback.post.domain.BookStatus;
+import com.teamherb.bookstoreback.post.domain.PostStatus;
 import com.teamherb.bookstoreback.post.dto.BookRequest;
 import com.teamherb.bookstoreback.post.dto.BookResponse;
 import com.teamherb.bookstoreback.post.dto.FullPostRequest;
@@ -15,6 +16,7 @@ import com.teamherb.bookstoreback.post.dto.FullPostResponse;
 import com.teamherb.bookstoreback.post.dto.NaverBookRequest;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.post.dto.PostResponse;
+import com.teamherb.bookstoreback.post.dto.PostStatusUpdateRequest;
 import com.teamherb.bookstoreback.post.dto.PostUpdateRequest;
 import com.teamherb.bookstoreback.user.acceptance.step.UserAcceptanceStep;
 import io.restassured.builder.MultiPartSpecBuilder;
@@ -163,5 +165,23 @@ public class PostAcceptanceTest extends AcceptanceTest {
 
     AcceptanceStep.assertThatStatusIsOk(response);
     PostAcceptanceStep.assertThatUpdatePost(postResponse, updateRequest, updateImages.size());
+  }
+
+  @DisplayName("게시글 상태를 변경한다.")
+  @Test
+  void updatePostStatus() {
+    PostStatusUpdateRequest request = new PostStatusUpdateRequest(PostStatus.RESERVED.toString());
+
+    String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
+    Long postId = AcceptanceUtils.getIdFromResponse(
+        PostAcceptanceStep.requestToCreatePost(jwt, postRequest));
+
+    ExtractableResponse<Response> response = PostAcceptanceStep.requestToUpdatePostStatus(
+        jwt, postId, request);
+    PostStatus postStatus = PostAcceptanceStep.requestToFindPost(jwt, postId).jsonPath()
+        .getObject(".", PostResponse.class).getPostStatus();
+
+    AcceptanceStep.assertThatStatusIsOk(response);
+    assertThat(postStatus).isEqualTo(PostStatus.valueOf(request.getPostStatus()));
   }
 }
