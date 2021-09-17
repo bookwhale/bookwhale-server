@@ -27,6 +27,7 @@ public class PostResponse {
   private List<String> images;
   private BookResponse bookResponse;
   private boolean isMyPost;
+  private boolean isMyInterest;
   private LocalDateTime createdDate;
   private LocalDateTime lastModifiedDate;
 
@@ -34,8 +35,8 @@ public class PostResponse {
   public PostResponse(Long sellerId, String sellerIdentity, String sellerProfileImage,
       Long postId, String title, String price, String description,
       BookStatus bookStatus, PostStatus postStatus, List<String> images,
-      BookResponse bookResponse, boolean isMyPost, LocalDateTime createdDate,
-      LocalDateTime lastModifiedDate) {
+      BookResponse bookResponse, boolean isMyPost, boolean isMyInterest,
+      LocalDateTime createdDate, LocalDateTime lastModifiedDate) {
     this.sellerId = sellerId;
     this.sellerIdentity = sellerIdentity;
     this.sellerProfileImage = sellerProfileImage;
@@ -48,11 +49,13 @@ public class PostResponse {
     this.images = images;
     this.bookResponse = bookResponse;
     this.isMyPost = isMyPost;
+    this.isMyInterest = isMyInterest;
     this.createdDate = createdDate;
     this.lastModifiedDate = lastModifiedDate;
   }
 
-  public static PostResponse of(Post post, List<Image> images, boolean isMyPost) {
+  public static PostResponse of(Post post, List<Image> images, boolean isMyPost,
+      boolean isMyInterest) {
     BookResponse bookResponse = BookResponse.builder()
         .bookAuthor(post.getBook().getBookAuthor())
         .bookIsbn(post.getBook().getBookIsbn())
@@ -79,6 +82,7 @@ public class PostResponse {
         .postStatus(post.getPostStatus())
         .images(imageResponse)
         .isMyPost(isMyPost)
+        .isMyInterest(isMyInterest)
         .createdDate(post.getCreatedDate())
         .lastModifiedDate(post.getLastModifiedDate())
         .build();

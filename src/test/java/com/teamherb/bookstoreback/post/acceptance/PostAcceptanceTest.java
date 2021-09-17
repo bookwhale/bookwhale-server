@@ -2,6 +2,7 @@ package com.teamherb.bookstoreback.post.acceptance;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.teamherb.bookstoreback.Interest.dto.InterestRequest;
 import com.teamherb.bookstoreback.common.Pagination;
 import com.teamherb.bookstoreback.common.acceptance.AcceptanceTest;
 import com.teamherb.bookstoreback.common.acceptance.AcceptanceUtils;
@@ -66,9 +67,9 @@ public class PostAcceptanceTest extends AcceptanceTest {
     AcceptanceStep.assertThatStatusIsCreated(res);
   }
 
-  @DisplayName("게시글을 상세 조회한다.")
+  @DisplayName("게시글을 상세 조회한다. (나의 게시글, 관심목록 X)")
   @Test
-  void findPost() {
+  void findPost_isMyPostAndIsNotMyInterest() {
     String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
 
     Long postId = AcceptanceUtils.getIdFromResponse(
@@ -78,7 +79,24 @@ public class PostAcceptanceTest extends AcceptanceTest {
     PostResponse postResponse = response.jsonPath().getObject(".", PostResponse.class);
 
     AcceptanceStep.assertThatStatusIsOk(response);
-    PostAcceptanceStep.assertThatFindPost(postResponse, postRequest, user);
+    PostAcceptanceStep.assertThatFindPost(postResponse, postRequest, user, true, false);
+  }
+
+  @DisplayName("게시글을 상세 조회한다. (다른 유저의 게시글, 관심목록 O)")
+  @Test
+  void findPost_isNotMyPostAndIsMyInterest() {
+    String anotherUserJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(anotherLoginRequest);
+    Long postId = AcceptanceUtils.getIdFromResponse(
+        PostAcceptanceStep.requestToCreatePost(anotherUserJwt, postRequest));
+
+    String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
+    UserAcceptanceStep.addInterest(jwt, new InterestRequest(postId));
+
+    ExtractableResponse<Response> response = PostAcceptanceStep.requestToFindPost(jwt, postId);
+    PostResponse postResponse = response.jsonPath().getObject(".", PostResponse.class);
+
+    AcceptanceStep.assertThatStatusIsOk(response);
+    PostAcceptanceStep.assertThatFindPost(postResponse, postRequest, anotherUser, false, true);
   }
 
   @DisplayName("게시글을 전체 조회한다.")

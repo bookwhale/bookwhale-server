@@ -155,6 +155,7 @@ public class PostControllerTest extends CommonApiTest {
         .images(of("image1", "image2"))
         .bookResponse(bookResponse)
         .isMyPost(true)
+        .isMyInterest(true)
         .createdDate(LocalDateTime.now())
         .lastModifiedDate(LocalDateTime.now())
         .build();

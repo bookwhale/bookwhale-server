@@ -33,11 +33,11 @@ public class UserAcceptanceTest extends AcceptanceTest {
   @Test
   void signUpTest() {
     SignUpRequest signUpRequest = SignUpRequest.builder()
-        .identity("hose12")
+        .identity("gentleDot")
         .password("1234")
-        .name("주호세")
-        .email("hose12@email.com")
-        .phoneNumber("010-5678-5678")
+        .name("백상일")
+        .email("gentleDot@email.com")
+        .phoneNumber("010-3456-3456")
         .build();
 
     ExtractableResponse<Response> response = UserAcceptanceStep.requestToSignUp(signUpRequest);

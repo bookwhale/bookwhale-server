@@ -13,6 +13,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.teamherb.bookstoreback.Interest.domain.InterestRepository;
 import com.teamherb.bookstoreback.common.exception.CustomException;
 import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
 import com.teamherb.bookstoreback.common.utils.upload.FileStoreUtil;
@@ -53,6 +54,9 @@ public class PostServiceTest {
   @Mock
   private FileStoreUtil fileStoreUtil;
 
+  @Mock
+  private InterestRepository interestRepository;
+
   PostService postService;
 
   PostRequest postRequest;
@@ -61,7 +65,8 @@ public class PostServiceTest {
 
   @BeforeEach
   void setUp() {
-    postService = new PostService(postRepository, imageRepository, fileStoreUtil);
+    postService = new PostService(postRepository, imageRepository, fileStoreUtil,
+        interestRepository);
 
     BookRequest bookRequest = BookRequest.builder()
         .bookSummary("설명")
@@ -117,12 +122,13 @@ public class PostServiceTest {
     List<String> uploadFilePaths = of("image1", "image2");
     List<Image> images = Image.createPostImage(post, uploadFilePaths);
 
-    when(postRepository.findById(any())).thenReturn(ofNullable(post));
+    when(postRepository.findWithSellerById(any())).thenReturn(ofNullable(post));
     when(imageRepository.findAllByPost(any())).thenReturn(images);
+    when(interestRepository.existsByUserAndPost(any(), any())).thenReturn(true);
 
     PostResponse response = postService.findPost(user, 1L);
 
-    verify(postRepository).findById(any());
+    verify(postRepository).findWithSellerById(any());
     verify(imageRepository).findAllByPost(any());
     assertAll(
         () -> assertThat(response.getTitle()).isEqualTo(postRequest.getTitle()),
@@ -131,6 +137,7 @@ public class PostServiceTest {
         () -> assertThat(response.getPostStatus()).isEqualTo(PostStatus.SALE),
         () -> assertThat(response.getTitle()).isEqualTo(postRequest.getTitle()),
         () -> assertThat(response.isMyPost()).isEqualTo(true),
+        () -> assertThat(response.isMyInterest()).isEqualTo(true),
         () -> assertThat(response.getBookStatus()).isEqualTo(
             BookStatus.valueOf(postRequest.getBookStatus())),
         () -> assertThat(response.getBookResponse().getBookIsbn()).isEqualTo(
@@ -165,12 +172,12 @@ public class PostServiceTest {
 
     Post post = Post.create(user, postRequest);
 
-    when(postRepository.findById(any())).thenReturn(ofNullable(post));
+    when(postRepository.findWithSellerById(any())).thenReturn(ofNullable(post));
     when(imageRepository.findAllByPost(any())).thenReturn(emptyList());
 
     PostResponse response = postService.findPost(otherUser, 1L);
 
-    verify(postRepository).findById(any());
+    verify(postRepository).findWithSellerById(any());
     verify(imageRepository).findAllByPost(any());
     assertThat(response.isMyPost()).isEqualTo(false);
   }
@@ -178,7 +185,7 @@ public class PostServiceTest {
   @DisplayName("잘못된 게시글 ID로 상세 조회하면 예외가 발생한다.")
   @Test
   void findPost_invalidPostId_failure() {
-    when(postRepository.findById(any())).thenReturn(empty());
+    when(postRepository.findWithSellerById(any())).thenReturn(empty());
 
     assertThatThrownBy(() -> postService.findPost(user, 1L))
         .isInstanceOf(CustomException.class)

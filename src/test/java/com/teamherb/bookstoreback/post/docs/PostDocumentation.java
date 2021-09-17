@@ -106,6 +106,7 @@ public class PostDocumentation {
             fieldWithPath("price").type(JsonFieldType.STRING).description("게시글 가격"),
             fieldWithPath("description").type(JsonFieldType.STRING).description("게시글 설명"),
             fieldWithPath("myPost").type(JsonFieldType.BOOLEAN).description("나의 게시글 여부"),
+            fieldWithPath("myInterest").type(JsonFieldType.BOOLEAN).description("나의 관심목록 여부"),
             fieldWithPath("images").type(JsonFieldType.ARRAY).description("이미지 URL"),
             fieldWithPath("bookStatus").type(JsonFieldType.STRING)
                 .description("책 상태 [LOWER, MIDDLE, UPPER, BEST]"),

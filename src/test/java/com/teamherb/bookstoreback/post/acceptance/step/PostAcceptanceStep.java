@@ -28,7 +28,8 @@ import org.springframework.util.MimeTypeUtils;
 
 public class PostAcceptanceStep {
 
-  public static void assertThatFindPost(PostResponse res, PostRequest req, User seller) {
+  public static void assertThatFindPost(PostResponse res, PostRequest req, User seller,
+      boolean isMyPost, boolean isMyInterest) {
     Assertions.assertAll(
         () -> assertThat(res.getSellerId()).isEqualTo(seller.getId()),
         () -> assertThat(res.getSellerIdentity()).isEqualTo(seller.getIdentity()),
@@ -38,7 +39,8 @@ public class PostAcceptanceStep {
         () -> assertThat(res.getDescription()).isEqualTo(req.getDescription()),
         () -> assertThat(res.getPostStatus()).isEqualTo(PostStatus.SALE),
         () -> assertThat(res.getTitle()).isEqualTo(req.getTitle()),
-        () -> assertThat(res.isMyPost()).isEqualTo(true),
+        () -> assertThat(res.isMyPost()).isEqualTo(isMyPost),
+        () -> assertThat(res.isMyInterest()).isEqualTo(isMyInterest),
         () -> assertThat(res.getCreatedDate()).isNotNull(),
         () -> assertThat(res.getLastModifiedDate()).isNotNull(),
         () -> assertThat(res.getBookStatus()).isEqualTo(
