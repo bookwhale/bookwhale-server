@@ -1,5 +1,10 @@
 package com.teamherb.bookstoreback.common.utils.mail;
 
+import com.teamherb.bookstoreback.common.exception.CustomException;
+import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
+import com.teamherb.bookstoreback.post.domain.Post;
+import com.teamherb.bookstoreback.post.domain.PostRepository;
+import com.teamherb.bookstoreback.user.domain.User;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,8 +19,27 @@ public class MailUtil {
 
     private final JavaMailSender mailSender;
 
+    private final PostRepository postRepository;
+
     @Value("${spring.mail.username}")
     private String email;
+
+    public void sendPurchaseRequestEmail(User user,Long postId) throws Exception {
+        Post getPost = validatePostAndGetPost(postId);
+        getPost.validPurchaseRequest();
+        MailDto sendMailDto = MailDto.builder()
+            .address(user.getEmail())
+            .title(String.format("%s 게시글에 올리신 책에 대한 구매요청이 왔습니다.", getPost.getTitle()))
+            .message(String.format("%s 사용자가 %s 게시글에 올려진 책에 대한 구매요청을 하였습니다.", user.getIdentity(),
+                getPost.getTitle()))
+            .build();
+        mailSend(sendMailDto);
+    }
+
+    private Post validatePostAndGetPost(Long postId) {
+        return postRepository.findById(postId)
+            .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_POST_ID));
+    }
 
     public void mailSend(MailDto MailDto) throws Exception {
 
