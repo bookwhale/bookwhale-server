@@ -5,5 +5,7 @@ import java.util.List;
 
 public interface ChatRoomQuerydsl {
 
-  public List<ChatRoom> findAllByBuyerOrSellerCreatedDateDesc(User loginUser);
+  List<ChatRoom> findAllByBuyerOrSellerCreatedDateDesc(User loginUser);
+
+  //Optional<ChatRoom> findByIdWithBuyerAndSeller(Long id);
 }

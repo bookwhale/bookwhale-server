@@ -1,8 +1,7 @@
 package com.teamherb.bookstoreback.chatroom.dto;
 
 import com.teamherb.bookstoreback.chatroom.domain.ChatRoom;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.teamherb.bookstoreback.chatroom.domain.Opponent;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,39 +10,36 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ChatRoomResponse {
 
-  private Long chatRoomId;
+  private Long roomId;
   private Long postId;
   private String postTitle;
-  private String postImage; // 네이버 책 API 썸네일
-  private String buyerIdentity;
-  private String buyerProfile;
-  private String sellerIdentity;
-  private String sellerProfile;
+  private String postBookThumbnail;
+  private String opponentIdentity;
+  private String opponentProfile;
+  private boolean isOpponentLeave;
 
   @Builder
-  public ChatRoomResponse(Long chatRoomId, Long postId, String postTitle,
-      String postImage, String buyerIdentity, String buyerProfile, String sellerIdentity,
-      String sellerProfile) {
-    this.chatRoomId = chatRoomId;
+  public ChatRoomResponse(Long roomId, Long postId, String postTitle,
+      String postBookThumbnail, String opponentIdentity, String opponentProfile,
+      boolean isOpponentLeave) {
+    this.roomId = roomId;
     this.postId = postId;
     this.postTitle = postTitle;
-    this.postImage = postImage;
-    this.buyerIdentity = buyerIdentity;
-    this.buyerProfile = buyerProfile;
-    this.sellerIdentity = sellerIdentity;
-    this.sellerProfile = sellerProfile;
+    this.postBookThumbnail = postBookThumbnail;
+    this.opponentIdentity = opponentIdentity;
+    this.opponentProfile = opponentProfile;
+    this.isOpponentLeave = isOpponentLeave;
   }
 
-  public static List<ChatRoomResponse> listOf(List<ChatRoom> chatRooms) {
-    return chatRooms.stream().map(v -> ChatRoomResponse.builder()
-        .chatRoomId(v.getId())
-        .postId(v.getPost().getId())
-        .postTitle(v.getPost().getTitle())
-        .postImage(v.getPost().getBook().getBookThumbnail())
-        .buyerIdentity(v.getBuyer().getIdentity())
-        .buyerProfile(v.getBuyer().getProfileImage())
-        .sellerIdentity(v.getSeller().getIdentity())
-        .sellerProfile(v.getSeller().getProfileImage())
-        .build()).collect(Collectors.toList());
+  public static ChatRoomResponse of(ChatRoom chatRoom, Opponent opponent,
+      boolean isOpponentLeave) {
+    return ChatRoomResponse.builder()
+        .roomId(chatRoom.getId())
+        .postId(chatRoom.getPost().getId())
+        .postTitle(chatRoom.getPost().getTitle())
+        .opponentIdentity(opponent.getIdentity())
+        .opponentProfile(opponent.getProfile())
+        .isOpponentLeave(isOpponentLeave)
+        .build();
   }
 }
