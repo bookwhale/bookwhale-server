@@ -1,5 +1,10 @@
 package com.teamherb.bookstoreback.common.utils.mail;
 
+import com.teamherb.bookstoreback.common.exception.CustomException;
+import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
+import com.teamherb.bookstoreback.post.domain.Post;
+import com.teamherb.bookstoreback.post.domain.PostRepository;
+import com.teamherb.bookstoreback.user.domain.User;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,43 +17,63 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class MailUtil {
 
-    private final JavaMailSender mailSender;
+  private final JavaMailSender mailSender;
 
-    @Value("${spring.mail.username}")
-    private String email;
+  private final PostRepository postRepository;
 
-    public void mailSend(MailDto MailDto) throws Exception {
+  @Value("${spring.mail.username}")
+  private String email;
 
-        MailHandler mailHandler = new MailHandler(mailSender);
+  public void sendPurchaseRequestEmail(User user, Long postId) throws Exception {
+    Post getPost = validatePostAndGetPost(postId);
+    getPost.validPurchaseRequest();
+    MailDto sendMailDto = MailDto.builder()
+        .address(user.getEmail())
+        .title(String.format("%s 게시글에 올리신 책에 대한 구매요청이 왔습니다.", getPost.getTitle()))
+        .message(String.format("%s 사용자가 %s 게시글에 올려진 책에 대한 구매요청을 하였습니다.", user.getIdentity(),
+            getPost.getTitle()))
+        .build();
+    mailSend(sendMailDto);
+  }
 
-        mailHandler.setTo(MailDto.getAddress());
-        mailHandler.setFrom(email);
-        mailHandler.setSubject(MailDto.getTitle());
+  private Post validatePostAndGetPost(Long postId) {
+    return postRepository.findById(postId)
+        .orElseThrow(() -> new CustomException(ErrorCode.NOT_EXIST_POST_ID));
+  }
 
-        String htmlContent = "<p>" + MailDto.getMessage() + "<p> <img src='cid:teamherb'>";
-        mailHandler.setText(htmlContent, true);
+  public void mailSend(MailDto MailDto) throws Exception {
 
-        // 첨부 파일
-        //mailHandler.setAttach("newTest.txt", "static/originTest.txt");
+    MailHandler mailHandler = new MailHandler(mailSender);
 
-        // 이미지 삽입
-        mailHandler.setInline("teamherb", "static/teamherb.png");
+    mailHandler.setTo(MailDto.getAddress());
+    mailHandler.setFrom(email);
+    mailHandler.setSubject(MailDto.getTitle());
 
-        mailHandler.send();
+    String htmlContent = "<p>" + MailDto.getMessage() + "<p> <img src='cid:teamherb'>";
+    mailHandler.setText(htmlContent, true);
+
+    // 첨부 파일
+    //mailHandler.setAttach("newTest.txt", "static/originTest.txt");
+
+    // 이미지 삽입
+    mailHandler.setInline("teamherb", "static/teamherb.png");
+
+    mailHandler.send();
+  }
+
+  @Data
+  @NoArgsConstructor
+  public static class MailDto {
+
+    private String address;
+    private String title;
+    private String message;
+
+    @Builder
+    public MailDto(String address, String title, String message) {
+      this.address = address;
+      this.title = title;
+      this.message = message;
     }
-
-    @Data
-    @NoArgsConstructor
-    public static class MailDto {
-        private String address;
-        private String title;
-        private String message;
-
-        @Builder
-        public MailDto(String address, String title, String message) {
-            this.address = address;
-            this.title = title;
-            this.message = message;
-        }
-    }
+  }
 }

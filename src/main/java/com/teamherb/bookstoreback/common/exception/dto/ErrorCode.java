@@ -17,6 +17,8 @@ public enum ErrorCode {
   INVALID_USER_PASSWORD(400, "US_002", "잘못된 비밀번호입니다."),
 
   INVALID_POST_ID(400, "P_001", "잘못된 게시글 ID 입니다."),
+  NOT_EXIST_POST_ID(400,"P_002","존재하지 않는 게시글 ID 입니다."),
+  INVALID_POST_STATUS(400,"P_003","게시글 상태가 적절하지 않습니다."),
 
   INVALID_INTEREST_ID(400, "IN_001", "잘못된 관심목록 ID 입니다.");
 

@@ -90,4 +90,5 @@ public class UserController {
     userService.deleteInterest(user, interestId);
     return ResponseEntity.ok().build();
   }
+
 }

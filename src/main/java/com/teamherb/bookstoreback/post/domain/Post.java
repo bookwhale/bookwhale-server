@@ -18,6 +18,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -98,4 +99,14 @@ public class Post extends BaseEntity {
   public void updatePostStatus(String postStatus) {
     this.postStatus = PostStatus.valueOf(postStatus);
   }
+
+  public void validPurchaseRequest() {
+    if (this.postStatus.equals(PostStatus.RESERVED) || this.postStatus
+        .equals(PostStatus.SOLD_OUT)) {
+      throw new CustomException(ErrorCode.INVALID_POST_STATUS);
+    }
+  }
+
+
+
 }
