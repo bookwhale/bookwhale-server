@@ -52,7 +52,7 @@ public class PostService {
     return PostResponse.of(post, findImages, isMyPost, isMyInterest);
   }
 
-  private Post validatePostIdAndGetPostWithSeller(Long postId) {
+  public Post validatePostIdAndGetPostWithSeller(Long postId) {
     return postRepository.findWithSellerById(postId)
         .orElseThrow(() -> new CustomException(ErrorCode.INVALID_POST_ID));
   }
@@ -102,7 +102,7 @@ public class PostService {
     post.updatePostStatus(request.getPostStatus());
   }
 
-  private Post validatePostIdAndGetPost(Long postId) {
+  public Post validatePostIdAndGetPost(Long postId) {
     return postRepository.findById(postId)
         .orElseThrow(() -> new CustomException(ErrorCode.INVALID_POST_ID));
   }
