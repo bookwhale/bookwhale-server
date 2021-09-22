@@ -1,5 +1,8 @@
 package com.teamherb.bookstoreback.post.domain;
 
+import static com.teamherb.bookstoreback.post.domain.PostStatus.RESERVED;
+import static com.teamherb.bookstoreback.post.domain.PostStatus.SOLD_OUT;
+
 import com.teamherb.bookstoreback.common.domain.BaseEntity;
 import com.teamherb.bookstoreback.common.exception.CustomException;
 import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
@@ -18,7 +21,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.PrePersist;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -100,13 +102,9 @@ public class Post extends BaseEntity {
     this.postStatus = PostStatus.valueOf(postStatus);
   }
 
-  public void validPurchaseRequest() {
-    if (this.postStatus.equals(PostStatus.RESERVED) || this.postStatus
-        .equals(PostStatus.SOLD_OUT)) {
+  public void validatePostStatus() {
+    if (this.postStatus.equals(RESERVED) || this.postStatus.equals(SOLD_OUT)) {
       throw new CustomException(ErrorCode.INVALID_POST_STATUS);
     }
   }
-
-
-
 }

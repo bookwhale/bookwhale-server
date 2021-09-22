@@ -6,6 +6,7 @@ import lombok.Getter;
 public enum ErrorCode {
 
   INTERNAL_SERVER_ERROR(500, "S_001", "서버에 문제가 생겼습니다."),
+  FAILED_TO_SEND_MAIL(500, "S_002", "메일 전송에 실패했습니다."),
 
   USER_ACCESS_DENIED(401, "A_001", "해당 콘텐츠에 접근 권한이 없는 유저입니다."),
 
@@ -18,12 +19,12 @@ public enum ErrorCode {
 
   INVALID_POST_ID(400, "P_001", "잘못된 게시글 ID 입니다."),
   NOT_EXIST_POST_ID(400, "P_002", "존재하지 않는 게시글 ID 입니다."),
-  INVALID_POST_STATUS(400, "P_003", "게시글 상태가 적절하지 않습니다."),
 
   INVALID_INTEREST_ID(400, "I_001", "잘못된 관심목록 ID 입니다."),
 
   INVALID_CHATROOM_ID(400, "CHAT_001", "잘못된 채팅방 ID 입니다."),
-  INVALID_SELLER_ID(400, "CHAT_002", "잘못된 판매자 ID 입니다.");
+  INVALID_SELLER_ID(400, "CHAT_002", "잘못된 판매자 ID 입니다."),
+  INVALID_POST_STATUS(400, "P_003", "판매중인 게시글만 판매자에게 채팅을 보낼 수 있습니다.");
 
   private final int status;
   private final String code;

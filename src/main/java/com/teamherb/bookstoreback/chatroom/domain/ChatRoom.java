@@ -40,10 +40,10 @@ public class ChatRoom {
   @JoinColumn(name = "seller_id")
   private User seller;
 
-  @Column(name = "buyer_leave")
+  @Column(name = "buyer_leave_flag")
   private boolean isBuyerLeave;
 
-  @Column(name = "seller_leave")
+  @Column(name = "seller_leave_flag")
   private boolean isSellerLeave;
 
   @CreatedDate
@@ -76,26 +76,25 @@ public class ChatRoom {
     } else if (isLoginUserEqualSeller(loginUser)) {
       this.isSellerLeave = true;
     } else {
-      // 채팅방의 참여자가 아니면 에러를 반환한다.
       throw new CustomException(ErrorCode.USER_ACCESS_DENIED);
     }
   }
 
-  public boolean checkIsLeaveChatRoom(User loginUser) {
+  public boolean checkIsLeaveUser(User loginUser) {
     if (isLoginUserEqualBuyer(loginUser)) {
       return isBuyerLeave;
     }
     return isSellerLeave;
   }
 
-  public boolean checkIsOpponentLeaveChatRoom(User loginUser) {
+  public boolean checkIsLeaveOpponent(User loginUser) {
     if (isLoginUserEqualBuyer(loginUser)) {
       return isSellerLeave;
     }
     return isBuyerLeave;
   }
 
-  public boolean isEmptyChatRoom() {
+  public boolean checkIsEmpty() {
     return this.isBuyerLeave && this.isSellerLeave;
   }
 
