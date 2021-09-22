@@ -37,6 +37,7 @@ public class ChatRoomResponse {
         .roomId(chatRoom.getId())
         .postId(chatRoom.getPost().getId())
         .postTitle(chatRoom.getPost().getTitle())
+        .postBookThumbnail(chatRoom.getPost().getBook().getBookThumbnail())
         .opponentIdentity(opponent.getIdentity())
         .opponentProfile(opponent.getProfile())
         .isOpponentLeave(isOpponentLeave)

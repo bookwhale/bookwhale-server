@@ -63,7 +63,7 @@ public abstract class AcceptanceTest {
         .identity("highright96")
         .password(passwordEncoder.encode("1234"))
         .name("남상우")
-        .email("highright96@email.com")
+        .email("highright96@gmail.com")
         .phoneNumber("010-1234-1234")
         .role(Role.ROLE_USER)
         .build();
