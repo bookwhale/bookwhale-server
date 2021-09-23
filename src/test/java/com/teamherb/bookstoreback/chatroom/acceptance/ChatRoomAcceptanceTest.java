@@ -14,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+@DisplayName("채팅방 통합 테스트")
 public class ChatRoomAcceptanceTest extends AcceptanceTest {
 
   PostRequest postRequest;
