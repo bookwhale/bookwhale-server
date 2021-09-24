@@ -3,6 +3,7 @@ package com.teamherb.bookstoreback.message.service;
 import com.teamherb.bookstoreback.common.Pagination;
 import com.teamherb.bookstoreback.message.domain.Message;
 import com.teamherb.bookstoreback.message.domain.MessageRepository;
+import com.teamherb.bookstoreback.message.dto.MessageRequest;
 import com.teamherb.bookstoreback.message.dto.MessageResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,11 @@ public class MessageService {
   public MessageResponse findLastMessage(Long roomId) {
     Message message = messageRepository.findTopByRoomIdOrderByCreatedDateDesc(roomId)
         .orElseGet(Message::createEmptyMessage);
+    return MessageResponse.of(message);
+  }
+
+  public MessageResponse saveMessage(MessageRequest request) {
+    Message message = messageRepository.save(Message.create(request));
     return MessageResponse.of(message);
   }
 }
