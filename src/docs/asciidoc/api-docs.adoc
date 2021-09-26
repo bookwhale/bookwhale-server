@@ -99,3 +99,25 @@ operation::post/findPosts[snippets='http-request,request-headers,request-paramet
 === 2.6 게시글 상태 변경
 
 operation::post/updatePostStatus[snippets='http-request,request-headers,path-parameters,request-fields,http-response']
+
+== 3. 채팅
+
+=== 3.1 채팅방 생성
+
+operation::chatRoom/createChatRoom[snippets='http-request,request-headers,request-fields,http-response']
+
+=== 3.2 채팅방 목록 조회
+
+operation::chatRoom/findChatRooms[snippets='http-request,request-headers,http-response,response-fields']
+
+=== 3.3 채팅방 삭제
+
+operation::chatRoom/deleteChatRoom[snippets='http-request,request-headers,path-parameters,http-response']
+
+=== 3.4 채팅방의 이전 메세지 조회
+
+operation::message/findMessages[snippets='http-request,request-headers,path-parameters,request-parameters,http-response,response-fields']
+
+=== 3.5 채팅방의 마지막 메세지 조회
+
+operation::message/findLastMessage[snippets='http-request,request-headers,path-parameters,http-response,response-fields']

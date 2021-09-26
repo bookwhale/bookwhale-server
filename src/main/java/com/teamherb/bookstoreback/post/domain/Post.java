@@ -1,5 +1,8 @@
 package com.teamherb.bookstoreback.post.domain;
 
+import static com.teamherb.bookstoreback.post.domain.PostStatus.RESERVED;
+import static com.teamherb.bookstoreback.post.domain.PostStatus.SOLD_OUT;
+
 import com.teamherb.bookstoreback.common.domain.BaseEntity;
 import com.teamherb.bookstoreback.common.exception.CustomException;
 import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
@@ -97,5 +100,11 @@ public class Post extends BaseEntity {
 
   public void updatePostStatus(String postStatus) {
     this.postStatus = PostStatus.valueOf(postStatus);
+  }
+
+  public void validatePostStatus() {
+    if (this.postStatus.equals(RESERVED) || this.postStatus.equals(SOLD_OUT)) {
+      throw new CustomException(ErrorCode.INVALID_POST_STATUS);
+    }
   }
 }

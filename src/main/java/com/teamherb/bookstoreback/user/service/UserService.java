@@ -96,7 +96,7 @@ public class UserService {
     interestRepository.save(Interest.create(loginUser, post));
   }
 
-  private Post validatePostIdAndGetPost(Long postId) {
+  public Post validatePostIdAndGetPost(Long postId) {
     return postRepository.findById(postId)
         .orElseThrow(() -> new CustomException(ErrorCode.INVALID_POST_ID));
   }
