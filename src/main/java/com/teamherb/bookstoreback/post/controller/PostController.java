@@ -2,8 +2,8 @@ package com.teamherb.bookstoreback.post.controller;
 
 import com.teamherb.bookstoreback.common.Pagination;
 import com.teamherb.bookstoreback.post.dto.BookResponse;
-import com.teamherb.bookstoreback.post.dto.FullPostRequest;
-import com.teamherb.bookstoreback.post.dto.FullPostResponse;
+import com.teamherb.bookstoreback.post.dto.PostsRequest;
+import com.teamherb.bookstoreback.post.dto.PostsResponse;
 import com.teamherb.bookstoreback.post.dto.NaverBookRequest;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.post.dto.PostResponse;
@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -63,9 +62,9 @@ public class PostController {
   }
 
   @GetMapping
-  public ResponseEntity<List<FullPostResponse>> findPosts(FullPostRequest fullPostRequest,
+  public ResponseEntity<List<PostsResponse>> findPosts(PostsRequest postsRequest,
       @Valid Pagination pagination) {
-    return ResponseEntity.ok(postService.findPosts(fullPostRequest, pagination));
+    return ResponseEntity.ok(postService.findPosts(postsRequest, pagination));
   }
 
   @PatchMapping("/{postId}")

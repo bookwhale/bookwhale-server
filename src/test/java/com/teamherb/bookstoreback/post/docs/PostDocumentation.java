@@ -145,7 +145,7 @@ public class PostDocumentation {
             parameterWithName("page").description("페이지(0부터 시작) (필수)"),
             parameterWithName("size").description("한 페이지 내의 사이즈 (필수)")
         ),
-        responseFields(fieldWithPath("[]").description("An arrays of fullPostResponse"))
+        responseFields(fieldWithPath("[]").description("An arrays of postsResponse"))
             .andWithPrefix("[].", response)
     );
   }

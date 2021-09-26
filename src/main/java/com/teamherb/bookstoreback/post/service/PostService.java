@@ -9,14 +9,15 @@ import com.teamherb.bookstoreback.image.domain.Image;
 import com.teamherb.bookstoreback.image.domain.ImageRepository;
 import com.teamherb.bookstoreback.post.domain.Post;
 import com.teamherb.bookstoreback.post.domain.PostRepository;
-import com.teamherb.bookstoreback.post.dto.FullPostRequest;
-import com.teamherb.bookstoreback.post.dto.FullPostResponse;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.post.dto.PostResponse;
 import com.teamherb.bookstoreback.post.dto.PostStatusUpdateRequest;
 import com.teamherb.bookstoreback.post.dto.PostUpdateRequest;
+import com.teamherb.bookstoreback.post.dto.PostsRequest;
+import com.teamherb.bookstoreback.post.dto.PostsResponse;
 import com.teamherb.bookstoreback.user.domain.User;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -36,20 +37,18 @@ public class PostService {
 
   private final InterestRepository interestRepository;
 
-  public Long createPost(User loginUser, PostRequest postRequest, List<MultipartFile> images) {
-    Post newPost = Post.create(loginUser, postRequest);
-    Post savedPost = postRepository.save(newPost);
-    saveImages(savedPost, images);
-    return savedPost.getId();
+  public Long createPost(User user, PostRequest postRequest, List<MultipartFile> images) {
+    Post post = Post.create(user, postRequest);
+    saveImages(post, images);
+    return postRepository.save(post).getId();
   }
 
   @Transactional(readOnly = true)
-  public PostResponse findPost(User loginUser, Long postId) {
+  public PostResponse findPost(User user, Long postId) {
     Post post = validatePostIdAndGetPostWithSeller(postId);
-    List<Image> findImages = imageRepository.findAllByPost(post);
-    boolean isMyPost = post.isMyPost(loginUser);
-    boolean isMyInterest = interestRepository.existsByUserAndPost(loginUser, post);
-    return PostResponse.of(post, findImages, isMyPost, isMyInterest);
+    boolean isMyPost = post.isMyPost(user);
+    boolean isMyInterest = interestRepository.existsByUserAndPost(user, post);
+    return PostResponse.of(post, isMyPost, isMyInterest);
   }
 
   public Post validatePostIdAndGetPostWithSeller(Long postId) {
@@ -58,16 +57,26 @@ public class PostService {
   }
 
   @Transactional(readOnly = true)
-  public List<FullPostResponse> findPosts(FullPostRequest request, Pagination pagination) {
+  public List<PostsResponse> findPosts(PostsRequest request, Pagination pagination) {
     PageRequest pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
-    return postRepository.findAllByFullPostReqOrderByCreatedDateDesc(request, pageable)
+    List<Post> posts = postRepository.findAllByPostsReqOrderByCreatedDateDesc(request, pageable)
         .getContent();
+    return posts.stream().map(p -> {
+          List<Image> images = p.getImages().getImages();
+          /*
+          사용자가 게시글에 책 이미지를 등록하지 않았을 경우 대표 이미지는 null 로 반환한다.
+          사용자가 게시글에 책 이미지를 등록한 경우 대표 이미지는 첫 번째 이미지를 반환한다.
+          */
+          return PostsResponse.of(p, images.isEmpty() ? null : images.get(0).getPath());
+        })
+        .collect(Collectors.toList());
   }
 
-  public void updatePost(User loginUser, Long postId, PostUpdateRequest request,
+  //TODO : 게시글 업데이트, 게시글 삭제, API 문서, 전체 테스트, 게시글 전반적인 코드 정리, S3 연동
+  public void updatePost(User user, Long postId, PostUpdateRequest request,
       List<MultipartFile> updateImages) {
     Post post = validatePostIdAndGetPost(postId);
-    post.validateIsMyPost(loginUser);
+    post.validateIsMyPost(user);
     post.update(request);
     updateImages(post, updateImages);
   }
@@ -86,19 +95,19 @@ public class PostService {
   }
 
   public void saveImages(Post post, List<MultipartFile> images) {
-    List<String> uploadFilePaths = getUploadFilePaths(images);
-    if (uploadFilePaths != null) {
-      imageRepository.saveAll(Image.createPostImage(post, uploadFilePaths));
+    List<String> imagePaths = getUploadImagePaths(images);
+    if (imagePaths != null) {
+      post.getImages().addImages(post, imagePaths);
     }
   }
 
-  public List<String> getUploadFilePaths(List<MultipartFile> images) {
+  public List<String> getUploadImagePaths(List<MultipartFile> images) {
     return images == null || images.isEmpty() ? null : fileStoreUtil.storeFiles(images);
   }
 
-  public void updatePostStatus(User loginUser, Long postId, PostStatusUpdateRequest request) {
+  public void updatePostStatus(User user, Long postId, PostStatusUpdateRequest request) {
     Post post = validatePostIdAndGetPost(postId);
-    post.validateIsMyPost(loginUser);
+    post.validateIsMyPost(user);
     post.updatePostStatus(request.getPostStatus());
   }
 

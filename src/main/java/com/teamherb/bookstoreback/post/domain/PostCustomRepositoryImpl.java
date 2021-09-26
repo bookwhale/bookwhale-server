@@ -6,9 +6,7 @@ import static com.teamherb.bookstoreback.user.domain.QUser.user;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.teamherb.bookstoreback.post.dto.FullPostRequest;
-import com.teamherb.bookstoreback.post.dto.FullPostResponse;
-import com.teamherb.bookstoreback.post.dto.QFullPostResponse;
+import com.teamherb.bookstoreback.post.dto.PostsRequest;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -30,19 +28,10 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
   }
 
   @Override
-  public Page<FullPostResponse> findAllByFullPostReqOrderByCreatedDateDesc(
-      FullPostRequest req, Pageable pageable) {
-    QueryResults<FullPostResponse> results = queryFactory
-        .select(new QFullPostResponse(
-            post.id,
-            post.book.bookThumbnail,
-            post.title,
-            post.price,
-            post.book.bookTitle,
-            post.postStatus,
-            post.createdDate
-        ))
-        .from(post)
+  public Page<Post> findAllByPostsReqOrderByCreatedDateDesc(
+      PostsRequest req, Pageable pageable) {
+    QueryResults<Post> results = queryFactory
+        .selectFrom(post)
         .where(
             titleLike(req.getTitle()),
             authorLike(req.getAuthor()),

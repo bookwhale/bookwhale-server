@@ -12,13 +12,13 @@ import com.teamherb.bookstoreback.post.domain.BookStatus;
 import com.teamherb.bookstoreback.post.domain.PostStatus;
 import com.teamherb.bookstoreback.post.dto.BookRequest;
 import com.teamherb.bookstoreback.post.dto.BookResponse;
-import com.teamherb.bookstoreback.post.dto.FullPostRequest;
-import com.teamherb.bookstoreback.post.dto.FullPostResponse;
 import com.teamherb.bookstoreback.post.dto.NaverBookRequest;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.post.dto.PostResponse;
 import com.teamherb.bookstoreback.post.dto.PostStatusUpdateRequest;
 import com.teamherb.bookstoreback.post.dto.PostUpdateRequest;
+import com.teamherb.bookstoreback.post.dto.PostsRequest;
+import com.teamherb.bookstoreback.post.dto.PostsResponse;
 import com.teamherb.bookstoreback.user.acceptance.step.UserAcceptanceStep;
 import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.response.ExtractableResponse;
@@ -35,11 +35,13 @@ public class PostAcceptanceTest extends AcceptanceTest {
 
   PostRequest postRequest;
 
+  PostRequest emptyImagePostRequest;
+
   @BeforeEach
   @Override
   public void setUp() {
     super.setUp();
-    BookRequest bookRequest = BookRequest.builder()
+    BookRequest toby = BookRequest.builder()
         .bookSummary("책 설명")
         .bookPubDate("2021-12-12")
         .bookIsbn("12345678910")
@@ -51,11 +53,30 @@ public class PostAcceptanceTest extends AcceptanceTest {
         .build();
 
     postRequest = PostRequest.builder()
-        .bookRequest(bookRequest)
+        .bookRequest(toby)
         .title("토비의 스프링 팝니다~")
         .description("책 설명")
         .bookStatus("BEST")
         .price("5000")
+        .build();
+
+    BookRequest springBoot = BookRequest.builder()
+        .bookSummary("책 설명")
+        .bookPubDate("2021-12-12")
+        .bookIsbn("12345678910")
+        .bookListPrice("10000")
+        .bookThumbnail("썸네일")
+        .bookTitle("스프링 부트와 AWS로 혼자 구현하는 웹 서비스")
+        .bookPublisher("허브출판사")
+        .bookAuthor("이동욱")
+        .build();
+
+    emptyImagePostRequest = PostRequest.builder()
+        .bookRequest(springBoot)
+        .title("스프링 부트와 AWS로 혼자 구현하는 웹 서비스 팝니다~")
+        .description("책 설명")
+        .bookStatus("BEST")
+        .price("4000")
         .build();
   }
 
@@ -102,21 +123,23 @@ public class PostAcceptanceTest extends AcceptanceTest {
   @DisplayName("게시글을 전체 조회한다.")
   @Test
   void findPosts() {
-    FullPostRequest fullPostRequest = FullPostRequest.builder()
+    PostsRequest postsRequest = PostsRequest.builder()
         .title("스프링")
         .build();
+
     Pagination pagination = new Pagination(0, 10);
 
     String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
     PostAcceptanceStep.requestToCreatePost(jwt, postRequest);
+    PostAcceptanceStep.requestToCreateEmptyImagePost(jwt, emptyImagePostRequest);
 
     ExtractableResponse<Response> response = PostAcceptanceStep.requestToFindPosts(jwt,
-        fullPostRequest, pagination);
-    List<FullPostResponse> fullPostResponses = response.jsonPath()
-        .getList(".", FullPostResponse.class);
+        postsRequest, pagination);
+    List<PostsResponse> postsResponses = response.jsonPath()
+        .getList(".", PostsResponse.class);
 
     AcceptanceStep.assertThatStatusIsOk(response);
-    PostAcceptanceStep.assertThatFindPosts(fullPostResponses, postRequest);
+    PostAcceptanceStep.assertThatFindPosts(postsResponses, postRequest, emptyImagePostRequest);
   }
 
   @DisplayName("ISBN 으로 네이버 책(API)을 검색한다.")

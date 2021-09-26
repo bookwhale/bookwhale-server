@@ -7,13 +7,13 @@ import com.teamherb.bookstoreback.common.Pagination;
 import com.teamherb.bookstoreback.post.domain.BookStatus;
 import com.teamherb.bookstoreback.post.domain.PostStatus;
 import com.teamherb.bookstoreback.post.dto.BookResponse;
-import com.teamherb.bookstoreback.post.dto.FullPostRequest;
-import com.teamherb.bookstoreback.post.dto.FullPostResponse;
 import com.teamherb.bookstoreback.post.dto.NaverBookRequest;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.post.dto.PostResponse;
 import com.teamherb.bookstoreback.post.dto.PostStatusUpdateRequest;
 import com.teamherb.bookstoreback.post.dto.PostUpdateRequest;
+import com.teamherb.bookstoreback.post.dto.PostsRequest;
+import com.teamherb.bookstoreback.post.dto.PostsResponse;
 import com.teamherb.bookstoreback.user.domain.User;
 import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.response.ExtractableResponse;
@@ -64,17 +64,24 @@ public class PostAcceptanceStep {
     );
   }
 
-  public static void assertThatFindPosts(List<FullPostResponse> res, PostRequest req) {
+  public static void assertThatFindPosts(List<PostsResponse> res, PostRequest req1,
+      PostRequest req2) {
     Assertions.assertAll(
-        () -> assertThat(res.size()).isEqualTo(1),
-        () -> assertThat(res.get(0).getPostPrice()).isEqualTo(req.getPrice()),
-        () -> assertThat(res.get(0).getPostTitle()).isEqualTo(req.getTitle()),
-        () -> assertThat(res.get(0).getPostPrice()).isEqualTo(req.getPrice()),
+        () -> assertThat(res.size()).isEqualTo(2),
+        // 책 이미지가 없는 게시글
+        () -> assertThat(res.get(0).getPostPrice()).isEqualTo(req2.getPrice()),
+        () -> assertThat(res.get(0).getPostTitle()).isEqualTo(req2.getTitle()),
+        () -> assertThat(res.get(0).getPostPrice()).isEqualTo(req2.getPrice()),
         () -> assertThat(res.get(0).getPostStatus()).isEqualTo(PostStatus.SALE),
-        () -> assertThat(res.get(0).getBookTitle()).isEqualTo(
-            req.getBookRequest().getBookTitle()),
-        () -> assertThat(res.get(0).getBookThumbnail()).isEqualTo(
-            req.getBookRequest().getBookThumbnail())
+        () -> assertThat(res.get(0).getBookTitle()).isEqualTo(req2.getBookRequest().getBookTitle()),
+        () -> assertThat(res.get(0).getPostImage()).isNull(),
+        // 책 이미지가 있는 게시글
+        () -> assertThat(res.get(1).getPostPrice()).isEqualTo(req1.getPrice()),
+        () -> assertThat(res.get(1).getPostTitle()).isEqualTo(req1.getTitle()),
+        () -> assertThat(res.get(1).getPostPrice()).isEqualTo(req1.getPrice()),
+        () -> assertThat(res.get(1).getPostStatus()).isEqualTo(PostStatus.SALE),
+        () -> assertThat(res.get(1).getBookTitle()).isEqualTo(req1.getBookRequest().getBookTitle()),
+        () -> assertThat(res.get(1).getPostImage()).isNotNull()
     );
   }
 
@@ -129,6 +136,22 @@ public class PostAcceptanceStep {
         .extract();
   }
 
+  public static void requestToCreateEmptyImagePost(String jwt, PostRequest postRequest) {
+    MultiPartSpecification json = new MultiPartSpecBuilder(postRequest)
+        .controlName("postRequest")
+        .charset(StandardCharsets.UTF_8)
+        .mimeType(MimeTypeUtils.APPLICATION_JSON_VALUE).build();
+
+    given().log().all()
+        .header(HttpHeaders.AUTHORIZATION, jwt)
+        .contentType(MediaType.MULTIPART_MIXED_VALUE)
+        .multiPart(json)
+        .when()
+        .post("/api/post")
+        .then().log().all()
+        .extract();
+  }
+
   public static ExtractableResponse<Response> requestToFindPost(String jwt, Long postId) {
     return given().log().all()
         .header(HttpHeaders.AUTHORIZATION, jwt)
@@ -139,7 +162,7 @@ public class PostAcceptanceStep {
         .extract();
   }
 
-  public static ExtractableResponse<Response> requestToFindPosts(String jwt, FullPostRequest req,
+  public static ExtractableResponse<Response> requestToFindPosts(String jwt, PostsRequest req,
       Pagination page) {
     return given().log().all()
         .header(HttpHeaders.AUTHORIZATION, jwt)

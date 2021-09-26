@@ -100,30 +100,27 @@ public class PostServiceTest {
   @Test
   void createPost() {
     Post post = Post.create(user, postRequest);
-    List<String> uploadFilePaths = of("image1", "image2");
-    List<Image> images = Image.createPostImage(post, uploadFilePaths);
+    List<String> images = of("image1", "image2");
+    post.getImages().addImages(post, images);
 
     when(postRepository.save(any())).thenReturn(post);
-    when(fileStoreUtil.storeFiles(any())).thenReturn(uploadFilePaths);
-    when(imageRepository.saveAll(any())).thenReturn(images);
+    when(fileStoreUtil.storeFiles(any())).thenReturn(images);
 
     postService.createPost(user, postRequest,
         of(new MockMultipartFile("images", "image".getBytes(StandardCharsets.UTF_8))));
 
     verify(postRepository).save(any());
     verify(fileStoreUtil).storeFiles(any());
-    verify(imageRepository).saveAll(any());
   }
 
   @DisplayName("나의 게시글을 상세 조회한다.")
   @Test
   void findMyPost_success() {
     Post post = Post.create(user, postRequest);
-    List<String> uploadFilePaths = of("image1", "image2");
-    List<Image> images = Image.createPostImage(post, uploadFilePaths);
+    List<String> images = of("image1", "image2");
+    post.getImages().addImages(post, images);
 
-    when(postRepository.findWithSellerById(any())).thenReturn(ofNullable(post));
-    when(imageRepository.findAllByPost(any())).thenReturn(images);
+    when(postRepository.findWithSellerById(any())).thenReturn(Optional.of(post));
     when(interestRepository.existsByUserAndPost(any(), any())).thenReturn(true);
 
     PostResponse response = postService.findPost(user, 1L);
@@ -209,16 +206,11 @@ public class PostServiceTest {
 
     when(postRepository.findById(any())).thenReturn(Optional.ofNullable(post));
     when(fileStoreUtil.storeFiles(any())).thenReturn(of("image1", "image2"));
-    when(imageRepository.findAllByPost(any())).thenReturn(Image.createPostImage(post, of("image")));
     doNothing().when(imageRepository).deleteAll(any());
-    when(imageRepository.saveAll(any())).thenReturn(
-        Image.createPostImage(post, of("image1", "image2")));
 
     postService.updatePost(user, 1L, request, images);
 
     verify(postRepository).findById(any());
-    verify(imageRepository).findAllByPost(any());
-    verify(imageRepository).deleteAll(any());
     verify(fileStoreUtil).storeFiles(any());
     verify(imageRepository).saveAll(any());
     assertAll(
@@ -243,14 +235,10 @@ public class PostServiceTest {
     List<MultipartFile> images = emptyList();
 
     when(postRepository.findById(any())).thenReturn(Optional.ofNullable(post));
-    when(imageRepository.findAllByPost(any())).thenReturn(Image.createPostImage(post, of("image")));
-    doNothing().when(imageRepository).deleteAll(any());
 
     postService.updatePost(user, 1L, request, images);
 
     verify(postRepository).findById(any());
-    verify(imageRepository).findAllByPost(any());
-    verify(imageRepository).deleteAll(any());
     verify(fileStoreUtil, never()).storeFiles(any());
     verify(imageRepository, never()).saveAll(any());
   }
@@ -267,14 +255,10 @@ public class PostServiceTest {
         .build();
 
     when(postRepository.findById(any())).thenReturn(Optional.ofNullable(post));
-    when(imageRepository.findAllByPost(any())).thenReturn(Image.createPostImage(post, of("image")));
-    doNothing().when(imageRepository).deleteAll(any());
 
     postService.updatePost(user, 1L, request, null);
 
     verify(postRepository).findById(any());
-    verify(imageRepository).findAllByPost(any());
-    verify(imageRepository).deleteAll(any());
     verify(fileStoreUtil, never()).storeFiles(any());
     verify(imageRepository, never()).saveAll(any());
   }

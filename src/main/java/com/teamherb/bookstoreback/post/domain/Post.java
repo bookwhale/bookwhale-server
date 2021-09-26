@@ -6,6 +6,7 @@ import static com.teamherb.bookstoreback.post.domain.PostStatus.SOLD_OUT;
 import com.teamherb.bookstoreback.common.domain.BaseEntity;
 import com.teamherb.bookstoreback.common.exception.CustomException;
 import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
+import com.teamherb.bookstoreback.image.domain.Images;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.post.dto.PostUpdateRequest;
 import com.teamherb.bookstoreback.user.domain.User;
@@ -55,6 +56,9 @@ public class Post extends BaseEntity {
 
   @Embedded
   private Book book;
+
+  @Embedded
+  private final Images images = Images.empty();
 
   @Builder
   public Post(Long id, User seller, String title, String price, String description,
