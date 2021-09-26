@@ -164,7 +164,10 @@ public class PostAcceptanceStep {
         .get("/api/post/naverBookAPI?"
             + (req.getTitle() == null ? "" : "title=" + req.getTitle())
             + (req.getIsbn() == null ? "" : "isbn=" + req.getIsbn())
-            + (req.getAuthor() == null ? "" : "author=" + req.getAuthor()))
+            + (req.getAuthor() == null ? "" : "author=" + req.getAuthor())
+            + "&display=" + req.getDisplay()
+            + "&start=" + req.getStart()
+        )
         .then().log().all()
         .extract();
   }

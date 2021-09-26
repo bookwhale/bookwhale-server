@@ -42,7 +42,9 @@ public class PostDocumentation {
         requestParameters(
             parameterWithName("title").description("제목").optional(),
             parameterWithName("isbn").description("ISBN").optional(),
-            parameterWithName("author").description("저자명").optional()
+            parameterWithName("author").description("저자명").optional(),
+            parameterWithName("display").description("검색 결과 출력 건수 지정 / 10(기본값) ~ 100(최대값)"),
+            parameterWithName("start").description("검색 시작 위치 / 1(기본값) ~ 1000(최대값)")
         ),
         responseFields(
             fieldWithPath("[]").description("An array of books"))

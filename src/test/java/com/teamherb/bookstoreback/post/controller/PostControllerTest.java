@@ -54,8 +54,10 @@ public class PostControllerTest extends CommonApiTest {
   @DisplayName("네이버 책 API")
   @WithMockCustomUser
   public void findNaverBooksTest() throws Exception {
-    NaverBookRequest naverBookRequest = NaverBookRequest.builder()
+    NaverBookRequest request = NaverBookRequest.builder()
         .title("책 제목")
+        .display(10)
+        .start(1)
         .build();
 
     BookResponse bookResponse = BookResponse.builder()
@@ -71,7 +73,8 @@ public class PostControllerTest extends CommonApiTest {
 
     when(naverBookAPIService.getNaverBooks(any())).thenReturn(of(bookResponse));
 
-    mockMvc.perform(get(format("/api/post/naverBookAPI?title=%s", naverBookRequest.getTitle()))
+    mockMvc.perform(get(format("/api/post/naverBookAPI?title=%s&display=%d&start=%d",
+            request.getTitle(), request.getDisplay(), request.getStart()))
             .header(HttpHeaders.AUTHORIZATION, "accessToken"))
         .andExpect(status().isOk())
         .andDo(print())

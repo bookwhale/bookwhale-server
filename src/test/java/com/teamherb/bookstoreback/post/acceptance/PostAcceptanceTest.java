@@ -124,12 +124,14 @@ public class PostAcceptanceTest extends AcceptanceTest {
   void findNaverBooks_isbn() {
     NaverBookRequest naverBookRequest = NaverBookRequest.builder()
         .isbn("8960773433")
+        .display(10)
+        .start(1)
         .build();
 
     String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
 
-    ExtractableResponse<Response> response = PostAcceptanceStep.requestToFindNaverBooks(
-        jwt, naverBookRequest);
+    ExtractableResponse<Response> response = PostAcceptanceStep.requestToFindNaverBooks(jwt,
+        naverBookRequest);
     BookResponse bookResponse = response.jsonPath().getList(".", BookResponse.class).get(0);
 
     AcceptanceStep.assertThatStatusIsOk(response);
@@ -141,16 +143,18 @@ public class PostAcceptanceTest extends AcceptanceTest {
   void findNaverBooks_title() {
     NaverBookRequest naverBookRequest = NaverBookRequest.builder()
         .title("토비")
+        .display(10)
+        .start(1)
         .build();
 
     String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
 
-    ExtractableResponse<Response> response = PostAcceptanceStep.requestToFindNaverBooks(
-        jwt, naverBookRequest);
+    ExtractableResponse<Response> response = PostAcceptanceStep.requestToFindNaverBooks(jwt,
+        naverBookRequest);
     List<BookResponse> bookResponses = response.jsonPath().getList(".", BookResponse.class);
 
     AcceptanceStep.assertThatStatusIsOk(response);
-    assertThat(bookResponses.size()).isGreaterThan(1);
+    assertThat(bookResponses.size()).isEqualTo(naverBookRequest.getDisplay());
   }
 
   @DisplayName("게시글을 수정한다.")
