@@ -167,11 +167,11 @@ public class PostAcceptanceStep {
     return given().log().all()
         .header(HttpHeaders.AUTHORIZATION, jwt)
         .when()
-        .get("/api/post"
-            + (req.getTitle() != null ? "?title=" + req.getTitle() : "")
-            + (req.getAuthor() != null ? "?author=" + req.getAuthor() : "")
-            + (req.getPublisher() != null ? "?publisher=" + req.getPublisher() : "")
-            + "&page=" + page.getPage()
+        .get("/api/post?"
+            + (req.getTitle() != null ? "title=" + req.getTitle() + "&" : "")
+            + (req.getAuthor() != null ? "author=" + req.getAuthor() + "&" : "")
+            + (req.getPublisher() != null ? "publisher=" + req.getPublisher() + "&" : "")
+            + "page=" + page.getPage()
             + "&size=" + page.getSize())
         .then().log().all()
         .extract();
@@ -222,6 +222,15 @@ public class PostAcceptanceStep {
         .body(request)
         .when()
         .patch("/api/post/postStatus/{postId}", postId)
+        .then().log().all()
+        .extract();
+  }
+
+  public static ExtractableResponse<Response> requestToDeletePost(String jwt, Long postId) {
+    return given().log().all()
+        .header(HttpHeaders.AUTHORIZATION, jwt)
+        .when()
+        .delete("/api/post/{postId}", postId)
         .then().log().all()
         .extract();
   }

@@ -5,8 +5,7 @@ import com.teamherb.bookstoreback.common.Pagination;
 import com.teamherb.bookstoreback.common.exception.CustomException;
 import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
 import com.teamherb.bookstoreback.common.utils.upload.FileStoreUtil;
-import com.teamherb.bookstoreback.image.domain.Image;
-import com.teamherb.bookstoreback.image.domain.ImageRepository;
+import com.teamherb.bookstoreback.image.domain.Images;
 import com.teamherb.bookstoreback.post.domain.Post;
 import com.teamherb.bookstoreback.post.domain.PostRepository;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
@@ -31,28 +30,29 @@ public class PostService {
 
   private final PostRepository postRepository;
 
-  private final ImageRepository imageRepository;
-
   private final FileStoreUtil fileStoreUtil;
 
   private final InterestRepository interestRepository;
 
+  //TODO : S3 연동, 테스트 개발 코드 정리
   public Long createPost(User user, PostRequest postRequest, List<MultipartFile> images) {
     Post post = Post.create(user, postRequest);
-    saveImages(post, images);
+    saveAllImages(post, images);
     return postRepository.save(post).getId();
   }
 
   @Transactional(readOnly = true)
   public PostResponse findPost(User user, Long postId) {
     Post post = validatePostIdAndGetPostWithSeller(postId);
-    boolean isMyPost = post.isMyPost(user);
-    boolean isMyInterest = interestRepository.existsByUserAndPost(user, post);
-    return PostResponse.of(post, isMyPost, isMyInterest);
+    return PostResponse.of(
+        post,
+        post.isMyPost(user),
+        interestRepository.existsByUserAndPost(user, post)
+    );
   }
 
   public Post validatePostIdAndGetPostWithSeller(Long postId) {
-    return postRepository.findWithSellerById(postId)
+    return postRepository.findPostWithSellerById(postId)
         .orElseThrow(() -> new CustomException(ErrorCode.INVALID_POST_ID));
   }
 
@@ -61,18 +61,10 @@ public class PostService {
     PageRequest pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
     List<Post> posts = postRepository.findAllByPostsReqOrderByCreatedDateDesc(request, pageable)
         .getContent();
-    return posts.stream().map(p -> {
-          List<Image> images = p.getImages().getImages();
-          /*
-          사용자가 게시글에 책 이미지를 등록하지 않았을 경우 대표 이미지는 null 로 반환한다.
-          사용자가 게시글에 책 이미지를 등록한 경우 대표 이미지는 첫 번째 이미지를 반환한다.
-          */
-          return PostsResponse.of(p, images.isEmpty() ? null : images.get(0).getPath());
-        })
+    return posts.stream().map(p -> PostsResponse.of(p, p.getImages().getFirstImage()))
         .collect(Collectors.toList());
   }
 
-  //TODO : 게시글 업데이트, 게시글 삭제, API 문서, 전체 테스트, 게시글 전반적인 코드 정리, S3 연동
   public void updatePost(User user, Long postId, PostUpdateRequest request,
       List<MultipartFile> updateImages) {
     Post post = validatePostIdAndGetPost(postId);
@@ -82,26 +74,26 @@ public class PostService {
   }
 
   public void updateImages(Post post, List<MultipartFile> updateImages) {
-    deleteImages(post);
-    saveImages(post, updateImages);
+    deleteAllImages(post);
+    saveAllImages(post, updateImages);
   }
 
-  public void deleteImages(Post post) {
-    List<Image> images = imageRepository.findAllByPost(post);
+  public void deleteAllImages(Post post) {
+    Images images = post.getImages();
     if (!images.isEmpty()) {
       //TODO : S3 연동하면 S3 이미지를 삭제하는 로직을 추가해야합니다.
-      imageRepository.deleteAll(images);
+      images.deleteAll();
     }
   }
 
-  public void saveImages(Post post, List<MultipartFile> images) {
-    List<String> imagePaths = getUploadImagePaths(images);
+  public void saveAllImages(Post post, List<MultipartFile> images) {
+    List<String> imagePaths = getImagePathsAndStoreFile(images);
     if (imagePaths != null) {
-      post.getImages().addImages(post, imagePaths);
+      post.getImages().addAll(post, imagePaths);
     }
   }
 
-  public List<String> getUploadImagePaths(List<MultipartFile> images) {
+  public List<String> getImagePathsAndStoreFile(List<MultipartFile> images) {
     return images == null || images.isEmpty() ? null : fileStoreUtil.storeFiles(images);
   }
 
@@ -114,5 +106,11 @@ public class PostService {
   public Post validatePostIdAndGetPost(Long postId) {
     return postRepository.findById(postId)
         .orElseThrow(() -> new CustomException(ErrorCode.INVALID_POST_ID));
+  }
+
+  public void deletePost(User user, Long postId) {
+    Post post = validatePostIdAndGetPost(postId);
+    post.validateIsMyPost(user);
+    postRepository.delete(post);
   }
 }

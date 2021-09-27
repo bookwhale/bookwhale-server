@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface PostCustomRepository {
 
-  Optional<Post> findWithSellerById(Long id);
+  Optional<Post> findPostWithSellerById(Long id);
 
   Page<Post> findAllByPostsReqOrderByCreatedDateDesc(PostsRequest req,
       Pageable pageable);

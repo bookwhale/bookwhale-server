@@ -126,8 +126,7 @@ public class PostDocumentation {
         fieldWithPath("postPrice").type(JsonFieldType.STRING).description("게시글 가격"),
         fieldWithPath("bookTitle").type(JsonFieldType.STRING).description("책 제목"),
         fieldWithPath("createdDate").type(JsonFieldType.STRING).description("게시글 등록일"),
-        fieldWithPath("bookThumbnail").type(JsonFieldType.STRING).description(
-            "책 썸네일(네이버 책 API)"),
+        fieldWithPath("postImage").type(JsonFieldType.STRING).description("판매자가 올린 이미지"),
         fieldWithPath("postStatus").type(JsonFieldType.STRING).description(
             "게시글 상태 [SALE, RESERVED, SOLD_OUT]")
     };

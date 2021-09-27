@@ -229,4 +229,20 @@ public class PostAcceptanceTest extends AcceptanceTest {
     AcceptanceStep.assertThatStatusIsOk(response);
     assertThat(postStatus).isEqualTo(PostStatus.valueOf(request.getPostStatus()));
   }
+
+  @DisplayName("게시글을 삭제한다.")
+  @Test
+  void deletePost() {
+    String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
+    Long postId = AcceptanceUtils.getIdFromResponse(
+        PostAcceptanceStep.requestToCreatePost(jwt, postRequest));
+
+    ExtractableResponse<Response> response = PostAcceptanceStep.requestToDeletePost(jwt, postId);
+    List<PostsResponse> postsResponses = PostAcceptanceStep.requestToFindPosts(
+            jwt, new PostsRequest(), new Pagination(0, 10))
+        .jsonPath().getList(".", PostsResponse.class);
+
+    AcceptanceStep.assertThatStatusIsOk(response);
+    assertThat(postsResponses.size()).isEqualTo(0);
+  }
 }

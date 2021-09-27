@@ -19,7 +19,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
   private final JPAQueryFactory queryFactory;
 
   @Override
-  public Optional<Post> findWithSellerById(Long id) {
+  public Optional<Post> findPostWithSellerById(Long id) {
     Post result = queryFactory.selectFrom(post)
         .leftJoin(post.seller, user).fetchJoin()
         .where(post.id.eq(id))
