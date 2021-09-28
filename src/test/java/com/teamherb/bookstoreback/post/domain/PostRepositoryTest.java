@@ -3,7 +3,7 @@ package com.teamherb.bookstoreback.post.domain;
 import static java.util.List.of;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.teamherb.bookstoreback.config.AppConfig;
+import com.teamherb.bookstoreback.common.TestConfig;
 import com.teamherb.bookstoreback.post.dto.PostsRequest;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
 
 @DisplayName("게시글 단위 테스트(Repository)")
-@Import(AppConfig.class)
+@Import(TestConfig.class)
 @DataJpaTest
 public class PostRepositoryTest {
 

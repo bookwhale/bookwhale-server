@@ -4,7 +4,7 @@ import com.teamherb.bookstoreback.Interest.domain.InterestRepository;
 import com.teamherb.bookstoreback.common.Pagination;
 import com.teamherb.bookstoreback.common.exception.CustomException;
 import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
-import com.teamherb.bookstoreback.common.utils.upload.FileStoreUtil;
+import com.teamherb.bookstoreback.common.utils.upload.FileUploader;
 import com.teamherb.bookstoreback.image.domain.Images;
 import com.teamherb.bookstoreback.post.domain.Post;
 import com.teamherb.bookstoreback.post.domain.PostRepository;
@@ -30,11 +30,10 @@ public class PostService {
 
   private final PostRepository postRepository;
 
-  private final FileStoreUtil fileStoreUtil;
+  private final FileUploader fileUploader;
 
   private final InterestRepository interestRepository;
 
-  //TODO : S3 연동, 테스트 개발 코드 정리
   public Long createPost(User user, PostRequest postRequest, List<MultipartFile> images) {
     Post post = Post.create(user, postRequest);
     saveAllImages(post, images);
@@ -61,7 +60,7 @@ public class PostService {
     PageRequest pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
     List<Post> posts = postRepository.findAllByPostsReqOrderByCreatedDateDesc(request, pageable)
         .getContent();
-    return posts.stream().map(p -> PostsResponse.of(p, p.getImages().getFirstImage()))
+    return posts.stream().map(p -> PostsResponse.of(p, p.getImages().getFirstImageUrl()))
         .collect(Collectors.toList());
   }
 
@@ -78,23 +77,15 @@ public class PostService {
     saveAllImages(post, updateImages);
   }
 
-  public void deleteAllImages(Post post) {
-    Images images = post.getImages();
-    if (!images.isEmpty()) {
-      //TODO : S3 연동하면 S3 이미지를 삭제하는 로직을 추가해야합니다.
-      images.deleteAll();
-    }
-  }
-
   public void saveAllImages(Post post, List<MultipartFile> images) {
-    List<String> imagePaths = getImagePathsAndStoreFile(images);
-    if (imagePaths != null) {
-      post.getImages().addAll(post, imagePaths);
+    List<String> uploadUrls = getImageUrlsAndUploadImages(images);
+    if (uploadUrls != null) {
+      post.getImages().addAll(post, uploadUrls);
     }
   }
 
-  public List<String> getImagePathsAndStoreFile(List<MultipartFile> images) {
-    return images == null || images.isEmpty() ? null : fileStoreUtil.storeFiles(images);
+  public List<String> getImageUrlsAndUploadImages(List<MultipartFile> images) {
+    return images == null || images.isEmpty() ? null : fileUploader.uploadFiles(images);
   }
 
   public void updatePostStatus(User user, Long postId, PostStatusUpdateRequest request) {
@@ -111,6 +102,15 @@ public class PostService {
   public void deletePost(User user, Long postId) {
     Post post = validatePostIdAndGetPost(postId);
     post.validateIsMyPost(user);
+    deleteAllImages(post);
     postRepository.delete(post);
+  }
+
+  public void deleteAllImages(Post post) {
+    Images images = post.getImages();
+    if (!images.isEmpty()) {
+      fileUploader.deleteFiles(images.getImageUrls());
+      images.deleteAll();
+    }
   }
 }

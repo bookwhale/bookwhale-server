@@ -16,7 +16,7 @@ import static org.mockito.Mockito.when;
 import com.teamherb.bookstoreback.Interest.domain.InterestRepository;
 import com.teamherb.bookstoreback.common.exception.CustomException;
 import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
-import com.teamherb.bookstoreback.common.utils.upload.FileStoreUtil;
+import com.teamherb.bookstoreback.common.utils.upload.FileUploader;
 import com.teamherb.bookstoreback.post.domain.Post;
 import com.teamherb.bookstoreback.post.domain.PostRepository;
 import com.teamherb.bookstoreback.post.domain.PostStatus;
@@ -46,7 +46,7 @@ public class PostServiceTest {
   private PostRepository postRepository;
 
   @Mock
-  private FileStoreUtil fileStoreUtil;
+  private FileUploader fileUploader;
 
   @Mock
   private InterestRepository interestRepository;
@@ -59,7 +59,7 @@ public class PostServiceTest {
 
   @BeforeEach
   void setUp() {
-    postService = new PostService(postRepository, fileStoreUtil, interestRepository);
+    postService = new PostService(postRepository, fileUploader, interestRepository);
 
     BookRequest bookRequest = BookRequest.builder()
         .bookSummary("설명")
@@ -95,14 +95,14 @@ public class PostServiceTest {
     Post post = Post.create(user, postRequest);
     List<String> images = of("image1", "image2");
 
-    when(fileStoreUtil.storeFiles(any())).thenReturn(images);
+    when(fileUploader.uploadFiles(any())).thenReturn(images);
     when(postRepository.save(any())).thenReturn(post);
 
     postService.createPost(user, postRequest,
         of(new MockMultipartFile("images", "image".getBytes(StandardCharsets.UTF_8))));
 
     verify(postRepository).save(any());
-    verify(fileStoreUtil).storeFiles(any());
+    verify(fileUploader).uploadFiles(any());
   }
 
   @DisplayName("나의 게시글을 상세 조회한다. (게시글 이미지 2개)")
@@ -193,12 +193,12 @@ public class PostServiceTest {
     );
 
     when(postRepository.findById(any())).thenReturn(Optional.ofNullable(post));
-    when(fileStoreUtil.storeFiles(any())).thenReturn(of("image1", "image2"));
+    when(fileUploader.uploadFiles(any())).thenReturn(of("image1", "image2"));
 
     postService.updatePost(user, 1L, request, images);
 
     verify(postRepository).findById(any());
-    verify(fileStoreUtil).storeFiles(any());
+    verify(fileUploader).uploadFiles(any());
     assertAll(
         () -> assertThat(post.getTitle()).isEqualTo(request.getTitle()),
         () -> assertThat(post.getPrice()).isEqualTo(request.getPrice()),
@@ -225,7 +225,7 @@ public class PostServiceTest {
     postService.updatePost(user, 1L, request, images);
 
     verify(postRepository).findById(any());
-    verify(fileStoreUtil, never()).storeFiles(any());
+    verify(fileUploader, never()).uploadFiles(any());
   }
 
   @DisplayName("게시글을 수정한다. (null 을 보내는 경우)")
@@ -244,7 +244,7 @@ public class PostServiceTest {
     postService.updatePost(user, 1L, request, null);
 
     verify(postRepository).findById(any());
-    verify(fileStoreUtil, never()).storeFiles(any());
+    verify(fileUploader, never()).uploadFiles(any());
   }
 
   @DisplayName("잘못된 post_id로 게시글을 수정하면 예외가 발생한다.")

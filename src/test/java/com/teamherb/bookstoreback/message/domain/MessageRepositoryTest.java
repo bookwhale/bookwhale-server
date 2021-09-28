@@ -2,7 +2,7 @@ package com.teamherb.bookstoreback.message.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.teamherb.bookstoreback.config.AppConfig;
+import com.teamherb.bookstoreback.common.TestConfig;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
 
 @DisplayName("메세지 단위 테스트(Repository)")
-@Import(AppConfig.class)
+@Import(TestConfig.class)
 @DataJpaTest
 public class MessageRepositoryTest {
 

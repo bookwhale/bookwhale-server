@@ -1,7 +1,6 @@
 package com.teamherb.bookstoreback.post.dto;
 
 import com.teamherb.bookstoreback.image.domain.Image;
-import com.teamherb.bookstoreback.image.domain.Images;
 import com.teamherb.bookstoreback.post.domain.BookStatus;
 import com.teamherb.bookstoreback.post.domain.Post;
 import com.teamherb.bookstoreback.post.domain.PostStatus;
@@ -68,7 +67,7 @@ public class PostResponse {
         .bookTitle(post.getBook().getBookTitle())
         .build();
 
-    List<String> imageResponse = post.getImages().getImages().stream().map(Image::getPath)
+    List<String> imageResponse = post.getImages().getImages().stream().map(Image::getUrl)
         .collect(Collectors.toList());
 
     return PostResponse.builder()

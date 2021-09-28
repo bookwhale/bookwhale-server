@@ -27,14 +27,14 @@ public class Image {
   @JoinColumn(name = "post_id")
   private Post post;
 
-  private String path;
+  private String url;
 
-  private Image(Post post, String path) {
+  private Image(Post post, String url) {
     this.post = post;
-    this.path = path;
+    this.url = url;
   }
 
-  public static Image createPostImage(Post post, String imagePath) {
-    return new Image(post, imagePath);
+  public static Image createPostImage(Post post, String url) {
+    return new Image(post, url);
   }
 }
