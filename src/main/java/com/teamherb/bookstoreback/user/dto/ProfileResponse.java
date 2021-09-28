@@ -11,7 +11,7 @@ public class ProfileResponse {
 
   private String profileImage;
 
-  public static ProfileResponse of(String uploadFile) {
-    return new ProfileResponse(uploadFile);
+  public static ProfileResponse of(String imageUrl) {
+    return new ProfileResponse(imageUrl);
   }
 }
