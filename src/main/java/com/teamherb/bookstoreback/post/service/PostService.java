@@ -16,7 +16,6 @@ import com.teamherb.bookstoreback.post.dto.PostsRequest;
 import com.teamherb.bookstoreback.post.dto.PostsResponse;
 import com.teamherb.bookstoreback.user.domain.User;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -60,8 +59,7 @@ public class PostService {
     PageRequest pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
     List<Post> posts = postRepository.findAllByPostsReqOrderByCreatedDateDesc(request, pageable)
         .getContent();
-    return posts.stream().map(p -> PostsResponse.of(p, p.getImages().getFirstImageUrl()))
-        .collect(Collectors.toList());
+    return PostsResponse.listOf(posts);
   }
 
   public void updatePost(User user, Long postId, PostUpdateRequest request,

@@ -2,6 +2,8 @@ package com.teamherb.bookstoreback.user.controller;
 
 import com.teamherb.bookstoreback.Interest.dto.InterestRequest;
 import com.teamherb.bookstoreback.Interest.dto.InterestResponse;
+import com.teamherb.bookstoreback.common.Pagination;
+import com.teamherb.bookstoreback.post.dto.PostsResponse;
 import com.teamherb.bookstoreback.security.CurrentUser;
 import com.teamherb.bookstoreback.user.domain.User;
 import com.teamherb.bookstoreback.user.dto.PasswordUpdateRequest;
@@ -89,5 +91,12 @@ public class UserController {
       @PathVariable Long interestId) {
     userService.deleteInterest(user, interestId);
     return ResponseEntity.ok().build();
+  }
+
+  @GetMapping("/me/post")
+  public ResponseEntity<List<PostsResponse>> findMyPosts(@CurrentUser User user,
+      @Valid Pagination pagination) {
+    List<PostsResponse> response = userService.findMyPost(user, pagination);
+    return ResponseEntity.ok(response);
   }
 }

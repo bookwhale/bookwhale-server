@@ -4,11 +4,13 @@ import com.teamherb.bookstoreback.Interest.domain.Interest;
 import com.teamherb.bookstoreback.Interest.domain.InterestRepository;
 import com.teamherb.bookstoreback.Interest.dto.InterestRequest;
 import com.teamherb.bookstoreback.Interest.dto.InterestResponse;
+import com.teamherb.bookstoreback.common.Pagination;
 import com.teamherb.bookstoreback.common.exception.CustomException;
 import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
 import com.teamherb.bookstoreback.common.utils.upload.FileUploader;
 import com.teamherb.bookstoreback.post.domain.Post;
 import com.teamherb.bookstoreback.post.domain.PostRepository;
+import com.teamherb.bookstoreback.post.dto.PostsResponse;
 import com.teamherb.bookstoreback.user.domain.User;
 import com.teamherb.bookstoreback.user.domain.UserRepository;
 import com.teamherb.bookstoreback.user.dto.PasswordUpdateRequest;
@@ -17,6 +19,8 @@ import com.teamherb.bookstoreback.user.dto.SignUpRequest;
 import com.teamherb.bookstoreback.user.dto.UserUpdateRequest;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -118,5 +122,12 @@ public class UserService {
   private Interest validateInterestIdAndGetInterest(Long interestId) {
     return interestRepository.findById(interestId)
         .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INTEREST_ID));
+  }
+
+  @Transactional(readOnly = true)
+  public List<PostsResponse> findMyPost(User user, Pagination pagination) {
+    Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
+    List<Post> posts = postRepository.findAllBySeller(user, pageable).getContent();
+    return PostsResponse.listOf(posts);
   }
 }
