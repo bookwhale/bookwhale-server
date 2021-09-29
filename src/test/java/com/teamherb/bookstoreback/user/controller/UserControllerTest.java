@@ -14,9 +14,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.teamherb.bookstoreback.Interest.dto.InterestRequest;
 import com.teamherb.bookstoreback.Interest.dto.InterestResponse;
+import com.teamherb.bookstoreback.common.Pagination;
 import com.teamherb.bookstoreback.common.controller.CommonApiTest;
 import com.teamherb.bookstoreback.common.security.WithMockCustomUser;
 import com.teamherb.bookstoreback.post.domain.PostStatus;
+import com.teamherb.bookstoreback.post.dto.PostsResponse;
 import com.teamherb.bookstoreback.user.docs.UserDocumentation;
 import com.teamherb.bookstoreback.user.dto.LoginRequest;
 import com.teamherb.bookstoreback.user.dto.PasswordUpdateRequest;
@@ -24,6 +26,7 @@ import com.teamherb.bookstoreback.user.dto.ProfileResponse;
 import com.teamherb.bookstoreback.user.dto.SignUpRequest;
 import com.teamherb.bookstoreback.user.dto.UserUpdateRequest;
 import com.teamherb.bookstoreback.user.service.UserService;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.DisplayName;
@@ -233,5 +236,30 @@ public class UserControllerTest extends CommonApiTest {
         .andExpect(status().isOk())
         .andDo(print())
         .andDo(UserDocumentation.userDeleteInterest());
+  }
+
+  @WithMockCustomUser
+  @DisplayName("내 판매글들을 조회한다.")
+  @Test
+  void findMyPosts() throws Exception {
+    PostsResponse postsResponse = PostsResponse.builder()
+        .postId(1L)
+        .postImage("이미지")
+        .postTitle("책 팝니다~")
+        .bookTitle("토비의 스프링")
+        .postPrice("20000원")
+        .postStatus(PostStatus.SALE)
+        .createdDate(LocalDateTime.now())
+        .build();
+    Pagination page = new Pagination(0, 10);
+
+    when(userService.findMyPost(any(), any())).thenReturn(List.of(postsResponse));
+
+    mockMvc.perform(
+            get(String.format("/api/user/me/post?page=%d&size=%d", page.getPage(), page.getSize()))
+                .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+        .andExpect(status().isOk())
+        .andDo(print())
+        .andDo(UserDocumentation.userFindMyPosts());
   }
 }

@@ -5,7 +5,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.teamherb.bookstoreback.Interest.dto.InterestRequest;
 import com.teamherb.bookstoreback.Interest.dto.InterestResponse;
+import com.teamherb.bookstoreback.common.Pagination;
+import com.teamherb.bookstoreback.post.domain.PostStatus;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
+import com.teamherb.bookstoreback.post.dto.PostsResponse;
 import com.teamherb.bookstoreback.user.domain.User;
 import com.teamherb.bookstoreback.user.dto.LoginRequest;
 import com.teamherb.bookstoreback.user.dto.LoginResponse;
@@ -65,6 +68,17 @@ public class UserAcceptanceStep {
         () -> assertThat(res.get(0).getBookTitle()).isEqualTo(req.getBookRequest().getBookTitle()),
         () -> assertThat(res.get(0).getBookThumbnail()).isEqualTo(
             req.getBookRequest().getBookThumbnail())
+    );
+  }
+
+  public static void assertThatFindMyPosts(List<PostsResponse> res, PostRequest req) {
+    Assertions.assertAll(
+        () -> assertThat(res.size()).isEqualTo(1),
+        () -> assertThat(res.get(0).getPostTitle()).isEqualTo(req.getTitle()),
+        () -> assertThat(res.get(0).getPostPrice()).isEqualTo(req.getPrice()),
+        () -> assertThat(res.get(0).getBookTitle()).isEqualTo(req.getBookRequest().getBookTitle()),
+        () -> assertThat(res.get(0).getPostStatus()).isEqualTo(PostStatus.SALE),
+        () -> assertThat(res.get(0).getPostImage()).isNotNull()
     );
   }
 
@@ -174,6 +188,15 @@ public class UserAcceptanceStep {
         .header(HttpHeaders.AUTHORIZATION, jwt)
         .when()
         .delete("/api/user/me/interest/{interestId}", interestId)
+        .then().log().all()
+        .extract();
+  }
+
+  public static ExtractableResponse<Response> requestToFindMyPosts(String jwt, Pagination page) {
+    return given().log().all()
+        .header(HttpHeaders.AUTHORIZATION, jwt)
+        .when()
+        .get(String.format("/api/user/me/post?page=%d&size=%d", page.getPage(), page.getSize()))
         .then().log().all()
         .extract();
   }
