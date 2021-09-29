@@ -74,6 +74,10 @@ operation::user/findInterests[snippets='http-request,request-headers,http-respon
 
 operation::user/deleteInterest[snippets='http-request,request-headers,path-parameters,http-response']
 
+=== 1.11 내 게시글 조회
+
+operation::user/findMyPosts[snippets='http-request,request-headers,request-parameters,http-response,response-fields']
+
 == 2. 게시글
 
 === 2.1 네이버 책 API
