@@ -1,5 +1,6 @@
 package com.teamherb.bookstoreback.post.service;
 
+import static com.teamherb.bookstoreback.post.domain.BookStatus.valueOf;
 import static java.util.List.of;
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
@@ -8,7 +9,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.util.Lists.emptyList;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -16,10 +16,7 @@ import static org.mockito.Mockito.when;
 import com.teamherb.bookstoreback.Interest.domain.InterestRepository;
 import com.teamherb.bookstoreback.common.exception.CustomException;
 import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
-import com.teamherb.bookstoreback.common.utils.upload.FileStoreUtil;
-import com.teamherb.bookstoreback.image.domain.Image;
-import com.teamherb.bookstoreback.image.domain.ImageRepository;
-import com.teamherb.bookstoreback.post.domain.BookStatus;
+import com.teamherb.bookstoreback.common.utils.upload.FileUploader;
 import com.teamherb.bookstoreback.post.domain.Post;
 import com.teamherb.bookstoreback.post.domain.PostRepository;
 import com.teamherb.bookstoreback.post.domain.PostStatus;
@@ -49,10 +46,7 @@ public class PostServiceTest {
   private PostRepository postRepository;
 
   @Mock
-  private ImageRepository imageRepository;
-
-  @Mock
-  private FileStoreUtil fileStoreUtil;
+  private FileUploader fileUploader;
 
   @Mock
   private InterestRepository interestRepository;
@@ -65,8 +59,7 @@ public class PostServiceTest {
 
   @BeforeEach
   void setUp() {
-    postService = new PostService(postRepository, imageRepository, fileStoreUtil,
-        interestRepository);
+    postService = new PostService(postRepository, fileUploader, interestRepository);
 
     BookRequest bookRequest = BookRequest.builder()
         .bookSummary("설명")
@@ -100,36 +93,31 @@ public class PostServiceTest {
   @Test
   void createPost() {
     Post post = Post.create(user, postRequest);
-    List<String> uploadFilePaths = of("image1", "image2");
-    List<Image> images = Image.createPostImage(post, uploadFilePaths);
+    List<String> images = of("image1", "image2");
 
+    when(fileUploader.uploadFiles(any())).thenReturn(images);
     when(postRepository.save(any())).thenReturn(post);
-    when(fileStoreUtil.storeFiles(any())).thenReturn(uploadFilePaths);
-    when(imageRepository.saveAll(any())).thenReturn(images);
 
     postService.createPost(user, postRequest,
         of(new MockMultipartFile("images", "image".getBytes(StandardCharsets.UTF_8))));
 
     verify(postRepository).save(any());
-    verify(fileStoreUtil).storeFiles(any());
-    verify(imageRepository).saveAll(any());
+    verify(fileUploader).uploadFiles(any());
   }
 
-  @DisplayName("나의 게시글을 상세 조회한다.")
+  @DisplayName("나의 게시글을 상세 조회한다. (게시글 이미지 2개)")
   @Test
   void findMyPost_success() {
     Post post = Post.create(user, postRequest);
-    List<String> uploadFilePaths = of("image1", "image2");
-    List<Image> images = Image.createPostImage(post, uploadFilePaths);
+    List<String> images = of("image1", "image2");
+    post.getImages().addAll(post, images);
 
-    when(postRepository.findWithSellerById(any())).thenReturn(ofNullable(post));
-    when(imageRepository.findAllByPost(any())).thenReturn(images);
+    when(postRepository.findPostWithSellerById(any())).thenReturn(Optional.of(post));
     when(interestRepository.existsByUserAndPost(any(), any())).thenReturn(true);
 
     PostResponse response = postService.findPost(user, 1L);
 
-    verify(postRepository).findWithSellerById(any());
-    verify(imageRepository).findAllByPost(any());
+    verify(postRepository).findPostWithSellerById(any());
     assertAll(
         () -> assertThat(response.getTitle()).isEqualTo(postRequest.getTitle()),
         () -> assertThat(response.getPrice()).isEqualTo(postRequest.getPrice()),
@@ -138,8 +126,8 @@ public class PostServiceTest {
         () -> assertThat(response.getTitle()).isEqualTo(postRequest.getTitle()),
         () -> assertThat(response.isMyPost()).isEqualTo(true),
         () -> assertThat(response.isMyInterest()).isEqualTo(true),
-        () -> assertThat(response.getBookStatus()).isEqualTo(
-            BookStatus.valueOf(postRequest.getBookStatus())),
+        () -> assertThat(response.getBookStatus()).isEqualTo(valueOf(postRequest.getBookStatus())),
+        () -> assertThat(response.getImages().size()).isEqualTo(2),
         () -> assertThat(response.getBookResponse().getBookIsbn()).isEqualTo(
             postRequest.getBookRequest().getBookIsbn()),
         () -> assertThat(response.getBookResponse().getBookAuthor()).isEqualTo(
@@ -159,74 +147,64 @@ public class PostServiceTest {
     );
   }
 
-  @DisplayName("다른 유저의 게시글을 상세 조회한다.")
+  @DisplayName("다른 유저의 게시글을 상세 조회한다. (게시글 이미지 0개)")
   @Test
   void findNotMyPost_success() {
-    User otherUser = User.builder()
-        .id(2L)
-        .identity("hose")
-        .name("주호세")
-        .email("hose@email.com")
-        .phoneNumber("010-5678-5678")
-        .build();
-
+    User otherUser = User.builder().id(2L).build();
     Post post = Post.create(user, postRequest);
 
-    when(postRepository.findWithSellerById(any())).thenReturn(ofNullable(post));
-    when(imageRepository.findAllByPost(any())).thenReturn(emptyList());
+    when(postRepository.findPostWithSellerById(any())).thenReturn(ofNullable(post));
 
     PostResponse response = postService.findPost(otherUser, 1L);
 
-    verify(postRepository).findWithSellerById(any());
-    verify(imageRepository).findAllByPost(any());
-    assertThat(response.isMyPost()).isEqualTo(false);
+    verify(postRepository).findPostWithSellerById(any());
+    assertAll(
+        () -> assertThat(response.isMyPost()).isEqualTo(false),
+        () -> assertThat(response.getImages().isEmpty()).isEqualTo(true)
+    );
   }
 
   @DisplayName("잘못된 게시글 ID로 상세 조회하면 예외가 발생한다.")
   @Test
   void findPost_invalidPostId_failure() {
-    when(postRepository.findWithSellerById(any())).thenReturn(empty());
+    when(postRepository.findPostWithSellerById(any())).thenReturn(empty());
 
     assertThatThrownBy(() -> postService.findPost(user, 1L))
         .isInstanceOf(CustomException.class)
         .hasMessage(ErrorCode.INVALID_POST_ID.getMessage());
   }
 
-  @DisplayName("게시글을 수정한다.")
+  @DisplayName("게시글을 수정한다. (게시글 이미지 1개 -> 2개로 변경)")
   @Test
   void updatePost_success() {
     Post post = Post.create(user, postRequest);
+    post.getImages().addAll(post, of("image1"));
+
     PostUpdateRequest request = PostUpdateRequest.builder()
         .title("이펙티브 자바")
         .description("이펙티브 자바입니다.")
         .price("15000")
         .bookStatus("BEST")
         .build();
+
     List<MultipartFile> images = of(
         new MockMultipartFile("updateImages", "image1".getBytes(StandardCharsets.UTF_8)),
         new MockMultipartFile("updateImages", "image2".getBytes(StandardCharsets.UTF_8))
     );
 
     when(postRepository.findById(any())).thenReturn(Optional.ofNullable(post));
-    when(fileStoreUtil.storeFiles(any())).thenReturn(of("image1", "image2"));
-    when(imageRepository.findAllByPost(any())).thenReturn(Image.createPostImage(post, of("image")));
-    doNothing().when(imageRepository).deleteAll(any());
-    when(imageRepository.saveAll(any())).thenReturn(
-        Image.createPostImage(post, of("image1", "image2")));
+    when(fileUploader.uploadFiles(any())).thenReturn(of("image1", "image2"));
 
     postService.updatePost(user, 1L, request, images);
 
     verify(postRepository).findById(any());
-    verify(imageRepository).findAllByPost(any());
-    verify(imageRepository).deleteAll(any());
-    verify(fileStoreUtil).storeFiles(any());
-    verify(imageRepository).saveAll(any());
+    verify(fileUploader).uploadFiles(any());
     assertAll(
         () -> assertThat(post.getTitle()).isEqualTo(request.getTitle()),
         () -> assertThat(post.getPrice()).isEqualTo(request.getPrice()),
         () -> assertThat(post.getDescription()).isEqualTo(request.getDescription()),
-        () -> assertThat(post.getBookStatus()).isEqualTo(
-            BookStatus.valueOf(request.getBookStatus()))
+        () -> assertThat(post.getImages().getSize()).isEqualTo(images.size()),
+        () -> assertThat(post.getBookStatus()).isEqualTo(valueOf(request.getBookStatus()))
     );
   }
 
@@ -243,16 +221,11 @@ public class PostServiceTest {
     List<MultipartFile> images = emptyList();
 
     when(postRepository.findById(any())).thenReturn(Optional.ofNullable(post));
-    when(imageRepository.findAllByPost(any())).thenReturn(Image.createPostImage(post, of("image")));
-    doNothing().when(imageRepository).deleteAll(any());
 
     postService.updatePost(user, 1L, request, images);
 
     verify(postRepository).findById(any());
-    verify(imageRepository).findAllByPost(any());
-    verify(imageRepository).deleteAll(any());
-    verify(fileStoreUtil, never()).storeFiles(any());
-    verify(imageRepository, never()).saveAll(any());
+    verify(fileUploader, never()).uploadFiles(any());
   }
 
   @DisplayName("게시글을 수정한다. (null 을 보내는 경우)")
@@ -267,16 +240,11 @@ public class PostServiceTest {
         .build();
 
     when(postRepository.findById(any())).thenReturn(Optional.ofNullable(post));
-    when(imageRepository.findAllByPost(any())).thenReturn(Image.createPostImage(post, of("image")));
-    doNothing().when(imageRepository).deleteAll(any());
 
     postService.updatePost(user, 1L, request, null);
 
     verify(postRepository).findById(any());
-    verify(imageRepository).findAllByPost(any());
-    verify(imageRepository).deleteAll(any());
-    verify(fileStoreUtil, never()).storeFiles(any());
-    verify(imageRepository, never()).saveAll(any());
+    verify(fileUploader, never()).uploadFiles(any());
   }
 
   @DisplayName("잘못된 post_id로 게시글을 수정하면 예외가 발생한다.")
@@ -285,7 +253,7 @@ public class PostServiceTest {
     PostUpdateRequest request = PostUpdateRequest.builder().build();
     List<MultipartFile> images = emptyList();
 
-    when(postRepository.findById(any())).thenReturn(empty());
+    when(postRepository.findById(any())).thenReturn(Optional.empty());
 
     assertThatThrownBy(() -> postService.updatePost(user, 1L, request, images))
         .isInstanceOf(CustomException.class)

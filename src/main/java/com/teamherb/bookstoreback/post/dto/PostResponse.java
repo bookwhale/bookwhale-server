@@ -54,7 +54,7 @@ public class PostResponse {
     this.lastModifiedDate = lastModifiedDate;
   }
 
-  public static PostResponse of(Post post, List<Image> images, boolean isMyPost,
+  public static PostResponse of(Post post, boolean isMyPost,
       boolean isMyInterest) {
     BookResponse bookResponse = BookResponse.builder()
         .bookAuthor(post.getBook().getBookAuthor())
@@ -67,7 +67,8 @@ public class PostResponse {
         .bookTitle(post.getBook().getBookTitle())
         .build();
 
-    List<String> imageResponse = images.stream().map(Image::getPath).collect(Collectors.toList());
+    List<String> imageResponse = post.getImages().getImages().stream().map(Image::getUrl)
+        .collect(Collectors.toList());
 
     return PostResponse.builder()
         .bookResponse(bookResponse)

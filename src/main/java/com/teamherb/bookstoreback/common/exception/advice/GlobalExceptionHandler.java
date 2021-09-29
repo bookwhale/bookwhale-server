@@ -11,6 +11,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 @Slf4j
@@ -51,6 +52,13 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(value = MissingServletRequestPartException.class)
   public ResponseEntity<ErrorResponse> handleMissingServletRequestPartException(
       MissingServletRequestPartException e) {
+    log.error(e.getMessage(), e);
+    ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.INVALID_INPUT_VALUE);
+    return ResponseEntity.status(errorResponse.getStatus()).body(errorResponse);
+  }
+
+  @ExceptionHandler(value = MultipartException.class)
+  public ResponseEntity<ErrorResponse> handleMultipartException(MultipartException e) {
     log.error(e.getMessage(), e);
     ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.INVALID_INPUT_VALUE);
     return ResponseEntity.status(errorResponse.getStatus()).body(errorResponse);

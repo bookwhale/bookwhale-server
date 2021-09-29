@@ -2,13 +2,13 @@ package com.teamherb.bookstoreback.post.controller;
 
 import com.teamherb.bookstoreback.common.Pagination;
 import com.teamherb.bookstoreback.post.dto.BookResponse;
-import com.teamherb.bookstoreback.post.dto.FullPostRequest;
-import com.teamherb.bookstoreback.post.dto.FullPostResponse;
 import com.teamherb.bookstoreback.post.dto.NaverBookRequest;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.post.dto.PostResponse;
 import com.teamherb.bookstoreback.post.dto.PostStatusUpdateRequest;
 import com.teamherb.bookstoreback.post.dto.PostUpdateRequest;
+import com.teamherb.bookstoreback.post.dto.PostsRequest;
+import com.teamherb.bookstoreback.post.dto.PostsResponse;
 import com.teamherb.bookstoreback.post.service.NaverBookAPIService;
 import com.teamherb.bookstoreback.post.service.PostService;
 import com.teamherb.bookstoreback.security.CurrentUser;
@@ -19,6 +19,7 @@ import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -41,7 +42,7 @@ public class PostController {
 
   @GetMapping("/naverBookAPI")
   public ResponseEntity<List<BookResponse>> findNaverBooks(
-      @ModelAttribute NaverBookRequest naverBookRequest) {
+      @Valid @ModelAttribute NaverBookRequest naverBookRequest) {
     List<BookResponse> bookResponses = naverBookAPIService.getNaverBooks(naverBookRequest);
     return ResponseEntity.ok(bookResponses);
   }
@@ -62,9 +63,9 @@ public class PostController {
   }
 
   @GetMapping
-  public ResponseEntity<List<FullPostResponse>> findPosts(FullPostRequest fullPostRequest,
+  public ResponseEntity<List<PostsResponse>> findPosts(PostsRequest postsRequest,
       @Valid Pagination pagination) {
-    return ResponseEntity.ok(postService.findPosts(fullPostRequest, pagination));
+    return ResponseEntity.ok(postService.findPosts(postsRequest, pagination));
   }
 
   @PatchMapping("/{postId}")
@@ -80,6 +81,12 @@ public class PostController {
   public ResponseEntity<Void> updatePostStatus(@CurrentUser User user, @PathVariable Long postId,
       @Valid @RequestBody PostStatusUpdateRequest request) {
     postService.updatePostStatus(user, postId, request);
+    return ResponseEntity.ok().build();
+  }
+
+  @DeleteMapping("/{postId}")
+  public ResponseEntity<Void> deletePost(@CurrentUser User user, @PathVariable Long postId) {
+    postService.deletePost(user, postId);
     return ResponseEntity.ok().build();
   }
 }

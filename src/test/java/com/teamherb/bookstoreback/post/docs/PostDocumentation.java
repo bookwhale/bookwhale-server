@@ -42,7 +42,9 @@ public class PostDocumentation {
         requestParameters(
             parameterWithName("title").description("제목").optional(),
             parameterWithName("isbn").description("ISBN").optional(),
-            parameterWithName("author").description("저자명").optional()
+            parameterWithName("author").description("저자명").optional(),
+            parameterWithName("display").description("검색 결과 출력 건수 지정 / 10(기본값) ~ 100(최대값)"),
+            parameterWithName("start").description("검색 시작 위치 / 1(기본값) ~ 1000(최대값)")
         ),
         responseFields(
             fieldWithPath("[]").description("An array of books"))
@@ -124,8 +126,7 @@ public class PostDocumentation {
         fieldWithPath("postPrice").type(JsonFieldType.STRING).description("게시글 가격"),
         fieldWithPath("bookTitle").type(JsonFieldType.STRING).description("책 제목"),
         fieldWithPath("createdDate").type(JsonFieldType.STRING).description("게시글 등록일"),
-        fieldWithPath("bookThumbnail").type(JsonFieldType.STRING).description(
-            "책 썸네일(네이버 책 API)"),
+        fieldWithPath("postImage").type(JsonFieldType.STRING).description("판매자가 올린 이미지"),
         fieldWithPath("postStatus").type(JsonFieldType.STRING).description(
             "게시글 상태 [SALE, RESERVED, SOLD_OUT]")
     };
@@ -143,7 +144,7 @@ public class PostDocumentation {
             parameterWithName("page").description("페이지(0부터 시작) (필수)"),
             parameterWithName("size").description("한 페이지 내의 사이즈 (필수)")
         ),
-        responseFields(fieldWithPath("[]").description("An arrays of fullPostResponse"))
+        responseFields(fieldWithPath("[]").description("An arrays of postsResponse"))
             .andWithPrefix("[].", response)
     );
   }

@@ -6,7 +6,7 @@ import com.teamherb.bookstoreback.Interest.dto.InterestRequest;
 import com.teamherb.bookstoreback.Interest.dto.InterestResponse;
 import com.teamherb.bookstoreback.common.exception.CustomException;
 import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
-import com.teamherb.bookstoreback.common.utils.upload.FileStoreUtil;
+import com.teamherb.bookstoreback.common.utils.upload.FileUploader;
 import com.teamherb.bookstoreback.post.domain.Post;
 import com.teamherb.bookstoreback.post.domain.PostRepository;
 import com.teamherb.bookstoreback.user.domain.User;
@@ -31,7 +31,7 @@ public class UserService {
 
   private final PasswordEncoder passwordEncoder;
 
-  private final FileStoreUtil fileStoreUtil;
+  private final FileUploader fileUploader;
 
   private final PostRepository postRepository;
 
@@ -49,33 +49,41 @@ public class UserService {
     }
   }
 
-  public void updateMyInfo(User loginUser, UserUpdateRequest userUpdateRequest) {
-    loginUser.update(userUpdateRequest);
-    userRepository.save(loginUser);
+  public void updateMyInfo(User user, UserUpdateRequest request) {
+    user.update(request);
+    userRepository.save(user);
   }
 
-  public ProfileResponse uploadProfileImage(User loginUser, MultipartFile profileImage) {
-    deleteProfile(loginUser);
-    String uploadImage = fileStoreUtil.storeFile(profileImage);
-    loginUser.uploadProfile(uploadImage);
-    userRepository.save(loginUser);
-    return ProfileResponse.of(uploadImage);
+  public ProfileResponse uploadProfileImage(User user, MultipartFile image) {
+    deleteImage(user);
+    String imageUrl = getImageUrlAndUploadImage(user, image);
+    userRepository.save(user);
+    return ProfileResponse.of(imageUrl);
   }
 
-  public void deleteProfileImage(User loginUser) {
-    deleteProfile(loginUser);
-    userRepository.save(loginUser);
+  public String getImageUrlAndUploadImage(User user, MultipartFile image) {
+    String imageUrl = fileUploader.uploadFile(image);
+    user.uploadProfile(imageUrl);
+    return imageUrl;
   }
 
-  private void deleteProfile(User user) {
-    //TODO : S3 연동하면 S3 이미지를 삭제하는 로직을 추가해야합니다.
-    user.deleteProfile();
+  public void deleteProfileImage(User user) {
+    deleteImage(user);
+    userRepository.save(user);
   }
 
-  public void updatePassword(User loginUser, PasswordUpdateRequest req) {
-    validateIsCorrectPassword(req.getOldPassword(), loginUser.getPassword());
-    loginUser.updatePassword(passwordEncoder.encode(req.getNewPassword()));
-    userRepository.save(loginUser);
+  private void deleteImage(User user) {
+    String image = user.getProfileImage();
+    if (image != null) {
+      fileUploader.deleteFile(image);
+      user.deleteProfile();
+    }
+  }
+
+  public void updatePassword(User user, PasswordUpdateRequest req) {
+    validateIsCorrectPassword(req.getOldPassword(), user.getPassword());
+    user.updatePassword(passwordEncoder.encode(req.getNewPassword()));
+    userRepository.save(user);
   }
 
   private void validateIsCorrectPassword(String password, String encodedPassword) {
@@ -91,9 +99,9 @@ public class UserService {
     return InterestResponse.listOf(interests);
   }
 
-  public void addInterest(User loginUser, InterestRequest request) {
+  public void addInterest(User user, InterestRequest request) {
     Post post = validatePostIdAndGetPost(request.getPostId());
-    interestRepository.save(Interest.create(loginUser, post));
+    interestRepository.save(Interest.create(user, post));
   }
 
   public Post validatePostIdAndGetPost(Long postId) {
@@ -101,9 +109,9 @@ public class UserService {
         .orElseThrow(() -> new CustomException(ErrorCode.INVALID_POST_ID));
   }
 
-  public void deleteInterest(User loginUser, Long interestId) {
+  public void deleteInterest(User user, Long interestId) {
     Interest interest = validateInterestIdAndGetInterest(interestId);
-    interest.validateIsMyInterest(loginUser);
+    interest.validateIsMyInterest(user);
     interestRepository.delete(interest);
   }
 

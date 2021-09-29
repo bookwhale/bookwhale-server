@@ -3,9 +3,8 @@ package com.teamherb.bookstoreback.post.domain;
 import static java.util.List.of;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.teamherb.bookstoreback.config.AppConfig;
-import com.teamherb.bookstoreback.post.dto.FullPostRequest;
-import com.teamherb.bookstoreback.post.dto.FullPostResponse;
+import com.teamherb.bookstoreback.common.TestConfig;
+import com.teamherb.bookstoreback.post.dto.PostsRequest;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +16,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
 
 @DisplayName("게시글 단위 테스트(Repository)")
-@Import(AppConfig.class)
+@Import(TestConfig.class)
 @DataJpaTest
 public class PostRepositoryTest {
 
@@ -73,80 +72,80 @@ public class PostRepositoryTest {
 
   @DisplayName("책 제목에 스프링이 포함된 게시글들을 오름차순으로 찾는다.")
   @Test
-  void findAllByFullPostReqOrderByCreatedDateDesc_bookTitle() {
-    FullPostRequest fullPostRequest = FullPostRequest.builder()
+  void findAllByPostsReqOrderByCreatedDateDesc_bookTitle() {
+    PostsRequest postsRequest = PostsRequest.builder()
         .title("스프링")
         .build();
     PageRequest pageRequest = PageRequest.of(0, 10);
 
-    List<FullPostResponse> res = postRepository.findAllByFullPostReqOrderByCreatedDateDesc(
-        fullPostRequest, pageRequest).getContent();
+    List<Post> res = postRepository.findAllByPostsReqOrderByCreatedDateDesc(postsRequest,
+        pageRequest).getContent();
 
     Assertions.assertAll(
         () -> assertThat(res.size()).isEqualTo(2),
-        () -> assertThat(res.get(0).getBookTitle()).isEqualTo(
+        () -> assertThat(res.get(0).getBook().getBookTitle()).isEqualTo(
             hrSpringPost.getBook().getBookTitle()),
-        () -> assertThat(res.get(1).getBookTitle()).isEqualTo(
+        () -> assertThat(res.get(1).getBook().getBookTitle()).isEqualTo(
             tobySpringPost.getBook().getBookTitle())
     );
   }
 
   @DisplayName("책 저자에 남상우가 포함된 게시글들을 오름차순으로 찾는다.")
   @Test
-  void findAllByFullPostReqOrderByCreatedDateDesc_bookAuthor() {
-    FullPostRequest fullPostRequest = FullPostRequest.builder()
+  void findAllByPostsReqOrderByCreatedDateDesc_bookAuthor() {
+    PostsRequest postsRequest = PostsRequest.builder()
         .author("남상우")
         .build();
     PageRequest pageRequest = PageRequest.of(0, 10);
 
-    List<FullPostResponse> res = postRepository.findAllByFullPostReqOrderByCreatedDateDesc(
-        fullPostRequest, pageRequest).getContent();
+    List<Post> res = postRepository.findAllByPostsReqOrderByCreatedDateDesc(postsRequest,
+        pageRequest).getContent();
 
     Assertions.assertAll(
         () -> assertThat(res.size()).isEqualTo(2),
-        () -> assertThat(res.get(0).getBookTitle()).isEqualTo(
+        () -> assertThat(res.get(0).getBook().getBookTitle()).isEqualTo(
             effectiveJavaPost.getBook().getBookTitle()),
-        () -> assertThat(res.get(1).getBookTitle()).isEqualTo(
+        () -> assertThat(res.get(1).getBook().getBookTitle()).isEqualTo(
             hrSpringPost.getBook().getBookTitle())
     );
   }
 
   @DisplayName("책 출판사에 허브가 포함된 게시글들을 오름차순으로 찾는다.")
   @Test
-  void findAllByFullPostReqOrderByCreatedDateDesc_bookPublisher() {
-    FullPostRequest fullPostRequest = FullPostRequest.builder()
+  void findAllByPostsReqOrderByCreatedDateDesc_bookPublisher() {
+    PostsRequest postsRequest = PostsRequest.builder()
         .publisher("허브")
         .build();
     PageRequest pageRequest = PageRequest.of(0, 10);
 
-    List<FullPostResponse> res = postRepository.findAllByFullPostReqOrderByCreatedDateDesc(
-        fullPostRequest, pageRequest).getContent();
+    List<Post> res = postRepository.findAllByPostsReqOrderByCreatedDateDesc(postsRequest,
+        pageRequest).getContent();
 
     Assertions.assertAll(
         () -> assertThat(res.size()).isEqualTo(2),
-        () -> assertThat(res.get(0).getBookTitle()).isEqualTo(
+        () -> assertThat(res.get(0).getBook().getBookTitle()).isEqualTo(
             hrSpringPost.getBook().getBookTitle()),
-        () -> assertThat(res.get(1).getBookTitle()).isEqualTo(
+        () -> assertThat(res.get(1).getBook().getBookTitle()).isEqualTo(
             tobySpringPost.getBook().getBookTitle())
     );
   }
 
   @DisplayName("페이징이 옳바르게 작동하는지 확인한다.")
   @Test
-  void findAllByFullPostReqOrderByCreatedDateDesc_paging() {
-    FullPostRequest fullPostRequest = FullPostRequest.builder()
+  void findAllByPostsReqOrderByCreatedDateDesc_paging() {
+    PostsRequest postsRequest = PostsRequest.builder()
         .author("남상우")
         .build();
     PageRequest pageRequest = PageRequest.of(0, 2);
 
-    List<FullPostResponse> res = postRepository.findAllByFullPostReqOrderByCreatedDateDesc(
-        fullPostRequest, pageRequest).getContent();
+    List<Post> res = postRepository.findAllByPostsReqOrderByCreatedDateDesc(postsRequest,
+        pageRequest).getContent();
 
     Assertions.assertAll(
         () -> assertThat(res.size()).isEqualTo(2),
-        () -> assertThat(res.get(0).getBookTitle()).isEqualTo(
+        () -> assertThat(res.get(0).getBook().getBookTitle()).isEqualTo(
             effectiveJavaPost.getBook().getBookTitle()),
-        () -> assertThat(res.get(1).getBookTitle()).isEqualTo(
+        () -> assertThat(res.get(1).getBook().getBookTitle()).isEqualTo(
             hrSpringPost.getBook().getBookTitle())
     );
   }

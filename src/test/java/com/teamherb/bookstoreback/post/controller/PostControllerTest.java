@@ -19,8 +19,8 @@ import com.teamherb.bookstoreback.post.domain.BookStatus;
 import com.teamherb.bookstoreback.post.domain.PostStatus;
 import com.teamherb.bookstoreback.post.dto.BookRequest;
 import com.teamherb.bookstoreback.post.dto.BookResponse;
-import com.teamherb.bookstoreback.post.dto.FullPostRequest;
-import com.teamherb.bookstoreback.post.dto.FullPostResponse;
+import com.teamherb.bookstoreback.post.dto.PostsRequest;
+import com.teamherb.bookstoreback.post.dto.PostsResponse;
 import com.teamherb.bookstoreback.post.dto.NaverBookRequest;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.post.dto.PostResponse;
@@ -54,8 +54,10 @@ public class PostControllerTest extends CommonApiTest {
   @DisplayName("네이버 책 API")
   @WithMockCustomUser
   public void findNaverBooksTest() throws Exception {
-    NaverBookRequest naverBookRequest = NaverBookRequest.builder()
+    NaverBookRequest request = NaverBookRequest.builder()
         .title("책 제목")
+        .display(10)
+        .start(1)
         .build();
 
     BookResponse bookResponse = BookResponse.builder()
@@ -71,7 +73,8 @@ public class PostControllerTest extends CommonApiTest {
 
     when(naverBookAPIService.getNaverBooks(any())).thenReturn(of(bookResponse));
 
-    mockMvc.perform(get(format("/api/post/naverBookAPI?title=%s", naverBookRequest.getTitle()))
+    mockMvc.perform(get(format("/api/post/naverBookAPI?title=%s&display=%d&start=%d",
+            request.getTitle(), request.getDisplay(), request.getStart()))
             .header(HttpHeaders.AUTHORIZATION, "accessToken"))
         .andExpect(status().isOk())
         .andDo(print())
@@ -175,13 +178,13 @@ public class PostControllerTest extends CommonApiTest {
   void findPosts() throws Exception {
     Pagination pagination = new Pagination(0, 10);
 
-    FullPostRequest fullPostRequest = FullPostRequest.builder()
+    PostsRequest postsRequest = PostsRequest.builder()
         .title("책 제목")
         .build();
 
-    FullPostResponse fullPostResponse = FullPostResponse.builder()
+    PostsResponse postsResponse = PostsResponse.builder()
         .postId(1L)
-        .bookThumbnail("이미지")
+        .postImage("이미지")
         .postTitle("책 팝니다~")
         .bookTitle("토비의 스프링")
         .postPrice("20000원")
@@ -189,9 +192,9 @@ public class PostControllerTest extends CommonApiTest {
         .createdDate(LocalDateTime.now())
         .build();
 
-    when(postService.findPosts(any(), any())).thenReturn(of(fullPostResponse));
+    when(postService.findPosts(any(), any())).thenReturn(of(postsResponse));
 
-    mockMvc.perform(get(format("/api/post?title=%s&page=%d&size=%d", fullPostRequest.getTitle(),
+    mockMvc.perform(get(format("/api/post?title=%s&page=%d&size=%d", postsRequest.getTitle(),
             pagination.getPage(), pagination.getSize()))
             .header(HttpHeaders.AUTHORIZATION, "accessToken"))
         .andExpect(status().isOk())

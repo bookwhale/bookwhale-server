@@ -13,7 +13,7 @@ import com.teamherb.bookstoreback.Interest.dto.InterestRequest;
 import com.teamherb.bookstoreback.Interest.dto.InterestResponse;
 import com.teamherb.bookstoreback.common.exception.CustomException;
 import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
-import com.teamherb.bookstoreback.common.utils.upload.FileStoreUtil;
+import com.teamherb.bookstoreback.common.utils.upload.FileUploader;
 import com.teamherb.bookstoreback.post.domain.Post;
 import com.teamherb.bookstoreback.post.domain.PostRepository;
 import com.teamherb.bookstoreback.post.dto.BookRequest;
@@ -48,7 +48,7 @@ public class UserServiceTest {
   private PasswordEncoder passwordEncoder;
 
   @Mock
-  private FileStoreUtil fileStoreUtil;
+  private FileUploader fileUploader;
 
   @Mock
   private PostRepository postRepository;
@@ -62,7 +62,7 @@ public class UserServiceTest {
 
   @BeforeEach
   void setUp() {
-    userService = new UserService(userRepository, passwordEncoder, fileStoreUtil, postRepository,
+    userService = new UserService(userRepository, passwordEncoder, fileUploader, postRepository,
         interestRepository);
 
     user = User.builder()
@@ -164,7 +164,7 @@ public class UserServiceTest {
         "프로필 이미지 입니다.".getBytes());
     String uploadedImage = "uploadImage";
 
-    when(fileStoreUtil.storeFile(any())).thenReturn(uploadedImage);
+    when(fileUploader.uploadFile(any())).thenReturn(uploadedImage);
 
     ProfileResponse profileResponse = userService.uploadProfileImage(user, image);
 

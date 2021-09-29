@@ -1,8 +1,6 @@
 package com.teamherb.bookstoreback.image.domain;
 
 import com.teamherb.bookstoreback.post.domain.Post;
-import java.util.List;
-import java.util.stream.Collectors;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -29,15 +27,14 @@ public class Image {
   @JoinColumn(name = "post_id")
   private Post post;
 
-  private String path;
+  private String url;
 
-  private Image(Post post, String path) {
+  private Image(Post post, String url) {
     this.post = post;
-    this.path = path;
+    this.url = url;
   }
 
-  public static List<Image> createPostImage(Post post, List<String> uploadFilePaths) {
-    return uploadFilePaths.stream().map(path -> new Image(post, path))
-        .collect(Collectors.toList());
+  public static Image createPostImage(Post post, String url) {
+    return new Image(post, url);
   }
 }
