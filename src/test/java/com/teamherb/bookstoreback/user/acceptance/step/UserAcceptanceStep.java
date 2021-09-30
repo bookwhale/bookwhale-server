@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.teamherb.bookstoreback.Interest.dto.InterestRequest;
 import com.teamherb.bookstoreback.Interest.dto.InterestResponse;
-import com.teamherb.bookstoreback.common.Pagination;
 import com.teamherb.bookstoreback.post.domain.PostStatus;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.post.dto.PostsResponse;
@@ -192,11 +191,11 @@ public class UserAcceptanceStep {
         .extract();
   }
 
-  public static ExtractableResponse<Response> requestToFindMyPosts(String jwt, Pagination page) {
+  public static ExtractableResponse<Response> requestToFindMyPosts(String jwt) {
     return given().log().all()
         .header(HttpHeaders.AUTHORIZATION, jwt)
         .when()
-        .get(String.format("/api/user/me/post?page=%d&size=%d", page.getPage(), page.getSize()))
+        .get("/api/user/me/post")
         .then().log().all()
         .extract();
   }

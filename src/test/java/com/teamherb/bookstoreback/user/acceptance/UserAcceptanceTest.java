@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.teamherb.bookstoreback.Interest.dto.InterestRequest;
 import com.teamherb.bookstoreback.Interest.dto.InterestResponse;
-import com.teamherb.bookstoreback.common.Pagination;
 import com.teamherb.bookstoreback.common.acceptance.AcceptanceTest;
 import com.teamherb.bookstoreback.common.acceptance.AcceptanceUtils;
 import com.teamherb.bookstoreback.common.acceptance.step.AcceptanceStep;
@@ -217,7 +216,7 @@ public class UserAcceptanceTest extends AcceptanceTest {
     assertThat(interestResponses.size()).isEqualTo(0);
   }
 
-  @DisplayName("나의 게시글들을 조회한다. (1개)")
+  @DisplayName("나의 게시글들을 조회한다.")
   @Test
   void findPosts_one() {
     PostRequest postRequest = PostRequest.builder()
@@ -237,20 +236,17 @@ public class UserAcceptanceTest extends AcceptanceTest {
         .price("5000")
         .build();
 
-    Pagination pagination = new Pagination(0, 10);
-
     String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
     PostAcceptanceStep.requestToCreatePost(jwt, postRequest);
 
-    ExtractableResponse<Response> response = UserAcceptanceStep.requestToFindMyPosts(jwt,
-        pagination);
+    ExtractableResponse<Response> response = UserAcceptanceStep.requestToFindMyPosts(jwt);
     List<PostsResponse> postsResponses = response.jsonPath().getList(".", PostsResponse.class);
 
     AcceptanceStep.assertThatStatusIsOk(response);
     UserAcceptanceStep.assertThatFindMyPosts(postsResponses, postRequest);
   }
 
-  @DisplayName("나의 게시글들을 조회한다. (0개)")
+  @DisplayName("나의 게시글들을 조회할 때 다른 유저의 게시글을 조회되지 않는다.")
   @Test
   void findPosts_empty() {
     PostRequest postRequest = PostRequest.builder()
@@ -270,14 +266,11 @@ public class UserAcceptanceTest extends AcceptanceTest {
         .price("5000")
         .build();
 
-    Pagination pagination = new Pagination(0, 10);
-
     String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
     String anotherJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(anotherLoginRequest);
     PostAcceptanceStep.requestToCreatePost(anotherJwt, postRequest);
 
-    ExtractableResponse<Response> response = UserAcceptanceStep.requestToFindMyPosts(jwt,
-        pagination);
+    ExtractableResponse<Response> response = UserAcceptanceStep.requestToFindMyPosts(jwt);
     List<PostsResponse> postsResponses = response.jsonPath().getList(".", PostsResponse.class);
 
     AcceptanceStep.assertThatStatusIsOk(response);

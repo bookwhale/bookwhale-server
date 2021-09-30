@@ -98,7 +98,10 @@ public class UserService {
 
   @Transactional(readOnly = true)
   public List<InterestResponse> findInterests(User user) {
-    // TODO: findAllByUser join 쿼리가 나가지 않음 ---> 해결이 필요함
+    /*
+    TODO: findAllByUser join 쿼리가 나가지 않음 ---> 해결이 필요함
+          interestResponse -> PostsResponse 로 변경 필요 
+    */
     List<Interest> interests = interestRepository.findAllByUser(user);
     return InterestResponse.listOf(interests);
   }
@@ -125,9 +128,7 @@ public class UserService {
   }
 
   @Transactional(readOnly = true)
-  public List<PostsResponse> findMyPost(User user, Pagination pagination) {
-    Pageable pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
-    List<Post> posts = postRepository.findAllBySeller(user, pageable).getContent();
-    return PostsResponse.listOf(posts);
+  public List<PostsResponse> findMyPost(User user) {
+    return PostsResponse.listOf(postRepository.findAllBySeller(user));
   }
 }

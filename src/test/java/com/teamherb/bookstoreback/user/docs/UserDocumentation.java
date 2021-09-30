@@ -12,7 +12,6 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.requestParts;
 
 import org.springframework.http.HttpHeaders;
@@ -175,10 +174,6 @@ public class UserDocumentation {
         preprocessResponse(prettyPrint()),
         requestHeaders(
             headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
-        ),
-        requestParameters(
-            parameterWithName("page").description("페이지(0부터 시작) (필수)"),
-            parameterWithName("size").description("한 페이지 내의 사이즈 (필수)")
         ),
         responseFields(fieldWithPath("[]").description("An arrays of postsResponse"))
             .andWithPrefix("[].", response)

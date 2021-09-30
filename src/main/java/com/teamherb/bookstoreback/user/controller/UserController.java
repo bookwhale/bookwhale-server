@@ -94,9 +94,8 @@ public class UserController {
   }
 
   @GetMapping("/me/post")
-  public ResponseEntity<List<PostsResponse>> findMyPosts(@CurrentUser User user,
-      @Valid Pagination pagination) {
-    List<PostsResponse> response = userService.findMyPost(user, pagination);
+  public ResponseEntity<List<PostsResponse>> findMyPosts(@CurrentUser User user) {
+    List<PostsResponse> response = userService.findMyPost(user);
     return ResponseEntity.ok(response);
   }
 }

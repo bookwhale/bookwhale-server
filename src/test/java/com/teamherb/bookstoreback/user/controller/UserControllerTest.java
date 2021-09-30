@@ -251,13 +251,11 @@ public class UserControllerTest extends CommonApiTest {
         .postStatus(PostStatus.SALE)
         .createdDate(LocalDateTime.now())
         .build();
-    Pagination page = new Pagination(0, 10);
 
-    when(userService.findMyPost(any(), any())).thenReturn(List.of(postsResponse));
+    when(userService.findMyPost(any())).thenReturn(List.of(postsResponse));
 
-    mockMvc.perform(
-            get(String.format("/api/user/me/post?page=%d&size=%d", page.getPage(), page.getSize()))
-                .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+    mockMvc.perform(get("/api/user/me/post")
+            .header(HttpHeaders.AUTHORIZATION, "accessToken"))
         .andExpect(status().isOk())
         .andDo(print())
         .andDo(UserDocumentation.userFindMyPosts());
