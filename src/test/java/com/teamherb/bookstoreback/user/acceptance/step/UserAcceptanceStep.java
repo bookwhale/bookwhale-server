@@ -76,7 +76,7 @@ public class UserAcceptanceStep {
         () -> assertThat(res.get(0).getPostTitle()).isEqualTo(req.getTitle()),
         () -> assertThat(res.get(0).getPostPrice()).isEqualTo(req.getPrice()),
         () -> assertThat(res.get(0).getBookTitle()).isEqualTo(req.getBookRequest().getBookTitle()),
-        () -> assertThat(res.get(0).getPostStatus()).isEqualTo(PostStatus.SALE),
+        () -> assertThat(res.get(0).getPostStatus()).isEqualTo(PostStatus.SALE.getName()),
         () -> assertThat(res.get(0).getPostImage()).isNotNull()
     );
   }

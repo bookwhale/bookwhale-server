@@ -194,7 +194,7 @@ public class UserControllerTest extends CommonApiTest {
                 .postTitle("토비의 스프링 팝니다.")
                 .postImage("이미지")
                 .postPrice("10000")
-                .postStatus(PostStatus.SALE)
+                .postStatus(PostStatus.SALE.getName())
                 .createdDate(LocalDateTime.now())
                 .build()
         )
@@ -250,7 +250,7 @@ public class UserControllerTest extends CommonApiTest {
         .postTitle("책 팝니다~")
         .bookTitle("토비의 스프링")
         .postPrice("20000원")
-        .postStatus(PostStatus.SALE)
+        .postStatus(PostStatus.SALE.getName())
         .createdDate(LocalDateTime.now())
         .build();
 

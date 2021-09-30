@@ -223,11 +223,11 @@ public class PostAcceptanceTest extends AcceptanceTest {
 
     ExtractableResponse<Response> response = PostAcceptanceStep.requestToUpdatePostStatus(
         jwt, postId, request);
-    PostStatus postStatus = PostAcceptanceStep.requestToFindPost(jwt, postId).jsonPath()
+    String postStatus = PostAcceptanceStep.requestToFindPost(jwt, postId).jsonPath()
         .getObject(".", PostResponse.class).getPostStatus();
 
     AcceptanceStep.assertThatStatusIsOk(response);
-    assertThat(postStatus).isEqualTo(PostStatus.valueOf(request.getPostStatus()));
+    assertThat(postStatus).isEqualTo(PostStatus.valueOf(request.getPostStatus()).getName());
   }
 
   @DisplayName("게시글을 삭제한다.")

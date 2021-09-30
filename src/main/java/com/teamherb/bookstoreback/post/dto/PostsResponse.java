@@ -1,7 +1,6 @@
 package com.teamherb.bookstoreback.post.dto;
 
 import com.teamherb.bookstoreback.post.domain.Post;
-import com.teamherb.bookstoreback.post.domain.PostStatus;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,12 +17,12 @@ public class PostsResponse {
   private String postTitle;
   private String postPrice;
   private String bookTitle;
-  private PostStatus postStatus;
+  private String postStatus;
   private LocalDateTime createdDate;
 
   @Builder
   public PostsResponse(Long postId, String postImage, String postTitle, String postPrice,
-      String bookTitle, PostStatus postStatus, LocalDateTime createdDate) {
+      String bookTitle, String postStatus, LocalDateTime createdDate) {
     this.postId = postId;
     this.postImage = postImage;
     this.postTitle = postTitle;
@@ -40,7 +39,7 @@ public class PostsResponse {
         .postTitle(post.getTitle())
         .postPrice(post.getPrice())
         .bookTitle(post.getBook().getBookTitle())
-        .postStatus(post.getPostStatus())
+        .postStatus(post.getPostStatus().getName())
         .createdDate(post.getCreatedDate())
         .build();
   }
