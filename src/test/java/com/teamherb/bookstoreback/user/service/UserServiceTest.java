@@ -208,11 +208,13 @@ public class UserServiceTest {
     verify(interestRepository).findAllByUser(any());
     Assertions.assertAll(
         () -> assertThat(responses.size()).isEqualTo(1),
-        () -> assertThat(responses.get(0).getBookTitle()).isEqualTo(bookRequest.getBookTitle()),
-        () -> assertThat(responses.get(0).getBookThumbnail()).isEqualTo(
-            bookRequest.getBookThumbnail()),
-        () -> assertThat(responses.get(0).getPostTitle()).isEqualTo(postRequest.getTitle()),
-        () -> assertThat(responses.get(0).getPostPrice()).isEqualTo(postRequest.getPrice())
+        () -> assertThat(responses.get(0).getPostsResponse().getPostImage()).isNull(),
+        () -> assertThat(responses.get(0).getPostsResponse().getBookTitle()).isEqualTo(
+            bookRequest.getBookTitle()),
+        () -> assertThat(responses.get(0).getPostsResponse().getPostTitle()).isEqualTo(
+            postRequest.getTitle()),
+        () -> assertThat(responses.get(0).getPostsResponse().getPostPrice()).isEqualTo(
+            postRequest.getPrice())
     );
   }
 

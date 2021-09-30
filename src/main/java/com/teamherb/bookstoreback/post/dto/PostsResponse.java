@@ -33,7 +33,7 @@ public class PostsResponse {
     this.createdDate = createdDate;
   }
 
-  private static PostsResponse of(Post post, String postImage) {
+  public static PostsResponse of(Post post, String postImage) {
     return PostsResponse.builder()
         .postId(post.getId())
         .postImage(postImage)

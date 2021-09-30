@@ -4,7 +4,6 @@ import com.teamherb.bookstoreback.Interest.domain.Interest;
 import com.teamherb.bookstoreback.Interest.domain.InterestRepository;
 import com.teamherb.bookstoreback.Interest.dto.InterestRequest;
 import com.teamherb.bookstoreback.Interest.dto.InterestResponse;
-import com.teamherb.bookstoreback.common.Pagination;
 import com.teamherb.bookstoreback.common.exception.CustomException;
 import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
 import com.teamherb.bookstoreback.common.utils.upload.FileUploader;
@@ -19,8 +18,6 @@ import com.teamherb.bookstoreback.user.dto.SignUpRequest;
 import com.teamherb.bookstoreback.user.dto.UserUpdateRequest;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -98,22 +95,24 @@ public class UserService {
 
   @Transactional(readOnly = true)
   public List<InterestResponse> findInterests(User user) {
-    /*
-    TODO: findAllByUser join 쿼리가 나가지 않음 ---> 해결이 필요함
-          interestResponse -> PostsResponse 로 변경 필요 
-    */
-    List<Interest> interests = interestRepository.findAllByUser(user);
-    return InterestResponse.listOf(interests);
+    return InterestResponse.listOf(interestRepository.findAllByUser(user));
   }
 
   public void addInterest(User user, InterestRequest request) {
     Post post = validatePostIdAndGetPost(request.getPostId());
+    validateIsDuplicatedInterest(user, post);
     interestRepository.save(Interest.create(user, post));
   }
 
   public Post validatePostIdAndGetPost(Long postId) {
     return postRepository.findById(postId)
         .orElseThrow(() -> new CustomException(ErrorCode.INVALID_POST_ID));
+  }
+
+  public void validateIsDuplicatedInterest(User user, Post post) {
+    if (interestRepository.existsByUserAndPost(user, post)) {
+      throw new CustomException(ErrorCode.DUPLICATED_INTEREST);
+    }
   }
 
   public void deleteInterest(User user, Long interestId) {

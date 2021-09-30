@@ -62,11 +62,11 @@ public class UserAcceptanceStep {
   public static void assertThatAddInterest(List<InterestResponse> res, PostRequest req) {
     Assertions.assertAll(
         () -> assertThat(res.size()).isEqualTo(1),
-        () -> assertThat(res.get(0).getPostTitle()).isEqualTo(req.getTitle()),
-        () -> assertThat(res.get(0).getPostPrice()).isEqualTo(req.getPrice()),
-        () -> assertThat(res.get(0).getBookTitle()).isEqualTo(req.getBookRequest().getBookTitle()),
-        () -> assertThat(res.get(0).getBookThumbnail()).isEqualTo(
-            req.getBookRequest().getBookThumbnail())
+        () -> assertThat(res.get(0).getPostsResponse().getPostTitle()).isEqualTo(req.getTitle()),
+        () -> assertThat(res.get(0).getPostsResponse().getPostPrice()).isEqualTo(req.getPrice()),
+        () -> assertThat(res.get(0).getPostsResponse().getPostImage()).isNotNull(),
+        () -> assertThat(res.get(0).getPostsResponse().getBookTitle()).isEqualTo(
+            req.getBookRequest().getBookTitle())
     );
   }
 

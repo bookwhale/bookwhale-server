@@ -187,15 +187,17 @@ public class UserControllerTest extends CommonApiTest {
   @Test
   void findInterests() throws Exception {
     List<InterestResponse> responses = List.of(
-        InterestResponse.builder()
-            .interestId(1L)
-            .postId(1L)
-            .bookTitle("토비의 스프링")
-            .postTitle("토비의 스프링 팝니다.")
-            .bookThumbnail("이미지")
-            .postPrice("10000")
-            .postStatus(PostStatus.SALE)
-            .build()
+        new InterestResponse(1L,
+            PostsResponse.builder()
+                .postId(1L)
+                .bookTitle("토비의 스프링")
+                .postTitle("토비의 스프링 팝니다.")
+                .postImage("이미지")
+                .postPrice("10000")
+                .postStatus(PostStatus.SALE)
+                .createdDate(LocalDateTime.now())
+                .build()
+        )
     );
 
     when(userService.findInterests(any())).thenReturn(responses);

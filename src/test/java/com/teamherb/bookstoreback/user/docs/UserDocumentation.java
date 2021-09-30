@@ -112,13 +112,13 @@ public class UserDocumentation {
   public static RestDocumentationResultHandler userFindInterests() {
     FieldDescriptor[] response = new FieldDescriptor[]{
         fieldWithPath("interestId").type(JsonFieldType.NUMBER).description("관심목록 ID"),
-        fieldWithPath("postId").type(JsonFieldType.NUMBER).description("게시글 ID"),
-        fieldWithPath("postTitle").type(JsonFieldType.STRING).description("게시글 제목"),
-        fieldWithPath("postPrice").type(JsonFieldType.STRING).description("게시글 가격"),
-        fieldWithPath("bookTitle").type(JsonFieldType.STRING).description("책 제목"),
-        fieldWithPath("bookThumbnail").type(JsonFieldType.STRING).description(
-            "책 썸네일(네이버 책 API)"),
-        fieldWithPath("postStatus").type(JsonFieldType.STRING).description(
+        fieldWithPath("postsResponse.postId").type(JsonFieldType.NUMBER).description("게시글 ID"),
+        fieldWithPath("postsResponse.postTitle").type(JsonFieldType.STRING).description("게시글 제목"),
+        fieldWithPath("postsResponse.postPrice").type(JsonFieldType.STRING).description("게시글 가격"),
+        fieldWithPath("postsResponse.bookTitle").type(JsonFieldType.STRING).description("책 제목"),
+        fieldWithPath("postsResponse.createdDate").type(JsonFieldType.STRING).description("게시글 등록일"),
+        fieldWithPath("postsResponse.postImage").type(JsonFieldType.STRING).description("판매자가 올린 이미지"),
+        fieldWithPath("postsResponse.postStatus").type(JsonFieldType.STRING).description(
             "게시글 상태 [SALE, RESERVED, SOLD_OUT]")
     };
 
