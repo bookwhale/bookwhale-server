@@ -14,7 +14,8 @@ public enum ErrorCode {
 
   INVALID_INPUT_VALUE(400, "C_001", "적절하지 않은 요청 값입니다."),
   INVALID_TYPE_VALUE(400, "C_002", "요청 값의 타입이 잘못되었습니다."),
-  METHOD_NOT_ALLOWED(405, "C_003", "적절하지 않은 HTTP 메소드입니다."),
+  NOT_EXIST_REQUESTPART(400, "C_003", "RequestPart는 필수 값입니다."),
+  METHOD_NOT_ALLOWED(405, "C_004", "적절하지 않은 HTTP 메소드입니다."),
 
   DUPLICATED_USER_IDENTITY(400, "U_001", "이미 존재하는 아이디입니다."),
   INVALID_USER_PASSWORD(400, "U_002", "잘못된 비밀번호입니다."),

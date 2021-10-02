@@ -9,7 +9,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.util.Lists.emptyList;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -208,45 +207,6 @@ public class PostServiceTest {
         () -> assertThat(post.getImages().getSize()).isEqualTo(images.size()),
         () -> assertThat(post.getBookStatus()).isEqualTo(valueOf(request.getBookStatus()))
     );
-  }
-
-  @DisplayName("게시글을 수정한다. (빈 이미지 리스트를 보내는 경우)")
-  @Test
-  void updatePost_emptyImageList_success() {
-    Post post = Post.create(user, postRequest);
-    PostUpdateRequest request = PostUpdateRequest.builder()
-        .title("이펙티브 자바")
-        .description("이펙티브 자바입니다.")
-        .price("15000")
-        .bookStatus("BEST")
-        .build();
-    List<MultipartFile> images = emptyList();
-
-    when(postRepository.findById(any())).thenReturn(Optional.ofNullable(post));
-
-    postService.updatePost(user, 1L, request, images);
-
-    verify(postRepository).findById(any());
-    verify(fileUploader, never()).uploadFiles(any());
-  }
-
-  @DisplayName("게시글을 수정한다. (null 을 보내는 경우)")
-  @Test
-  void updatePost_nullImageList_success() {
-    Post post = Post.create(user, postRequest);
-    PostUpdateRequest request = PostUpdateRequest.builder()
-        .title("이펙티브 자바")
-        .description("이펙티브 자바입니다.")
-        .price("15000")
-        .bookStatus("BEST")
-        .build();
-
-    when(postRepository.findById(any())).thenReturn(Optional.ofNullable(post));
-
-    postService.updatePost(user, 1L, request, null);
-
-    verify(postRepository).findById(any());
-    verify(fileUploader, never()).uploadFiles(any());
   }
 
   @DisplayName("잘못된 post_id로 게시글을 수정하면 예외가 발생한다.")

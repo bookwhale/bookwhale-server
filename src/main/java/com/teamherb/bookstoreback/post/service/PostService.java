@@ -76,14 +76,8 @@ public class PostService {
   }
 
   public void saveAllImages(Post post, List<MultipartFile> images) {
-    List<String> uploadUrls = getImageUrlsAndUploadImages(images);
-    if (uploadUrls != null) {
-      post.getImages().addAll(post, uploadUrls);
-    }
-  }
-
-  public List<String> getImageUrlsAndUploadImages(List<MultipartFile> images) {
-    return images == null || images.isEmpty() ? null : fileUploader.uploadFiles(images);
+    List<String> uploadUrls = fileUploader.uploadFiles(images);
+    post.getImages().addAll(post, uploadUrls);
   }
 
   public void updatePostStatus(User user, Long postId, PostStatusUpdateRequest request) {

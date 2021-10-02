@@ -35,8 +35,6 @@ public class PostAcceptanceTest extends AcceptanceTest {
 
   PostRequest postRequest;
 
-  PostRequest emptyImagePostRequest;
-
   @BeforeEach
   @Override
   public void setUp() {
@@ -58,25 +56,6 @@ public class PostAcceptanceTest extends AcceptanceTest {
         .description("책 설명")
         .bookStatus("BEST")
         .price("5000")
-        .build();
-
-    BookRequest springBoot = BookRequest.builder()
-        .bookSummary("책 설명")
-        .bookPubDate("2021-12-12")
-        .bookIsbn("12345678910")
-        .bookListPrice("10000")
-        .bookThumbnail("썸네일")
-        .bookTitle("스프링 부트와 AWS로 혼자 구현하는 웹 서비스")
-        .bookPublisher("허브출판사")
-        .bookAuthor("이동욱")
-        .build();
-
-    emptyImagePostRequest = PostRequest.builder()
-        .bookRequest(springBoot)
-        .title("스프링 부트와 AWS로 혼자 구현하는 웹 서비스 팝니다~")
-        .description("책 설명")
-        .bookStatus("BEST")
-        .price("4000")
         .build();
   }
 
@@ -131,7 +110,6 @@ public class PostAcceptanceTest extends AcceptanceTest {
 
     String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
     PostAcceptanceStep.requestToCreatePost(jwt, postRequest);
-    PostAcceptanceStep.requestToCreateEmptyImagePost(jwt, emptyImagePostRequest);
 
     ExtractableResponse<Response> response = PostAcceptanceStep.requestToFindPosts(jwt,
         postsRequest, pagination);
@@ -139,7 +117,7 @@ public class PostAcceptanceTest extends AcceptanceTest {
         .getList(".", PostsResponse.class);
 
     AcceptanceStep.assertThatStatusIsOk(response);
-    PostAcceptanceStep.assertThatFindPosts(postsResponses, postRequest, emptyImagePostRequest);
+    PostAcceptanceStep.assertThatFindPosts(postsResponses, postRequest);
   }
 
   @DisplayName("ISBN 으로 네이버 책(API)을 검색한다.")
