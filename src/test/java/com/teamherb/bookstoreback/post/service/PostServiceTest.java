@@ -15,7 +15,7 @@ import static org.mockito.Mockito.when;
 import com.teamherb.bookstoreback.Interest.domain.InterestRepository;
 import com.teamherb.bookstoreback.common.exception.CustomException;
 import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
-import com.teamherb.bookstoreback.common.utils.upload.FileUploader;
+import com.teamherb.bookstoreback.common.upload.FileUploader;
 import com.teamherb.bookstoreback.post.domain.BookStatus;
 import com.teamherb.bookstoreback.post.domain.Post;
 import com.teamherb.bookstoreback.post.domain.PostRepository;
@@ -27,6 +27,7 @@ import com.teamherb.bookstoreback.post.dto.PostStatusUpdateRequest;
 import com.teamherb.bookstoreback.post.dto.PostUpdateRequest;
 import com.teamherb.bookstoreback.user.domain.User;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -111,6 +112,7 @@ public class PostServiceTest {
     Post post = Post.create(user, postRequest);
     List<String> images = of("image1", "image2");
     post.getImages().addAll(post, images);
+    post.setCreatedDate(LocalDateTime.now());
 
     when(postRepository.findPostWithSellerById(any())).thenReturn(Optional.of(post));
     when(interestRepository.existsByUserAndPost(any(), any())).thenReturn(true);
@@ -153,6 +155,7 @@ public class PostServiceTest {
   void findNotMyPost_success() {
     User otherUser = User.builder().id(2L).build();
     Post post = Post.create(user, postRequest);
+    post.setCreatedDate(LocalDateTime.now());
 
     when(postRepository.findPostWithSellerById(any())).thenReturn(ofNullable(post));
 

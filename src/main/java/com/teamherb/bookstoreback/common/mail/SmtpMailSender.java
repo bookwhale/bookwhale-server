@@ -1,4 +1,4 @@
-package com.teamherb.bookstoreback.common.utils.mail;
+package com.teamherb.bookstoreback.common.mail;
 
 import static java.lang.String.format;
 
@@ -15,9 +15,9 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class MailUtil {
+public class SmtpMailSender {
 
-  private final JavaMailSender mailSender;
+  private final JavaMailSender sender;
 
   @Value("${spring.mail.username}")
   private String email;
@@ -31,7 +31,7 @@ public class MailUtil {
 
   public void mailSend(String from, String to, String subject, String content) {
     try {
-      MailHandler mailHandler = new MailHandler(mailSender);
+      MailHandler mailHandler = new MailHandler(sender);
       mailHandler.setFrom(from);
       mailHandler.setTo(to);
       mailHandler.setSubject(subject);

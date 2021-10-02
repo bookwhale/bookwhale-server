@@ -114,8 +114,7 @@ public class PostDocumentation {
                 .description("책 상태 [LOWER, MIDDLE, UPPER, BEST]"),
             fieldWithPath("postStatus").type(JsonFieldType.STRING)
                 .description("게시글 상태 [SALE, RESERVED, SOLD_OUT]"),
-            fieldWithPath("createdDate").type(JsonFieldType.STRING).description("게시글 등록일"),
-            fieldWithPath("lastModifiedDate").type(JsonFieldType.STRING).description("게시글 최근 수정일")
+            fieldWithPath("beforeTime").type(JsonFieldType.STRING).description("등록한 시간 - 현재 시간")
         ));
   }
 
@@ -125,7 +124,9 @@ public class PostDocumentation {
         fieldWithPath("postTitle").type(JsonFieldType.STRING).description("게시글 제목"),
         fieldWithPath("postPrice").type(JsonFieldType.STRING).description("게시글 가격"),
         fieldWithPath("bookTitle").type(JsonFieldType.STRING).description("책 제목"),
-        fieldWithPath("createdDate").type(JsonFieldType.STRING).description("게시글 등록일"),
+        fieldWithPath("bookAuthor").type(JsonFieldType.STRING).description("작가"),
+        fieldWithPath("bookPublisher").type(JsonFieldType.STRING).description("출판사"),
+        fieldWithPath("beforeTime").type(JsonFieldType.STRING).description("등록한 시간 - 현재 시간"),
         fieldWithPath("postImage").type(JsonFieldType.STRING).description("판매자가 올린 이미지"),
         fieldWithPath("postStatus").type(JsonFieldType.STRING).description(
             "게시글 상태 [SALE, RESERVED, SOLD_OUT]")

@@ -1,4 +1,4 @@
-package com.teamherb.bookstoreback.common.utils.mail;
+package com.teamherb.bookstoreback.common.mail;
 
 import javax.mail.internet.MimeMessage;
 import org.springframework.mail.javamail.JavaMailSender;

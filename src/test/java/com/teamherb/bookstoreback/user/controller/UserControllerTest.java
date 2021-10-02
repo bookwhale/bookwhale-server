@@ -14,7 +14,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.teamherb.bookstoreback.Interest.dto.InterestRequest;
 import com.teamherb.bookstoreback.Interest.dto.InterestResponse;
-import com.teamherb.bookstoreback.common.Pagination;
 import com.teamherb.bookstoreback.common.controller.CommonApiTest;
 import com.teamherb.bookstoreback.common.security.WithMockCustomUser;
 import com.teamherb.bookstoreback.post.domain.PostStatus;
@@ -26,7 +25,6 @@ import com.teamherb.bookstoreback.user.dto.ProfileResponse;
 import com.teamherb.bookstoreback.user.dto.SignUpRequest;
 import com.teamherb.bookstoreback.user.dto.UserUpdateRequest;
 import com.teamherb.bookstoreback.user.service.UserService;
-import java.time.LocalDateTime;
 import java.util.List;
 import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.DisplayName;
@@ -190,12 +188,14 @@ public class UserControllerTest extends CommonApiTest {
         new InterestResponse(1L,
             PostsResponse.builder()
                 .postId(1L)
-                .bookTitle("토비의 스프링")
-                .postTitle("토비의 스프링 팝니다.")
                 .postImage("이미지")
-                .postPrice("10000")
+                .postTitle("책 팝니다~")
+                .postPrice("20000원")
                 .postStatus(PostStatus.SALE.getName())
-                .createdDate(LocalDateTime.now())
+                .bookTitle("토비의 스프링")
+                .bookAuthor("이일민")
+                .bookPublisher("허브출판사")
+                .beforeTime("15분 전")
                 .build()
         )
     );
@@ -248,10 +248,12 @@ public class UserControllerTest extends CommonApiTest {
         .postId(1L)
         .postImage("이미지")
         .postTitle("책 팝니다~")
-        .bookTitle("토비의 스프링")
         .postPrice("20000원")
         .postStatus(PostStatus.SALE.getName())
-        .createdDate(LocalDateTime.now())
+        .bookTitle("토비의 스프링")
+        .bookAuthor("이일민")
+        .bookPublisher("허브출판사")
+        .beforeTime("15분 전")
         .build();
 
     when(userService.findMyPost(any())).thenReturn(List.of(postsResponse));

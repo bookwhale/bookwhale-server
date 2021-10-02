@@ -99,9 +99,9 @@ public class PostAcceptanceTest extends AcceptanceTest {
     PostAcceptanceStep.assertThatFindPost(postResponse, postRequest, anotherUser, false, true);
   }
 
-  @DisplayName("게시글을 전체 조회한다.")
+  @DisplayName("로그인한 유저가 게시글을 전체 조회한다.")
   @Test
-  void findPosts() {
+  void findPosts_loginUser() {
     PostsRequest postsRequest = PostsRequest.builder()
         .title("스프링")
         .build();
@@ -112,6 +112,27 @@ public class PostAcceptanceTest extends AcceptanceTest {
     PostAcceptanceStep.requestToCreatePost(jwt, postRequest);
 
     ExtractableResponse<Response> response = PostAcceptanceStep.requestToFindPosts(jwt,
+        postsRequest, pagination);
+    List<PostsResponse> postsResponses = response.jsonPath()
+        .getList(".", PostsResponse.class);
+
+    AcceptanceStep.assertThatStatusIsOk(response);
+    PostAcceptanceStep.assertThatFindPosts(postsResponses, postRequest);
+  }
+
+  @DisplayName("로그인하지 않은 유저가 게시글을 전체 조회한다.")
+  @Test
+  void findPosts_anonymousUser() {
+    PostsRequest postsRequest = PostsRequest.builder()
+        .title("스프링")
+        .build();
+
+    Pagination pagination = new Pagination(0, 10);
+
+    String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
+    PostAcceptanceStep.requestToCreatePost(jwt, postRequest);
+
+    ExtractableResponse<Response> response = PostAcceptanceStep.requestToFindPosts("anonymousUser",
         postsRequest, pagination);
     List<PostsResponse> postsResponses = response.jsonPath()
         .getList(".", PostsResponse.class);

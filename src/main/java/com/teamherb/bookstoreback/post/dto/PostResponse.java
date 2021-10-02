@@ -1,5 +1,6 @@
 package com.teamherb.bookstoreback.post.dto;
 
+import com.teamherb.bookstoreback.common.utils.TimeUtils;
 import com.teamherb.bookstoreback.image.domain.Image;
 import com.teamherb.bookstoreback.post.domain.Post;
 import java.time.LocalDateTime;
@@ -26,15 +27,13 @@ public class PostResponse {
   private BookResponse bookResponse;
   private boolean isMyPost;
   private boolean isMyInterest;
-  private LocalDateTime createdDate;
-  private LocalDateTime lastModifiedDate;
+  private String beforeTime;
 
   @Builder
   public PostResponse(Long sellerId, String sellerIdentity, String sellerProfileImage,
       Long postId, String title, String price, String description,
       String bookStatus, String postStatus, List<String> images,
-      BookResponse bookResponse, boolean isMyPost, boolean isMyInterest,
-      LocalDateTime createdDate, LocalDateTime lastModifiedDate) {
+      BookResponse bookResponse, boolean isMyPost, boolean isMyInterest, String beforeTime) {
     this.sellerId = sellerId;
     this.sellerIdentity = sellerIdentity;
     this.sellerProfileImage = sellerProfileImage;
@@ -48,8 +47,7 @@ public class PostResponse {
     this.bookResponse = bookResponse;
     this.isMyPost = isMyPost;
     this.isMyInterest = isMyInterest;
-    this.createdDate = createdDate;
-    this.lastModifiedDate = lastModifiedDate;
+    this.beforeTime = beforeTime;
   }
 
   public static PostResponse of(Post post, boolean isMyPost,
@@ -82,8 +80,7 @@ public class PostResponse {
         .images(imageResponse)
         .isMyPost(isMyPost)
         .isMyInterest(isMyInterest)
-        .createdDate(post.getCreatedDate())
-        .lastModifiedDate(post.getLastModifiedDate())
+        .beforeTime(TimeUtils.BeforeTime(LocalDateTime.now(), post.getCreatedDate()))
         .build();
   }
 }

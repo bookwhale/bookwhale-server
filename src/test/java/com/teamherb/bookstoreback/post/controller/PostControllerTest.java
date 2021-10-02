@@ -196,8 +196,7 @@ public class PostControllerTest extends CommonApiTest {
         .bookResponse(bookResponse)
         .isMyPost(true)
         .isMyInterest(true)
-        .createdDate(LocalDateTime.now())
-        .lastModifiedDate(LocalDateTime.now())
+        .beforeTime("15분 전")
         .build();
 
     when(postService.findPost(any(), any())).thenReturn(postResponse);
@@ -210,9 +209,9 @@ public class PostControllerTest extends CommonApiTest {
   }
 
   @WithMockCustomUser
-  @DisplayName("게시글을 전체 조회한다.")
+  @DisplayName("로그인한 유저가 게시글을 전체 조회한다.")
   @Test
-  void findPosts() throws Exception {
+  void findPosts_loginUser() throws Exception {
     Pagination pagination = new Pagination(0, 10);
 
     PostsRequest postsRequest = PostsRequest.builder()
@@ -223,10 +222,12 @@ public class PostControllerTest extends CommonApiTest {
         .postId(1L)
         .postImage("이미지")
         .postTitle("책 팝니다~")
-        .bookTitle("토비의 스프링")
         .postPrice("20000원")
         .postStatus(PostStatus.SALE.getName())
-        .createdDate(LocalDateTime.now())
+        .bookTitle("토비의 스프링")
+        .bookAuthor("이일민")
+        .bookPublisher("허브출판사")
+        .beforeTime("15분 전")
         .build();
 
     when(postService.findPosts(any(), any())).thenReturn(of(postsResponse));
@@ -237,6 +238,35 @@ public class PostControllerTest extends CommonApiTest {
         .andExpect(status().isOk())
         .andDo(print())
         .andDo(PostDocumentation.findPosts());
+  }
+
+  @DisplayName("로그인하지 않은 유저가 게시글을 전체 조회한다.")
+  @Test
+  void findPosts_anonymousUser() throws Exception {
+    Pagination pagination = new Pagination(0, 10);
+
+    PostsRequest postsRequest = PostsRequest.builder()
+        .title("책 제목")
+        .build();
+
+    PostsResponse postsResponse = PostsResponse.builder()
+        .postId(1L)
+        .postImage("이미지")
+        .postTitle("책 팝니다~")
+        .postPrice("20000원")
+        .postStatus(PostStatus.SALE.getName())
+        .bookTitle("토비의 스프링")
+        .bookAuthor("이일민")
+        .bookPublisher("허브출판사")
+        .beforeTime("15분 전")
+        .build();
+
+    when(postService.findPosts(any(), any())).thenReturn(of(postsResponse));
+
+    mockMvc.perform(get(format("/api/post?title=%s&page=%d&size=%d", postsRequest.getTitle(),
+            pagination.getPage(), pagination.getSize())))
+        .andExpect(status().isOk())
+        .andDo(print());
   }
 
   @WithMockCustomUser
