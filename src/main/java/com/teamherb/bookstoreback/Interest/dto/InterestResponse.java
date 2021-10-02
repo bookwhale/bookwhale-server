@@ -1,10 +1,10 @@
 package com.teamherb.bookstoreback.Interest.dto;
 
 import com.teamherb.bookstoreback.Interest.domain.Interest;
-import com.teamherb.bookstoreback.post.domain.PostStatus;
+import com.teamherb.bookstoreback.post.domain.Post;
+import com.teamherb.bookstoreback.post.dto.PostsResponse;
 import java.util.List;
 import java.util.stream.Collectors;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,40 +14,19 @@ public class InterestResponse {
 
   private Long interestId;
 
-  private Long postId;
+  private PostsResponse postsResponse;
 
-  private String bookThumbnail;
-
-  private String postTitle;
-
-  private String bookTitle;
-
-  private String postPrice;
-
-  private PostStatus postStatus;
-
-  @Builder
-  public InterestResponse(Long interestId, Long postId, String bookThumbnail,
-      String postTitle, String bookTitle, String postPrice, PostStatus postStatus) {
+  public InterestResponse(Long interestId,
+      PostsResponse postsResponse) {
     this.interestId = interestId;
-    this.postId = postId;
-    this.bookThumbnail = bookThumbnail;
-    this.postTitle = postTitle;
-    this.bookTitle = bookTitle;
-    this.postPrice = postPrice;
-    this.postStatus = postStatus;
+    this.postsResponse = postsResponse;
   }
 
   public static List<InterestResponse> listOf(List<Interest> interests) {
-    return interests.stream().map(v -> InterestResponse.builder()
-        .interestId(v.getId())
-        .postId(v.getPost().getId())
-        .bookThumbnail(v.getPost().getBook().getBookThumbnail())
-        .postTitle(v.getPost().getTitle())
-        .bookTitle(v.getPost().getBook().getBookTitle())
-        .postPrice(v.getPost().getPrice())
-        .postStatus(v.getPost().getPostStatus())
-        .build()
-    ).collect(Collectors.toList());
+    return interests.stream().map(v -> {
+      Post post = v.getPost();
+      return new InterestResponse(v.getId(),
+          PostsResponse.of(post, post.getImages().getFirstImageUrl()));
+    }).collect(Collectors.toList());
   }
 }

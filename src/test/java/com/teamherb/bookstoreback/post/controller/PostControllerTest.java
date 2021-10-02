@@ -153,8 +153,8 @@ public class PostControllerTest extends CommonApiTest {
         .title("책 팝니다~")
         .price("5000원")
         .description("쿨 거래시 1000원 할인해드려요~")
-        .bookStatus(BookStatus.BEST)
-        .postStatus(PostStatus.SALE)
+        .bookStatus(BookStatus.BEST.getName())
+        .postStatus(PostStatus.SALE.getName())
         .images(of("image1", "image2"))
         .bookResponse(bookResponse)
         .isMyPost(true)
@@ -188,7 +188,7 @@ public class PostControllerTest extends CommonApiTest {
         .postTitle("책 팝니다~")
         .bookTitle("토비의 스프링")
         .postPrice("20000원")
-        .postStatus(PostStatus.SALE)
+        .postStatus(PostStatus.SALE.getName())
         .createdDate(LocalDateTime.now())
         .build();
 

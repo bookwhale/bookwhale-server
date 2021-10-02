@@ -9,6 +9,7 @@ import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
 import com.teamherb.bookstoreback.common.utils.upload.FileUploader;
 import com.teamherb.bookstoreback.post.domain.Post;
 import com.teamherb.bookstoreback.post.domain.PostRepository;
+import com.teamherb.bookstoreback.post.dto.PostsResponse;
 import com.teamherb.bookstoreback.user.domain.User;
 import com.teamherb.bookstoreback.user.domain.UserRepository;
 import com.teamherb.bookstoreback.user.dto.PasswordUpdateRequest;
@@ -94,19 +95,24 @@ public class UserService {
 
   @Transactional(readOnly = true)
   public List<InterestResponse> findInterests(User user) {
-    // TODO: findAllByUser join 쿼리가 나가지 않음 ---> 해결이 필요함
-    List<Interest> interests = interestRepository.findAllByUser(user);
-    return InterestResponse.listOf(interests);
+    return InterestResponse.listOf(interestRepository.findAllByUser(user));
   }
 
   public void addInterest(User user, InterestRequest request) {
     Post post = validatePostIdAndGetPost(request.getPostId());
+    validateIsDuplicatedInterest(user, post);
     interestRepository.save(Interest.create(user, post));
   }
 
   public Post validatePostIdAndGetPost(Long postId) {
     return postRepository.findById(postId)
         .orElseThrow(() -> new CustomException(ErrorCode.INVALID_POST_ID));
+  }
+
+  public void validateIsDuplicatedInterest(User user, Post post) {
+    if (interestRepository.existsByUserAndPost(user, post)) {
+      throw new CustomException(ErrorCode.DUPLICATED_INTEREST);
+    }
   }
 
   public void deleteInterest(User user, Long interestId) {
@@ -118,5 +124,10 @@ public class UserService {
   private Interest validateInterestIdAndGetInterest(Long interestId) {
     return interestRepository.findById(interestId)
         .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INTEREST_ID));
+  }
+
+  @Transactional(readOnly = true)
+  public List<PostsResponse> findMyPost(User user) {
+    return PostsResponse.listOf(postRepository.findAllBySeller(user));
   }
 }

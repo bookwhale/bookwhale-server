@@ -5,7 +5,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.teamherb.bookstoreback.Interest.dto.InterestRequest;
 import com.teamherb.bookstoreback.Interest.dto.InterestResponse;
+import com.teamherb.bookstoreback.post.domain.PostStatus;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
+import com.teamherb.bookstoreback.post.dto.PostsResponse;
 import com.teamherb.bookstoreback.user.domain.User;
 import com.teamherb.bookstoreback.user.dto.LoginRequest;
 import com.teamherb.bookstoreback.user.dto.LoginResponse;
@@ -60,11 +62,22 @@ public class UserAcceptanceStep {
   public static void assertThatAddInterest(List<InterestResponse> res, PostRequest req) {
     Assertions.assertAll(
         () -> assertThat(res.size()).isEqualTo(1),
+        () -> assertThat(res.get(0).getPostsResponse().getPostTitle()).isEqualTo(req.getTitle()),
+        () -> assertThat(res.get(0).getPostsResponse().getPostPrice()).isEqualTo(req.getPrice()),
+        () -> assertThat(res.get(0).getPostsResponse().getPostImage()).isNotNull(),
+        () -> assertThat(res.get(0).getPostsResponse().getBookTitle()).isEqualTo(
+            req.getBookRequest().getBookTitle())
+    );
+  }
+
+  public static void assertThatFindMyPosts(List<PostsResponse> res, PostRequest req) {
+    Assertions.assertAll(
+        () -> assertThat(res.size()).isEqualTo(1),
         () -> assertThat(res.get(0).getPostTitle()).isEqualTo(req.getTitle()),
         () -> assertThat(res.get(0).getPostPrice()).isEqualTo(req.getPrice()),
         () -> assertThat(res.get(0).getBookTitle()).isEqualTo(req.getBookRequest().getBookTitle()),
-        () -> assertThat(res.get(0).getBookThumbnail()).isEqualTo(
-            req.getBookRequest().getBookThumbnail())
+        () -> assertThat(res.get(0).getPostStatus()).isEqualTo(PostStatus.SALE.getName()),
+        () -> assertThat(res.get(0).getPostImage()).isNotNull()
     );
   }
 
@@ -174,6 +187,15 @@ public class UserAcceptanceStep {
         .header(HttpHeaders.AUTHORIZATION, jwt)
         .when()
         .delete("/api/user/me/interest/{interestId}", interestId)
+        .then().log().all()
+        .extract();
+  }
+
+  public static ExtractableResponse<Response> requestToFindMyPosts(String jwt) {
+    return given().log().all()
+        .header(HttpHeaders.AUTHORIZATION, jwt)
+        .when()
+        .get("/api/user/me/post")
         .then().log().all()
         .extract();
   }

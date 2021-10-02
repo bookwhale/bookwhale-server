@@ -10,6 +10,7 @@ import com.teamherb.bookstoreback.common.acceptance.step.AcceptanceStep;
 import com.teamherb.bookstoreback.post.acceptance.step.PostAcceptanceStep;
 import com.teamherb.bookstoreback.post.dto.BookRequest;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
+import com.teamherb.bookstoreback.post.dto.PostsResponse;
 import com.teamherb.bookstoreback.user.acceptance.step.UserAcceptanceStep;
 import com.teamherb.bookstoreback.user.dto.LoginRequest;
 import com.teamherb.bookstoreback.user.dto.PasswordUpdateRequest;
@@ -149,19 +150,17 @@ public class UserAcceptanceTest extends AcceptanceTest {
   @DisplayName("관심목록에 추가한다.")
   @Test
   void addInterest() {
-    BookRequest bookRequest = BookRequest.builder()
-        .bookSummary("책 설명")
-        .bookPubDate("2021-12-12")
-        .bookIsbn("12345678910")
-        .bookListPrice("10000")
-        .bookThumbnail("썸네일")
-        .bookTitle("토비의 스프링")
-        .bookPublisher("허브출판사")
-        .bookAuthor("이일민")
-        .build();
-
     PostRequest postRequest = PostRequest.builder()
-        .bookRequest(bookRequest)
+        .bookRequest(BookRequest.builder()
+            .bookSummary("책 설명")
+            .bookPubDate("2021-12-12")
+            .bookIsbn("12345678910")
+            .bookListPrice("10000")
+            .bookThumbnail("썸네일")
+            .bookTitle("토비의 스프링")
+            .bookPublisher("허브출판사")
+            .bookAuthor("이일민")
+            .build())
         .title("토비의 스프링 팝니다~")
         .description("책 설명")
         .bookStatus("BEST")
@@ -184,19 +183,17 @@ public class UserAcceptanceTest extends AcceptanceTest {
   @DisplayName("관심목록에서 삭제한다.")
   @Test
   void deleteInterest() {
-    BookRequest bookRequest = BookRequest.builder()
-        .bookSummary("책 설명")
-        .bookPubDate("2021-12-12")
-        .bookIsbn("12345678910")
-        .bookListPrice("10000")
-        .bookThumbnail("썸네일")
-        .bookTitle("토비의 스프링")
-        .bookPublisher("허브출판사")
-        .bookAuthor("이일민")
-        .build();
-
     PostRequest postRequest = PostRequest.builder()
-        .bookRequest(bookRequest)
+        .bookRequest(BookRequest.builder()
+            .bookSummary("책 설명")
+            .bookPubDate("2021-12-12")
+            .bookIsbn("12345678910")
+            .bookListPrice("10000")
+            .bookThumbnail("썸네일")
+            .bookTitle("토비의 스프링")
+            .bookPublisher("허브출판사")
+            .bookAuthor("이일민")
+            .build())
         .title("토비의 스프링 팝니다~")
         .description("책 설명")
         .bookStatus("BEST")
@@ -217,5 +214,66 @@ public class UserAcceptanceTest extends AcceptanceTest {
 
     AcceptanceStep.assertThatStatusIsOk(response);
     assertThat(interestResponses.size()).isEqualTo(0);
+  }
+
+  @DisplayName("나의 게시글들을 조회한다.")
+  @Test
+  void findPosts_one() {
+    PostRequest postRequest = PostRequest.builder()
+        .bookRequest(BookRequest.builder()
+            .bookSummary("책 설명")
+            .bookPubDate("2021-12-12")
+            .bookIsbn("12345678910")
+            .bookListPrice("10000")
+            .bookThumbnail("썸네일")
+            .bookTitle("토비의 스프링")
+            .bookPublisher("허브출판사")
+            .bookAuthor("이일민")
+            .build())
+        .title("토비의 스프링 팝니다~")
+        .description("책 설명")
+        .bookStatus("BEST")
+        .price("5000")
+        .build();
+
+    String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
+    PostAcceptanceStep.requestToCreatePost(jwt, postRequest);
+
+    ExtractableResponse<Response> response = UserAcceptanceStep.requestToFindMyPosts(jwt);
+    List<PostsResponse> postsResponses = response.jsonPath().getList(".", PostsResponse.class);
+
+    AcceptanceStep.assertThatStatusIsOk(response);
+    UserAcceptanceStep.assertThatFindMyPosts(postsResponses, postRequest);
+  }
+
+  @DisplayName("나의 게시글들을 조회할 때 다른 유저의 게시글을 조회되지 않는다.")
+  @Test
+  void findPosts_empty() {
+    PostRequest postRequest = PostRequest.builder()
+        .bookRequest(BookRequest.builder()
+            .bookSummary("책 설명")
+            .bookPubDate("2021-12-12")
+            .bookIsbn("12345678910")
+            .bookListPrice("10000")
+            .bookThumbnail("썸네일")
+            .bookTitle("토비의 스프링")
+            .bookPublisher("허브출판사")
+            .bookAuthor("이일민")
+            .build())
+        .title("토비의 스프링 팝니다~")
+        .description("책 설명")
+        .bookStatus("BEST")
+        .price("5000")
+        .build();
+
+    String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
+    String anotherJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(anotherLoginRequest);
+    PostAcceptanceStep.requestToCreatePost(anotherJwt, postRequest);
+
+    ExtractableResponse<Response> response = UserAcceptanceStep.requestToFindMyPosts(jwt);
+    List<PostsResponse> postsResponses = response.jsonPath().getList(".", PostsResponse.class);
+
+    AcceptanceStep.assertThatStatusIsOk(response);
+    assertThat(postsResponses.size()).isEqualTo(0);
   }
 }

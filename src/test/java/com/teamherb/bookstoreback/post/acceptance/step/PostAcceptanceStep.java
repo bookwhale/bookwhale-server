@@ -37,14 +37,14 @@ public class PostAcceptanceStep {
         () -> assertThat(res.getTitle()).isEqualTo(req.getTitle()),
         () -> assertThat(res.getPrice()).isEqualTo(req.getPrice()),
         () -> assertThat(res.getDescription()).isEqualTo(req.getDescription()),
-        () -> assertThat(res.getPostStatus()).isEqualTo(PostStatus.SALE),
+        () -> assertThat(res.getPostStatus()).isEqualTo(PostStatus.SALE.getName()),
         () -> assertThat(res.getTitle()).isEqualTo(req.getTitle()),
         () -> assertThat(res.isMyPost()).isEqualTo(isMyPost),
         () -> assertThat(res.isMyInterest()).isEqualTo(isMyInterest),
         () -> assertThat(res.getCreatedDate()).isNotNull(),
         () -> assertThat(res.getLastModifiedDate()).isNotNull(),
         () -> assertThat(res.getBookStatus()).isEqualTo(
-            BookStatus.valueOf(req.getBookStatus())),
+            BookStatus.valueOf(req.getBookStatus()).getName()),
         () -> assertThat(res.getBookResponse().getBookIsbn()).isEqualTo(
             req.getBookRequest().getBookIsbn()),
         () -> assertThat(res.getBookResponse().getBookAuthor()).isEqualTo(
@@ -72,14 +72,14 @@ public class PostAcceptanceStep {
         () -> assertThat(res.get(0).getPostPrice()).isEqualTo(req2.getPrice()),
         () -> assertThat(res.get(0).getPostTitle()).isEqualTo(req2.getTitle()),
         () -> assertThat(res.get(0).getPostPrice()).isEqualTo(req2.getPrice()),
-        () -> assertThat(res.get(0).getPostStatus()).isEqualTo(PostStatus.SALE),
+        () -> assertThat(res.get(0).getPostStatus()).isEqualTo(PostStatus.SALE.getName()),
         () -> assertThat(res.get(0).getBookTitle()).isEqualTo(req2.getBookRequest().getBookTitle()),
         () -> assertThat(res.get(0).getPostImage()).isNull(),
         // 책 이미지가 있는 게시글
         () -> assertThat(res.get(1).getPostPrice()).isEqualTo(req1.getPrice()),
         () -> assertThat(res.get(1).getPostTitle()).isEqualTo(req1.getTitle()),
         () -> assertThat(res.get(1).getPostPrice()).isEqualTo(req1.getPrice()),
-        () -> assertThat(res.get(1).getPostStatus()).isEqualTo(PostStatus.SALE),
+        () -> assertThat(res.get(1).getPostStatus()).isEqualTo(PostStatus.SALE.getName()),
         () -> assertThat(res.get(1).getBookTitle()).isEqualTo(req1.getBookRequest().getBookTitle()),
         () -> assertThat(res.get(1).getPostImage()).isNotNull()
     );
@@ -98,7 +98,7 @@ public class PostAcceptanceStep {
         () -> assertThat(res.getTitle()).isEqualTo(req.getTitle()),
         () -> assertThat(res.getDescription()).isEqualTo(req.getDescription()),
         () -> assertThat(res.getPrice()).isEqualTo(req.getPrice()),
-        () -> assertThat(res.getBookStatus()).isEqualTo(BookStatus.valueOf(req.getBookStatus())),
+        () -> assertThat(res.getBookStatus()).isEqualTo(BookStatus.valueOf(req.getBookStatus()).getName()),
         () -> assertThat(res.getImages().size()).isEqualTo(size)
     );
   }

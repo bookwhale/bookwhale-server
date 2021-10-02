@@ -17,6 +17,7 @@ import com.teamherb.bookstoreback.Interest.domain.InterestRepository;
 import com.teamherb.bookstoreback.common.exception.CustomException;
 import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
 import com.teamherb.bookstoreback.common.utils.upload.FileUploader;
+import com.teamherb.bookstoreback.post.domain.BookStatus;
 import com.teamherb.bookstoreback.post.domain.Post;
 import com.teamherb.bookstoreback.post.domain.PostRepository;
 import com.teamherb.bookstoreback.post.domain.PostStatus;
@@ -122,11 +123,12 @@ public class PostServiceTest {
         () -> assertThat(response.getTitle()).isEqualTo(postRequest.getTitle()),
         () -> assertThat(response.getPrice()).isEqualTo(postRequest.getPrice()),
         () -> assertThat(response.getDescription()).isEqualTo(postRequest.getDescription()),
-        () -> assertThat(response.getPostStatus()).isEqualTo(PostStatus.SALE),
+        () -> assertThat(response.getPostStatus()).isEqualTo(PostStatus.SALE.getName()),
         () -> assertThat(response.getTitle()).isEqualTo(postRequest.getTitle()),
         () -> assertThat(response.isMyPost()).isEqualTo(true),
         () -> assertThat(response.isMyInterest()).isEqualTo(true),
-        () -> assertThat(response.getBookStatus()).isEqualTo(valueOf(postRequest.getBookStatus())),
+        () -> assertThat(response.getBookStatus()).isEqualTo(
+            BookStatus.valueOf(postRequest.getBookStatus()).getName()),
         () -> assertThat(response.getImages().size()).isEqualTo(2),
         () -> assertThat(response.getBookResponse().getBookIsbn()).isEqualTo(
             postRequest.getBookRequest().getBookIsbn()),
@@ -192,7 +194,7 @@ public class PostServiceTest {
         new MockMultipartFile("updateImages", "image2".getBytes(StandardCharsets.UTF_8))
     );
 
-    when(postRepository.findById(any())).thenReturn(Optional.ofNullable(post));
+    when(postRepository.findById(any())).thenReturn(Optional.of(post));
     when(fileUploader.uploadFiles(any())).thenReturn(of("image1", "image2"));
 
     postService.updatePost(user, 1L, request, images);

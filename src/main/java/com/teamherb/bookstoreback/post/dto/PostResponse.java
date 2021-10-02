@@ -1,9 +1,7 @@
 package com.teamherb.bookstoreback.post.dto;
 
 import com.teamherb.bookstoreback.image.domain.Image;
-import com.teamherb.bookstoreback.post.domain.BookStatus;
 import com.teamherb.bookstoreback.post.domain.Post;
-import com.teamherb.bookstoreback.post.domain.PostStatus;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,8 +20,8 @@ public class PostResponse {
   private String title;
   private String price;
   private String description;
-  private BookStatus bookStatus;
-  private PostStatus postStatus;
+  private String bookStatus;
+  private String postStatus;
   private List<String> images;
   private BookResponse bookResponse;
   private boolean isMyPost;
@@ -34,7 +32,7 @@ public class PostResponse {
   @Builder
   public PostResponse(Long sellerId, String sellerIdentity, String sellerProfileImage,
       Long postId, String title, String price, String description,
-      BookStatus bookStatus, PostStatus postStatus, List<String> images,
+      String bookStatus, String postStatus, List<String> images,
       BookResponse bookResponse, boolean isMyPost, boolean isMyInterest,
       LocalDateTime createdDate, LocalDateTime lastModifiedDate) {
     this.sellerId = sellerId;
@@ -79,8 +77,8 @@ public class PostResponse {
         .title(post.getTitle())
         .price(post.getPrice())
         .description(post.getDescription())
-        .bookStatus(post.getBookStatus())
-        .postStatus(post.getPostStatus())
+        .bookStatus(post.getBookStatus().getName())
+        .postStatus(post.getPostStatus().getName())
         .images(imageResponse)
         .isMyPost(isMyPost)
         .isMyInterest(isMyInterest)
