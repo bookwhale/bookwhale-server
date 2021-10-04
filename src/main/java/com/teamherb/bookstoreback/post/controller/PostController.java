@@ -50,8 +50,7 @@ public class PostController {
   @PostMapping
   public ResponseEntity<Void> createPost(@CurrentUser User user,
       @Valid @RequestPart("postRequest") PostRequest postRequest,
-      @RequestPart(name = "images", required = false) List<MultipartFile> images)
-      throws URISyntaxException {
+      @RequestPart(name = "images") List<MultipartFile> images) throws URISyntaxException {
     Long postId = postService.createPost(user, postRequest, images);
     return ResponseEntity.created(new URI("/api/post/" + postId)).build();
   }
@@ -70,9 +69,8 @@ public class PostController {
 
   @PatchMapping("/{postId}")
   public ResponseEntity<Void> updatePost(@CurrentUser User user,
-      @PathVariable Long postId,
-      @Valid @RequestPart("postUpdateRequest") PostUpdateRequest request,
-      @RequestPart(name = "updateImages", required = false) List<MultipartFile> updateImages) {
+      @PathVariable Long postId, @Valid @RequestPart("postUpdateRequest") PostUpdateRequest request,
+      @RequestPart(name = "updateImages") List<MultipartFile> updateImages) {
     postService.updatePost(user, postId, request, updateImages);
     return ResponseEntity.ok().build();
   }

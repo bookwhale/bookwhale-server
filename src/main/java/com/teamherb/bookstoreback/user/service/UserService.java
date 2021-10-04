@@ -6,7 +6,7 @@ import com.teamherb.bookstoreback.Interest.dto.InterestRequest;
 import com.teamherb.bookstoreback.Interest.dto.InterestResponse;
 import com.teamherb.bookstoreback.common.exception.CustomException;
 import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
-import com.teamherb.bookstoreback.common.utils.upload.FileUploader;
+import com.teamherb.bookstoreback.common.upload.FileUploader;
 import com.teamherb.bookstoreback.post.domain.Post;
 import com.teamherb.bookstoreback.post.domain.PostRepository;
 import com.teamherb.bookstoreback.post.dto.PostsResponse;

@@ -1,4 +1,4 @@
-package com.teamherb.bookstoreback.common.utils.upload;
+package com.teamherb.bookstoreback.common.upload;
 
 import com.teamherb.bookstoreback.common.exception.CustomException;
 import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;

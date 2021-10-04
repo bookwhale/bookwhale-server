@@ -19,13 +19,13 @@ import com.teamherb.bookstoreback.post.domain.BookStatus;
 import com.teamherb.bookstoreback.post.domain.PostStatus;
 import com.teamherb.bookstoreback.post.dto.BookRequest;
 import com.teamherb.bookstoreback.post.dto.BookResponse;
-import com.teamherb.bookstoreback.post.dto.PostsRequest;
-import com.teamherb.bookstoreback.post.dto.PostsResponse;
 import com.teamherb.bookstoreback.post.dto.NaverBookRequest;
 import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.post.dto.PostResponse;
 import com.teamherb.bookstoreback.post.dto.PostStatusUpdateRequest;
 import com.teamherb.bookstoreback.post.dto.PostUpdateRequest;
+import com.teamherb.bookstoreback.post.dto.PostsRequest;
+import com.teamherb.bookstoreback.post.dto.PostsResponse;
 import com.teamherb.bookstoreback.post.service.NaverBookAPIService;
 import com.teamherb.bookstoreback.post.service.PostService;
 import java.nio.charset.StandardCharsets;
@@ -131,6 +131,43 @@ public class PostControllerTest extends CommonApiTest {
   }
 
   @WithMockCustomUser
+  @DisplayName("게시글을 등록할 때 이미지를 보내지 않으면 예외가 발생한다.")
+  @Test
+  void createPost_notExistRequestPart_failure() throws Exception {
+    BookRequest bookRequest = BookRequest.builder()
+        .bookSummary("설명")
+        .bookPubDate("2021-12-12")
+        .bookIsbn("12398128745902")
+        .bookListPrice("10000")
+        .bookThumbnail("썸네일")
+        .bookTitle("책 제목")
+        .bookPublisher("출판사")
+        .bookAuthor("작가")
+        .build();
+
+    PostRequest postRequest = PostRequest.builder()
+        .bookRequest(bookRequest)
+        .title("책 팝니다~")
+        .description("쿨 거래시 1000원 할인해드려요~")
+        .bookStatus("BEST")
+        .price("5000")
+        .build();
+
+    String content = objectMapper.writeValueAsString(postRequest);
+    MockMultipartFile json = new MockMultipartFile("postRequest", "jsonData",
+        "application/json", content.getBytes(StandardCharsets.UTF_8));
+
+    when(postService.createPost(any(), any(), any())).thenReturn(1L);
+
+    mockMvc.perform(multipart("/api/post")
+            .file(json)
+            .header(HttpHeaders.AUTHORIZATION, "accessToken")
+            .contentType(MediaType.MULTIPART_MIXED))
+        .andExpect(status().isBadRequest())
+        .andDo(print());
+  }
+
+  @WithMockCustomUser
   @DisplayName("게시글을 상세 조회한다.")
   @Test
   void findPost() throws Exception {
@@ -159,8 +196,7 @@ public class PostControllerTest extends CommonApiTest {
         .bookResponse(bookResponse)
         .isMyPost(true)
         .isMyInterest(true)
-        .createdDate(LocalDateTime.now())
-        .lastModifiedDate(LocalDateTime.now())
+        .beforeTime("15분 전")
         .build();
 
     when(postService.findPost(any(), any())).thenReturn(postResponse);
@@ -173,9 +209,9 @@ public class PostControllerTest extends CommonApiTest {
   }
 
   @WithMockCustomUser
-  @DisplayName("게시글을 전체 조회한다.")
+  @DisplayName("로그인한 유저가 게시글을 전체 조회한다.")
   @Test
-  void findPosts() throws Exception {
+  void findPosts_loginUser() throws Exception {
     Pagination pagination = new Pagination(0, 10);
 
     PostsRequest postsRequest = PostsRequest.builder()
@@ -186,10 +222,12 @@ public class PostControllerTest extends CommonApiTest {
         .postId(1L)
         .postImage("이미지")
         .postTitle("책 팝니다~")
-        .bookTitle("토비의 스프링")
         .postPrice("20000원")
         .postStatus(PostStatus.SALE.getName())
-        .createdDate(LocalDateTime.now())
+        .bookTitle("토비의 스프링")
+        .bookAuthor("이일민")
+        .bookPublisher("허브출판사")
+        .beforeTime("15분 전")
         .build();
 
     when(postService.findPosts(any(), any())).thenReturn(of(postsResponse));
@@ -200,6 +238,35 @@ public class PostControllerTest extends CommonApiTest {
         .andExpect(status().isOk())
         .andDo(print())
         .andDo(PostDocumentation.findPosts());
+  }
+
+  @DisplayName("로그인하지 않은 유저가 게시글을 전체 조회한다.")
+  @Test
+  void findPosts_anonymousUser() throws Exception {
+    Pagination pagination = new Pagination(0, 10);
+
+    PostsRequest postsRequest = PostsRequest.builder()
+        .title("책 제목")
+        .build();
+
+    PostsResponse postsResponse = PostsResponse.builder()
+        .postId(1L)
+        .postImage("이미지")
+        .postTitle("책 팝니다~")
+        .postPrice("20000원")
+        .postStatus(PostStatus.SALE.getName())
+        .bookTitle("토비의 스프링")
+        .bookAuthor("이일민")
+        .bookPublisher("허브출판사")
+        .beforeTime("15분 전")
+        .build();
+
+    when(postService.findPosts(any(), any())).thenReturn(of(postsResponse));
+
+    mockMvc.perform(get(format("/api/post?title=%s&page=%d&size=%d", postsRequest.getTitle(),
+            pagination.getPage(), pagination.getSize())))
+        .andExpect(status().isOk())
+        .andDo(print());
   }
 
   @WithMockCustomUser
@@ -231,6 +298,31 @@ public class PostControllerTest extends CommonApiTest {
         .andExpect(status().isOk())
         .andDo(print())
         .andDo(PostDocumentation.updatePost());
+  }
+
+  @WithMockCustomUser
+  @DisplayName("게시글을 수정할 때 이미지를 보내지 않으면 예외가 발생한다.")
+  @Test
+  void updatePost_notExistRequestPart_failure() throws Exception {
+    PostUpdateRequest request = PostUpdateRequest.builder()
+        .title("책 팝니다~ (가격 내림)")
+        .description("쿨 거래시 1000원 할인해드려요~ (가격 내림)")
+        .bookStatus("LOWER")
+        .price("2000")
+        .build();
+
+    String content = objectMapper.writeValueAsString(request);
+    MockMultipartFile json = new MockMultipartFile("postUpdateRequest", "jsonData",
+        "application/json", content.getBytes(StandardCharsets.UTF_8));
+
+    doNothing().when(postService).updatePost(any(), any(), any(), any());
+
+    mockMvc.perform(MockMultipartPatchBuilder("/api/post/1")
+            .file(json)
+            .header(HttpHeaders.AUTHORIZATION, "accessToken")
+            .contentType(MediaType.MULTIPART_MIXED))
+        .andExpect(status().isBadRequest())
+        .andDo(print());
   }
 
   @WithMockCustomUser

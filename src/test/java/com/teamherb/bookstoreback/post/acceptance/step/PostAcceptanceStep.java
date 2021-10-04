@@ -41,8 +41,7 @@ public class PostAcceptanceStep {
         () -> assertThat(res.getTitle()).isEqualTo(req.getTitle()),
         () -> assertThat(res.isMyPost()).isEqualTo(isMyPost),
         () -> assertThat(res.isMyInterest()).isEqualTo(isMyInterest),
-        () -> assertThat(res.getCreatedDate()).isNotNull(),
-        () -> assertThat(res.getLastModifiedDate()).isNotNull(),
+        () -> assertThat(res.getBeforeTime()).isNotNull(),
         () -> assertThat(res.getBookStatus()).isEqualTo(
             BookStatus.valueOf(req.getBookStatus()).getName()),
         () -> assertThat(res.getBookResponse().getBookIsbn()).isEqualTo(
@@ -64,24 +63,20 @@ public class PostAcceptanceStep {
     );
   }
 
-  public static void assertThatFindPosts(List<PostsResponse> res, PostRequest req1,
-      PostRequest req2) {
+  public static void assertThatFindPosts(List<PostsResponse> res, PostRequest req) {
     Assertions.assertAll(
-        () -> assertThat(res.size()).isEqualTo(2),
-        // 책 이미지가 없는 게시글
-        () -> assertThat(res.get(0).getPostPrice()).isEqualTo(req2.getPrice()),
-        () -> assertThat(res.get(0).getPostTitle()).isEqualTo(req2.getTitle()),
-        () -> assertThat(res.get(0).getPostPrice()).isEqualTo(req2.getPrice()),
+        () -> assertThat(res.size()).isEqualTo(1),
+        () -> assertThat(res.get(0).getPostPrice()).isEqualTo(req.getPrice()),
+        () -> assertThat(res.get(0).getPostTitle()).isEqualTo(req.getTitle()),
+        () -> assertThat(res.get(0).getPostPrice()).isEqualTo(req.getPrice()),
+        () -> assertThat(res.get(0).getBeforeTime()).isNotNull(),
         () -> assertThat(res.get(0).getPostStatus()).isEqualTo(PostStatus.SALE.getName()),
-        () -> assertThat(res.get(0).getBookTitle()).isEqualTo(req2.getBookRequest().getBookTitle()),
-        () -> assertThat(res.get(0).getPostImage()).isNull(),
-        // 책 이미지가 있는 게시글
-        () -> assertThat(res.get(1).getPostPrice()).isEqualTo(req1.getPrice()),
-        () -> assertThat(res.get(1).getPostTitle()).isEqualTo(req1.getTitle()),
-        () -> assertThat(res.get(1).getPostPrice()).isEqualTo(req1.getPrice()),
-        () -> assertThat(res.get(1).getPostStatus()).isEqualTo(PostStatus.SALE.getName()),
-        () -> assertThat(res.get(1).getBookTitle()).isEqualTo(req1.getBookRequest().getBookTitle()),
-        () -> assertThat(res.get(1).getPostImage()).isNotNull()
+        () -> assertThat(res.get(0).getBookTitle()).isEqualTo(req.getBookRequest().getBookTitle()),
+        () -> assertThat(res.get(0).getBookAuthor()).isEqualTo(
+            req.getBookRequest().getBookAuthor()),
+        () -> assertThat(res.get(0).getBookPublisher()).isEqualTo(
+            req.getBookRequest().getBookPublisher()),
+        () -> assertThat(res.get(0).getPostImage()).isNotNull()
     );
   }
 
@@ -98,7 +93,8 @@ public class PostAcceptanceStep {
         () -> assertThat(res.getTitle()).isEqualTo(req.getTitle()),
         () -> assertThat(res.getDescription()).isEqualTo(req.getDescription()),
         () -> assertThat(res.getPrice()).isEqualTo(req.getPrice()),
-        () -> assertThat(res.getBookStatus()).isEqualTo(BookStatus.valueOf(req.getBookStatus()).getName()),
+        () -> assertThat(res.getBookStatus()).isEqualTo(
+            BookStatus.valueOf(req.getBookStatus()).getName()),
         () -> assertThat(res.getImages().size()).isEqualTo(size)
     );
   }
@@ -129,22 +125,6 @@ public class PostAcceptanceStep {
         .contentType(MediaType.MULTIPART_MIXED_VALUE)
         .multiPart(image1)
         .multiPart(image2)
-        .multiPart(json)
-        .when()
-        .post("/api/post")
-        .then().log().all()
-        .extract();
-  }
-
-  public static void requestToCreateEmptyImagePost(String jwt, PostRequest postRequest) {
-    MultiPartSpecification json = new MultiPartSpecBuilder(postRequest)
-        .controlName("postRequest")
-        .charset(StandardCharsets.UTF_8)
-        .mimeType(MimeTypeUtils.APPLICATION_JSON_VALUE).build();
-
-    given().log().all()
-        .header(HttpHeaders.AUTHORIZATION, jwt)
-        .contentType(MediaType.MULTIPART_MIXED_VALUE)
         .multiPart(json)
         .when()
         .post("/api/post")

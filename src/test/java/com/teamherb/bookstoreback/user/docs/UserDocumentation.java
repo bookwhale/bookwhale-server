@@ -116,8 +116,12 @@ public class UserDocumentation {
         fieldWithPath("postsResponse.postTitle").type(JsonFieldType.STRING).description("게시글 제목"),
         fieldWithPath("postsResponse.postPrice").type(JsonFieldType.STRING).description("게시글 가격"),
         fieldWithPath("postsResponse.bookTitle").type(JsonFieldType.STRING).description("책 제목"),
-        fieldWithPath("postsResponse.createdDate").type(JsonFieldType.STRING).description("게시글 등록일"),
-        fieldWithPath("postsResponse.postImage").type(JsonFieldType.STRING).description("판매자가 올린 이미지"),
+        fieldWithPath("postsResponse.bookAuthor").type(JsonFieldType.STRING).description("작가"),
+        fieldWithPath("postsResponse.bookPublisher").type(JsonFieldType.STRING).description("출판사"),
+        fieldWithPath("postsResponse.beforeTime").type(JsonFieldType.STRING).description(
+            "등록한 시간 - 현재 시간"),
+        fieldWithPath("postsResponse.postImage").type(JsonFieldType.STRING).description(
+            "판매자가 올린 이미지"),
         fieldWithPath("postsResponse.postStatus").type(JsonFieldType.STRING).description(
             "게시글 상태 [SALE, RESERVED, SOLD_OUT]")
     };
@@ -163,7 +167,9 @@ public class UserDocumentation {
         fieldWithPath("postTitle").type(JsonFieldType.STRING).description("게시글 제목"),
         fieldWithPath("postPrice").type(JsonFieldType.STRING).description("게시글 가격"),
         fieldWithPath("bookTitle").type(JsonFieldType.STRING).description("책 제목"),
-        fieldWithPath("createdDate").type(JsonFieldType.STRING).description("게시글 등록일"),
+        fieldWithPath("bookAuthor").type(JsonFieldType.STRING).description("작가"),
+        fieldWithPath("bookPublisher").type(JsonFieldType.STRING).description("출판사"),
+        fieldWithPath("beforeTime").type(JsonFieldType.STRING).description("등록한 시간 - 현재 시간"),
         fieldWithPath("postImage").type(JsonFieldType.STRING).description("판매자가 올린 이미지"),
         fieldWithPath("postStatus").type(JsonFieldType.STRING).description(
             "게시글 상태 [SALE, RESERVED, SOLD_OUT]")

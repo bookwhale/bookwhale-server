@@ -4,7 +4,7 @@ import com.teamherb.bookstoreback.Interest.domain.InterestRepository;
 import com.teamherb.bookstoreback.common.Pagination;
 import com.teamherb.bookstoreback.common.exception.CustomException;
 import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
-import com.teamherb.bookstoreback.common.utils.upload.FileUploader;
+import com.teamherb.bookstoreback.common.upload.FileUploader;
 import com.teamherb.bookstoreback.image.domain.Images;
 import com.teamherb.bookstoreback.post.domain.Post;
 import com.teamherb.bookstoreback.post.domain.PostRepository;
@@ -76,14 +76,8 @@ public class PostService {
   }
 
   public void saveAllImages(Post post, List<MultipartFile> images) {
-    List<String> uploadUrls = getImageUrlsAndUploadImages(images);
-    if (uploadUrls != null) {
-      post.getImages().addAll(post, uploadUrls);
-    }
-  }
-
-  public List<String> getImageUrlsAndUploadImages(List<MultipartFile> images) {
-    return images == null || images.isEmpty() ? null : fileUploader.uploadFiles(images);
+    List<String> uploadUrls = fileUploader.uploadFiles(images);
+    post.getImages().addAll(post, uploadUrls);
   }
 
   public void updatePostStatus(User user, Long postId, PostStatusUpdateRequest request) {

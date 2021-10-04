@@ -13,7 +13,7 @@ import com.teamherb.bookstoreback.Interest.dto.InterestRequest;
 import com.teamherb.bookstoreback.Interest.dto.InterestResponse;
 import com.teamherb.bookstoreback.common.exception.CustomException;
 import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
-import com.teamherb.bookstoreback.common.utils.upload.FileUploader;
+import com.teamherb.bookstoreback.common.upload.FileUploader;
 import com.teamherb.bookstoreback.post.domain.Post;
 import com.teamherb.bookstoreback.post.domain.PostRepository;
 import com.teamherb.bookstoreback.post.dto.BookRequest;
@@ -24,6 +24,7 @@ import com.teamherb.bookstoreback.user.dto.PasswordUpdateRequest;
 import com.teamherb.bookstoreback.user.dto.ProfileResponse;
 import com.teamherb.bookstoreback.user.dto.SignUpRequest;
 import com.teamherb.bookstoreback.user.dto.UserUpdateRequest;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.apache.http.entity.ContentType;
@@ -200,6 +201,7 @@ public class UserServiceTest {
         .price("5000")
         .build();
     Post post = Post.create(user, postRequest);
+    post.setCreatedDate(LocalDateTime.now());
 
     when(interestRepository.findAllByUser(any())).thenReturn(List.of(Interest.create(user, post)));
 

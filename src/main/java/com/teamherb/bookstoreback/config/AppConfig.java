@@ -2,8 +2,8 @@ package com.teamherb.bookstoreback.config;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.teamherb.bookstoreback.common.utils.upload.AwsS3Uploader;
-import com.teamherb.bookstoreback.common.utils.upload.FileUploader;
+import com.teamherb.bookstoreback.common.upload.AwsS3Uploader;
+import com.teamherb.bookstoreback.common.upload.FileUploader;
 import javax.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

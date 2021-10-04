@@ -9,14 +9,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.util.Lists.emptyList;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.teamherb.bookstoreback.Interest.domain.InterestRepository;
 import com.teamherb.bookstoreback.common.exception.CustomException;
 import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
-import com.teamherb.bookstoreback.common.utils.upload.FileUploader;
+import com.teamherb.bookstoreback.common.upload.FileUploader;
 import com.teamherb.bookstoreback.post.domain.BookStatus;
 import com.teamherb.bookstoreback.post.domain.Post;
 import com.teamherb.bookstoreback.post.domain.PostRepository;
@@ -28,6 +27,7 @@ import com.teamherb.bookstoreback.post.dto.PostStatusUpdateRequest;
 import com.teamherb.bookstoreback.post.dto.PostUpdateRequest;
 import com.teamherb.bookstoreback.user.domain.User;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -112,6 +112,7 @@ public class PostServiceTest {
     Post post = Post.create(user, postRequest);
     List<String> images = of("image1", "image2");
     post.getImages().addAll(post, images);
+    post.setCreatedDate(LocalDateTime.now());
 
     when(postRepository.findPostWithSellerById(any())).thenReturn(Optional.of(post));
     when(interestRepository.existsByUserAndPost(any(), any())).thenReturn(true);
@@ -154,6 +155,7 @@ public class PostServiceTest {
   void findNotMyPost_success() {
     User otherUser = User.builder().id(2L).build();
     Post post = Post.create(user, postRequest);
+    post.setCreatedDate(LocalDateTime.now());
 
     when(postRepository.findPostWithSellerById(any())).thenReturn(ofNullable(post));
 
@@ -208,45 +210,6 @@ public class PostServiceTest {
         () -> assertThat(post.getImages().getSize()).isEqualTo(images.size()),
         () -> assertThat(post.getBookStatus()).isEqualTo(valueOf(request.getBookStatus()))
     );
-  }
-
-  @DisplayName("게시글을 수정한다. (빈 이미지 리스트를 보내는 경우)")
-  @Test
-  void updatePost_emptyImageList_success() {
-    Post post = Post.create(user, postRequest);
-    PostUpdateRequest request = PostUpdateRequest.builder()
-        .title("이펙티브 자바")
-        .description("이펙티브 자바입니다.")
-        .price("15000")
-        .bookStatus("BEST")
-        .build();
-    List<MultipartFile> images = emptyList();
-
-    when(postRepository.findById(any())).thenReturn(Optional.ofNullable(post));
-
-    postService.updatePost(user, 1L, request, images);
-
-    verify(postRepository).findById(any());
-    verify(fileUploader, never()).uploadFiles(any());
-  }
-
-  @DisplayName("게시글을 수정한다. (null 을 보내는 경우)")
-  @Test
-  void updatePost_nullImageList_success() {
-    Post post = Post.create(user, postRequest);
-    PostUpdateRequest request = PostUpdateRequest.builder()
-        .title("이펙티브 자바")
-        .description("이펙티브 자바입니다.")
-        .price("15000")
-        .bookStatus("BEST")
-        .build();
-
-    when(postRepository.findById(any())).thenReturn(Optional.ofNullable(post));
-
-    postService.updatePost(user, 1L, request, null);
-
-    verify(postRepository).findById(any());
-    verify(fileUploader, never()).uploadFiles(any());
   }
 
   @DisplayName("잘못된 post_id로 게시글을 수정하면 예외가 발생한다.")

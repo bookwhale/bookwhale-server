@@ -16,7 +16,7 @@ import com.teamherb.bookstoreback.chatroom.dto.ChatRoomCreateRequest;
 import com.teamherb.bookstoreback.chatroom.dto.ChatRoomResponse;
 import com.teamherb.bookstoreback.common.exception.CustomException;
 import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
-import com.teamherb.bookstoreback.common.utils.mail.MailUtil;
+import com.teamherb.bookstoreback.common.mail.SmtpMailSender;
 import com.teamherb.bookstoreback.post.domain.Post;
 import com.teamherb.bookstoreback.post.domain.PostRepository;
 import com.teamherb.bookstoreback.post.domain.PostStatus;
@@ -46,7 +46,7 @@ public class ChatRoomServiceTest {
   private PostRepository postRepository;
 
   @Mock
-  private MailUtil mailUtil;
+  private SmtpMailSender smtpMailSender;
 
   ChatRoomService chatRoomService;
 
@@ -59,7 +59,7 @@ public class ChatRoomServiceTest {
   @BeforeEach
   void setUp() {
     chatRoomService = new ChatRoomService(chatRoomRepository, userRepository, postRepository,
-        mailUtil);
+        smtpMailSender);
 
     buyer = User.builder()
         .id(1L)
@@ -102,7 +102,7 @@ public class ChatRoomServiceTest {
 
     when(userRepository.findById(any())).thenReturn(of(seller));
     when(postRepository.findById(any())).thenReturn(of(post));
-    doNothing().when(mailUtil).sendCreateChatRoomMailToSeller(any(), any(), any());
+    doNothing().when(smtpMailSender).sendCreateChatRoomMailToSeller(any(), any(), any());
     when(chatRoomRepository.save(any())).thenReturn(chatRoom);
 
     chatRoomService.createChatRoom(buyer,
@@ -110,7 +110,7 @@ public class ChatRoomServiceTest {
 
     verify(userRepository).findById(any());
     verify(postRepository).findById(any());
-    verify(mailUtil).sendCreateChatRoomMailToSeller(any(), any(), any());
+    verify(smtpMailSender).sendCreateChatRoomMailToSeller(any(), any(), any());
     verify(chatRoomRepository).save(any());
   }
 

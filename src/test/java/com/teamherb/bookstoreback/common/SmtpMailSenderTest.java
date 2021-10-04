@@ -1,6 +1,7 @@
-package com.teamherb.bookstoreback.common.utils.mail;
+package com.teamherb.bookstoreback.common;
 
 import com.teamherb.bookstoreback.common.acceptance.AcceptanceTest;
+import com.teamherb.bookstoreback.common.mail.SmtpMailSender;
 import com.teamherb.bookstoreback.post.domain.Book;
 import com.teamherb.bookstoreback.post.domain.Post;
 import org.junit.jupiter.api.Disabled;
@@ -9,10 +10,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @DisplayName("메일 통합 테스트")
-class MailTest extends AcceptanceTest {
+class SmtpMailSenderTest extends AcceptanceTest {
 
   @Autowired
-  MailUtil mailUtil;
+  SmtpMailSender smtpMailSender;
 
   @Test
   @Disabled
@@ -28,6 +29,6 @@ class MailTest extends AcceptanceTest {
                 .bookPublisher("한국출판사")
                 .build())
         .build();
-    mailUtil.sendCreateChatRoomMailToSeller(post, user, anotherUser);
+    smtpMailSender.sendCreateChatRoomMailToSeller(post, user, anotherUser);
   }
 }

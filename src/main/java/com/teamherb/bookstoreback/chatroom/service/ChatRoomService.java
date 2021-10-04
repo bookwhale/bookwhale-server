@@ -6,7 +6,7 @@ import com.teamherb.bookstoreback.chatroom.dto.ChatRoomCreateRequest;
 import com.teamherb.bookstoreback.chatroom.dto.ChatRoomResponse;
 import com.teamherb.bookstoreback.common.exception.CustomException;
 import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
-import com.teamherb.bookstoreback.common.utils.mail.MailUtil;
+import com.teamherb.bookstoreback.common.mail.SmtpMailSender;
 import com.teamherb.bookstoreback.post.domain.Post;
 import com.teamherb.bookstoreback.post.domain.PostRepository;
 import com.teamherb.bookstoreback.user.domain.User;
@@ -28,13 +28,13 @@ public class ChatRoomService {
 
   private final PostRepository postRepository;
 
-  private final MailUtil mailUtil;
+  private final SmtpMailSender smtpMailSender;
 
   public Long createChatRoom(User user, ChatRoomCreateRequest request) {
     User seller = validateSellerIdAndGetSeller(request.getSellerId());
     Post post = validatePostIdAndGetPost(request.getPostId());
     post.validatePostStatus();
-    mailUtil.sendCreateChatRoomMailToSeller(post, seller, user);
+    smtpMailSender.sendCreateChatRoomMailToSeller(post, seller, user);
     return chatRoomRepository.save(ChatRoom.create(post, user, seller)).getId();
   }
 

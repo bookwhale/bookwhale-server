@@ -1,4 +1,4 @@
-package com.teamherb.bookstoreback.common.utils.upload;
+package com.teamherb.bookstoreback.common.upload;
 
 import java.util.ArrayList;
 import java.util.List;
