@@ -27,11 +27,9 @@ repositories {
 
 dependencies {
     //common
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'com.querydsl:querydsl-jpa'
 
     //jwt
     implementation 'io.jsonwebtoken:jjwt:0.5.1'
@@ -48,6 +46,9 @@ dependencies {
 
     //database
     runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'mysql:mysql-connector-java'
+    implementation 'com.querydsl:querydsl-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
     //lombok
     compileOnly 'org.projectlombok:lombok'
