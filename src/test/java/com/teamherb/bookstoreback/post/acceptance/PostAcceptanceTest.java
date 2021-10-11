@@ -182,33 +182,35 @@ public class PostAcceptanceTest extends AcceptanceTest {
   @DisplayName("게시글을 수정한다.")
   @Test
   void updatePost() {
+    String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
+
+    Long postId = AcceptanceUtils.getIdFromResponse(PostAcceptanceStep.requestToCreatePost(jwt, postRequest));
+    String deleteImgUrl = PostAcceptanceStep.requestToFindPost(jwt, postId).jsonPath()
+        .getObject(".", PostResponse.class).getImages().get(0);
+
     PostUpdateRequest updateRequest = PostUpdateRequest.builder()
         .title("토비의 스프링 팝니다~ (수정)")
         .description("책 설명 (수정)")
         .bookStatus(BookStatus.MIDDLE.toString())
         .price("25000")
+        .deleteImgUrls(List.of(deleteImgUrl))
         .build();
-    MultiPartSpecification updateImage = new MultiPartSpecBuilder(
+
+    MultiPartSpecification image = new MultiPartSpecBuilder(
         "updateImage1".getBytes())
         .mimeType(MimeTypeUtils.IMAGE_JPEG.toString())
-        .controlName("updateImages")
+        .controlName("images")
         .fileName("updateImage1.jpg")
         .build();
-    List<MultiPartSpecification> updateImages = List.of(updateImage);
+    List<MultiPartSpecification> images = List.of(image);
 
-    String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
-
-    Long postId = AcceptanceUtils.getIdFromResponse(
-        PostAcceptanceStep.requestToCreatePost(jwt, postRequest));
-
-    ExtractableResponse<Response> response = PostAcceptanceStep.requestToUpdatePost(
-        jwt, postId, updateRequest, updateImages);
+    ExtractableResponse<Response> response = PostAcceptanceStep.requestToUpdatePost(jwt, postId, updateRequest, images);
 
     PostResponse postResponse = PostAcceptanceStep.requestToFindPost(jwt, postId).jsonPath()
         .getObject(".", PostResponse.class);
 
     AcceptanceStep.assertThatStatusIsOk(response);
-    PostAcceptanceStep.assertThatUpdatePost(postResponse, updateRequest, updateImages.size());
+    PostAcceptanceStep.assertThatUpdatePost(postResponse, updateRequest, 2);
   }
 
   @DisplayName("게시글 상태를 변경한다.")

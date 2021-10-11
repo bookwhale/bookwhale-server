@@ -70,8 +70,8 @@ public class PostController {
   @PatchMapping("/{postId}")
   public ResponseEntity<Void> updatePost(@CurrentUser User user,
       @PathVariable Long postId, @Valid @RequestPart("postUpdateRequest") PostUpdateRequest request,
-      @RequestPart(name = "updateImages") List<MultipartFile> updateImages) {
-    postService.updatePost(user, postId, request, updateImages);
+      @RequestPart(name = "images") List<MultipartFile> images) {
+    postService.updatePost(user, postId, request, images);
     return ResponseEntity.ok().build();
   }
 

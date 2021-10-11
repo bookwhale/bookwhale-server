@@ -63,21 +63,26 @@ public class PostService {
   }
 
   public void updatePost(User user, Long postId, PostUpdateRequest request,
-      List<MultipartFile> updateImages) {
+      List<MultipartFile> images) {
     Post post = validatePostIdAndGetPost(postId);
     post.validateIsMyPost(user);
     post.update(request);
-    updateImages(post, updateImages);
+    updateImages(post, images, request.getDeleteImgUrls());
   }
 
-  public void updateImages(Post post, List<MultipartFile> updateImages) {
-    deleteAllImages(post);
-    saveAllImages(post, updateImages);
+  public void updateImages(Post post, List<MultipartFile> images, List<String> deleteImgUrls) {
+    if (deleteImgUrls != null && !deleteImgUrls.isEmpty()) {
+      fileUploader.deleteFiles(deleteImgUrls);
+      post.getImages().deleteImageUrls(deleteImgUrls);
+    }
+    saveAllImages(post, images);
   }
 
   public void saveAllImages(Post post, List<MultipartFile> images) {
-    List<String> uploadUrls = fileUploader.uploadFiles(images);
-    post.getImages().addAll(post, uploadUrls);
+    if (images != null && !images.isEmpty()) {
+      List<String> uploadImageUrls = fileUploader.uploadFiles(images);
+      post.getImages().addAll(post, uploadImageUrls);
+    }
   }
 
   public void updatePostStatus(User user, Long postId, PostStatusUpdateRequest request) {

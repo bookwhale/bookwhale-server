@@ -9,6 +9,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.util.Lists.emptyList;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -16,6 +19,8 @@ import com.teamherb.bookstoreback.Interest.domain.InterestRepository;
 import com.teamherb.bookstoreback.common.exception.CustomException;
 import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
 import com.teamherb.bookstoreback.common.upload.FileUploader;
+import com.teamherb.bookstoreback.image.domain.Image;
+import com.teamherb.bookstoreback.image.domain.ImageRepository;
 import com.teamherb.bookstoreback.post.domain.BookStatus;
 import com.teamherb.bookstoreback.post.domain.Post;
 import com.teamherb.bookstoreback.post.domain.PostRepository;
@@ -36,6 +41,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.verification.VerificationMode;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -44,13 +50,13 @@ import org.springframework.web.multipart.MultipartFile;
 public class PostServiceTest {
 
   @Mock
-  private PostRepository postRepository;
+  PostRepository postRepository;
 
   @Mock
-  private FileUploader fileUploader;
+  FileUploader fileUploader;
 
   @Mock
-  private InterestRepository interestRepository;
+  InterestRepository interestRepository;
 
   PostService postService;
 
@@ -178,9 +184,9 @@ public class PostServiceTest {
         .hasMessage(ErrorCode.INVALID_POST_ID.getMessage());
   }
 
-  @DisplayName("게시글을 수정한다. (게시글 이미지 1개 -> 2개로 변경)")
+  @DisplayName("게시글을 수정한다. (게시글 이미지 1개, 삭제하는 이미지 0개, 추가하는 이미지 1개 -> 총 2개)")
   @Test
-  void updatePost_success() {
+  void updatePost_One_success() {
     Post post = Post.create(user, postRequest);
     post.getImages().addAll(post, of("image1"));
 
@@ -192,22 +198,89 @@ public class PostServiceTest {
         .build();
 
     List<MultipartFile> images = of(
-        new MockMultipartFile("updateImages", "image1".getBytes(StandardCharsets.UTF_8)),
-        new MockMultipartFile("updateImages", "image2".getBytes(StandardCharsets.UTF_8))
+        new MockMultipartFile("images", "image1".getBytes(StandardCharsets.UTF_8))
     );
 
     when(postRepository.findById(any())).thenReturn(Optional.of(post));
-    when(fileUploader.uploadFiles(any())).thenReturn(of("image1", "image2"));
+    when(fileUploader.uploadFiles(any())).thenReturn(of("image1"));
 
     postService.updatePost(user, 1L, request, images);
 
     verify(postRepository).findById(any());
+    verify(fileUploader, never()).deleteFile(any());
     verify(fileUploader).uploadFiles(any());
     assertAll(
         () -> assertThat(post.getTitle()).isEqualTo(request.getTitle()),
         () -> assertThat(post.getPrice()).isEqualTo(request.getPrice()),
         () -> assertThat(post.getDescription()).isEqualTo(request.getDescription()),
-        () -> assertThat(post.getImages().getSize()).isEqualTo(images.size()),
+        () -> assertThat(post.getImages().getSize()).isEqualTo(2),
+        () -> assertThat(post.getBookStatus()).isEqualTo(valueOf(request.getBookStatus()))
+    );
+  }
+
+  @DisplayName("게시글을 수정한다. (게시글 이미지 3개, 삭제하는 이미지 1개, 추가하는 이미지 1개 -> 총 3개)")
+  @Test
+  void updatePost_Two_success() {
+    Post post = Post.create(user, postRequest);
+    post.getImages().addAll(post, of("image1", "image2", "image3"));
+
+    PostUpdateRequest request = PostUpdateRequest.builder()
+        .title("이펙티브 자바")
+        .description("이펙티브 자바입니다.")
+        .price("15000")
+        .bookStatus("BEST")
+        .deleteImgUrls(List.of("image2"))
+        .build();
+
+    List<MultipartFile> images = of(
+        new MockMultipartFile("images", "image4".getBytes(StandardCharsets.UTF_8))
+    );
+
+    when(postRepository.findById(any())).thenReturn(Optional.of(post));
+    doNothing().when(fileUploader).deleteFiles(anyList());
+    when(fileUploader.uploadFiles(any())).thenReturn(of("image4"));
+
+    postService.updatePost(user, 1L, request, images);
+
+    verify(postRepository).findById(any());
+    verify(fileUploader).deleteFiles(anyList());
+    verify(fileUploader).uploadFiles(any());
+    assertAll(
+        () -> assertThat(post.getTitle()).isEqualTo(request.getTitle()),
+        () -> assertThat(post.getPrice()).isEqualTo(request.getPrice()),
+        () -> assertThat(post.getDescription()).isEqualTo(request.getDescription()),
+        () -> assertThat(post.getImages().getSize()).isEqualTo(3),
+        () -> assertThat(post.getBookStatus()).isEqualTo(valueOf(request.getBookStatus()))
+    );
+  }
+
+  @DisplayName("게시글을 수정한다. (게시글 이미지 3개, 삭제하는 이미지 2개, 추가하는 이미지 0개 -> 총 1개)")
+  @Test
+  void updatePost_Three_success() {
+    Post post = Post.create(user, postRequest);
+    post.getImages().addAll(post, of("image1", "image2", "image3"));
+
+    PostUpdateRequest request = PostUpdateRequest.builder()
+        .title("이펙티브 자바")
+        .description("이펙티브 자바입니다.")
+        .price("15000")
+        .bookStatus("BEST")
+        .deleteImgUrls(List.of("image2", "image3"))
+        .build();
+
+    when(postRepository.findById(any())).thenReturn(Optional.of(post));
+    doNothing().when(fileUploader).deleteFiles(anyList());
+
+    postService.updatePost(user, 1L, request, emptyList());
+
+    verify(postRepository).findById(any());
+    verify(fileUploader).deleteFiles(anyList());
+    verify(fileUploader, never()).uploadFiles(any());
+    assertAll(
+        () -> assertThat(post.getTitle()).isEqualTo(request.getTitle()),
+        () -> assertThat(post.getPrice()).isEqualTo(request.getPrice()),
+        () -> assertThat(post.getDescription()).isEqualTo(request.getDescription()),
+        () -> assertThat(post.getImages().getSize()).isEqualTo(1),
         () -> assertThat(post.getBookStatus()).isEqualTo(valueOf(request.getBookStatus()))
     );
   }

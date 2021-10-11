@@ -30,6 +30,7 @@ import com.teamherb.bookstoreback.post.service.NaverBookAPIService;
 import com.teamherb.bookstoreback.post.service.PostService;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.List;
 import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -273,7 +274,7 @@ public class PostControllerTest extends CommonApiTest {
   @DisplayName("게시글을 수정한다.")
   @Test
   void updatePost_success() throws Exception {
-    MockMultipartFile updateImage = new MockMultipartFile("updateImages", "updateImage.jpg",
+    MockMultipartFile updateImage = new MockMultipartFile("images", "updateImage.jpg",
         ContentType.IMAGE_JPEG.getMimeType(),
         "수정된 이미지입니다.".getBytes());
 
@@ -282,6 +283,7 @@ public class PostControllerTest extends CommonApiTest {
         .description("쿨 거래시 1000원 할인해드려요~ (가격 내림)")
         .bookStatus("LOWER")
         .price("2000")
+        .deleteImgUrls(List.of("image1", "image2"))
         .build();
 
     String content = objectMapper.writeValueAsString(request);

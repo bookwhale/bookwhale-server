@@ -3,6 +3,7 @@ package com.teamherb.bookstoreback.image.domain;
 import com.teamherb.bookstoreback.post.domain.Post;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
@@ -25,6 +26,14 @@ public class Images {
     return new Images();
   }
 
+  public int getSize() {
+    return images.size();
+  }
+
+  public boolean isEmpty() {
+    return images.isEmpty();
+  }
+
   public void addAll(Post post, List<String> imageUrls) {
     //TODO : Bulk Insert
     for (String imagePath : imageUrls) {
@@ -38,20 +47,16 @@ public class Images {
     images.clear();
   }
 
-  /*
-  사용자가 게시글에 책 이미지를 등록하지 않았을 경우 대표 이미지는 null 로 반환한다.
-  사용자가 게시글에 책 이미지를 등록한 경우 대표 이미지는 첫 번째 이미지를 반환한다.
-  */
+  public void deleteImageUrls(List<String> deleteImgUrls) {
+    List<Image> newImages = images.stream()
+        .filter(image -> deleteImgUrls.stream().noneMatch(Predicate.isEqual(image.getUrl())))
+        .collect(Collectors.toList());
+    images.clear();
+    images.addAll(newImages);
+  }
+
   public String getFirstImageUrl() {
     return images.isEmpty() ? null : images.get(0).getUrl();
-  }
-
-  public int getSize() {
-    return images.size();
-  }
-
-  public boolean isEmpty() {
-    return images.isEmpty();
   }
 
   public List<String> getImageUrls() {
