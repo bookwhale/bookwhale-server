@@ -10,6 +10,7 @@ import com.teamherb.bookstoreback.user.acceptance.step.UserAcceptanceStep;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.List;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -65,11 +66,65 @@ public class ChatRoomAcceptanceTest extends AcceptanceTest {
 
     ChatRoomAcceptanceStep.createChatRoom(loginUserJwt, sellerJwt, postRequest);
 
-    ExtractableResponse<Response> res = ChatRoomAcceptanceStep.requestToFindChatRooms(loginUserJwt);
-    List<ChatRoomResponse> roomResponses = res.jsonPath().getList("", ChatRoomResponse.class);
+    ExtractableResponse<Response> loginUserRes = ChatRoomAcceptanceStep.requestToFindChatRooms(
+        loginUserJwt);
+    ExtractableResponse<Response> anotherUserRes = ChatRoomAcceptanceStep.requestToFindChatRooms(
+        sellerJwt);
 
+    List<ChatRoomResponse> loginUserRoomRes = loginUserRes.jsonPath()
+        .getList("", ChatRoomResponse.class);
+    List<ChatRoomResponse> anotherRoomRes = anotherUserRes.jsonPath()
+        .getList("", ChatRoomResponse.class);
+
+    AcceptanceStep.assertThatStatusIsOk(loginUserRes);
+    AcceptanceStep.assertThatStatusIsOk(anotherUserRes);
+
+    ChatRoomAcceptanceStep.assertThatFindChatRooms(loginUserRoomRes, postRequest, anotherUser);
+    ChatRoomAcceptanceStep.assertThatFindChatRooms(anotherRoomRes, postRequest, user);
+  }
+
+  @DisplayName("상대방이 나간 채팅방은 isOpponentLeave 가 false 로 조회된다.")
+  @Test
+  void findChatRooms_opponentDelete() {
+    String loginUserJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
+    String sellerJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(anotherLoginRequest);
+
+    ChatRoomAcceptanceStep.createChatRoom(loginUserJwt, sellerJwt, postRequest);
+
+    //상대방이 채팅방을 나간다
+    ExtractableResponse<Response> anotherUserRes = ChatRoomAcceptanceStep.requestToFindChatRooms(
+        sellerJwt);
+    List<ChatRoomResponse> anotherRoomRes = anotherUserRes.jsonPath()
+        .getList("", ChatRoomResponse.class);
+    ChatRoomAcceptanceStep.requestToDeleteChatRoom(sellerJwt, anotherRoomRes.get(0).getRoomId());
+
+    //상대방이 나간 채팅방은 isOpponentLeave 가 false 로 조회된다.
+    ExtractableResponse<Response> loginUserRes = ChatRoomAcceptanceStep.requestToFindChatRooms(
+        loginUserJwt);
+    List<ChatRoomResponse> loginUserRoomRes = loginUserRes.jsonPath()
+        .getList("", ChatRoomResponse.class);
+    AcceptanceStep.assertThatStatusIsOk(loginUserRes);
+    Assertions.assertThat(loginUserRoomRes.get(0).isOpponentDelete()).isEqualTo(true);
+  }
+
+  @DisplayName("나간 채팅방은 조회되지 않는다.")
+  @Test
+  void findChatRooms_deleteRoom() {
+    String loginUserJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
+    String sellerJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(anotherLoginRequest);
+
+    ChatRoomAcceptanceStep.createChatRoom(loginUserJwt, sellerJwt, postRequest);
+
+    //채팅방을 나간다
+    List<ChatRoomResponse> loginUserRoomRes = ChatRoomAcceptanceStep.requestToFindChatRooms(
+        loginUserJwt).jsonPath().getList("", ChatRoomResponse.class);
+    ChatRoomAcceptanceStep.requestToDeleteChatRoom(loginUserJwt, loginUserRoomRes.get(0).getRoomId());
+
+    //나간 채팅방은 조회되지 않는다.
+    ExtractableResponse<Response> res = ChatRoomAcceptanceStep.requestToFindChatRooms(loginUserJwt);
+    List<ChatRoomResponse> roomRes = res.jsonPath().getList("", ChatRoomResponse.class);
     AcceptanceStep.assertThatStatusIsOk(res);
-    ChatRoomAcceptanceStep.assertThatFindChatRooms(roomResponses, postRequest, anotherUser);
+    Assertions.assertThat(roomRes.size()).isEqualTo(0);
   }
 
   @DisplayName("채팅방을 삭제한 후 조회한다.")

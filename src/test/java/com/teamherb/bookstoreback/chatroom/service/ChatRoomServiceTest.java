@@ -102,7 +102,7 @@ public class ChatRoomServiceTest {
 
     when(userRepository.findById(any())).thenReturn(of(seller));
     when(postRepository.findById(any())).thenReturn(of(post));
-    doNothing().when(smtpMailSender).sendCreateChatRoomMailToSeller(any(), any(), any());
+    doNothing().when(smtpMailSender).sendChatRoomCreationMail(any(), any(), any());
     when(chatRoomRepository.save(any())).thenReturn(chatRoom);
 
     chatRoomService.createChatRoom(buyer,
@@ -110,7 +110,7 @@ public class ChatRoomServiceTest {
 
     verify(userRepository).findById(any());
     verify(postRepository).findById(any());
-    verify(smtpMailSender).sendCreateChatRoomMailToSeller(any(), any(), any());
+    verify(smtpMailSender).sendChatRoomCreationMail(any(), any(), any());
     verify(chatRoomRepository).save(any());
   }
 
@@ -153,14 +153,14 @@ public class ChatRoomServiceTest {
     ChatRoom chatRoom = ChatRoom.create(post, buyer, seller);
 
     // 로그인한 유저만 존재하는 채팅방
-    ChatRoom chatRoomOpponentLeave = ChatRoom.create(post, buyer, seller);
-    chatRoomOpponentLeave.leaveChatRoom(seller);
+    ChatRoom chatRoomOpponentDelete = ChatRoom.create(post, buyer, seller);
+    chatRoomOpponentDelete.deleteChatRoom(seller);
 
     // 상대방만 존재하는 채팅방
-    ChatRoom chatRoomUserLeave = ChatRoom.create(post, buyer, seller);
-    chatRoomUserLeave.leaveChatRoom(buyer);
+    ChatRoom chatRoomUserDelete = ChatRoom.create(post, buyer, seller);
+    chatRoomUserDelete.deleteChatRoom(buyer);
 
-    List<ChatRoom> rooms = List.of(chatRoom, chatRoomOpponentLeave, chatRoomUserLeave);
+    List<ChatRoom> rooms = List.of(chatRoom, chatRoomOpponentDelete, chatRoomUserDelete);
 
     when(chatRoomRepository.findAllByBuyerOrSellerCreatedDateDesc(any())).thenReturn(rooms);
 
@@ -170,15 +170,15 @@ public class ChatRoomServiceTest {
     assertAll(
         () -> assertThat(responses.size()).isEqualTo(2),
         () -> assertThat(responses.get(0).getPostTitle()).isEqualTo(post.getTitle()),
-        () -> assertThat(responses.get(0).getPostBookThumbnail()).isEqualTo(
-            post.getBook().getBookThumbnail()),
+        () -> assertThat(responses.get(0).getPostImage()).isEqualTo(
+            post.getImages().getFirstImageUrl()),
         () -> assertThat(responses.get(0).getOpponentIdentity()).isEqualTo(seller.getIdentity()),
-        () -> assertThat(responses.get(0).isOpponentLeave()).isEqualTo(false),
+        () -> assertThat(responses.get(0).isOpponentDelete()).isEqualTo(false),
         () -> assertThat(responses.get(1).getPostTitle()).isEqualTo(post.getTitle()),
-        () -> assertThat(responses.get(1).getPostBookThumbnail()).isEqualTo(
-            post.getBook().getBookThumbnail()),
+        () -> assertThat(responses.get(1).getPostImage()).isEqualTo(
+            post.getImages().getFirstImageUrl()),
         () -> assertThat(responses.get(1).getOpponentIdentity()).isEqualTo(seller.getIdentity()),
-        () -> assertThat(responses.get(1).isOpponentLeave()).isEqualTo(true)
+        () -> assertThat(responses.get(1).isOpponentDelete()).isEqualTo(true)
     );
   }
 
@@ -198,8 +198,8 @@ public class ChatRoomServiceTest {
     verify(chatRoomRepository).findById(any());
     verify(chatRoomRepository, never()).deleteById(any());
     assertAll(
-        () -> assertThat(chatRoom.isBuyerLeave()).isEqualTo(true),
-        () -> assertThat(chatRoom.isSellerLeave()).isEqualTo(false)
+        () -> assertThat(chatRoom.isBuyerDelete()).isEqualTo(true),
+        () -> assertThat(chatRoom.isSellerDelete()).isEqualTo(false)
     );
   }
 
@@ -207,7 +207,7 @@ public class ChatRoomServiceTest {
   @Test
   void deleteChatRoom_both_success() {
     ChatRoom chatRoom = ChatRoom.create(post, buyer, seller);
-    chatRoom.leaveChatRoom(seller);
+    chatRoom.deleteChatRoom(seller);
 
     when(chatRoomRepository.findById(any())).thenReturn(of(chatRoom));
 
@@ -216,8 +216,8 @@ public class ChatRoomServiceTest {
     verify(chatRoomRepository).findById(any());
     verify(chatRoomRepository).deleteById(any());
     assertAll(
-        () -> assertThat(chatRoom.isBuyerLeave()).isEqualTo(true),
-        () -> assertThat(chatRoom.isSellerLeave()).isEqualTo(true)
+        () -> assertThat(chatRoom.isBuyerDelete()).isEqualTo(true),
+        () -> assertThat(chatRoom.isSellerDelete()).isEqualTo(true)
     );
   }
 }

@@ -37,11 +37,10 @@ public class ChatRoomDocumentations {
         fieldWithPath("roomId").type(JsonFieldType.NUMBER).description("채팅방 ID"),
         fieldWithPath("postId").type(JsonFieldType.NUMBER).description("게시글 ID"),
         fieldWithPath("postTitle").type(JsonFieldType.STRING).description("게시글 제목"),
-        fieldWithPath("postBookThumbnail").type(JsonFieldType.STRING).description(
-            "게시글 썸네일(네이버 책 API)"),
+        fieldWithPath("postImage").type(JsonFieldType.STRING).description("유저가 올린 이미지"),
         fieldWithPath("opponentIdentity").type(JsonFieldType.STRING).description("상대방 아이디"),
         fieldWithPath("opponentProfile").type(JsonFieldType.STRING).description("상대방 프로필 사진"),
-        fieldWithPath("opponentLeave").type(JsonFieldType.BOOLEAN).description("상대방이 나간 채팅방 여부")
+        fieldWithPath("opponentDelete").type(JsonFieldType.BOOLEAN).description("상대방이 나간 채팅방 여부")
     };
 
     return document("chatRoom/findChatRooms",

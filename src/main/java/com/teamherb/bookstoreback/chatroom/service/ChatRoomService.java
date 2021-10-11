@@ -30,12 +30,12 @@ public class ChatRoomService {
 
   private final SmtpMailSender smtpMailSender;
 
-  public Long createChatRoom(User user, ChatRoomCreateRequest request) {
+  public void createChatRoom(User user, ChatRoomCreateRequest request) {
     User seller = validateSellerIdAndGetSeller(request.getSellerId());
     Post post = validatePostIdAndGetPost(request.getPostId());
     post.validatePostStatus();
-    smtpMailSender.sendCreateChatRoomMailToSeller(post, seller, user);
-    return chatRoomRepository.save(ChatRoom.create(post, user, seller)).getId();
+    smtpMailSender.sendChatRoomCreationMail(post, seller, user);
+    chatRoomRepository.save(ChatRoom.create(post, user, seller));
   }
 
   public User validateSellerIdAndGetSeller(Long sellerId) {
@@ -58,17 +58,17 @@ public class ChatRoomService {
       User loginUser) {
     return rooms.stream()
         //내가 떠난 채팅방은 제외
-        .filter(room -> !room.checkIsLeaveUser(loginUser))
+        .filter(room -> !room.isLoginUserDelete(loginUser))
         //상대방이 나간 채팅방인지 확인
         .map(room -> ChatRoomResponse.of(room, room.getOpponent(loginUser),
-            room.checkIsLeaveOpponent(loginUser)))
+            room.isOpponentDelete(loginUser)))
         .collect(Collectors.toList());
   }
 
   public void deleteChatRoom(User user, Long roomId) {
     ChatRoom room = validateRoomIdAndGetRoom(roomId);
-    room.leaveChatRoom(user);
-    if (room.checkIsEmpty()) {
+    room.deleteChatRoom(user);
+    if (room.isEmpty()) {
       chatRoomRepository.deleteById(roomId);
     }
   }
