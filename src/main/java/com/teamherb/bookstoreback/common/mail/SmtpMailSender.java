@@ -22,7 +22,7 @@ public class SmtpMailSender {
   @Value("${spring.mail.username}")
   private String email;
 
-  public void sendCreateChatRoomMailToSeller(Post post, User seller, User buyer) {
+  public void sendChatRoomCreationMail(Post post, User seller, User buyer) {
     String subject = format("%s 게시글에 대한 새로운 채팅방이 개설되었습니다.", post.getTitle());
     String content = format("[%s]님이 [%s] 게시글에 대한 새로운 채팅방을 개설했습니다. 채팅을 확인해주세요.",
         buyer.getIdentity(), post.getTitle());

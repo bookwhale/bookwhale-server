@@ -25,8 +25,7 @@ public class ChatRoomAcceptanceStep {
     Assertions.assertAll(
         () -> assertThat(responses.size()).isEqualTo(1),
         () -> assertThat(responses.get(0).getPostTitle()).isEqualTo(request.getTitle()),
-        () -> assertThat(responses.get(0).getPostBookThumbnail()).isEqualTo(
-            request.getBookRequest().getBookThumbnail()),
+        () -> assertThat(responses.get(0).getPostImage()).isNotNull(),
         () -> assertThat(responses.get(0).getOpponentIdentity()).isEqualTo(opponent.getIdentity()),
         () -> assertThat(responses.get(0).getOpponentProfile()).isEqualTo(
             opponent.getProfileImage())
@@ -38,7 +37,7 @@ public class ChatRoomAcceptanceStep {
     Assertions.assertAll(
         () -> assertThat(loginUserRoomRes.size()).isEqualTo(0),
         () -> assertThat(sellerRoomRes.size()).isEqualTo(1),
-        () -> assertThat(sellerRoomRes.get(0).isOpponentLeave()).isEqualTo(true)
+        () -> assertThat(sellerRoomRes.get(0).isOpponentDelete()).isEqualTo(true)
     );
   }
 

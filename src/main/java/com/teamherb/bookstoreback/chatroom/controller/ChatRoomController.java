@@ -31,8 +31,8 @@ public class ChatRoomController {
   @PostMapping
   public ResponseEntity<Void> createChatRoom(@CurrentUser User user,
       @Valid @RequestBody ChatRoomCreateRequest request) throws URISyntaxException {
-    Long roomId = chatRoomService.createChatRoom(user, request);
-    return ResponseEntity.created(new URI(format("/api/chat/room/%d/messages", roomId))).build();
+    chatRoomService.createChatRoom(user, request);
+    return ResponseEntity.created(new URI("/api/chat/room")).build();
   }
 
   @GetMapping

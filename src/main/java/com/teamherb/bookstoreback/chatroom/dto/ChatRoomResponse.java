@@ -13,34 +13,33 @@ public class ChatRoomResponse {
   private Long roomId;
   private Long postId;
   private String postTitle;
-  private String postBookThumbnail;
+  private String postImage;
   private String opponentIdentity;
   private String opponentProfile;
-  private boolean isOpponentLeave;
+  private boolean isOpponentDelete;
 
   @Builder
-  public ChatRoomResponse(Long roomId, Long postId, String postTitle,
-      String postBookThumbnail, String opponentIdentity, String opponentProfile,
-      boolean isOpponentLeave) {
+  public ChatRoomResponse(Long roomId, Long postId, String postTitle, String postImage,
+      String opponentIdentity, String opponentProfile, boolean isOpponentDelete) {
     this.roomId = roomId;
     this.postId = postId;
     this.postTitle = postTitle;
-    this.postBookThumbnail = postBookThumbnail;
+    this.postImage = postImage;
     this.opponentIdentity = opponentIdentity;
     this.opponentProfile = opponentProfile;
-    this.isOpponentLeave = isOpponentLeave;
+    this.isOpponentDelete = isOpponentDelete;
   }
 
   public static ChatRoomResponse of(ChatRoom chatRoom, Opponent opponent,
-      boolean isOpponentLeave) {
+      boolean isOpponentDelete) {
     return ChatRoomResponse.builder()
         .roomId(chatRoom.getId())
         .postId(chatRoom.getPost().getId())
         .postTitle(chatRoom.getPost().getTitle())
-        .postBookThumbnail(chatRoom.getPost().getBook().getBookThumbnail())
+        .postImage(chatRoom.getPost().getImages().getFirstImageUrl())
         .opponentIdentity(opponent.getIdentity())
         .opponentProfile(opponent.getProfile())
-        .isOpponentLeave(isOpponentLeave)
+        .isOpponentDelete(isOpponentDelete)
         .build();
   }
 }

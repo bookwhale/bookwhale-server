@@ -40,22 +40,22 @@ public class ChatRoom {
   @JoinColumn(name = "seller_id")
   private User seller;
 
-  @Column(name = "buyer_leave_flag")
-  private boolean isBuyerLeave;
+  @Column(name = "buyer_delete_flag")
+  private boolean isBuyerDelete;
 
-  @Column(name = "seller_leave_flag")
-  private boolean isSellerLeave;
+  @Column(name = "seller_delete_flag")
+  private boolean isSellerDelete;
 
   @CreatedDate
   private LocalDateTime createdDate;
 
-  private ChatRoom(Post post, User buyer, User seller, boolean isBuyerLeave,
-      boolean isSellerLeave) {
+  private ChatRoom(Post post, User buyer, User seller, boolean isBuyerDelete,
+      boolean isSellerDelete) {
     this.post = post;
     this.buyer = buyer;
     this.seller = seller;
-    this.isBuyerLeave = isBuyerLeave;
-    this.isSellerLeave = isSellerLeave;
+    this.isBuyerDelete = isBuyerDelete;
+    this.isSellerDelete = isSellerDelete;
   }
 
   public static ChatRoom create(Post post, User buyer, User seller) {
@@ -70,32 +70,32 @@ public class ChatRoom {
     return this.seller.getId().equals(loginUser.getId());
   }
 
-  public void leaveChatRoom(User loginUser) {
+  public void deleteChatRoom(User loginUser) {
     if (isLoginUserEqualBuyer(loginUser)) {
-      this.isBuyerLeave = true;
+      this.isBuyerDelete = true;
     } else if (isLoginUserEqualSeller(loginUser)) {
-      this.isSellerLeave = true;
+      this.isSellerDelete = true;
     } else {
       throw new CustomException(ErrorCode.USER_ACCESS_DENIED);
     }
   }
 
-  public boolean checkIsLeaveUser(User loginUser) {
+  public boolean isLoginUserDelete(User loginUser) {
     if (isLoginUserEqualBuyer(loginUser)) {
-      return isBuyerLeave;
+      return isBuyerDelete;
     }
-    return isSellerLeave;
+    return isSellerDelete;
   }
 
-  public boolean checkIsLeaveOpponent(User loginUser) {
+  public boolean isOpponentDelete(User loginUser) {
     if (isLoginUserEqualBuyer(loginUser)) {
-      return isSellerLeave;
+      return isSellerDelete;
     }
-    return isBuyerLeave;
+    return isBuyerDelete;
   }
 
-  public boolean checkIsEmpty() {
-    return this.isBuyerLeave && this.isSellerLeave;
+  public boolean isEmpty() {
+    return this.isBuyerDelete && this.isSellerDelete;
   }
 
   public Opponent getOpponent(User loginUser) {

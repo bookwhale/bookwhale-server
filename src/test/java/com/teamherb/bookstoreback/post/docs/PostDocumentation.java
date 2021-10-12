@@ -161,7 +161,8 @@ public class PostDocumentation {
             fieldWithPath("title").description("게시글 제목 (필수)"),
             fieldWithPath("price").description("게시글 가격 (필수)"),
             fieldWithPath("description").description("게시글 설명 (필수)"),
-            fieldWithPath("bookStatus").description("책 상태 [LOWER, MIDDLE, UPPER, BEST] (필수)")
+            fieldWithPath("bookStatus").description("책 상태 [LOWER, MIDDLE, UPPER, BEST] (필수)"),
+            fieldWithPath("deleteImgUrls").description("삭제할 이미지 URL")
         )
     );
   }

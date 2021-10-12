@@ -1,6 +1,5 @@
 package com.teamherb.bookstoreback.chatroom.controller;
 
-import static java.lang.String.format;
 import static java.util.List.of;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
@@ -40,15 +39,14 @@ public class ChatRoomControllerTest extends CommonApiTest {
         .postId(1L)
         .sellerId(1L)
         .build();
-    Long chatRoomId = 1L;
 
-    when(chatRoomService.createChatRoom(any(), any())).thenReturn(chatRoomId);
+    doNothing().when(chatRoomService).createChatRoom(any(), any());
 
     mockMvc.perform(post("/api/chat/room")
             .header(HttpHeaders.AUTHORIZATION, "accessToken")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request)))
-        .andExpect(header().string("location", format("/api/chat/room/%d/messages", chatRoomId)))
+        .andExpect(header().string("location", "/api/chat/room"))
         .andExpect(status().isCreated())
         .andDo(print())
         .andDo(ChatRoomDocumentations.createChatRoom());
@@ -62,10 +60,10 @@ public class ChatRoomControllerTest extends CommonApiTest {
         .roomId(1L)
         .postId(1L)
         .postTitle("토비의 스프링 팝니다.")
-        .postBookThumbnail("썸네일")
+        .postImage("이미지")
         .opponentIdentity("highright96")
         .opponentProfile("profile")
-        .isOpponentLeave(false)
+        .isOpponentDelete(false)
         .build();
 
     when(chatRoomService.findChatRooms(any())).thenReturn(of(response));

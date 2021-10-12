@@ -29,6 +29,6 @@ class SmtpMailSenderTest extends AcceptanceTest {
                 .bookPublisher("한국출판사")
                 .build())
         .build();
-    smtpMailSender.sendCreateChatRoomMailToSeller(post, user, anotherUser);
+    smtpMailSender.sendChatRoomCreationMail(post, user, anotherUser);
   }
 }
