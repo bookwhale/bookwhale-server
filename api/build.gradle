@@ -1,0 +1,46 @@
+apply plugin: 'org.asciidoctor.convert'
+
+dependencies {
+    //project
+    implementation project(path: ':common', configuration: 'default')
+    implementation project(path: ':core', configuration: 'default')
+    //spring
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    //jwt
+    implementation 'io.jsonwebtoken:jjwt:0.5.1'
+    //mail
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    //aws
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+    //test
+    testImplementation group: 'io.rest-assured', name: 'rest-assured', version: '4.3.3'
+    testImplementation 'org.springframework.security:spring-security-test'
+    //api docs
+    asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+}
+
+ext {
+    snippetsDir = file('build/generated-snippets')
+}
+
+test {
+    outputs.dir snippetsDir
+}
+
+asciidoctor {
+    inputs.dir snippetsDir
+    dependsOn test
+}
+
+task copyDocument(type: Copy) {
+    dependsOn asciidoctor
+    from file("build/asciidoc/html5/")
+    into file("src/main/resources/static/docs")
+}
+
+build {
+    dependsOn copyDocument
+}

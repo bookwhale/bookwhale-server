@@ -1,1 +1,6 @@
 rootProject.name = 'bookstore-back'
+include 'api'
+include 'core'
+include 'chat'
+include 'common'
+
