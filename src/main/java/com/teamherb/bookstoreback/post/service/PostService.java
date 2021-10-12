@@ -33,8 +33,8 @@ public class PostService {
 
   private final InterestRepository interestRepository;
 
-  public Long createPost(User user, PostRequest postRequest, List<MultipartFile> images) {
-    Post post = Post.create(user, postRequest);
+  public Long createPost(User user, PostRequest request, List<MultipartFile> images) {
+    Post post = Post.create(user, request.toEntity());
     saveAllImages(post, images);
     return postRepository.save(post).getId();
   }
@@ -66,7 +66,7 @@ public class PostService {
       List<MultipartFile> images) {
     Post post = validatePostIdAndGetPost(postId);
     post.validateIsMyPost(user);
-    post.update(request);
+    post.update(request.toEntity());
     updateImages(post, images, request.getDeleteImgUrls());
   }
 

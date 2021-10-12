@@ -200,7 +200,7 @@ public class UserServiceTest {
         .bookStatus("BEST")
         .price("5000")
         .build();
-    Post post = Post.create(user, postRequest);
+    Post post = Post.create(user, postRequest.toEntity());
     post.setCreatedDate(LocalDateTime.now());
 
     when(interestRepository.findAllByUser(any())).thenReturn(List.of(Interest.create(user, post)));
@@ -241,7 +241,7 @@ public class UserServiceTest {
         .bookStatus("BEST")
         .price("5000")
         .build();
-    Post post = Post.create(user, postRequest);
+    Post post = Post.create(user, postRequest.toEntity());
 
     when(postRepository.findById(any())).thenReturn(Optional.ofNullable(post));
     when(interestRepository.save(any())).thenReturn(Interest.create(user, post));
@@ -283,7 +283,7 @@ public class UserServiceTest {
         .bookStatus("BEST")
         .price("5000")
         .build();
-    Post post = Post.create(user, postRequest);
+    Post post = Post.create(user, postRequest.toEntity());
 
     when(interestRepository.findById(any())).thenReturn(Optional.of(Interest.create(user, post)));
     doNothing().when(interestRepository).delete(any());
@@ -314,7 +314,7 @@ public class UserServiceTest {
         .bookStatus("BEST")
         .price("5000")
         .build();
-    Post post = Post.create(user, postRequest);
+    Post post = Post.create(user, postRequest.toEntity());
     User otherUser = User.builder().id(2L).build();
 
     when(interestRepository.findById(any())).thenReturn(

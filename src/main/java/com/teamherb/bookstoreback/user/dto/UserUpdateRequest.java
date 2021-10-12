@@ -1,5 +1,6 @@
 package com.teamherb.bookstoreback.user.dto;
 
+import com.teamherb.bookstoreback.user.domain.User;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import lombok.Builder;
@@ -25,5 +26,13 @@ public class UserUpdateRequest {
     this.name = name;
     this.phoneNumber = phoneNumber;
     this.email = email;
+  }
+
+  public User toEntity() {
+    return User.builder()
+        .name(name)
+        .phoneNumber(phoneNumber)
+        .email(email)
+        .build();
   }
 }

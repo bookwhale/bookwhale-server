@@ -83,7 +83,7 @@ public class ChatRoomAcceptanceTest extends AcceptanceTest {
     ChatRoomAcceptanceStep.assertThatFindChatRooms(anotherRoomRes, postRequest, user);
   }
 
-  @DisplayName("상대방이 나간 채팅방은 isOpponentLeave 가 false 로 조회된다.")
+  @DisplayName("상대방이 나간 채팅방은 isOpponentDelete 가 false 로 조회된다.")
   @Test
   void findChatRooms_opponentDelete() {
     String loginUserJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
@@ -98,7 +98,7 @@ public class ChatRoomAcceptanceTest extends AcceptanceTest {
         .getList("", ChatRoomResponse.class);
     ChatRoomAcceptanceStep.requestToDeleteChatRoom(sellerJwt, anotherRoomRes.get(0).getRoomId());
 
-    //상대방이 나간 채팅방은 isOpponentLeave 가 false 로 조회된다.
+    //상대방이 나간 채팅방은 isOpponentDelete 가 false 로 조회된다.
     ExtractableResponse<Response> loginUserRes = ChatRoomAcceptanceStep.requestToFindChatRooms(
         loginUserJwt);
     List<ChatRoomResponse> loginUserRoomRes = loginUserRes.jsonPath()

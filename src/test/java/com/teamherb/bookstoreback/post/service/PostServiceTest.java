@@ -19,8 +19,6 @@ import com.teamherb.bookstoreback.Interest.domain.InterestRepository;
 import com.teamherb.bookstoreback.common.exception.CustomException;
 import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
 import com.teamherb.bookstoreback.common.upload.FileUploader;
-import com.teamherb.bookstoreback.image.domain.Image;
-import com.teamherb.bookstoreback.image.domain.ImageRepository;
 import com.teamherb.bookstoreback.post.domain.BookStatus;
 import com.teamherb.bookstoreback.post.domain.Post;
 import com.teamherb.bookstoreback.post.domain.PostRepository;
@@ -41,7 +39,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.verification.VerificationMode;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -99,7 +96,7 @@ public class PostServiceTest {
   @DisplayName("게시글을 등록한다.")
   @Test
   void createPost() {
-    Post post = Post.create(user, postRequest);
+    Post post = Post.create(user, postRequest.toEntity());
     List<String> images = of("image1", "image2");
 
     when(fileUploader.uploadFiles(any())).thenReturn(images);
@@ -115,7 +112,7 @@ public class PostServiceTest {
   @DisplayName("나의 게시글을 상세 조회한다. (게시글 이미지 2개)")
   @Test
   void findMyPost_success() {
-    Post post = Post.create(user, postRequest);
+    Post post = Post.create(user, postRequest.toEntity());
     List<String> images = of("image1", "image2");
     post.getImages().addAll(post, images);
     post.setCreatedDate(LocalDateTime.now());
@@ -160,7 +157,7 @@ public class PostServiceTest {
   @Test
   void findNotMyPost_success() {
     User otherUser = User.builder().id(2L).build();
-    Post post = Post.create(user, postRequest);
+    Post post = Post.create(user, postRequest.toEntity());
     post.setCreatedDate(LocalDateTime.now());
 
     when(postRepository.findPostWithSellerById(any())).thenReturn(ofNullable(post));
@@ -187,7 +184,7 @@ public class PostServiceTest {
   @DisplayName("게시글을 수정한다. (게시글 이미지 1개, 삭제하는 이미지 0개, 추가하는 이미지 1개 -> 총 2개)")
   @Test
   void updatePost_One_success() {
-    Post post = Post.create(user, postRequest);
+    Post post = Post.create(user, postRequest.toEntity());
     post.getImages().addAll(post, of("image1"));
 
     PostUpdateRequest request = PostUpdateRequest.builder()
@@ -221,7 +218,7 @@ public class PostServiceTest {
   @DisplayName("게시글을 수정한다. (게시글 이미지 3개, 삭제하는 이미지 1개, 추가하는 이미지 1개 -> 총 3개)")
   @Test
   void updatePost_Two_success() {
-    Post post = Post.create(user, postRequest);
+    Post post = Post.create(user, postRequest.toEntity());
     post.getImages().addAll(post, of("image1", "image2", "image3"));
 
     PostUpdateRequest request = PostUpdateRequest.builder()
@@ -257,7 +254,7 @@ public class PostServiceTest {
   @DisplayName("게시글을 수정한다. (게시글 이미지 3개, 삭제하는 이미지 2개, 추가하는 이미지 0개 -> 총 1개)")
   @Test
   void updatePost_Three_success() {
-    Post post = Post.create(user, postRequest);
+    Post post = Post.create(user, postRequest.toEntity());
     post.getImages().addAll(post, of("image1", "image2", "image3"));
 
     PostUpdateRequest request = PostUpdateRequest.builder()
@@ -302,7 +299,7 @@ public class PostServiceTest {
   @Test
   void updatePost_invalidUser_failure() {
     User otherUser = User.builder().id(2L).build();
-    Post post = Post.create(otherUser, postRequest);
+    Post post = Post.create(otherUser, postRequest.toEntity());
     PostUpdateRequest request = PostUpdateRequest.builder().build();
     List<MultipartFile> images = emptyList();
 
@@ -316,7 +313,7 @@ public class PostServiceTest {
   @DisplayName("게시글 상태를 변경한다.")
   @Test
   void updatePostStatus_success() {
-    Post post = Post.create(user, postRequest);
+    Post post = Post.create(user, postRequest.toEntity());
     PostStatusUpdateRequest request = new PostStatusUpdateRequest(PostStatus.SOLD_OUT.toString());
 
     when(postRepository.findById(any())).thenReturn(Optional.ofNullable(post));
@@ -342,7 +339,7 @@ public class PostServiceTest {
   @DisplayName("권한이 없는 유저가 게시글 상태를 변경하면 예외가 발생한다.")
   @Test
   void updatePostStatus_invalidUser_failure() {
-    Post post = Post.create(user, postRequest);
+    Post post = Post.create(user, postRequest.toEntity());
     PostStatusUpdateRequest request = new PostStatusUpdateRequest(PostStatus.SOLD_OUT.toString());
     User otherUser = User.builder().id(2L).build();
 

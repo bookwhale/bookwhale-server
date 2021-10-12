@@ -1,5 +1,6 @@
 package com.teamherb.bookstoreback.post.dto;
 
+import com.teamherb.bookstoreback.post.domain.Book;
 import javax.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;
@@ -45,5 +46,18 @@ public class BookRequest {
     this.bookListPrice = bookListPrice;
     this.bookPubDate = bookPubDate;
     this.bookSummary = bookSummary;
+  }
+
+  public Book toEntity() {
+    return Book.builder()
+        .bookIsbn(bookIsbn)
+        .bookTitle(bookTitle)
+        .bookAuthor(bookAuthor)
+        .bookPublisher(bookPublisher)
+        .bookThumbnail(bookThumbnail)
+        .bookListPrice(bookListPrice)
+        .bookPubDate(bookPubDate)
+        .bookSummary(bookSummary)
+        .build();
   }
 }

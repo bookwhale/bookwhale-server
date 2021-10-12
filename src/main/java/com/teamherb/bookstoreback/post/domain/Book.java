@@ -13,46 +13,46 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Book {
 
-    private String bookIsbn;
+  private String bookIsbn;
 
-    private String bookTitle;
+  private String bookTitle;
 
-    private String bookAuthor;
+  private String bookAuthor;
 
-    private String bookPublisher;
+  private String bookPublisher;
 
-    private String bookThumbnail;
+  private String bookThumbnail;
 
-    private String bookListPrice;
+  private String bookListPrice;
 
-    private String bookPubDate;
+  private String bookPubDate;
 
-    @Lob
-    private String bookSummary;
+  @Lob
+  private String bookSummary;
 
-    @Builder
-    public Book(String bookIsbn, String bookTitle, String bookAuthor, String bookPublisher,
-        String bookThumbnail, String bookListPrice, String bookPubDate, String bookSummary) {
-        this.bookIsbn = bookIsbn;
-        this.bookTitle = bookTitle;
-        this.bookAuthor = bookAuthor;
-        this.bookPublisher = bookPublisher;
-        this.bookThumbnail = bookThumbnail;
-        this.bookListPrice = bookListPrice;
-        this.bookPubDate = bookPubDate;
-        this.bookSummary = bookSummary;
-    }
+  @Builder
+  public Book(String bookIsbn, String bookTitle, String bookAuthor, String bookPublisher,
+      String bookThumbnail, String bookListPrice, String bookPubDate, String bookSummary) {
+    this.bookIsbn = bookIsbn;
+    this.bookTitle = bookTitle;
+    this.bookAuthor = bookAuthor;
+    this.bookPublisher = bookPublisher;
+    this.bookThumbnail = bookThumbnail;
+    this.bookListPrice = bookListPrice;
+    this.bookPubDate = bookPubDate;
+    this.bookSummary = bookSummary;
+  }
 
-    public static Book create(BookRequest req) {
-        return Book.builder()
-            .bookIsbn(req.getBookIsbn())
-            .bookTitle(req.getBookTitle())
-            .bookAuthor(req.getBookAuthor())
-            .bookPublisher(req.getBookPublisher())
-            .bookThumbnail(req.getBookThumbnail())
-            .bookListPrice(req.getBookListPrice())
-            .bookPubDate(req.getBookPubDate())
-            .bookSummary(req.getBookSummary())
-            .build();
-    }
+  public static Book create(Book book) {
+    return Book.builder()
+        .bookIsbn(book.getBookIsbn())
+        .bookTitle(book.getBookTitle())
+        .bookAuthor(book.getBookAuthor())
+        .bookPublisher(book.getBookPublisher())
+        .bookThumbnail(book.getBookThumbnail())
+        .bookListPrice(book.getBookListPrice())
+        .bookPubDate(book.getBookPubDate())
+        .bookSummary(book.getBookSummary())
+        .build();
+  }
 }

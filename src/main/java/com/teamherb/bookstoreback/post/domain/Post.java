@@ -7,8 +7,6 @@ import com.teamherb.bookstoreback.common.domain.BaseEntity;
 import com.teamherb.bookstoreback.common.exception.CustomException;
 import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
 import com.teamherb.bookstoreback.image.domain.Images;
-import com.teamherb.bookstoreback.post.dto.PostRequest;
-import com.teamherb.bookstoreback.post.dto.PostUpdateRequest;
 import com.teamherb.bookstoreback.user.domain.User;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -73,23 +71,23 @@ public class Post extends BaseEntity {
     this.book = book;
   }
 
-  public static Post create(User loginUser, PostRequest req) {
+  public static Post create(User loginUser, Post post) {
     return Post.builder()
         .seller(loginUser)
-        .title(req.getTitle())
-        .price(req.getPrice())
+        .title(post.getTitle())
+        .price(post.getPrice())
         .postStatus(PostStatus.SALE)
-        .bookStatus(BookStatus.valueOf(req.getBookStatus()))
-        .description(req.getDescription())
-        .book(Book.create(req.getBookRequest()))
+        .bookStatus(post.getBookStatus())
+        .description(post.getDescription())
+        .book(Book.create(post.getBook()))
         .build();
   }
 
-  public void update(PostUpdateRequest req) {
-    this.title = req.getTitle();
-    this.price = req.getPrice();
-    this.description = req.getDescription();
-    this.bookStatus = BookStatus.valueOf(req.getBookStatus());
+  public void update(Post post) {
+    this.title = post.getTitle();
+    this.price = post.getPrice();
+    this.description = post.getDescription();
+    this.bookStatus = post.getBookStatus();
   }
 
   public void validateIsMyPost(User loginUser) {

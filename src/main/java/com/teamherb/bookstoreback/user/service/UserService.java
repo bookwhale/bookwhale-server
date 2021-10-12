@@ -40,7 +40,7 @@ public class UserService {
 
   public void createUser(SignUpRequest request) {
     validateIsDuplicateIdentity(request);
-    User user = User.create(request, passwordEncoder.encode(request.getPassword()));
+    User user = User.create(request.toEntity(), passwordEncoder.encode(request.getPassword()));
     userRepository.save(user);
   }
 
@@ -51,7 +51,7 @@ public class UserService {
   }
 
   public void updateMyInfo(User user, UserUpdateRequest request) {
-    user.update(request);
+    user.update(request.toEntity());
     userRepository.save(user);
   }
 

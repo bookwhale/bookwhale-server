@@ -17,11 +17,11 @@ import com.teamherb.bookstoreback.chatroom.dto.ChatRoomResponse;
 import com.teamherb.bookstoreback.common.exception.CustomException;
 import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
 import com.teamherb.bookstoreback.common.mail.SmtpMailSender;
+import com.teamherb.bookstoreback.post.domain.Book;
+import com.teamherb.bookstoreback.post.domain.BookStatus;
 import com.teamherb.bookstoreback.post.domain.Post;
 import com.teamherb.bookstoreback.post.domain.PostRepository;
 import com.teamherb.bookstoreback.post.domain.PostStatus;
-import com.teamherb.bookstoreback.post.dto.BookRequest;
-import com.teamherb.bookstoreback.post.dto.PostRequest;
 import com.teamherb.bookstoreback.user.domain.User;
 import com.teamherb.bookstoreback.user.domain.UserRepository;
 import java.util.List;
@@ -77,22 +77,26 @@ public class ChatRoomServiceTest {
         .phoneNumber("010-5678-5678")
         .build();
 
-    post = Post.create(seller, PostRequest.builder()
-        .bookRequest(BookRequest.builder()
-            .bookSummary("설명")
-            .bookPubDate("2021-12-12")
-            .bookIsbn("12398128745902")
-            .bookListPrice("10000")
-            .bookThumbnail("썸네일")
-            .bookTitle("토비의 스프링")
-            .bookPublisher("출판사")
-            .bookAuthor("이일민")
-            .build())
-        .title("책 팝니다~")
-        .description("쿨 거래시 1000원 할인해드려요~")
-        .bookStatus("BEST")
-        .price("5000")
-        .build());
+    ;
+
+    post = Post.create(seller,
+        Post.builder()
+            .book(Book.builder()
+                .bookSummary("설명")
+                .bookPubDate("2021-12-12")
+                .bookIsbn("12398128745902")
+                .bookListPrice("10000")
+                .bookThumbnail("썸네일")
+                .bookTitle("토비의 스프링")
+                .bookPublisher("출판사")
+                .bookAuthor("이일민")
+                .build())
+            .title("책 팝니다~")
+            .description("쿨 거래시 1000원 할인해드려요~")
+            .bookStatus(BookStatus.valueOf("BEST"))
+            .price("5000")
+            .build()
+    );
   }
 
   @DisplayName("거래 요청 메일을 보낸 후 채팅방을 생성한다.")

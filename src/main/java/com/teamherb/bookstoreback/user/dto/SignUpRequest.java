@@ -1,5 +1,7 @@
 package com.teamherb.bookstoreback.user.dto;
 
+import com.teamherb.bookstoreback.user.domain.Role;
+import com.teamherb.bookstoreback.user.domain.User;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import lombok.Builder;
@@ -34,5 +36,15 @@ public class SignUpRequest {
     this.name = name;
     this.email = email;
     this.phoneNumber = phoneNumber;
+  }
+
+  public User toEntity() {
+    return User.builder()
+        .identity(identity)
+        .email(email)
+        .name(name)
+        .phoneNumber(phoneNumber)
+        .role(Role.ROLE_USER)
+        .build();
   }
 }

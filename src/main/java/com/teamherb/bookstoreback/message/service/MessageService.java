@@ -33,7 +33,7 @@ public class MessageService {
   }
 
   public MessageResponse saveMessage(MessageRequest request) {
-    Message message = messageRepository.save(Message.create(request));
+    Message message = messageRepository.save(Message.create(request.toEntity()));
     return MessageResponse.of(message);
   }
 }

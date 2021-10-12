@@ -1,7 +1,10 @@
 package com.teamherb.bookstoreback.post.dto;
 
 import com.teamherb.bookstoreback.common.validator.ValueOfEnum;
+import com.teamherb.bookstoreback.post.domain.Book;
 import com.teamherb.bookstoreback.post.domain.BookStatus;
+import com.teamherb.bookstoreback.post.domain.Post;
+import com.teamherb.bookstoreback.post.domain.PostStatus;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import lombok.Builder;
@@ -36,5 +39,16 @@ public class PostRequest {
     this.price = price;
     this.description = description;
     this.bookStatus = bookStatus;
+  }
+
+  public Post toEntity() {
+    return Post.builder()
+        .title(title)
+        .price(price)
+        .postStatus(PostStatus.SALE)
+        .bookStatus(BookStatus.valueOf(bookStatus))
+        .description(description)
+        .book(Book.create(bookRequest.toEntity()))
+        .build();
   }
 }

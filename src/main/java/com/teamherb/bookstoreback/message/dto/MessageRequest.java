@@ -1,5 +1,6 @@
 package com.teamherb.bookstoreback.message.dto;
 
+import com.teamherb.bookstoreback.message.domain.Message;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,5 +18,14 @@ public class MessageRequest {
     this.senderId = senderId;
     this.senderIdentity = senderIdentity;
     this.content = content;
+  }
+
+  public Message toEntity() {
+    return Message.builder()
+        .roomId(roomId)
+        .senderId(senderId)
+        .senderIdentity(senderIdentity)
+        .content(content)
+        .build();
   }
 }

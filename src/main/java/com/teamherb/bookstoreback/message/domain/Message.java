@@ -1,6 +1,5 @@
 package com.teamherb.bookstoreback.message.domain;
 
-import com.teamherb.bookstoreback.message.dto.MessageRequest;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -54,12 +53,12 @@ public class Message {
         .build();
   }
 
-  public static Message create(MessageRequest request) {
+  public static Message create(Message message) {
     return Message.builder()
-        .roomId(request.getRoomId())
-        .senderId(request.getSenderId())
-        .senderIdentity(request.getSenderIdentity())
-        .content(request.getContent())
+        .roomId(message.getRoomId())
+        .senderId(message.getSenderId())
+        .senderIdentity(message.getSenderIdentity())
+        .content(message.getContent())
         .build();
   }
 }
