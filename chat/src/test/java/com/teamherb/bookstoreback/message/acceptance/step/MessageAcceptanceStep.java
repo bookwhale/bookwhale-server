@@ -3,14 +3,13 @@ package com.teamherb.bookstoreback.message.acceptance.step;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.teamherb.bookstoreback.common.Pagination;
+import com.teamherb.bookstoreback.dto.Pagination;
 import com.teamherb.bookstoreback.message.domain.Message;
 import com.teamherb.bookstoreback.message.dto.MessageResponse;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
-import org.springframework.http.HttpHeaders;
 
 public class MessageAcceptanceStep {
 
@@ -31,10 +30,9 @@ public class MessageAcceptanceStep {
     );
   }
 
-  public static ExtractableResponse<Response> requestToFindMessages(String jwt, Long roomId,
+  public static ExtractableResponse<Response> requestToFindMessages(Long roomId,
       Pagination pagination) {
     return given().log().all()
-        .header(HttpHeaders.AUTHORIZATION, jwt)
         .when()
         .get(String.format("/api/chat/room/%d/messages?page=%d&size=%d", roomId,
             pagination.getPage(), pagination.getSize()))
@@ -42,9 +40,8 @@ public class MessageAcceptanceStep {
         .extract();
   }
 
-  public static ExtractableResponse<Response> requestToFindLastMessage(String jwt, Long roomId) {
+  public static ExtractableResponse<Response> requestToFindLastMessage(Long roomId) {
     return given().log().all()
-        .header(HttpHeaders.AUTHORIZATION, jwt)
         .when()
         .get(String.format("/api/chat/room/%d/last-message", roomId))
         .then().log().all()

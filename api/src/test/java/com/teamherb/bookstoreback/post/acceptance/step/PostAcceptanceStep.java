@@ -3,7 +3,7 @@ package com.teamherb.bookstoreback.post.acceptance.step;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.teamherb.bookstoreback.common.Pagination;
+import com.teamherb.bookstoreback.dto.Pagination;
 import com.teamherb.bookstoreback.post.domain.BookStatus;
 import com.teamherb.bookstoreback.post.domain.PostStatus;
 import com.teamherb.bookstoreback.post.dto.BookResponse;

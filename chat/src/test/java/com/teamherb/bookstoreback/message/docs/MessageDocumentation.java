@@ -1,22 +1,6 @@
 package com.teamherb.bookstoreback.message.docs;
 
-import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
-import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
-
-import org.springframework.http.HttpHeaders;
-import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
-import org.springframework.restdocs.payload.FieldDescriptor;
-import org.springframework.restdocs.payload.JsonFieldType;
-
+/*
 public class MessageDocumentation {
 
   public static RestDocumentationResultHandler findMessages() {
@@ -65,3 +49,4 @@ public class MessageDocumentation {
     );
   }
 }
+*/

@@ -1,4 +1,4 @@
-package com.teamherb.bookstoreback.common;
+package com.teamherb.bookstoreback.common.mail;
 
 import com.teamherb.bookstoreback.common.acceptance.AcceptanceTest;
 import com.teamherb.bookstoreback.common.mail.SmtpMailSender;

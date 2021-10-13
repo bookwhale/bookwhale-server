@@ -11,9 +11,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.teamherb.bookstoreback.common.Pagination;
 import com.teamherb.bookstoreback.common.controller.CommonApiTest;
 import com.teamherb.bookstoreback.common.security.WithMockCustomUser;
+import com.teamherb.bookstoreback.dto.Pagination;
 import com.teamherb.bookstoreback.post.docs.PostDocumentation;
 import com.teamherb.bookstoreback.post.domain.BookStatus;
 import com.teamherb.bookstoreback.post.domain.PostStatus;

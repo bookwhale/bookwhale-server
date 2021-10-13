@@ -3,6 +3,7 @@ package com.teamherb.bookstoreback.common.acceptance;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.teamherb.bookstoreback.common.DatabaseCleanUp;
 import com.teamherb.bookstoreback.user.domain.Role;
 import com.teamherb.bookstoreback.user.domain.User;
 import com.teamherb.bookstoreback.user.domain.UserRepository;

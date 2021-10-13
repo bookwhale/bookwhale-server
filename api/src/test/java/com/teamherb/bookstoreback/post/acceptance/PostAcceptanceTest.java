@@ -2,11 +2,10 @@ package com.teamherb.bookstoreback.post.acceptance;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.teamherb.bookstoreback.user.dto.InterestRequest;
-import com.teamherb.bookstoreback.common.Pagination;
 import com.teamherb.bookstoreback.common.acceptance.AcceptanceTest;
 import com.teamherb.bookstoreback.common.acceptance.AcceptanceUtils;
 import com.teamherb.bookstoreback.common.acceptance.step.AcceptanceStep;
+import com.teamherb.bookstoreback.dto.Pagination;
 import com.teamherb.bookstoreback.post.acceptance.step.PostAcceptanceStep;
 import com.teamherb.bookstoreback.post.domain.BookStatus;
 import com.teamherb.bookstoreback.post.domain.PostStatus;
@@ -20,6 +19,7 @@ import com.teamherb.bookstoreback.post.dto.PostUpdateRequest;
 import com.teamherb.bookstoreback.post.dto.PostsRequest;
 import com.teamherb.bookstoreback.post.dto.PostsResponse;
 import com.teamherb.bookstoreback.user.acceptance.step.UserAcceptanceStep;
+import com.teamherb.bookstoreback.user.dto.InterestRequest;
 import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -184,7 +184,8 @@ public class PostAcceptanceTest extends AcceptanceTest {
   void updatePost() {
     String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
 
-    Long postId = AcceptanceUtils.getIdFromResponse(PostAcceptanceStep.requestToCreatePost(jwt, postRequest));
+    Long postId = AcceptanceUtils.getIdFromResponse(
+        PostAcceptanceStep.requestToCreatePost(jwt, postRequest));
     String deleteImgUrl = PostAcceptanceStep.requestToFindPost(jwt, postId).jsonPath()
         .getObject(".", PostResponse.class).getImages().get(0);
 
@@ -204,7 +205,8 @@ public class PostAcceptanceTest extends AcceptanceTest {
         .build();
     List<MultiPartSpecification> images = List.of(image);
 
-    ExtractableResponse<Response> response = PostAcceptanceStep.requestToUpdatePost(jwt, postId, updateRequest, images);
+    ExtractableResponse<Response> response = PostAcceptanceStep.requestToUpdatePost(jwt, postId,
+        updateRequest, images);
 
     PostResponse postResponse = PostAcceptanceStep.requestToFindPost(jwt, postId).jsonPath()
         .getObject(".", PostResponse.class);

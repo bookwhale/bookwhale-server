@@ -15,7 +15,7 @@ import com.teamherb.bookstoreback.chatroom.domain.ChatRoomRepository;
 import com.teamherb.bookstoreback.chatroom.dto.ChatRoomCreateRequest;
 import com.teamherb.bookstoreback.chatroom.dto.ChatRoomResponse;
 import com.teamherb.bookstoreback.common.exception.CustomException;
-import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
+import com.teamherb.bookstoreback.common.exception.ErrorCode;
 import com.teamherb.bookstoreback.common.mail.SmtpMailSender;
 import com.teamherb.bookstoreback.post.domain.Book;
 import com.teamherb.bookstoreback.post.domain.BookStatus;

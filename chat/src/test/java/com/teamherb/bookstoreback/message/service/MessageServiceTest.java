@@ -7,7 +7,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.teamherb.bookstoreback.common.Pagination;
+import com.teamherb.bookstoreback.dto.Pagination;
 import com.teamherb.bookstoreback.message.domain.Message;
 import com.teamherb.bookstoreback.message.domain.MessageRepository;
 import com.teamherb.bookstoreback.message.dto.MessageResponse;

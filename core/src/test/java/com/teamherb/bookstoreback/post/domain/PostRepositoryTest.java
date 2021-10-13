@@ -4,7 +4,6 @@ import static java.util.List.of;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.teamherb.bookstoreback.common.TestConfig;
-import com.teamherb.bookstoreback.post.dto.PostsRequest;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -73,13 +72,9 @@ public class PostRepositoryTest {
   @DisplayName("책 제목에 스프링이 포함된 게시글들을 오름차순으로 찾는다.")
   @Test
   void findAllOrderByCreatedDateDesc_bookTitle() {
-    PostsRequest postsRequest = PostsRequest.builder()
-        .title("스프링")
-        .build();
     PageRequest pageRequest = PageRequest.of(0, 10);
-
-    List<Post> res = postRepository.findAllOrderByCreatedDateDesc(postsRequest,
-        pageRequest).getContent();
+    List<Post> res = postRepository.findAllOrderByCreatedDateDesc("스프링", null, null, pageRequest)
+        .getContent();
 
     Assertions.assertAll(
         () -> assertThat(res.size()).isEqualTo(2),
@@ -93,13 +88,9 @@ public class PostRepositoryTest {
   @DisplayName("책 저자에 남상우가 포함된 게시글들을 오름차순으로 찾는다.")
   @Test
   void findAllOrderByCreatedDateDesc_bookAuthor() {
-    PostsRequest postsRequest = PostsRequest.builder()
-        .author("남상우")
-        .build();
     PageRequest pageRequest = PageRequest.of(0, 10);
-
-    List<Post> res = postRepository.findAllOrderByCreatedDateDesc(postsRequest,
-        pageRequest).getContent();
+    List<Post> res = postRepository.findAllOrderByCreatedDateDesc(null, "남상우", null, pageRequest)
+        .getContent();
 
     Assertions.assertAll(
         () -> assertThat(res.size()).isEqualTo(2),
@@ -113,13 +104,9 @@ public class PostRepositoryTest {
   @DisplayName("책 출판사에 허브가 포함된 게시글들을 오름차순으로 찾는다.")
   @Test
   void findAllOrderByCreatedDateDesc_bookPublisher() {
-    PostsRequest postsRequest = PostsRequest.builder()
-        .publisher("허브")
-        .build();
     PageRequest pageRequest = PageRequest.of(0, 10);
-
-    List<Post> res = postRepository.findAllOrderByCreatedDateDesc(postsRequest,
-        pageRequest).getContent();
+    List<Post> res = postRepository.findAllOrderByCreatedDateDesc(null, null, "허브", pageRequest)
+        .getContent();
 
     Assertions.assertAll(
         () -> assertThat(res.size()).isEqualTo(2),
@@ -133,13 +120,9 @@ public class PostRepositoryTest {
   @DisplayName("페이징이 옳바르게 작동하는지 확인한다.")
   @Test
   void findAllOrderByCreatedDateDesc_paging() {
-    PostsRequest postsRequest = PostsRequest.builder()
-        .author("남상우")
-        .build();
     PageRequest pageRequest = PageRequest.of(0, 2);
-
-    List<Post> res = postRepository.findAllOrderByCreatedDateDesc(postsRequest,
-        pageRequest).getContent();
+    List<Post> res = postRepository.findAllOrderByCreatedDateDesc(null, "남상우", null, pageRequest)
+        .getContent();
 
     Assertions.assertAll(
         () -> assertThat(res.size()).isEqualTo(2),

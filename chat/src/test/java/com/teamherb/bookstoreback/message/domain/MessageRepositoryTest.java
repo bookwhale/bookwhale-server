@@ -2,7 +2,7 @@ package com.teamherb.bookstoreback.message.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.teamherb.bookstoreback.common.TestConfig;
+import com.teamherb.bookstoreback.message.config.TestConfig;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;

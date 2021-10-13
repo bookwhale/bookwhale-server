@@ -1,26 +1,6 @@
 package com.teamherb.bookstoreback.message.controller;
 
-import static java.util.List.of;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import com.teamherb.bookstoreback.common.Pagination;
-import com.teamherb.bookstoreback.common.controller.CommonApiTest;
-import com.teamherb.bookstoreback.common.security.WithMockCustomUser;
-import com.teamherb.bookstoreback.message.docs.MessageDocumentation;
-import com.teamherb.bookstoreback.message.dto.MessageResponse;
-import com.teamherb.bookstoreback.message.service.MessageService;
-import java.time.LocalDateTime;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpHeaders;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
-
+/*
 @DisplayName("메세지 단위 테스트(Controller)")
 @WebMvcTest(controllers = MessageController.class)
 public class MessageControllerTest extends CommonApiTest {
@@ -77,3 +57,4 @@ public class MessageControllerTest extends CommonApiTest {
         .andDo(MessageDocumentation.findLastMessage());
   }
 }
+*/

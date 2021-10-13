@@ -4,11 +4,16 @@ plugins {
     id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
     id "org.asciidoctor.convert" version "1.5.9.2"
     id 'java'
+    id 'application'
 }
 
 group = 'com.teamherb'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
+
+application{
+    mainClass = 'com.teamherb.bookstoreback.ApiApplication'
+}
 
 subprojects {
     apply plugin: 'java'
@@ -41,4 +46,12 @@ subprojects {
     test {
         useJUnitPlatform()
     }
+}
+
+task cleanRootSrc(type: Delete) {
+    delete 'src'
+}
+
+build {
+    dependsOn cleanRootSrc
 }

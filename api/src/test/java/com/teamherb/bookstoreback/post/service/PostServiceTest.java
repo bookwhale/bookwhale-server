@@ -17,7 +17,7 @@ import static org.mockito.Mockito.when;
 
 import com.teamherb.bookstoreback.Interest.domain.InterestRepository;
 import com.teamherb.bookstoreback.common.exception.CustomException;
-import com.teamherb.bookstoreback.common.exception.dto.ErrorCode;
+import com.teamherb.bookstoreback.common.exception.ErrorCode;
 import com.teamherb.bookstoreback.common.upload.FileUploader;
 import com.teamherb.bookstoreback.post.domain.BookStatus;
 import com.teamherb.bookstoreback.post.domain.Post;
