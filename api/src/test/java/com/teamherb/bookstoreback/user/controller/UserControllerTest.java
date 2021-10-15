@@ -12,13 +12,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.teamherb.bookstoreback.user.dto.InterestRequest;
-import com.teamherb.bookstoreback.user.dto.InterestResponse;
 import com.teamherb.bookstoreback.common.controller.CommonApiTest;
 import com.teamherb.bookstoreback.common.security.WithMockCustomUser;
 import com.teamherb.bookstoreback.post.domain.PostStatus;
 import com.teamherb.bookstoreback.post.dto.PostsResponse;
 import com.teamherb.bookstoreback.user.docs.UserDocumentation;
+import com.teamherb.bookstoreback.user.dto.InterestRequest;
+import com.teamherb.bookstoreback.user.dto.InterestResponse;
 import com.teamherb.bookstoreback.user.dto.LoginRequest;
 import com.teamherb.bookstoreback.user.dto.PasswordUpdateRequest;
 import com.teamherb.bookstoreback.user.dto.ProfileResponse;
@@ -76,22 +76,6 @@ public class UserControllerTest extends CommonApiTest {
         .andExpect(status().isUnauthorized())
         .andDo(print())
         .andDo(UserDocumentation.userLogin());
-  }
-
-  @WithMockCustomUser
-  @DisplayName("내 정보를 조회한다.")
-  @Test
-  void getMyInfo() throws Exception {
-    mockMvc.perform(get("/api/user/me")
-            .header(HttpHeaders.AUTHORIZATION, "accessToken"))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("identity").value("highright96"))
-        .andExpect(jsonPath("name").value("남상우"))
-        .andExpect(jsonPath("email").value("highright96@email.com"))
-        .andExpect(jsonPath("phoneNumber").value("010-1234-1234"))
-        .andExpect(jsonPath("profileImage").value("profileImage"))
-        .andDo(print())
-        .andDo(UserDocumentation.userMe());
   }
 
   @WithMockCustomUser

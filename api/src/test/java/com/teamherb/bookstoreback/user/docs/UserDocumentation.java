@@ -50,6 +50,7 @@ public class UserDocumentation {
             headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
         ),
         responseFields(
+            fieldWithPath("userId").type(JsonFieldType.NUMBER).description("유저 id"),
             fieldWithPath("identity").type(JsonFieldType.STRING).description("아이디"),
             fieldWithPath("name").type(JsonFieldType.STRING).description("이름"),
             fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
