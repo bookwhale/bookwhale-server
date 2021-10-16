@@ -4,100 +4,54 @@ plugins {
     id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
     id "org.asciidoctor.convert" version "1.5.9.2"
     id 'java'
+    id 'application'
 }
 
 group = 'com.teamherb'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
-ext {
-    querydslDir = "$buildDir/generated/querydsl"
-    snippetsDir = file('build/generated-snippets')
+application{
+    mainClass = 'com.teamherb.bookstoreback.ApiApplication'
 }
 
-configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+
+    group = 'com.teamherb'
+    version = '0.0.1-SNAPSHOT'
+    sourceCompatibility = '11'
+
+    repositories {
+        mavenCentral()
+    }
+
+    configurations {
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
+
+    dependencies {
+        //lombok
+        compileOnly 'org.projectlombok:lombok'
+        implementation 'org.projectlombok:lombok:1.18.18'
+        annotationProcessor 'org.projectlombok:lombok'
+        //test
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    }
+
+    test {
+        useJUnitPlatform()
     }
 }
 
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    //common
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-
-    //jwt
-    implementation 'io.jsonwebtoken:jjwt:0.5.1'
-
-    //chat
-    implementation 'org.springframework.boot:spring-boot-starter-websocket'
-    implementation "org.webjars:stomp-websocket:2.3.3-1"
-
-    //mail
-    implementation 'org.springframework.boot:spring-boot-starter-mail'
-
-    //aws
-    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
-
-    //database
-    runtimeOnly 'com.h2database:h2'
-    runtimeOnly 'mysql:mysql-connector-java'
-    implementation 'com.querydsl:querydsl-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-
-    //lombok
-    compileOnly 'org.projectlombok:lombok'
-    implementation 'org.projectlombok:lombok:1.18.18'
-    annotationProcessor 'org.projectlombok:lombok'
-
-    //test
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.security:spring-security-test'
-    testImplementation group: 'io.rest-assured', name: 'rest-assured', version: '4.3.3'
-
-    //api docs
-    asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor'
-    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
-}
-
-test {
-    outputs.dir snippetsDir
-    useJUnitPlatform()
-}
-
-asciidoctor {
-    inputs.dir snippetsDir
-    dependsOn test
-}
-
-task copyDocument(type: Copy) {
-    dependsOn asciidoctor
-    from file("build/asciidoc/html5/")
-    into file("src/main/resources/static/docs")
+task cleanRootSrc(type: Delete) {
+    delete 'src'
 }
 
 build {
-    dependsOn copyDocument
-}
-
-querydsl {
-    jpa = true
-    querydslSourcesDir = querydslDir
-}
-
-sourceSets {
-    main.java.srcDir querydslDir
-}
-
-configurations {
-    querydsl.extendsFrom compileClasspath
-}
-
-compileQuerydsl {
-    options.annotationProcessorPath = configurations.querydsl
+    dependsOn cleanRootSrc
 }
