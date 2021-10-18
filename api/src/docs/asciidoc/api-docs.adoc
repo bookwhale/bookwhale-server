@@ -117,11 +117,3 @@ operation::chatRoom/findChatRooms[snippets='http-request,request-headers,http-re
 === 3.3 채팅방 삭제
 
 operation::chatRoom/deleteChatRoom[snippets='http-request,request-headers,path-parameters,http-response']
-
-=== 3.4 채팅방의 이전 메세지 조회
-
-operation::message/findMessages[snippets='http-request,request-headers,path-parameters,request-parameters,http-response,response-fields']
-
-=== 3.5 채팅방의 마지막 메세지 조회
-
-operation::message/findLastMessage[snippets='http-request,request-headers,path-parameters,http-response,response-fields']
