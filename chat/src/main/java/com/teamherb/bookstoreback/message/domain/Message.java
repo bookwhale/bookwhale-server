@@ -1,26 +1,21 @@
 package com.teamherb.bookstoreback.message.domain;
 
 import java.time.LocalDateTime;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Document
 public class Message {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "message_id")
-  private Long id;
+  private String id;
 
   private Long roomId;
 
@@ -34,7 +29,7 @@ public class Message {
   private LocalDateTime createdDate;
 
   @Builder
-  public Message(Long id, Long roomId, Long senderId, String senderIdentity, String content,
+  public Message(String id, Long roomId, Long senderId, String senderIdentity, String content,
       LocalDateTime createdDate) {
     this.id = id;
     this.roomId = roomId;

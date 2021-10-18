@@ -22,46 +22,25 @@ public class MessageAcceptanceTest extends AcceptanceTest {
   @Autowired
   MessageRepository messageRepository;
 
-  List<Message> messages;
-
-  Long roomId = 1L;
+  Long roomId = 2L;
 
   @BeforeEach
   @Override
   public void setUp() throws Exception {
     super.setUp();
-    messages = List.of(Message.builder()
-            .roomId(roomId)
-            .content("1번 메세지입니다.")
-            .createdDate(LocalDateTime.of(2021, 10, 18, 1, 1))
-            .build(),
-        Message.builder()
-            .roomId(roomId)
-            .content("2번 메세지입니다.")
-            .createdDate(LocalDateTime.of(2021, 10, 18, 1, 2))
-            .build(),
-        Message.builder()
-            .roomId(roomId)
-            .content("3번 메세지입니다.")
-            .createdDate(LocalDateTime.of(2021, 10, 18, 1, 3))
-            .build(),
-        Message.builder()
-            .roomId(roomId)
-            .content("4번 메세지입니다.")
-            .createdDate(LocalDateTime.of(2021, 10, 18, 1, 4))
-            .build(),
-        Message.builder()
-            .roomId(roomId)
-            .content("5번 메세지입니다.")
-            .createdDate(LocalDateTime.of(2021, 10, 18, 1, 5))
-            .build(),
-        Message.builder()
-            .roomId(roomId)
-            .content("6번 메세지입니다.")
-            .createdDate(LocalDateTime.of(2021, 10, 18, 1, 6))
-            .build()
-    );
-    messageRepository.saveAll(messages);
+    Message message1 = Message.builder()
+        .roomId(roomId)
+        .content("1번 메세지입니다.")
+        .createdDate(LocalDateTime.of(2021, 10, 18, 1, 1))
+        .build();
+    Message message2 = Message.builder()
+        .roomId(roomId)
+        .content("2번 메세지입니다.")
+        .createdDate(LocalDateTime.of(2021, 10, 18, 1, 2))
+        .build();
+
+    messageRepository.save(message1);
+    messageRepository.save(message2);
   }
 
   @DisplayName("채팅방의 이전 메세지들을 조회한다.")
@@ -74,7 +53,7 @@ public class MessageAcceptanceTest extends AcceptanceTest {
     List<MessageResponse> messageResponses = response.jsonPath().getList("", MessageResponse.class);
 
     AcceptanceStep.assertThatStatusIsOk(response);
-    MessageAcceptanceStep.assertThatFindMessages(messageResponses, messages, pagination);
+    MessageAcceptanceStep.assertThatFindMessages(messageResponses);
   }
 
   @DisplayName("채팅방의 마지막 메세지를 조회한다.")
@@ -84,7 +63,6 @@ public class MessageAcceptanceTest extends AcceptanceTest {
     MessageResponse messageResponse = res.jsonPath().getObject("", MessageResponse.class);
 
     AcceptanceStep.assertThatStatusIsOk(res);
-    Assertions.assertThat(messageResponse.getContent())
-        .isEqualTo(messages.get(messages.size() - 1).getContent());
+    Assertions.assertThat(messageResponse).isNotNull();
   }
 }

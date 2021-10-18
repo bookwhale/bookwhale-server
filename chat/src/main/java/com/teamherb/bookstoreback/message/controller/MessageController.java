@@ -27,13 +27,13 @@ public class MessageController {
 
   private final SimpMessagingTemplate messagingTemplate;
 
-  @GetMapping("/api/chat/room/{roomId}/messages")
+  @GetMapping("/api/message/{roomId}")
   public ResponseEntity<List<MessageResponse>> findMessages(@PathVariable Long roomId,
       @Valid Pagination pagination) {
     return ResponseEntity.ok(messageService.findMessages(roomId, pagination));
   }
 
-  @GetMapping("/api/chat/room/{roomId}/last-message")
+  @GetMapping("/api/message/{roomId}/last")
   public ResponseEntity<MessageResponse> findLastMessage(@PathVariable Long roomId) {
     return ResponseEntity.ok(messageService.findLastMessage(roomId));
   }
