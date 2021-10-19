@@ -48,7 +48,7 @@ public class ChatRoomAcceptanceStep {
         .contentType(MediaType.APPLICATION_JSON_VALUE)
         .body(request)
         .when()
-        .post("/api/chat/room")
+        .post("/api/room")
         .then().log().all()
         .extract();
   }
@@ -57,7 +57,7 @@ public class ChatRoomAcceptanceStep {
     return given().log().all()
         .header(HttpHeaders.AUTHORIZATION, jwt)
         .when()
-        .get("/api/chat/room")
+        .get("/api/room")
         .then().log().all()
         .extract();
   }
@@ -66,7 +66,7 @@ public class ChatRoomAcceptanceStep {
     return given().log().all()
         .header(HttpHeaders.AUTHORIZATION, jwt)
         .when()
-        .delete("/api/chat/room/{roomId}", roomId)
+        .delete("/api/room/{roomId}", roomId)
         .then().log().all()
         .extract();
   }

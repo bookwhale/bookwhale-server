@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/chat/room")
+@RequestMapping("/api/room")
 @RequiredArgsConstructor
 public class ChatRoomController {
 
@@ -30,7 +30,7 @@ public class ChatRoomController {
   public ResponseEntity<Void> createChatRoom(@CurrentUser User user,
       @Valid @RequestBody ChatRoomCreateRequest request) throws URISyntaxException {
     chatRoomService.createChatRoom(user, request);
-    return ResponseEntity.created(new URI("/api/chat/room")).build();
+    return ResponseEntity.created(new URI("/api/room")).build();
   }
 
   @GetMapping
