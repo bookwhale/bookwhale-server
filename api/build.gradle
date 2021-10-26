@@ -14,6 +14,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     //aws
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+    // log
+    implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16'
+    // util
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+    implementation 'com.google.guava:guava:31.0.1-jre'
     //test
     testImplementation group: 'io.rest-assured', name: 'rest-assured', version: '4.3.3'
     testImplementation 'org.springframework.security:spring-security-test'
