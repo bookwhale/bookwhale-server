@@ -9,7 +9,7 @@
         </layout>
     </appender>
 
-    <logger name="com.teamherb.bookstoreback" level="DEBUG" additivity="false">
+    <logger name="com.bookwhale" level="DEBUG" additivity="false">
         <appender-ref ref="CONSOLE"/>
     </logger>
 
@@ -21,7 +21,7 @@
     <logger name="jdbc.resultsettable" level="DEBUG"/>
     <logger name="jdbc.connection" level="WARN"/>
 
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="CONSOLE"/>
     </root>
 

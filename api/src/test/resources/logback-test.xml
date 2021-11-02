@@ -4,12 +4,12 @@
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <layout class="ch.qos.logback.classic.PatternLayout">
             <Pattern>
-                >>>>> 로그 출력 : %d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n
+               >>>  %d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n
             </Pattern>
         </layout>
     </appender>
 
-    <logger name="com.teamherb.bookstoreback" level="DEBUG" additivity="false">
+    <logger name="com.bookwhale" level="DEBUG" additivity="false">
         <appender-ref ref="CONSOLE"/>
     </logger>
 

@@ -12,7 +12,7 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
 application{
-    mainClass = 'com.teamherb.bookstoreback.ApiApplication'
+    mainClass = 'com.bookwhale.ApiApplication'
 }
 
 subprojects {
