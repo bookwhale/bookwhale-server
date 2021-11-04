@@ -1,27 +1,21 @@
-package com.bookwhale.Interest.domain;
+package com.bookwhale.like.domain;
 
 import com.bookwhale.common.domain.BaseEntity;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.post.domain.Post;
 import com.bookwhale.user.domain.User;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.*;
+
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-public class Interest extends BaseEntity {
+@Table(name = "interest")
+public class Like extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,22 +30,22 @@ public class Interest extends BaseEntity {
   @JoinColumn(name = "post_id")
   private Post post;
 
-  private Interest(User user, Post post) {
+  private Like(User user, Post post) {
     this.user = user;
     this.post = post;
   }
 
-  public static Interest create(User loginUser, Post post) {
-    return new Interest(loginUser, post);
+  public static Like create(User loginUser, Post post) {
+    return new Like(loginUser, post);
   }
 
-  public void validateIsMyInterest(User loginUser) {
-    if (!isMyInterest(loginUser)) {
+  public void validateIsMyLike(User loginUser) {
+    if (!isMyLike(loginUser)) {
       throw new CustomException(ErrorCode.USER_ACCESS_DENIED);
     }
   }
 
-  public boolean isMyInterest(User loginUser) {
+  public boolean isMyLike(User loginUser) {
     return this.getUser().getId().equals(loginUser.getId());
   }
 }

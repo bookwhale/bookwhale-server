@@ -23,8 +23,8 @@ public enum ErrorCode {
   INVALID_POST_ID(400, "P_001", "잘못된 게시글 ID 입니다."),
   NOT_EXIST_POST_ID(400, "P_002", "존재하지 않는 게시글 ID 입니다."),
 
-  INVALID_INTEREST_ID(400, "I_001", "잘못된 관심목록 ID 입니다."),
-  DUPLICATED_INTEREST(400, "I_002", "이미 관심목록에 등록된 게시글입니다."),
+  INVALID_LIKE_ID(400, "I_001", "잘못된 관심목록 ID 입니다."),
+  DUPLICATED_LIKE(400, "I_002", "이미 관심목록에 등록된 게시글입니다."),
 
   INVALID_CHATROOM_ID(400, "CHAT_001", "잘못된 채팅방 ID 입니다."),
   INVALID_SELLER_ID(400, "CHAT_002", "잘못된 판매자 ID 입니다."),
