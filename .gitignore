@@ -157,3 +157,7 @@ api-docs.html
 
 #image
 images\
+
+# OS X
+# -  Desktop Services Store 제외
+.DS_Store
