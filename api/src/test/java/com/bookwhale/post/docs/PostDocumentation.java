@@ -1,23 +1,16 @@
 package com.bookwhale.post.docs;
 
-import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
-import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestPartFields;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.restdocs.payload.JsonFieldType;
+
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 
 public class PostDocumentation {
 
@@ -108,7 +101,7 @@ public class PostDocumentation {
             fieldWithPath("price").type(JsonFieldType.STRING).description("게시글 가격"),
             fieldWithPath("description").type(JsonFieldType.STRING).description("게시글 설명"),
             fieldWithPath("myPost").type(JsonFieldType.BOOLEAN).description("나의 게시글 여부"),
-            fieldWithPath("myInterest").type(JsonFieldType.BOOLEAN).description("나의 관심목록 여부"),
+            fieldWithPath("myLike").type(JsonFieldType.BOOLEAN).description("나의 관심목록 여부"),
             fieldWithPath("images").type(JsonFieldType.ARRAY).description("이미지 URL"),
             fieldWithPath("bookStatus").type(JsonFieldType.STRING)
                 .description("책 상태 [LOWER, MIDDLE, UPPER, BEST]"),

@@ -1,31 +1,25 @@
 package com.bookwhale.user.acceptance;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.bookwhale.common.acceptance.AcceptanceTest;
 import com.bookwhale.common.acceptance.AcceptanceUtils;
 import com.bookwhale.common.acceptance.step.AcceptanceStep;
+import com.bookwhale.post.acceptance.step.PostAcceptanceStep;
 import com.bookwhale.post.dto.BookRequest;
 import com.bookwhale.post.dto.PostRequest;
 import com.bookwhale.post.dto.PostsResponse;
-import com.bookwhale.user.dto.InterestRequest;
-import com.bookwhale.user.dto.InterestResponse;
-import com.bookwhale.post.acceptance.step.PostAcceptanceStep;
 import com.bookwhale.user.acceptance.step.UserAcceptanceStep;
-import com.bookwhale.user.dto.LoginRequest;
-import com.bookwhale.user.dto.PasswordUpdateRequest;
-import com.bookwhale.user.dto.ProfileResponse;
-import com.bookwhale.user.dto.SignUpRequest;
-import com.bookwhale.user.dto.UserResponse;
-import com.bookwhale.user.dto.UserUpdateRequest;
+import com.bookwhale.user.dto.*;
 import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import io.restassured.specification.MultiPartSpecification;
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.MimeTypeUtils;
+
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("유저 통합 테스트")
 public class UserAcceptanceTest extends AcceptanceTest {
@@ -149,7 +143,7 @@ public class UserAcceptanceTest extends AcceptanceTest {
 
   @DisplayName("관심목록에 추가한다.")
   @Test
-  void addInterest() {
+  void addLike() {
     PostRequest postRequest = PostRequest.builder()
         .bookRequest(BookRequest.builder()
             .bookSummary("책 설명")
@@ -171,18 +165,18 @@ public class UserAcceptanceTest extends AcceptanceTest {
     Long postId = AcceptanceUtils.getIdFromResponse(
         PostAcceptanceStep.requestToCreatePost(jwt, postRequest));
 
-    ExtractableResponse<Response> response = UserAcceptanceStep.addInterest(jwt,
-        new InterestRequest(postId));
-    List<InterestResponse> interestResponses = UserAcceptanceStep.findInterests(jwt).jsonPath()
-        .getList(".", InterestResponse.class);
+    ExtractableResponse<Response> response = UserAcceptanceStep.addLike(jwt,
+        new LikeRequest(postId));
+    List<LikeResponse> likeResponses = UserAcceptanceStep.findLikes(jwt).jsonPath()
+        .getList(".", LikeResponse.class);
 
     AcceptanceStep.assertThatStatusIsOk(response);
-    UserAcceptanceStep.assertThatAddInterest(interestResponses, postRequest);
+    UserAcceptanceStep.assertThatAddLike(likeResponses, postRequest);
   }
 
   @DisplayName("관심목록에서 삭제한다.")
   @Test
-  void deleteInterest() {
+  void deleteLike() {
     PostRequest postRequest = PostRequest.builder()
         .bookRequest(BookRequest.builder()
             .bookSummary("책 설명")
@@ -203,17 +197,17 @@ public class UserAcceptanceTest extends AcceptanceTest {
     String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
     Long postId = AcceptanceUtils.getIdFromResponse(
         PostAcceptanceStep.requestToCreatePost(jwt, postRequest));
-    UserAcceptanceStep.addInterest(jwt, new InterestRequest(postId));
-    Long interestId = UserAcceptanceStep.findInterests(jwt).jsonPath()
-        .getList(".", InterestResponse.class).get(0).getInterestId();
+    UserAcceptanceStep.addLike(jwt, new LikeRequest(postId));
+    Long likeId = UserAcceptanceStep.findLikes(jwt).jsonPath()
+        .getList(".", LikeResponse.class).get(0).getLikeId();
 
-    ExtractableResponse<Response> response = UserAcceptanceStep.deleteInterest(
-        jwt, interestId);
-    List<InterestResponse> interestResponses = UserAcceptanceStep.findInterests(jwt).jsonPath()
-        .getList(".", InterestResponse.class);
+    ExtractableResponse<Response> response = UserAcceptanceStep.deleteLike(
+        jwt, likeId);
+    List<LikeResponse> likeResponses = UserAcceptanceStep.findLikes(jwt).jsonPath()
+        .getList(".", LikeResponse.class);
 
     AcceptanceStep.assertThatStatusIsOk(response);
-    assertThat(interestResponses.size()).isEqualTo(0);
+    assertThat(likeResponses.size()).isEqualTo(0);
   }
 
   @DisplayName("나의 게시글들을 조회한다.")

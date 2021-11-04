@@ -3,13 +3,13 @@ package com.bookwhale.post.dto;
 import com.bookwhale.image.domain.Image;
 import com.bookwhale.post.domain.Post;
 import com.bookwhale.utils.TimeUtils;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
@@ -27,14 +27,14 @@ public class PostResponse {
   private List<String> images;
   private BookResponse bookResponse;
   private boolean isMyPost;
-  private boolean isMyInterest;
+  private boolean isMyLike;
   private String beforeTime;
 
   @Builder
   public PostResponse(Long sellerId, String sellerIdentity, String sellerProfileImage,
       Long postId, String title, String price, String description,
       String bookStatus, String postStatus, List<String> images,
-      BookResponse bookResponse, boolean isMyPost, boolean isMyInterest, String beforeTime) {
+      BookResponse bookResponse, boolean isMyPost, boolean isMyLike, String beforeTime) {
     this.sellerId = sellerId;
     this.sellerIdentity = sellerIdentity;
     this.sellerProfileImage = sellerProfileImage;
@@ -47,12 +47,12 @@ public class PostResponse {
     this.images = images;
     this.bookResponse = bookResponse;
     this.isMyPost = isMyPost;
-    this.isMyInterest = isMyInterest;
+    this.isMyLike = isMyLike;
     this.beforeTime = beforeTime;
   }
 
   public static PostResponse of(Post post, boolean isMyPost,
-                                boolean isMyInterest) {
+                                boolean isMyLike) {
     BookResponse bookResponse = BookResponse.builder()
         .bookAuthor(post.getBook().getBookAuthor())
         .bookIsbn(post.getBook().getBookIsbn())
@@ -80,7 +80,7 @@ public class PostResponse {
         .postStatus(post.getPostStatus().getName())
         .images(imageResponse)
         .isMyPost(isMyPost)
-        .isMyInterest(isMyInterest)
+        .isMyLike(isMyLike)
         .beforeTime(TimeUtils.BeforeTime(LocalDateTime.now(), post.getCreatedDate()))
         .build();
   }

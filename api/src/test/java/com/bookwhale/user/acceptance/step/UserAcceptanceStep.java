@@ -1,28 +1,21 @@
 package com.bookwhale.user.acceptance.step;
 
-import static io.restassured.RestAssured.given;
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.bookwhale.post.domain.PostStatus;
 import com.bookwhale.post.dto.PostRequest;
 import com.bookwhale.post.dto.PostsResponse;
 import com.bookwhale.user.domain.User;
-import com.bookwhale.user.dto.InterestRequest;
-import com.bookwhale.user.dto.InterestResponse;
-import com.bookwhale.user.dto.LoginRequest;
-import com.bookwhale.user.dto.LoginResponse;
-import com.bookwhale.user.dto.PasswordUpdateRequest;
-import com.bookwhale.user.dto.ProfileResponse;
-import com.bookwhale.user.dto.SignUpRequest;
-import com.bookwhale.user.dto.UserResponse;
-import com.bookwhale.user.dto.UserUpdateRequest;
+import com.bookwhale.user.dto.*;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import io.restassured.specification.MultiPartSpecification;
-import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+
+import java.util.List;
+
+import static io.restassured.RestAssured.given;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class UserAcceptanceStep {
 
@@ -59,7 +52,7 @@ public class UserAcceptanceStep {
     assertThat(res.getProfileImage()).isNull();
   }
 
-  public static void assertThatAddInterest(List<InterestResponse> res, PostRequest req) {
+  public static void assertThatAddLike(List<LikeResponse> res, PostRequest req) {
     Assertions.assertAll(
         () -> assertThat(res.size()).isEqualTo(1),
         () -> org.assertj.core.api.Assertions.assertThat(res.get(0).getPostsResponse().getPostTitle()).isEqualTo(req.getTitle()),
@@ -168,31 +161,31 @@ public class UserAcceptanceStep {
         .extract();
   }
 
-  public static ExtractableResponse<Response> addInterest(String jwt, InterestRequest request) {
+  public static ExtractableResponse<Response> addLike(String jwt, LikeRequest request) {
     return given().log().all()
         .header(HttpHeaders.AUTHORIZATION, jwt)
         .contentType(MediaType.APPLICATION_JSON_VALUE)
         .body(request)
         .when()
-        .post("/api/user/me/interest")
+        .post("/api/user/me/like")
         .then().log().all()
         .extract();
   }
 
-  public static ExtractableResponse<Response> findInterests(String jwt) {
+  public static ExtractableResponse<Response> findLikes(String jwt) {
     return given().log().all()
         .header(HttpHeaders.AUTHORIZATION, jwt)
         .when()
-        .get("/api/user/me/interests")
+        .get("/api/user/me/likes")
         .then().log().all()
         .extract();
   }
 
-  public static ExtractableResponse<Response> deleteInterest(String jwt, Long interestId) {
+  public static ExtractableResponse<Response> deleteLike(String jwt, Long likeId) {
     return given().log().all()
         .header(HttpHeaders.AUTHORIZATION, jwt)
         .when()
-        .delete("/api/user/me/interest/{interestId}", interestId)
+        .delete("/api/user/me/like/{likeId}", likeId)
         .then().log().all()
         .extract();
   }

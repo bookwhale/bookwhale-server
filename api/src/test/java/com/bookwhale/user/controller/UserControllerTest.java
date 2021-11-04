@@ -14,12 +14,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.bookwhale.common.controller.CommonApiTest;
 import com.bookwhale.common.security.WithMockCustomUser;
+import com.bookwhale.user.service.LikeService;
 import com.bookwhale.post.domain.PostStatus;
 import com.bookwhale.post.dto.PostsResponse;
 import com.bookwhale.user.docs.UserDocumentation;
 import com.bookwhale.user.service.UserService;
-import com.bookwhale.user.dto.InterestRequest;
-import com.bookwhale.user.dto.InterestResponse;
+import com.bookwhale.user.dto.LikeRequest;
+import com.bookwhale.user.dto.LikeResponse;
 import com.bookwhale.user.dto.LoginRequest;
 import com.bookwhale.user.dto.PasswordUpdateRequest;
 import com.bookwhale.user.dto.ProfileResponse;
@@ -44,6 +45,9 @@ public class UserControllerTest extends CommonApiTest {
 
   @MockBean
   UserService userService;
+
+  @MockBean
+  LikeService likeService;
 
   @DisplayName("유저 회원가입을 한다.")
   @Test
@@ -168,9 +172,9 @@ public class UserControllerTest extends CommonApiTest {
   @WithMockCustomUser
   @DisplayName("관심목록을 조회한다.")
   @Test
-  void findInterests() throws Exception {
-    List<InterestResponse> responses = List.of(
-        new InterestResponse(1L,
+  void findLikes() throws Exception {
+    List<LikeResponse> responses = List.of(
+        new LikeResponse(1L,
             PostsResponse.builder()
                 .postId(1L)
                 .postImage("이미지")
@@ -185,44 +189,44 @@ public class UserControllerTest extends CommonApiTest {
         )
     );
 
-    when(userService.findInterests(any())).thenReturn(responses);
+    when(likeService.findAllLikes(any())).thenReturn(responses);
 
-    mockMvc.perform(get("/api/user/me/interests")
+    mockMvc.perform(get("/api/user/me/likes")
             .header(HttpHeaders.AUTHORIZATION, "accessToken"))
         .andExpect(status().isOk())
         .andDo(print())
-        .andDo(UserDocumentation.userFindInterests());
+        .andDo(UserDocumentation.userFindLikes());
   }
 
   @WithMockCustomUser
   @DisplayName("관심목록에 추가한다.")
   @Test
-  void addInterest() throws Exception {
-    InterestRequest interestRequest = new InterestRequest(1L);
+  void addLike() throws Exception {
+    LikeRequest likeRequest = new LikeRequest(1L);
 
-    doNothing().when(userService).addInterest(any(), any());
+    doNothing().when(likeService).addLike(any(), any());
 
-    mockMvc.perform(post("/api/user/me/interest")
+    mockMvc.perform(post("/api/user/me/like")
             .header(HttpHeaders.AUTHORIZATION, "accessToken")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(interestRequest)))
+            .content(objectMapper.writeValueAsString(likeRequest)))
         .andExpect(status().isOk())
         .andDo(print())
-        .andDo(UserDocumentation.userAddInterest());
+        .andDo(UserDocumentation.userAddLike());
   }
 
   @WithMockCustomUser
   @DisplayName("관심목록에서 삭제한다.")
   @Test
-  void deleteInterest() throws Exception {
-    doNothing().when(userService).deleteInterest(any(), any());
+  void deleteLike() throws Exception {
+    doNothing().when(likeService).deleteLike(any(), any());
 
     mockMvc.perform(
-            RestDocumentationRequestBuilders.delete("/api/user/me/interest/{interestId}", 1L)
+            RestDocumentationRequestBuilders.delete("/api/user/me/like/{likeId}", 1L)
                 .header(HttpHeaders.AUTHORIZATION, "accessToken"))
         .andExpect(status().isOk())
         .andDo(print())
-        .andDo(UserDocumentation.userDeleteInterest());
+        .andDo(UserDocumentation.userDeleteLike());
   }
 
   @WithMockCustomUser

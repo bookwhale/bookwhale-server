@@ -1,40 +1,15 @@
 package com.bookwhale.post.service;
 
-import static com.bookwhale.post.domain.BookStatus.valueOf;
-import static java.util.List.of;
-import static java.util.Optional.empty;
-import static java.util.Optional.ofNullable;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.util.Lists.emptyList;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.common.upload.FileUploader;
+import com.bookwhale.like.domain.likeRepository;
 import com.bookwhale.post.domain.BookStatus;
 import com.bookwhale.post.domain.Post;
 import com.bookwhale.post.domain.PostRepository;
 import com.bookwhale.post.domain.PostStatus;
+import com.bookwhale.post.dto.*;
 import com.bookwhale.user.domain.User;
-import com.bookwhale.Interest.domain.InterestRepository;
-import com.bookwhale.post.dto.BookRequest;
-import com.bookwhale.post.dto.PostRequest;
-import com.bookwhale.post.dto.PostResponse;
-import com.bookwhale.post.dto.PostStatusUpdateRequest;
-import com.bookwhale.post.dto.PostUpdateRequest;
-
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -44,6 +19,22 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import static java.util.List.of;
+import static java.util.Optional.empty;
+import static java.util.Optional.ofNullable;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.util.Lists.emptyList;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("게시글 단위 테스트(Service)")
@@ -56,7 +47,7 @@ public class PostServiceTest {
   FileUploader fileUploader;
 
   @Mock
-  InterestRepository interestRepository;
+  likeRepository likeRepository;
 
   PostService postService;
 
@@ -66,7 +57,7 @@ public class PostServiceTest {
 
   @BeforeEach
   void setUp() {
-    postService = new PostService(postRepository, fileUploader, interestRepository);
+    postService = new PostService(postRepository, fileUploader, likeRepository);
 
     BookRequest bookRequest = BookRequest.builder()
         .bookSummary("설명")
@@ -121,7 +112,7 @@ public class PostServiceTest {
     post.setCreatedDate(LocalDateTime.now());
 
     when(postRepository.findPostWithSellerById(any())).thenReturn(Optional.of(post));
-    when(interestRepository.existsByUserAndPost(any(), any())).thenReturn(true);
+    when(likeRepository.existsByUserAndPost(any(), any())).thenReturn(true);
 
     PostResponse response = postService.findPost(user, 1L);
 
@@ -133,7 +124,7 @@ public class PostServiceTest {
         () -> assertThat(response.getPostStatus()).isEqualTo(PostStatus.SALE.getName()),
         () -> assertThat(response.getTitle()).isEqualTo(postRequest.getTitle()),
         () -> assertThat(response.isMyPost()).isEqualTo(true),
-        () -> assertThat(response.isMyInterest()).isEqualTo(true),
+        () -> assertThat(response.isMyLike()).isEqualTo(true),
         () -> assertThat(response.getBookStatus()).isEqualTo(
             BookStatus.valueOf(postRequest.getBookStatus()).getName()),
         () -> assertThat(response.getImages().size()).isEqualTo(2),

@@ -5,22 +5,18 @@ import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.common.upload.FileUploader;
 import com.bookwhale.dto.Pagination;
 import com.bookwhale.image.domain.Images;
+import com.bookwhale.like.domain.likeRepository;
 import com.bookwhale.post.domain.Post;
 import com.bookwhale.post.domain.PostRepository;
-import com.bookwhale.Interest.domain.InterestRepository;
-import com.bookwhale.post.dto.PostRequest;
-import com.bookwhale.post.dto.PostResponse;
-import com.bookwhale.post.dto.PostStatusUpdateRequest;
-import com.bookwhale.post.dto.PostUpdateRequest;
-import com.bookwhale.post.dto.PostsRequest;
-import com.bookwhale.post.dto.PostsResponse;
+import com.bookwhale.post.dto.*;
 import com.bookwhale.user.domain.User;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +27,7 @@ public class PostService {
 
   private final FileUploader fileUploader;
 
-  private final InterestRepository interestRepository;
+  private final likeRepository likeRepository;
 
   public Long createPost(User user, PostRequest request, List<MultipartFile> images) {
     Post post = Post.create(user, request.toEntity());
@@ -45,7 +41,7 @@ public class PostService {
     return PostResponse.of(
         post,
         post.isMyPost(user),
-        interestRepository.existsByUserAndPost(user, post)
+        likeRepository.existsByUserAndPost(user, post)
     );
   }
 

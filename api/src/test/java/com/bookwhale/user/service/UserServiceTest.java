@@ -1,32 +1,17 @@
 package com.bookwhale.user.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.common.upload.FileUploader;
+import com.bookwhale.like.domain.Like;
+import com.bookwhale.like.domain.likeRepository;
 import com.bookwhale.post.domain.Post;
 import com.bookwhale.post.domain.PostRepository;
 import com.bookwhale.post.dto.BookRequest;
 import com.bookwhale.post.dto.PostRequest;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.domain.UserRepository;
-import com.bookwhale.Interest.domain.Interest;
-import com.bookwhale.Interest.domain.InterestRepository;
-import com.bookwhale.user.dto.InterestRequest;
-import com.bookwhale.user.dto.InterestResponse;
-import com.bookwhale.user.dto.PasswordUpdateRequest;
-import com.bookwhale.user.dto.ProfileResponse;
-import com.bookwhale.user.dto.SignUpRequest;
-import com.bookwhale.user.dto.UserUpdateRequest;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import com.bookwhale.user.dto.*;
 import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,6 +22,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("유저 단위 테스트(Service)")
@@ -55,16 +49,17 @@ public class UserServiceTest {
   private PostRepository postRepository;
 
   @Mock
-  private InterestRepository interestRepository;
+  private likeRepository likeRepository;
 
   UserService userService;
+  LikeService likeService;
 
   User user;
 
   @BeforeEach
   void setUp() {
-    userService = new UserService(userRepository, passwordEncoder, fileUploader, postRepository,
-        interestRepository);
+    userService = new UserService(userRepository, passwordEncoder, fileUploader, postRepository);
+    likeService = new LikeService(likeRepository, userService);
 
     user = User.builder()
         .id(1L)
@@ -181,7 +176,7 @@ public class UserServiceTest {
 
   @DisplayName("관심목록을 조회한다.")
   @Test
-  void findInterests_success() {
+  void findLikes_success() {
     BookRequest bookRequest = BookRequest.builder()
         .bookSummary("설명")
         .bookPubDate("2021-12-12")
@@ -203,11 +198,11 @@ public class UserServiceTest {
     Post post = Post.create(user, postRequest.toEntity());
     post.setCreatedDate(LocalDateTime.now());
 
-    when(interestRepository.findAllByUser(any())).thenReturn(List.of(Interest.create(user, post)));
+    when(likeRepository.findAllByUser(any())).thenReturn(List.of(Like.create(user, post)));
 
-    List<InterestResponse> responses = userService.findInterests(user);
+    List<LikeResponse> responses = likeService.findAllLikes(user);
 
-    verify(interestRepository).findAllByUser(any());
+    verify(likeRepository).findAllByUser(any());
     Assertions.assertAll(
         () -> assertThat(responses.size()).isEqualTo(1),
         () -> org.assertj.core.api.Assertions.assertThat(responses.get(0).getPostsResponse().getPostImage()).isNull(),
@@ -222,7 +217,7 @@ public class UserServiceTest {
 
   @DisplayName("관심목록에 추가한다.")
   @Test
-  void addInterest_success() {
+  void addLike_success() {
     BookRequest bookRequest = BookRequest.builder()
         .bookSummary("설명")
         .bookPubDate("2021-12-12")
@@ -244,27 +239,27 @@ public class UserServiceTest {
     Post post = Post.create(user, postRequest.toEntity());
 
     when(postRepository.findById(any())).thenReturn(Optional.ofNullable(post));
-    when(interestRepository.save(any())).thenReturn(Interest.create(user, post));
+    when(likeRepository.save(any())).thenReturn(Like.create(user, post));
 
-    userService.addInterest(user, new InterestRequest(1L));
+    likeService.addLike(user, new LikeRequest(1L));
 
     verify(postRepository).findById(any());
-    verify(interestRepository).save(any());
+    verify(likeRepository).save(any());
   }
 
   @DisplayName("잘못된 post_id 로 관심목록에 추가하면 예외가 발생한다.")
   @Test
-  void addInterest_invalidPostId_failure() {
+  void addLike_invalidPostId_failure() {
     when(postRepository.findById(any())).thenReturn(Optional.empty());
 
-    assertThatThrownBy(() -> userService.addInterest(user, new InterestRequest(1L)))
+    assertThatThrownBy(() -> likeService.addLike(user, new LikeRequest(1L)))
         .isInstanceOf(CustomException.class)
         .hasMessage(ErrorCode.INVALID_POST_ID.getMessage());
   }
 
   @DisplayName("관심목록을 삭제한다.")
   @Test
-  void deleteInterest_success() {
+  void deleteLike_success() {
     BookRequest bookRequest = BookRequest.builder()
         .bookSummary("설명")
         .bookPubDate("2021-12-12")
@@ -285,17 +280,17 @@ public class UserServiceTest {
         .build();
     Post post = Post.create(user, postRequest.toEntity());
 
-    when(interestRepository.findById(any())).thenReturn(Optional.of(Interest.create(user, post)));
-    doNothing().when(interestRepository).delete(any());
+    when(likeRepository.findById(any())).thenReturn(Optional.of(Like.create(user, post)));
+    doNothing().when(likeRepository).delete(any());
 
-    userService.deleteInterest(user, 1L);
+    likeService.deleteLike(user, 1L);
 
-    verify(interestRepository).findById(any());
+    verify(likeRepository).findById(any());
   }
 
   @DisplayName("권한이 없는 유저가 관심목록을 삭제하면 예외가 발생한다.")
   @Test
-  void deleteInterest_isNotMyInterest_failure() {
+  void deleteLike_isNotMyLike_failure() {
     BookRequest bookRequest = BookRequest.builder()
         .bookSummary("설명")
         .bookPubDate("2021-12-12")
@@ -317,21 +312,21 @@ public class UserServiceTest {
     Post post = Post.create(user, postRequest.toEntity());
     User otherUser = User.builder().id(2L).build();
 
-    when(interestRepository.findById(any())).thenReturn(
-        Optional.of(Interest.create(otherUser, post)));
+    when(likeRepository.findById(any())).thenReturn(
+        Optional.of(Like.create(otherUser, post)));
 
-    assertThatThrownBy(() -> userService.deleteInterest(user, 1L))
+    assertThatThrownBy(() -> likeService.deleteLike(user, 1L))
         .isInstanceOf(CustomException.class)
         .hasMessage(ErrorCode.USER_ACCESS_DENIED.getMessage());
   }
 
-  @DisplayName("잘못된 interest_id 로 관심목록을 삭제하면 예외가 발생한다.")
+  @DisplayName("잘못된 like_id 로 관심목록을 삭제하면 예외가 발생한다.")
   @Test
-  void deleteInterest_invalidInterestId_failure() {
-    when(interestRepository.findById(any())).thenReturn(Optional.empty());
+  void deleteLike_invalidLikeId_failure() {
+    when(likeRepository.findById(any())).thenReturn(Optional.empty());
 
-    assertThatThrownBy(() -> userService.deleteInterest(user, 1L))
+    assertThatThrownBy(() -> likeService.deleteLike(user, 1L))
         .isInstanceOf(CustomException.class)
-        .hasMessage(ErrorCode.INVALID_INTEREST_ID.getMessage());
+        .hasMessage(ErrorCode.INVALID_LIKE_ID.getMessage());
   }
 }

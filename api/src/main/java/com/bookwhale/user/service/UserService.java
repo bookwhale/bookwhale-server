@@ -5,23 +5,20 @@ import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.common.upload.FileUploader;
 import com.bookwhale.post.domain.Post;
 import com.bookwhale.post.domain.PostRepository;
-import com.bookwhale.Interest.domain.Interest;
-import com.bookwhale.Interest.domain.InterestRepository;
 import com.bookwhale.post.dto.PostsResponse;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.domain.UserRepository;
-import com.bookwhale.user.dto.InterestRequest;
-import com.bookwhale.user.dto.InterestResponse;
 import com.bookwhale.user.dto.PasswordUpdateRequest;
 import com.bookwhale.user.dto.ProfileResponse;
 import com.bookwhale.user.dto.SignUpRequest;
 import com.bookwhale.user.dto.UserUpdateRequest;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -35,8 +32,6 @@ public class UserService {
   private final FileUploader fileUploader;
 
   private final PostRepository postRepository;
-
-  private final InterestRepository interestRepository;
 
   public void createUser(SignUpRequest request) {
     validateIsDuplicateIdentity(request);
@@ -93,37 +88,9 @@ public class UserService {
     }
   }
 
-  @Transactional(readOnly = true)
-  public List<InterestResponse> findInterests(User user) {
-    return InterestResponse.listOf(interestRepository.findAllByUser(user));
-  }
-
-  public void addInterest(User user, InterestRequest request) {
-    Post post = validatePostIdAndGetPost(request.getPostId());
-    validateIsDuplicatedInterest(user, post);
-    interestRepository.save(Interest.create(user, post));
-  }
-
   public Post validatePostIdAndGetPost(Long postId) {
     return postRepository.findById(postId)
         .orElseThrow(() -> new CustomException(ErrorCode.INVALID_POST_ID));
-  }
-
-  public void validateIsDuplicatedInterest(User user, Post post) {
-    if (interestRepository.existsByUserAndPost(user, post)) {
-      throw new CustomException(ErrorCode.DUPLICATED_INTEREST);
-    }
-  }
-
-  public void deleteInterest(User user, Long interestId) {
-    Interest interest = validateInterestIdAndGetInterest(interestId);
-    interest.validateIsMyInterest(user);
-    interestRepository.delete(interest);
-  }
-
-  private Interest validateInterestIdAndGetInterest(Long interestId) {
-    return interestRepository.findById(interestId)
-        .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INTEREST_ID));
   }
 
   @Transactional(readOnly = true)

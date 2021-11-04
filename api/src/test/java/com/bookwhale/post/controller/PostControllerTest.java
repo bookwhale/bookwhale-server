@@ -1,5 +1,27 @@
 package com.bookwhale.post.controller;
 
+import com.bookwhale.common.controller.CommonApiTest;
+import com.bookwhale.common.security.WithMockCustomUser;
+import com.bookwhale.dto.Pagination;
+import com.bookwhale.post.docs.PostDocumentation;
+import com.bookwhale.post.domain.BookStatus;
+import com.bookwhale.post.domain.PostStatus;
+import com.bookwhale.post.dto.*;
+import com.bookwhale.post.service.NaverBookAPIService;
+import com.bookwhale.post.service.PostService;
+import org.apache.http.entity.ContentType;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+
 import static java.lang.String.format;
 import static java.util.List.of;
 import static org.mockito.ArgumentMatchers.any;
@@ -10,36 +32,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import com.bookwhale.common.controller.CommonApiTest;
-import com.bookwhale.common.security.WithMockCustomUser;
-import com.bookwhale.dto.Pagination;
-import com.bookwhale.post.domain.BookStatus;
-import com.bookwhale.post.domain.PostStatus;
-import com.bookwhale.post.service.NaverBookAPIService;
-import com.bookwhale.post.service.PostService;
-import com.bookwhale.post.docs.PostDocumentation;
-import com.bookwhale.post.dto.BookRequest;
-import com.bookwhale.post.dto.BookResponse;
-import com.bookwhale.post.dto.NaverBookRequest;
-import com.bookwhale.post.dto.PostRequest;
-import com.bookwhale.post.dto.PostResponse;
-import com.bookwhale.post.dto.PostStatusUpdateRequest;
-import com.bookwhale.post.dto.PostUpdateRequest;
-import com.bookwhale.post.dto.PostsRequest;
-import com.bookwhale.post.dto.PostsResponse;
-
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import org.apache.http.entity.ContentType;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 
 @DisplayName("게시글 단위 테스트(Controller)")
 @WebMvcTest(controllers = PostController.class)
@@ -196,7 +188,7 @@ public class PostControllerTest extends CommonApiTest {
         .images(of("image1", "image2"))
         .bookResponse(bookResponse)
         .isMyPost(true)
-        .isMyInterest(true)
+        .isMyLike(true)
         .beforeTime("15분 전")
         .build();
 
