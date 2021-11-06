@@ -1,5 +1,12 @@
 package com.bookwhale.user.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.common.upload.FileUploader;
@@ -11,7 +18,15 @@ import com.bookwhale.post.dto.BookRequest;
 import com.bookwhale.post.dto.PostRequest;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.domain.UserRepository;
-import com.bookwhale.user.dto.*;
+import com.bookwhale.user.dto.LikeRequest;
+import com.bookwhale.user.dto.LikeResponse;
+import com.bookwhale.user.dto.PasswordUpdateRequest;
+import com.bookwhale.user.dto.ProfileResponse;
+import com.bookwhale.user.dto.SignUpRequest;
+import com.bookwhale.user.dto.UserUpdateRequest;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,15 +37,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("유저 단위 테스트(Service)")
@@ -205,12 +211,16 @@ public class UserServiceTest {
     verify(likeRepository).findAllByUser(any());
     Assertions.assertAll(
         () -> assertThat(responses.size()).isEqualTo(1),
-        () -> org.assertj.core.api.Assertions.assertThat(responses.get(0).getPostsResponse().getPostImage()).isNull(),
-        () -> org.assertj.core.api.Assertions.assertThat(responses.get(0).getPostsResponse().getBookTitle()).isEqualTo(
+        () -> org.assertj.core.api.Assertions.assertThat(
+            responses.get(0).getPostsResponse().getPostImage()).isNull(),
+        () -> org.assertj.core.api.Assertions.assertThat(
+            responses.get(0).getPostsResponse().getBookTitle()).isEqualTo(
             bookRequest.getBookTitle()),
-        () -> org.assertj.core.api.Assertions.assertThat(responses.get(0).getPostsResponse().getPostTitle()).isEqualTo(
+        () -> org.assertj.core.api.Assertions.assertThat(
+            responses.get(0).getPostsResponse().getPostTitle()).isEqualTo(
             postRequest.getTitle()),
-        () -> org.assertj.core.api.Assertions.assertThat(responses.get(0).getPostsResponse().getPostPrice()).isEqualTo(
+        () -> org.assertj.core.api.Assertions.assertThat(
+            responses.get(0).getPostsResponse().getPostPrice()).isEqualTo(
             postRequest.getPrice())
     );
   }

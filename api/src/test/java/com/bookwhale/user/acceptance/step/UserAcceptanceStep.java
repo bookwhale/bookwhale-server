@@ -1,21 +1,28 @@
 package com.bookwhale.user.acceptance.step;
 
+import static io.restassured.RestAssured.given;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.bookwhale.post.domain.PostStatus;
 import com.bookwhale.post.dto.PostRequest;
 import com.bookwhale.post.dto.PostsResponse;
 import com.bookwhale.user.domain.User;
-import com.bookwhale.user.dto.*;
+import com.bookwhale.user.dto.LikeRequest;
+import com.bookwhale.user.dto.LikeResponse;
+import com.bookwhale.user.dto.LoginRequest;
+import com.bookwhale.user.dto.LoginResponse;
+import com.bookwhale.user.dto.PasswordUpdateRequest;
+import com.bookwhale.user.dto.ProfileResponse;
+import com.bookwhale.user.dto.SignUpRequest;
+import com.bookwhale.user.dto.UserResponse;
+import com.bookwhale.user.dto.UserUpdateRequest;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import io.restassured.specification.MultiPartSpecification;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-
-import java.util.List;
-
-import static io.restassured.RestAssured.given;
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class UserAcceptanceStep {
 
@@ -44,7 +51,7 @@ public class UserAcceptanceStep {
   }
 
   public static void assertThatUploadProfileImage(ProfileResponse profileResponse,
-                                                  UserResponse userResponse) {
+      UserResponse userResponse) {
     assertThat(profileResponse.getProfileImage()).isEqualTo(userResponse.getProfileImage());
   }
 
@@ -55,11 +62,16 @@ public class UserAcceptanceStep {
   public static void assertThatAddLike(List<LikeResponse> res, PostRequest req) {
     Assertions.assertAll(
         () -> assertThat(res.size()).isEqualTo(1),
-        () -> org.assertj.core.api.Assertions.assertThat(res.get(0).getPostsResponse().getPostTitle()).isEqualTo(req.getTitle()),
-        () -> org.assertj.core.api.Assertions.assertThat(res.get(0).getPostsResponse().getPostPrice()).isEqualTo(req.getPrice()),
-        () -> org.assertj.core.api.Assertions.assertThat(res.get(0).getPostsResponse().getPostImage()).isNotNull(),
-        () -> org.assertj.core.api.Assertions.assertThat(res.get(0).getPostsResponse().getBeforeTime()).isNotNull(),
-        () -> org.assertj.core.api.Assertions.assertThat(res.get(0).getPostsResponse().getBookTitle()).isEqualTo(
+        () -> org.assertj.core.api.Assertions.assertThat(
+            res.get(0).getPostsResponse().getPostTitle()).isEqualTo(req.getTitle()),
+        () -> org.assertj.core.api.Assertions.assertThat(
+            res.get(0).getPostsResponse().getPostPrice()).isEqualTo(req.getPrice()),
+        () -> org.assertj.core.api.Assertions.assertThat(
+            res.get(0).getPostsResponse().getPostImage()).isNotNull(),
+        () -> org.assertj.core.api.Assertions.assertThat(
+            res.get(0).getPostsResponse().getBeforeTime()).isNotNull(),
+        () -> org.assertj.core.api.Assertions.assertThat(
+            res.get(0).getPostsResponse().getBookTitle()).isEqualTo(
             req.getBookRequest().getBookTitle())
     );
   }

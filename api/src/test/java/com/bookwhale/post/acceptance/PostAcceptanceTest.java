@@ -1,5 +1,7 @@
 package com.bookwhale.post.acceptance;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.bookwhale.common.acceptance.AcceptanceTest;
 import com.bookwhale.common.acceptance.AcceptanceUtils;
 import com.bookwhale.common.acceptance.step.AcceptanceStep;
@@ -7,21 +9,26 @@ import com.bookwhale.dto.Pagination;
 import com.bookwhale.post.acceptance.step.PostAcceptanceStep;
 import com.bookwhale.post.domain.BookStatus;
 import com.bookwhale.post.domain.PostStatus;
-import com.bookwhale.post.dto.*;
+import com.bookwhale.post.dto.BookRequest;
+import com.bookwhale.post.dto.BookResponse;
+import com.bookwhale.post.dto.NaverBookRequest;
+import com.bookwhale.post.dto.PostRequest;
+import com.bookwhale.post.dto.PostResponse;
+import com.bookwhale.post.dto.PostStatusUpdateRequest;
+import com.bookwhale.post.dto.PostUpdateRequest;
+import com.bookwhale.post.dto.PostsRequest;
+import com.bookwhale.post.dto.PostsResponse;
 import com.bookwhale.user.acceptance.step.UserAcceptanceStep;
 import com.bookwhale.user.dto.LikeRequest;
 import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import io.restassured.specification.MultiPartSpecification;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.MimeTypeUtils;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("게시글 통합 테스트")
 public class PostAcceptanceTest extends AcceptanceTest {

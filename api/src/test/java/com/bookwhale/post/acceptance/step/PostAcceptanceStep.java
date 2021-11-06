@@ -1,29 +1,35 @@
 package com.bookwhale.post.acceptance.step;
 
+import static io.restassured.RestAssured.given;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.bookwhale.dto.Pagination;
 import com.bookwhale.post.domain.BookStatus;
 import com.bookwhale.post.domain.PostStatus;
-import com.bookwhale.post.dto.*;
+import com.bookwhale.post.dto.BookResponse;
+import com.bookwhale.post.dto.NaverBookRequest;
+import com.bookwhale.post.dto.PostRequest;
+import com.bookwhale.post.dto.PostResponse;
+import com.bookwhale.post.dto.PostStatusUpdateRequest;
+import com.bookwhale.post.dto.PostUpdateRequest;
+import com.bookwhale.post.dto.PostsRequest;
+import com.bookwhale.post.dto.PostsResponse;
 import com.bookwhale.user.domain.User;
 import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import io.restassured.specification.MultiPartSpecification;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.util.MimeTypeUtils;
 
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-
-import static io.restassured.RestAssured.given;
-import static org.assertj.core.api.Assertions.assertThat;
-
 public class PostAcceptanceStep {
 
   public static void assertThatFindPost(PostResponse res, PostRequest req, User seller,
-                                        boolean isMyPost, boolean isMyLike) {
+      boolean isMyPost, boolean isMyLike) {
     Assertions.assertAll(
         () -> assertThat(res.getSellerId()).isEqualTo(seller.getId()),
         () -> assertThat(res.getSellerIdentity()).isEqualTo(seller.getIdentity()),

@@ -1,5 +1,7 @@
 package com.bookwhale.user.acceptance;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.bookwhale.common.acceptance.AcceptanceTest;
 import com.bookwhale.common.acceptance.AcceptanceUtils;
 import com.bookwhale.common.acceptance.step.AcceptanceStep;
@@ -8,18 +10,22 @@ import com.bookwhale.post.dto.BookRequest;
 import com.bookwhale.post.dto.PostRequest;
 import com.bookwhale.post.dto.PostsResponse;
 import com.bookwhale.user.acceptance.step.UserAcceptanceStep;
-import com.bookwhale.user.dto.*;
+import com.bookwhale.user.dto.LikeRequest;
+import com.bookwhale.user.dto.LikeResponse;
+import com.bookwhale.user.dto.LoginRequest;
+import com.bookwhale.user.dto.PasswordUpdateRequest;
+import com.bookwhale.user.dto.ProfileResponse;
+import com.bookwhale.user.dto.SignUpRequest;
+import com.bookwhale.user.dto.UserResponse;
+import com.bookwhale.user.dto.UserUpdateRequest;
 import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import io.restassured.specification.MultiPartSpecification;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.MimeTypeUtils;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("유저 통합 테스트")
 public class UserAcceptanceTest extends AcceptanceTest {

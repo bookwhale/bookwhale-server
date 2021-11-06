@@ -8,15 +8,19 @@ import com.bookwhale.image.domain.Images;
 import com.bookwhale.like.domain.likeRepository;
 import com.bookwhale.post.domain.Post;
 import com.bookwhale.post.domain.PostRepository;
-import com.bookwhale.post.dto.*;
+import com.bookwhale.post.dto.PostRequest;
+import com.bookwhale.post.dto.PostResponse;
+import com.bookwhale.post.dto.PostStatusUpdateRequest;
+import com.bookwhale.post.dto.PostUpdateRequest;
+import com.bookwhale.post.dto.PostsRequest;
+import com.bookwhale.post.dto.PostsResponse;
 import com.bookwhale.user.domain.User;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

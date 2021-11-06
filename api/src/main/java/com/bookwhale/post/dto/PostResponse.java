@@ -3,13 +3,12 @@ package com.bookwhale.post.dto;
 import com.bookwhale.image.domain.Image;
 import com.bookwhale.post.domain.Post;
 import com.bookwhale.utils.TimeUtils;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
@@ -52,7 +51,7 @@ public class PostResponse {
   }
 
   public static PostResponse of(Post post, boolean isMyPost,
-                                boolean isMyLike) {
+      boolean isMyLike) {
     BookResponse bookResponse = BookResponse.builder()
         .bookAuthor(post.getBook().getBookAuthor())
         .bookIsbn(post.getBook().getBookIsbn())

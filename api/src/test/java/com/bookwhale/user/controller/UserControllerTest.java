@@ -14,11 +14,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.bookwhale.common.controller.CommonApiTest;
 import com.bookwhale.common.security.WithMockCustomUser;
-import com.bookwhale.user.service.LikeService;
 import com.bookwhale.post.domain.PostStatus;
 import com.bookwhale.post.dto.PostsResponse;
 import com.bookwhale.user.docs.UserDocumentation;
-import com.bookwhale.user.service.UserService;
 import com.bookwhale.user.dto.LikeRequest;
 import com.bookwhale.user.dto.LikeResponse;
 import com.bookwhale.user.dto.LoginRequest;
@@ -26,7 +24,8 @@ import com.bookwhale.user.dto.PasswordUpdateRequest;
 import com.bookwhale.user.dto.ProfileResponse;
 import com.bookwhale.user.dto.SignUpRequest;
 import com.bookwhale.user.dto.UserUpdateRequest;
-
+import com.bookwhale.user.service.LikeService;
+import com.bookwhale.user.service.UserService;
 import java.util.List;
 import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.DisplayName;
