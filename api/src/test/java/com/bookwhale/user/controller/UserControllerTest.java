@@ -17,8 +17,6 @@ import com.bookwhale.common.security.WithMockCustomUser;
 import com.bookwhale.post.domain.PostStatus;
 import com.bookwhale.post.dto.PostsResponse;
 import com.bookwhale.user.docs.UserDocumentation;
-import com.bookwhale.user.dto.LikeRequest;
-import com.bookwhale.user.dto.LikeResponse;
 import com.bookwhale.user.dto.LoginRequest;
 import com.bookwhale.user.dto.PasswordUpdateRequest;
 import com.bookwhale.user.dto.ProfileResponse;
@@ -35,7 +33,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 
 
 @DisplayName("유저 단위 테스트(Controller)")
@@ -166,66 +163,6 @@ public class UserControllerTest extends CommonApiTest {
         .andExpect(status().isOk())
         .andDo(print())
         .andDo(UserDocumentation.userDeleteProfileImage());
-  }
-
-  @WithMockCustomUser
-  @DisplayName("관심목록을 조회한다.")
-  @Test
-  void findLikes() throws Exception {
-    List<LikeResponse> responses = List.of(
-        new LikeResponse(1L,
-            PostsResponse.builder()
-                .postId(1L)
-                .postImage("이미지")
-                .postTitle("책 팝니다~")
-                .postPrice("20000원")
-                .postStatus(PostStatus.SALE.getName())
-                .bookTitle("토비의 스프링")
-                .bookAuthor("이일민")
-                .bookPublisher("허브출판사")
-                .beforeTime("15분 전")
-                .build()
-        )
-    );
-
-    when(likeService.findAllLikes(any())).thenReturn(responses);
-
-    mockMvc.perform(get("/api/user/me/likes")
-            .header(HttpHeaders.AUTHORIZATION, "accessToken"))
-        .andExpect(status().isOk())
-        .andDo(print())
-        .andDo(UserDocumentation.userFindLikes());
-  }
-
-  @WithMockCustomUser
-  @DisplayName("관심목록에 추가한다.")
-  @Test
-  void addLike() throws Exception {
-    LikeRequest likeRequest = new LikeRequest(1L);
-
-    doNothing().when(likeService).addLike(any(), any());
-
-    mockMvc.perform(post("/api/user/me/like")
-            .header(HttpHeaders.AUTHORIZATION, "accessToken")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(likeRequest)))
-        .andExpect(status().isOk())
-        .andDo(print())
-        .andDo(UserDocumentation.userAddLike());
-  }
-
-  @WithMockCustomUser
-  @DisplayName("관심목록에서 삭제한다.")
-  @Test
-  void deleteLike() throws Exception {
-    doNothing().when(likeService).deleteLike(any(), any());
-
-    mockMvc.perform(
-            RestDocumentationRequestBuilders.delete("/api/user/me/like/{likeId}", 1L)
-                .header(HttpHeaders.AUTHORIZATION, "accessToken"))
-        .andExpect(status().isOk())
-        .andDo(print())
-        .andDo(UserDocumentation.userDeleteLike());
   }
 
   @WithMockCustomUser
