@@ -1,4 +1,4 @@
-# Herb-Bookstore
+# BookWhale
 중고책 거래 플랫폼 API 서버
 
 ## Git Flow

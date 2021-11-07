@@ -1,4 +1,4 @@
-rootProject.name = 'bookstore-back'
+rootProject.name = 'bookwhale-server'
 include 'api'
 include 'core'
 include 'chat'
