@@ -9,15 +9,13 @@ import static org.mockito.Mockito.when;
 
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
-import com.bookwhale.common.upload.FileUploader;
 import com.bookwhale.like.domain.Like;
-import com.bookwhale.like.domain.likeRepository;
+import com.bookwhale.like.domain.LikeRepository;
 import com.bookwhale.post.domain.Post;
 import com.bookwhale.post.domain.PostRepository;
 import com.bookwhale.post.dto.BookRequest;
 import com.bookwhale.post.dto.PostRequest;
 import com.bookwhale.user.domain.User;
-import com.bookwhale.user.domain.UserRepository;
 import com.bookwhale.user.dto.LikeRequest;
 import com.bookwhale.user.dto.LikeResponse;
 import java.time.LocalDateTime;
@@ -30,36 +28,24 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("관심목록 관련 기능 단위 테스트(Service)")
 public class LikeServiceTest {
 
   @Mock
-  private UserRepository userRepository;
-
-  @Mock
-  private PasswordEncoder passwordEncoder;
-
-  @Mock
-  private FileUploader fileUploader;
-
-  @Mock
   private PostRepository postRepository;
 
   @Mock
-  private likeRepository likeRepository;
+  private LikeRepository likeRepository;
 
-  UserService userService;
   LikeService likeService;
 
   User user;
 
   @BeforeEach
   void setUp() {
-    userService = new UserService(userRepository, passwordEncoder, fileUploader, postRepository);
-    likeService = new LikeService(likeRepository, userService);
+    likeService = new LikeService(likeRepository, postRepository);
 
     user = User.builder()
         .id(1L)

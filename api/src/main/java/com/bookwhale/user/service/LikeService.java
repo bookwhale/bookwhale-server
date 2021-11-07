@@ -3,8 +3,9 @@ package com.bookwhale.user.service;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.like.domain.Like;
-import com.bookwhale.like.domain.likeRepository;
+import com.bookwhale.like.domain.LikeRepository;
 import com.bookwhale.post.domain.Post;
+import com.bookwhale.post.domain.PostRepository;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.dto.LikeRequest;
 import com.bookwhale.user.dto.LikeResponse;
@@ -21,8 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class LikeService {
 
-  private final likeRepository likeRepository;
-  private final UserService userService;
+  private final LikeRepository likeRepository;
+  private final PostRepository postRepository;
 
   /**
    * 현재 접속중인 사용자가 대상 판매글(post)에 관심 추가
@@ -31,9 +32,14 @@ public class LikeService {
    * @param request 관심목록 추가 처리 요청
    */
   public void addLike(User user, LikeRequest request) {
-    Post post = userService.validatePostIdAndGetPost(request.getPostId());
+    Post post = getPostById(request.getPostId());
     validateIsDuplicatedLike(user, post);
     likeRepository.save(Like.create(user, post));
+  }
+
+  public Post getPostById(Long postId) {
+    return postRepository.findById(postId)
+        .orElseThrow(() -> new CustomException(ErrorCode.INVALID_POST_ID));
   }
 
   public void validateIsDuplicatedLike(User user, Post post) {

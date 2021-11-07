@@ -17,7 +17,7 @@ import static org.mockito.Mockito.when;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.common.upload.FileUploader;
-import com.bookwhale.like.domain.likeRepository;
+import com.bookwhale.like.domain.LikeRepository;
 import com.bookwhale.post.domain.BookStatus;
 import com.bookwhale.post.domain.Post;
 import com.bookwhale.post.domain.PostRepository;
@@ -53,7 +53,7 @@ public class PostServiceTest {
   FileUploader fileUploader;
 
   @Mock
-  likeRepository likeRepository;
+  LikeRepository likeRepository;
 
   PostService postService;
 

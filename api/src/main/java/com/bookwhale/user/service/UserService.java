@@ -87,11 +87,6 @@ public class UserService {
     }
   }
 
-  public Post validatePostIdAndGetPost(Long postId) {
-    return postRepository.findById(postId)
-        .orElseThrow(() -> new CustomException(ErrorCode.INVALID_POST_ID));
-  }
-
   @Transactional(readOnly = true)
   public List<PostsResponse> findMyPost(User user) {
     return PostsResponse.listOf(postRepository.findAllBySeller(user));

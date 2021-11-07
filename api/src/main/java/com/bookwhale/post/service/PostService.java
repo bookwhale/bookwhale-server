@@ -5,7 +5,7 @@ import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.common.upload.FileUploader;
 import com.bookwhale.dto.Pagination;
 import com.bookwhale.image.domain.Images;
-import com.bookwhale.like.domain.likeRepository;
+import com.bookwhale.like.domain.LikeRepository;
 import com.bookwhale.post.domain.Post;
 import com.bookwhale.post.domain.PostRepository;
 import com.bookwhale.post.dto.PostRequest;
@@ -31,7 +31,7 @@ public class PostService {
 
   private final FileUploader fileUploader;
 
-  private final likeRepository likeRepository;
+  private final LikeRepository likeRepository;
 
   public Long createPost(User user, PostRequest request, List<MultipartFile> images) {
     Post post = Post.create(user, request.toEntity());
