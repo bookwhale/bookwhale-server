@@ -2,10 +2,12 @@ package com.bookwhale.common;
 
 import com.google.common.base.CaseFormat;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Table;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,8 +23,14 @@ public class DatabaseCleanUp implements InitializingBean {
   @Override
   public void afterPropertiesSet() {
     tables = em.getMetamodel().getEntities().stream()
-        .filter(e -> e.getJavaType().getAnnotation(Entity.class) != null)
-        .map(e -> CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, e.getName()))
+        .filter(entityType -> entityType.getJavaType().getAnnotation(Entity.class) != null)
+        .map(entityType -> {
+          // DB Table 명이 Entity Class명과 일치하지 않아 @Table이 사용된 경우 @Table의 name을 사용
+          Optional<Table> atTable = Optional.ofNullable(
+              entityType.getJavaType().getAnnotation(Table.class));
+          return CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE,
+              atTable.isPresent() ? atTable.get().name() : entityType.getName());
+        })
         .collect(Collectors.toList());
   }
 
