@@ -1,7 +1,6 @@
 package com.bookwhale.user.domain;
 
 import com.bookwhale.common.domain.BaseEntity;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -27,7 +26,6 @@ public class User extends BaseEntity {
   @Column(nullable = false)
   private String identity;
 
-  @Column(nullable = false)
   private String password;
 
   @Column(nullable = false)
@@ -36,7 +34,6 @@ public class User extends BaseEntity {
   @Column(nullable = false)
   private String email;
 
-  @Column(nullable = false)
   private String phoneNumber;
 
   private String profileImage;
@@ -44,13 +41,16 @@ public class User extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private Role role;
 
+  @Enumerated(EnumType.STRING)
+  private AuthProvider provider;
+
   public String getRoleName() {
     return this.role.name();
   }
 
   @Builder
   public User(Long id, String identity, String password, String name, String email,
-      String phoneNumber, String profileImage, Role role) {
+      String phoneNumber, String profileImage, Role role, AuthProvider provider) {
     this.id = id;
     this.identity = identity;
     this.password = password;
@@ -59,6 +59,7 @@ public class User extends BaseEntity {
     this.phoneNumber = phoneNumber;
     this.profileImage = profileImage;
     this.role = role;
+    this.provider = provider;
   }
 
   public static User create(User user, String encodedPassword) {
@@ -69,6 +70,7 @@ public class User extends BaseEntity {
         .name(user.getName())
         .phoneNumber(user.getPhoneNumber())
         .role(Role.ROLE_USER)
+        .provider(AuthProvider.LOCAL)
         .build();
   }
 
@@ -76,6 +78,14 @@ public class User extends BaseEntity {
     this.name = user.getName();
     this.phoneNumber = user.getPhoneNumber();
     this.email = user.getEmail();
+  }
+
+  public void updateSocialUser(String name) {
+    this.name = name;
+  }
+
+  public boolean isSameProvider(String provider) {
+    return this.provider.equals(AuthProvider.valueOf(provider.toUpperCase()));
   }
 
   public void uploadProfile(String profileImage) {

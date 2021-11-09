@@ -10,7 +10,8 @@ public enum ErrorCode {
   INTERNAL_NAVER_SERVER_ERROR(500, "S_003", "네이버 책 API 서버에 문제가 생겼습니다."),
   FAILED_CONVERT_XML(500, "S_004", "XML 파일을 변환하는 과정에서 문제가 발생했습니다."),
 
-  USER_ACCESS_DENIED(401, "A_001", "해당 콘텐츠에 접근 권한이 없는 유저입니다."),
+  USER_ACCESS_DENIED(401, "AU_001", "해당 콘텐츠에 접근 권한이 없는 유저입니다."),
+  UNAUTHORIZED_REDIRECT_URI(400, "AU_002", "인증되지 않은 REDIRECT_URI 입니다."),
 
   INVALID_INPUT_VALUE(400, "C_001", "적절하지 않은 요청 값입니다."),
   INVALID_TYPE_VALUE(400, "C_002", "요청 값의 타입이 잘못되었습니다."),

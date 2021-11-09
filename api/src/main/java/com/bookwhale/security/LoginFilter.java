@@ -1,4 +1,4 @@
-package com.bookwhale.security.filter;
+package com.bookwhale.security;
 
 import com.bookwhale.user.dto.LoginRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
