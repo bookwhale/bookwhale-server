@@ -65,7 +65,6 @@ public class AcceptanceTest {
         .password(passwordEncoder.encode("1234"))
         .name("남상우")
         .email("highright96@gmail.com")
-        .phoneNumber("010-1234-1234")
         .role(Role.ROLE_USER)
         .build();
     userRepository.save(user);
@@ -76,9 +75,8 @@ public class AcceptanceTest {
     User user = User.builder()
         .identity("hose12")
         .password(passwordEncoder.encode("1234"))
-        .name("주호세")
-        .email("hose12@email.com")
-        .phoneNumber("010-5678-5678")
+        .name("백상일")
+        .email("gentledot@email.com")
         .role(Role.ROLE_USER)
         .build();
     userRepository.save(user);

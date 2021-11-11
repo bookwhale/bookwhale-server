@@ -53,7 +53,6 @@ public class LikeServiceTest {
         .password("1234")
         .name("남상우")
         .email("highright96@email.com")
-        .phoneNumber("010-1234-1234")
         .build();
   }
 

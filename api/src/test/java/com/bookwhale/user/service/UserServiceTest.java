@@ -61,7 +61,6 @@ public class UserServiceTest {
         .password("1234")
         .name("남상우")
         .email("highright96@email.com")
-        .phoneNumber("010-1234-1234")
         .build();
   }
 
@@ -73,7 +72,6 @@ public class UserServiceTest {
         .password("1234")
         .name("남상우")
         .email("highright96@email.com")
-        .phoneNumber("010-1234-1234")
         .build();
 
     when(userRepository.existsByIdentity(any())).thenReturn(false);
@@ -95,7 +93,6 @@ public class UserServiceTest {
         .password("1234")
         .name("남상우")
         .email("highright96@email.com")
-        .phoneNumber("010-1234-1234")
         .build();
 
     when(userRepository.existsByIdentity(any())).thenReturn(true);
@@ -108,17 +105,15 @@ public class UserServiceTest {
   @Test
   void updateMyInfo_success() {
     UserUpdateRequest userUpdateRequest = UserUpdateRequest.builder()
-        .name("테스터1")
-        .phoneNumber("010-0000-0000")
-        .email("tester1@email.com")
+        .name("테스터")
+        .email("tester@email.com")
         .build();
 
     userService.updateMyInfo(user, userUpdateRequest);
 
     Assertions.assertAll(
         () -> assertThat(user.getName()).isEqualTo(userUpdateRequest.getName()),
-        () -> assertThat(user.getEmail()).isEqualTo(userUpdateRequest.getEmail()),
-        () -> assertThat(user.getPhoneNumber()).isEqualTo(userUpdateRequest.getPhoneNumber())
+        () -> assertThat(user.getEmail()).isEqualTo(userUpdateRequest.getEmail())
     );
   }
 

@@ -37,7 +37,6 @@ public class UserAcceptanceStep {
     Assertions.assertAll(
         () -> assertThat(userResponse.getIdentity()).isEqualTo(user.getIdentity()),
         () -> assertThat(userResponse.getName()).isEqualTo(user.getName()),
-        () -> assertThat(userResponse.getPhoneNumber()).isEqualTo(user.getPhoneNumber()),
         () -> assertThat(userResponse.getEmail()).isEqualTo(user.getEmail())
     );
   }
@@ -45,8 +44,7 @@ public class UserAcceptanceStep {
   public static void assertThatUpdateMyInfo(UserResponse res, UserUpdateRequest req) {
     Assertions.assertAll(
         () -> assertThat(res.getEmail()).isEqualTo(req.getEmail()),
-        () -> assertThat(res.getName()).isEqualTo(req.getName()),
-        () -> assertThat(res.getPhoneNumber()).isEqualTo(req.getPhoneNumber())
+        () -> assertThat(res.getName()).isEqualTo(req.getName())
     );
   }
 

@@ -52,7 +52,6 @@ public class UserControllerTest extends CommonApiTest {
         .identity("highright96")
         .password("1234")
         .name("남상우")
-        .phoneNumber("010-1234-1234")
         .email("highright96@email.com")
         .build();
 
@@ -84,9 +83,8 @@ public class UserControllerTest extends CommonApiTest {
   @Test
   void updateMyInfo() throws Exception {
     UserUpdateRequest userUpdateRequest = UserUpdateRequest.builder()
-        .name("주호세")
-        .email("hose@email.com")
-        .phoneNumber("010-5678-5678")
+        .name("테스터")
+        .email("tester@email.com")
         .build();
 
     doNothing().when(userService).updateMyInfo(any(), any());

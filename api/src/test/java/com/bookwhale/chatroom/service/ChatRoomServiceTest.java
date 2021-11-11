@@ -66,15 +66,13 @@ public class ChatRoomServiceTest {
         .identity("highright96")
         .name("남상우")
         .email("highright96@email.com")
-        .phoneNumber("010-1234-1234")
         .build();
 
     seller = User.builder()
         .id(2L)
         .identity("hose12")
-        .name("주호세")
-        .email("hose12@email.com")
-        .phoneNumber("010-5678-5678")
+        .name("백상일")
+        .email("gentledot@email.com")
         .build();
 
     ;

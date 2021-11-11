@@ -38,7 +38,6 @@ public class UserAcceptanceTest extends AcceptanceTest {
         .password("1234")
         .name("백상일")
         .email("gentleDot@email.com")
-        .phoneNumber("010-3456-3456")
         .build();
 
     ExtractableResponse<Response> response = UserAcceptanceStep.requestToSignUp(signUpRequest);
@@ -62,9 +61,8 @@ public class UserAcceptanceTest extends AcceptanceTest {
   @Test
   void updateMyInfo() {
     UserUpdateRequest userUpdateRequest = UserUpdateRequest.builder()
-        .name("주호세")
-        .phoneNumber("010-5678-5678")
-        .email("hose@email.com")
+        .name("테스터")
+        .email("tester@email.com")
         .build();
 
     String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
