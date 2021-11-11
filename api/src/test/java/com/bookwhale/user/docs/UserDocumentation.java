@@ -28,8 +28,7 @@ public class UserDocumentation {
             fieldWithPath("identity").type(JsonFieldType.STRING).description("아이디"),
             fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호"),
             fieldWithPath("name").type(JsonFieldType.STRING).description("이름"),
-            fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
-            fieldWithPath("phoneNumber").type(JsonFieldType.STRING).description("전화번호")
+            fieldWithPath("email").type(JsonFieldType.STRING).description("이메일")
         )
     );
   }
@@ -54,7 +53,6 @@ public class UserDocumentation {
             fieldWithPath("identity").type(JsonFieldType.STRING).description("아이디"),
             fieldWithPath("name").type(JsonFieldType.STRING).description("이름"),
             fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
-            fieldWithPath("phoneNumber").type(JsonFieldType.STRING).description("전화번호"),
             fieldWithPath("profileImage").type(JsonFieldType.STRING).description("프로필 이미지")
         ));
   }
@@ -67,7 +65,6 @@ public class UserDocumentation {
         ),
         requestFields(
             fieldWithPath("name").type(JsonFieldType.STRING).description("이름"),
-            fieldWithPath("phoneNumber").type(JsonFieldType.STRING).description("전화번호"),
             fieldWithPath("email").type(JsonFieldType.STRING).description("이메일")
         ));
   }
