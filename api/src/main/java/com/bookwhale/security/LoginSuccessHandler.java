@@ -1,9 +1,7 @@
-package com.bookwhale.security.handler;
+package com.bookwhale.security;
 
-import com.bookwhale.security.TokenProvider;
 import com.bookwhale.user.dto.LoginResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

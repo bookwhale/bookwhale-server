@@ -1,11 +1,15 @@
-package com.bookwhale.security.config;
+package com.bookwhale.config.security;
 
 import com.bookwhale.security.CustomAuthenticationEntryPoint;
 import com.bookwhale.security.CustomUserDetailsService;
+import com.bookwhale.security.LoginFilter;
+import com.bookwhale.security.LoginSuccessHandler;
+import com.bookwhale.security.TokenAuthenticationFilter;
 import com.bookwhale.security.TokenProvider;
-import com.bookwhale.security.filter.LoginFilter;
-import com.bookwhale.security.filter.TokenAuthenticationFilter;
-import com.bookwhale.security.handler.LoginSuccessHandler;
+import com.bookwhale.security.oauth.CustomOAuth2UserService;
+import com.bookwhale.security.oauth.HttpCookieOAuth2AuthorizationRequestRepository;
+import com.bookwhale.security.oauth.OAuth2AuthenticationFailureHandler;
+import com.bookwhale.security.oauth.OAuth2AuthenticationSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -19,7 +23,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.filter.CorsFilter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -30,7 +34,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   private final CustomUserDetailsService customUserDetailsService;
 
-  private final CorsFilter corsFilter;
+  private final CustomOAuth2UserService customOAuth2UserService;
+
+  private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+
+  private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
+
+  private final TokenProvider tokenProvider;
 
   @Bean
   public PasswordEncoder passwordEncoder() {
@@ -38,8 +48,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   }
 
   @Bean
-  public TokenProvider tokenProvider() {
-    return new TokenProvider();
+  public TokenAuthenticationFilter tokenAuthenticationFilter() {
+    return new TokenAuthenticationFilter();
+  }
+
+  @Bean
+  public HttpCookieOAuth2AuthorizationRequestRepository cookieAuthorizationRequestRepository() {
+    return new HttpCookieOAuth2AuthorizationRequestRepository();
   }
 
   @Override
@@ -57,11 +72,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .csrf().disable()
         .formLogin().disable()
         .httpBasic().disable()
-
-        .addFilter(corsFilter)
-        .addFilter(loginFilter())
-        .addFilter(new TokenAuthenticationFilter(authenticationManager(), tokenProvider(),
-            customUserDetailsService))
+        .cors().and()
 
         .exceptionHandling()
         .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
@@ -72,9 +83,30 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .and()
 
         .authorizeRequests()
-        .antMatchers("/api/user/signup").permitAll()
+        .antMatchers("/api/user/signup", "/api/oauth2/**").permitAll()
         .antMatchers(HttpMethod.GET, "/api/post").permitAll()
-        .antMatchers("/api/**").hasRole(USER);
+        .antMatchers("/api/**").hasRole(USER)
+        .and()
+
+        .oauth2Login()
+        .authorizationEndpoint()
+        .baseUri("/api/oauth2/authorization")
+        .authorizationRequestRepository(cookieAuthorizationRequestRepository())
+        .and()
+
+        .redirectionEndpoint()
+        .baseUri("/*/oauth2/code/*")
+        .and()
+
+        .userInfoEndpoint()
+        .userService(customOAuth2UserService)
+        .and()
+
+        .successHandler(oAuth2AuthenticationSuccessHandler)
+        .failureHandler(oAuth2AuthenticationFailureHandler);
+
+    http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+    http.addFilterBefore(loginFilter(), UsernamePasswordAuthenticationFilter.class);
   }
 
   @Override
@@ -88,7 +120,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   private LoginFilter loginFilter() throws Exception {
     LoginFilter loginFilter = new LoginFilter(authenticationManager());
     loginFilter.setFilterProcessesUrl("/api/user/login");
-    loginFilter.setAuthenticationSuccessHandler(new LoginSuccessHandler(tokenProvider()));
+    loginFilter.setAuthenticationSuccessHandler(new LoginSuccessHandler(tokenProvider));
     return loginFilter;
   }
 }

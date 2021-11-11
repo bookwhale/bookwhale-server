@@ -1,35 +1,25 @@
-package com.bookwhale.security.filter;
-
-import com.bookwhale.security.TokenProvider;
+package com.bookwhale.security;
 
 import java.io.IOException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.util.StringUtils;
+import org.springframework.web.filter.OncePerRequestFilter;
 
-public class TokenAuthenticationFilter extends BasicAuthenticationFilter {
+public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
-  private final TokenProvider tokenProvider;
-
-  private final UserDetailsService userDetailsService;
-
-  public TokenAuthenticationFilter(AuthenticationManager authenticationManager,
-      TokenProvider tokenProvider,
-      UserDetailsService userDetailsService) {
-    super(authenticationManager);
-    this.tokenProvider = tokenProvider;
-    this.userDetailsService = userDetailsService;
-  }
+  @Autowired
+  private TokenProvider tokenProvider;
+  @Autowired
+  private CustomUserDetailsService customUserDetailsService;
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -39,7 +29,7 @@ public class TokenAuthenticationFilter extends BasicAuthenticationFilter {
 
       if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
         String identity = tokenProvider.getIdentityFromToken(jwt);
-        UserDetails userDetails = userDetailsService.loadUserByUsername(identity);
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(identity);
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
             userDetails, null, userDetails.getAuthorities());
         authentication

@@ -2,6 +2,7 @@ package com.bookwhale.post.service;
 
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
+import com.bookwhale.config.AppProperties;
 import com.bookwhale.post.dto.BookResponse;
 import com.bookwhale.post.dto.NaverBookRequest;
 import java.io.BufferedReader;
@@ -18,22 +19,17 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class NaverBookAPIService {
 
-  @Value("${app.naver-book.client-id}")
-  String clientId;
-
-  @Value("${app.naver-book.client-secret}")
-  String clientSecret;
+  private final AppProperties appProperties;
 
   public List<BookResponse> getNaverBooks(NaverBookRequest req) {
     String apiURL, text, result;
@@ -53,8 +49,9 @@ public class NaverBookAPIService {
       URL url = new URL(apiURL);
       HttpURLConnection con = (HttpURLConnection) url.openConnection();
       con.setRequestMethod("GET");
-      con.setRequestProperty("X-Naver-Client-Id", clientId);
-      con.setRequestProperty("X-Naver-Client-Secret", clientSecret);
+      con.setRequestProperty("X-Naver-Client-Id", appProperties.getNaverBook().getClientId());
+      con.setRequestProperty("X-Naver-Client-Secret",
+          appProperties.getNaverBook().getClientSecret());
       con.setDoOutput(true);
 
       int responseCode = con.getResponseCode();
