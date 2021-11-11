@@ -9,7 +9,6 @@ import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.image.domain.Images;
 import com.bookwhale.user.domain.User;
-import java.util.StringJoiner;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -57,9 +56,9 @@ public class Post extends BaseEntity {
   @Enumerated(EnumType.STRING)
   private Location sellingLocation;
 
-  private Long likeCount;
+  private Long likeCount = 0L;
 
-  private Long viewCount;
+  private Long viewCount = 0L;
 
   @Embedded
   private Book book;
@@ -79,8 +78,8 @@ public class Post extends BaseEntity {
     this.postStatus = postStatus;
     this.bookStatus = bookStatus;
     this.sellingLocation = sellingLocation;
-    this.likeCount = likeCount;
-    this.viewCount = viewCount;
+    this.likeCount = likeCount == null ? 0L : likeCount;
+    this.viewCount = viewCount == null ? 0L : viewCount;
     this.book = book;
   }
 
@@ -123,6 +122,20 @@ public class Post extends BaseEntity {
   public void validatePostStatus() {
     if (this.postStatus.equals(RESERVED) || this.postStatus.equals(SOLD_OUT)) {
       throw new CustomException(ErrorCode.INVALID_POST_STATUS);
+    }
+  }
+
+  public void increaseOneViewCount() {
+    this.viewCount += 1L;
+  }
+
+  public void increaseOneLikeCount() {
+    this.likeCount += 1L;
+  }
+
+  public void decreaseOneLikeCount() {
+    if (this.likeCount > 0) {
+      this.likeCount -= 1;
     }
   }
 
