@@ -13,7 +13,6 @@ public class UserResponse {
   private String identity;
   private String name;
   private String email;
-  private String phoneNumber;
   private String profileImage;
 
   @Builder
@@ -23,7 +22,6 @@ public class UserResponse {
     this.identity = identity;
     this.name = name;
     this.email = email;
-    this.phoneNumber = phoneNumber;
     this.profileImage = profileImage;
   }
 
@@ -33,7 +31,6 @@ public class UserResponse {
         .identity(user.getIdentity())
         .name(user.getName())
         .email(user.getEmail())
-        .phoneNumber(user.getPhoneNumber())
         .profileImage(user.getProfileImage())
         .build();
   }

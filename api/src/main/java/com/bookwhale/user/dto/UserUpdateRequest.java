@@ -15,23 +15,18 @@ public class UserUpdateRequest {
   private String name;
 
   @NotBlank
-  private String phoneNumber;
-
-  @NotBlank
   @Email
   private String email;
 
   @Builder
-  public UserUpdateRequest(String name, String phoneNumber, String email) {
+  public UserUpdateRequest(String name, String email) {
     this.name = name;
-    this.phoneNumber = phoneNumber;
     this.email = email;
   }
 
   public User toEntity() {
     return User.builder()
         .name(name)
-        .phoneNumber(phoneNumber)
         .email(email)
         .build();
   }

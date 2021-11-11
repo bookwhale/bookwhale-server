@@ -1,5 +1,6 @@
 package com.bookwhale.common.security;
 
+import com.bookwhale.user.domain.AuthProvider;
 import com.bookwhale.user.domain.Role;
 
 import java.lang.annotation.Retention;
@@ -18,9 +19,9 @@ public @interface WithMockCustomUser {
 
   String name() default "남상우";
 
-  String phoneNumber() default "010-1234-1234";
-
   String profileImage() default "profileImage";
 
   Role roles() default Role.ROLE_USER;
+
+  AuthProvider provider() default AuthProvider.LOCAL;
 }

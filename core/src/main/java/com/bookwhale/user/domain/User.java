@@ -34,8 +34,6 @@ public class User extends BaseEntity {
   @Column(nullable = false)
   private String email;
 
-  private String phoneNumber;
-
   private String profileImage;
 
   @Enumerated(EnumType.STRING)
@@ -50,13 +48,12 @@ public class User extends BaseEntity {
 
   @Builder
   public User(Long id, String identity, String password, String name, String email,
-      String phoneNumber, String profileImage, Role role, AuthProvider provider) {
+      String profileImage, Role role, AuthProvider provider) {
     this.id = id;
     this.identity = identity;
     this.password = password;
     this.name = name;
     this.email = email;
-    this.phoneNumber = phoneNumber;
     this.profileImage = profileImage;
     this.role = role;
     this.provider = provider;
@@ -68,7 +65,6 @@ public class User extends BaseEntity {
         .password(encodedPassword)
         .email(user.getEmail())
         .name(user.getName())
-        .phoneNumber(user.getPhoneNumber())
         .role(Role.ROLE_USER)
         .provider(AuthProvider.LOCAL)
         .build();
@@ -76,7 +72,6 @@ public class User extends BaseEntity {
 
   public void update(User user) {
     this.name = user.getName();
-    this.phoneNumber = user.getPhoneNumber();
     this.email = user.getEmail();
   }
 

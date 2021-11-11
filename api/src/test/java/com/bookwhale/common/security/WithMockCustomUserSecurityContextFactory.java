@@ -21,9 +21,8 @@ public class WithMockCustomUserSecurityContextFactory implements
         .name(customUser.name())
         .email(customUser.email())
         .role(customUser.roles())
-        .phoneNumber(customUser.phoneNumber())
         .profileImage(customUser.profileImage())
-        .role(customUser.roles())
+        .provider(customUser.provider())
         .build();
 
     UserPrincipal principal = UserPrincipal.create(user);

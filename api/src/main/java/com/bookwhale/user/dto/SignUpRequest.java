@@ -25,17 +25,12 @@ public class SignUpRequest {
   @Email
   private String email;
 
-  @NotBlank
-  private String phoneNumber;
-
   @Builder
-  public SignUpRequest(String identity, String password, String name, String email,
-      String phoneNumber) {
+  public SignUpRequest(String identity, String password, String name, String email) {
     this.identity = identity;
     this.password = password;
     this.name = name;
     this.email = email;
-    this.phoneNumber = phoneNumber;
   }
 
   public User toEntity() {
@@ -43,7 +38,6 @@ public class SignUpRequest {
         .identity(identity)
         .email(email)
         .name(name)
-        .phoneNumber(phoneNumber)
         .role(Role.ROLE_USER)
         .build();
   }
