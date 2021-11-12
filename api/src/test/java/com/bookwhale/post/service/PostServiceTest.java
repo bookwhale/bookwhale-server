@@ -171,6 +171,25 @@ public class PostServiceTest {
     );
   }
 
+  @DisplayName("게시글을 상세 조회할 때 조회수가 +1 증가된다.")
+  @Test
+  void increaseViewCountAfterFindPost() {
+    User otherUser = User.builder().id(2L).build();
+    Post post = Post.create(user, postRequest.toEntity());
+    post.setCreatedDate(LocalDateTime.now());
+    Long beforeViewCount = post.getViewCount();
+
+    when(postRepository.findPostWithSellerById(any())).thenReturn(ofNullable(post));
+
+    PostResponse response = postService.findPost(otherUser, 1L);
+
+    verify(postRepository).findPostWithSellerById(any());
+    assertAll(
+        () -> assertThat(response.isMyPost()).isEqualTo(false),
+        () -> assertThat(post.getViewCount()).isEqualTo(beforeViewCount + 1L)
+    );
+  }
+
   @DisplayName("잘못된 게시글 ID로 상세 조회하면 예외가 발생한다.")
   @Test
   void findPost_invalidPostId_failure() {
