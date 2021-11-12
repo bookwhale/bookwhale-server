@@ -15,4 +15,12 @@ public enum BookStatus {
   BookStatus(String name) {
     this.name = name;
   }
+
+  public String getCode() {
+    return name();
+  }
+
+  public String getName() {
+    return name;
+  }
 }

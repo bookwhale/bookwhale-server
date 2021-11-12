@@ -28,6 +28,10 @@ public enum Location {
     this.detailName = detailName;
   }
 
+  public String getCode() {
+    return name();
+  }
+
   public String getName() {
     return name;
   }
