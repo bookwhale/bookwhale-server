@@ -22,12 +22,15 @@ public class PostsResponse {
   private String bookTitle;
   private String bookAuthor;
   private String bookPublisher;
+  private String sellingLocation;
+  private Long viewCount;
+  private Long likeCount;
   private String beforeTime;
 
   @Builder
   public PostsResponse(Long postId, String postImage, String postTitle, String postPrice,
       String postStatus, String bookTitle, String bookAuthor, String bookPublisher,
-      String beforeTime) {
+      String sellingLocation, Long viewCount, Long likeCount, String beforeTime) {
     this.postId = postId;
     this.postImage = postImage;
     this.postTitle = postTitle;
@@ -36,6 +39,9 @@ public class PostsResponse {
     this.bookTitle = bookTitle;
     this.bookAuthor = bookAuthor;
     this.bookPublisher = bookPublisher;
+    this.sellingLocation = sellingLocation;
+    this.viewCount = viewCount;
+    this.likeCount = likeCount;
     this.beforeTime = beforeTime;
   }
 
@@ -49,6 +55,10 @@ public class PostsResponse {
         .bookTitle(post.getBook().getBookTitle())
         .bookAuthor(post.getBook().getBookAuthor())
         .bookPublisher(post.getBook().getBookPublisher())
+        .sellingLocation(post.getSellingLocation().isPresent() ?
+            post.getSellingLocation().get().getName() : "")
+        .viewCount(post.getViewCount())
+        .likeCount(post.getLikeCount())
         .beforeTime(TimeUtils.BeforeTime(currentTime, post.getCreatedDate()))
         .build();
   }

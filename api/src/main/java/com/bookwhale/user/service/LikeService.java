@@ -31,10 +31,13 @@ public class LikeService {
    * @param user    현재 접속 중인 사용자
    * @param request 관심목록 추가 처리 요청
    */
+  @Transactional
   public void addLike(User user, LikeRequest request) {
     Post post = getPostById(request.getPostId());
     validateIsDuplicatedLike(user, post);
+
     likeRepository.save(Like.create(user, post));
+    post.increaseOneLikeCount();
   }
 
   public Post getPostById(Long postId) {
@@ -54,10 +57,13 @@ public class LikeService {
    * @param user   현재 접속 중인 사용자
    * @param likeId 좋아요 id
    */
+  @Transactional
   public void deleteLike(User user, Long likeId) {
     Like like = getLikeById(likeId);
     like.validateIsMyLike(user);
+
     likeRepository.delete(like);
+    like.getPost().decreaseOneLikeCount();
   }
 
   private Like getLikeById(Long likeId) {
