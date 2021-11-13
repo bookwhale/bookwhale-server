@@ -9,6 +9,7 @@ import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.image.domain.Images;
 import com.bookwhale.user.domain.User;
+import java.util.Optional;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -83,6 +84,10 @@ public class Post extends BaseEntity {
     this.book = book;
   }
 
+  public Optional<Location> getSellingLocation() {
+    return Optional.ofNullable(sellingLocation);
+  }
+
   public static Post create(User loginUser, Post post) {
     return Post.builder()
         .seller(loginUser)
@@ -92,7 +97,7 @@ public class Post extends BaseEntity {
         .bookStatus(post.getBookStatus())
         .description(post.getDescription())
         .book(Book.create(post.getBook()))
-        .sellingLocation(post.getSellingLocation())
+        .sellingLocation(post.getSellingLocation().orElse(null))
         .likeCount(post.getLikeCount())
         .viewCount(post.getViewCount())
         .build();

@@ -84,7 +84,8 @@ public class PostResponse {
         .description(post.getDescription())
         .bookStatus(post.getBookStatus().getName())
         .postStatus(post.getPostStatus().getName())
-        .sellingLocation(post.getSellingLocation().getName())
+        .sellingLocation(post.getSellingLocation().isPresent() ?
+            post.getSellingLocation().get().getName() : "")
         .images(imageResponse)
         .isMyPost(isMyPost)
         .isMyLike(isMyLike)
