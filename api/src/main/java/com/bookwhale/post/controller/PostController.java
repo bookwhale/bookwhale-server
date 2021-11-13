@@ -94,7 +94,7 @@ public class PostController {
     return ResponseEntity.ok(ConditionListResponse.listOfBookStatus());
   }
 
-  @GetMapping("/conditions/location")
+  @GetMapping("/conditions/locations")
   public ResponseEntity<List<ConditionListResponse>> getAllSellingLocation() {
     return ResponseEntity.ok(ConditionListResponse.listOfSellingLocation());
   }

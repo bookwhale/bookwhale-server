@@ -5,13 +5,16 @@ import com.bookwhale.post.domain.BookStatus;
 import com.google.common.base.Preconditions;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class ConditionListResponse {
 
   private String code;
@@ -21,6 +24,31 @@ public class ConditionListResponse {
   public ConditionListResponse(String code, String name) {
     this.code = code;
     this.name = name;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    ConditionListResponse that = (ConditionListResponse) o;
+    return code.equals(that.code);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(code);
+  }
+
+  @Override
+  public String toString() {
+    return "ConditionListResponse{" +
+        "code='" + code + '\'' +
+        ", name='" + name + '\'' +
+        '}';
   }
 
   public static ConditionListResponse of(String code, String name) {
