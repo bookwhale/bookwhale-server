@@ -119,6 +119,9 @@ public class UserDocumentation {
         fieldWithPath("postsResponse.bookTitle").type(JsonFieldType.STRING).description("책 제목"),
         fieldWithPath("postsResponse.bookAuthor").type(JsonFieldType.STRING).description("작가"),
         fieldWithPath("postsResponse.bookPublisher").type(JsonFieldType.STRING).description("출판사"),
+        fieldWithPath("postsResponse.sellingLocation").type(JsonFieldType.STRING).description("게시글에 등록한 판매지역"),
+        fieldWithPath("postsResponse.viewCount").type(JsonFieldType.NUMBER).description("게시글 조회수"),
+        fieldWithPath("postsResponse.likeCount").type(JsonFieldType.NUMBER).description("게시글 관심수"),
         fieldWithPath("postsResponse.beforeTime").type(JsonFieldType.STRING).description(
             "등록한 시간 - 현재 시간"),
         fieldWithPath("postsResponse.postImage").type(JsonFieldType.STRING).description(
@@ -170,6 +173,9 @@ public class UserDocumentation {
         fieldWithPath("bookTitle").type(JsonFieldType.STRING).description("책 제목"),
         fieldWithPath("bookAuthor").type(JsonFieldType.STRING).description("작가"),
         fieldWithPath("bookPublisher").type(JsonFieldType.STRING).description("출판사"),
+        fieldWithPath("sellingLocation").type(JsonFieldType.STRING).description("게시글에 등록한 판매지역"),
+        fieldWithPath("viewCount").type(JsonFieldType.NUMBER).description("게시글 조회수"),
+        fieldWithPath("likeCount").type(JsonFieldType.NUMBER).description("게시글 관심수"),
         fieldWithPath("beforeTime").type(JsonFieldType.STRING).description("등록한 시간 - 현재 시간"),
         fieldWithPath("postImage").type(JsonFieldType.STRING).description("판매자가 올린 이미지"),
         fieldWithPath("postStatus").type(JsonFieldType.STRING).description(

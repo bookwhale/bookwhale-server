@@ -14,6 +14,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.restdocs.payload.FieldDescriptor;
@@ -114,6 +115,9 @@ public class PostDocumentation {
                 .description("책 상태 [LOWER, MIDDLE, UPPER, BEST]"),
             fieldWithPath("postStatus").type(JsonFieldType.STRING)
                 .description("게시글 상태 [SALE, RESERVED, SOLD_OUT]"),
+            fieldWithPath("sellingLocation").type(JsonFieldType.STRING).description("게시글에 등록한 판매지역"),
+            fieldWithPath("viewCount").type(JsonFieldType.NUMBER).description("게시글 조회수"),
+            fieldWithPath("likeCount").type(JsonFieldType.NUMBER).description("게시글 관심수"),
             fieldWithPath("beforeTime").type(JsonFieldType.STRING).description("등록한 시간 - 현재 시간")
         ));
   }
@@ -127,6 +131,9 @@ public class PostDocumentation {
         fieldWithPath("bookAuthor").type(JsonFieldType.STRING).description("작가"),
         fieldWithPath("bookPublisher").type(JsonFieldType.STRING).description("출판사"),
         fieldWithPath("beforeTime").type(JsonFieldType.STRING).description("등록한 시간 - 현재 시간"),
+        fieldWithPath("sellingLocation").type(JsonFieldType.STRING).description("게시글에 등록한 판매지역"),
+        fieldWithPath("viewCount").type(JsonFieldType.NUMBER).description("게시글 조회수"),
+        fieldWithPath("likeCount").type(JsonFieldType.NUMBER).description("게시글 관심수"),
         fieldWithPath("postImage").type(JsonFieldType.STRING).description("판매자가 올린 이미지"),
         fieldWithPath("postStatus").type(JsonFieldType.STRING).description(
             "게시글 상태 [SALE, RESERVED, SOLD_OUT]")
@@ -181,4 +188,20 @@ public class PostDocumentation {
         )
     );
   }
+
+  public static RestDocumentationResultHandler getSearchConditions(String kindOfCondition) {
+    String conditionFlag = StringUtils.isEmpty(kindOfCondition) ? "" : kindOfCondition;
+    FieldDescriptor[] response = new FieldDescriptor[]{
+        fieldWithPath("code").type(JsonFieldType.STRING).description("검색조건 - 코드값"),
+        fieldWithPath("name").type(JsonFieldType.STRING).description("검색조건 - 표기명"),
+    };
+
+    return document(String.format("post/conditions/%s", conditionFlag),
+        preprocessRequest(prettyPrint()),
+        preprocessResponse(prettyPrint()),
+        responseFields(fieldWithPath("[]").description("An arrays of postsResponse"))
+            .andWithPrefix("[].", response)
+    );
+  }
+
 }
