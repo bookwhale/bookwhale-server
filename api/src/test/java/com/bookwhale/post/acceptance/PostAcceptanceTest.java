@@ -25,6 +25,8 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import io.restassured.specification.MultiPartSpecification;
 import java.util.List;
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -97,6 +99,23 @@ public class PostAcceptanceTest extends AcceptanceTest {
 
     AcceptanceStep.assertThatStatusIsOk(response);
     PostAcceptanceStep.assertThatFindPost(postResponse, postRequest, anotherUser, false, true);
+  }
+
+  @DisplayName("게시글을 두번 상세 조회한다. (조회수 +2 확인)")
+  @Test
+  void findMyPost_twice() {
+    String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
+
+    Long postId = AcceptanceUtils.getIdFromResponse(
+        PostAcceptanceStep.requestToCreatePost(jwt, postRequest));
+
+    PostAcceptanceStep.requestToFindPost(jwt, postId);
+    ExtractableResponse<Response> response = PostAcceptanceStep.requestToFindPost(jwt, postId);
+    PostResponse postResponse = response.jsonPath().getObject(".", PostResponse.class);
+
+    AcceptanceStep.assertThatStatusIsOk(response);
+    PostAcceptanceStep.assertThatFindPost(postResponse, postRequest, user, true, false);
+    MatcherAssert.assertThat(postResponse.getViewCount(), CoreMatchers.is(2L));
   }
 
   @DisplayName("로그인한 유저가 게시글을 전체 조회한다.")

@@ -39,7 +39,6 @@ public class PostService {
     return postRepository.save(post).getId();
   }
 
-  @Transactional(readOnly = true)
   public PostResponse findPost(User user, Long postId) {
     Post post = validatePostIdAndGetPostWithSeller(postId);
     post.increaseOneViewCount();
