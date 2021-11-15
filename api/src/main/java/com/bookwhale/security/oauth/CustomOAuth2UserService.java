@@ -7,6 +7,7 @@ import com.bookwhale.user.domain.AuthProvider;
 import com.bookwhale.user.domain.Role;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.domain.UserRepository;
+import com.bookwhale.utils.RandomStringUtils;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,9 +18,11 @@ import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserServ
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
@@ -76,7 +79,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
   }
 
   public User createUser(OAuth2UserInfo userInfo, String provider) {
-    return userRepository.save(
+    User user = userRepository.save(
         User.builder()
             .identity(userInfo.getEmail())
             .name(userInfo.getName())
@@ -85,5 +88,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             .provider(AuthProvider.valueOf(provider.toUpperCase()))
             .build()
     );
+    user.updateNickname(RandomStringUtils.createRandomNickname(user.getId()));
+    return user;
   }
 }
