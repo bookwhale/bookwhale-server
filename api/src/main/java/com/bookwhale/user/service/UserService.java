@@ -3,7 +3,6 @@ package com.bookwhale.user.service;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.common.upload.FileUploader;
-import com.bookwhale.post.domain.Post;
 import com.bookwhale.post.domain.PostRepository;
 import com.bookwhale.post.dto.PostsResponse;
 import com.bookwhale.user.domain.User;
@@ -12,6 +11,7 @@ import com.bookwhale.user.dto.PasswordUpdateRequest;
 import com.bookwhale.user.dto.ProfileResponse;
 import com.bookwhale.user.dto.SignUpRequest;
 import com.bookwhale.user.dto.UserUpdateRequest;
+import com.bookwhale.utils.RandomStringUtils;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,8 +34,9 @@ public class UserService {
 
   public void createUser(SignUpRequest request) {
     validateIsDuplicateIdentity(request);
-    User user = User.create(request.toEntity(), passwordEncoder.encode(request.getPassword()));
-    userRepository.save(user);
+    User user = userRepository.save(
+        User.create(request.toEntity(), passwordEncoder.encode(request.getPassword())));
+    user.updateNickname(RandomStringUtils.createRandomNickname(user.getId()));
   }
 
   private void validateIsDuplicateIdentity(SignUpRequest request) {

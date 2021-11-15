@@ -23,6 +23,7 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import io.restassured.specification.MultiPartSpecification;
 import java.util.List;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.MimeTypeUtils;
@@ -43,6 +44,27 @@ public class UserAcceptanceTest extends AcceptanceTest {
     ExtractableResponse<Response> response = UserAcceptanceStep.requestToSignUp(signUpRequest);
 
     AcceptanceStep.assertThatStatusIsCreated(response);
+  }
+
+  @DisplayName("회원가입을 하면 닉네임이 자동 생성된다.")
+  @Test
+  void createRandomNicknameTest() {
+    SignUpRequest signUpRequest = SignUpRequest.builder()
+        .identity("gentleDot")
+        .password("1234")
+        .name("백상일")
+        .email("gentleDot@email.com")
+        .build();
+
+    ExtractableResponse<Response> response = UserAcceptanceStep.requestToSignUp(signUpRequest);
+
+    String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(
+        new LoginRequest(signUpRequest.getIdentity(), signUpRequest.getPassword()));
+    String nickname = UserAcceptanceStep.requestToGetMyInfo(jwt).jsonPath()
+        .getObject(".", UserResponse.class).getNickname();
+
+    AcceptanceStep.assertThatStatusIsCreated(response);
+    Assertions.assertThat(nickname).isNotNull();
   }
 
   @DisplayName("내 정보를 조회한다.")
