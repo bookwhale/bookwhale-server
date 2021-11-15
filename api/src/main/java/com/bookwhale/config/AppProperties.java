@@ -1,43 +1,56 @@
 package com.bookwhale.config;
 
-import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
-import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.ConstructorBinding;
 
 @Getter
+@ConstructorBinding
 @ConfigurationProperties(prefix = "app")
 public class AppProperties {
 
-  private final Auth auth = new Auth();
-  private final OAuth2 oauth2 = new OAuth2();
-  private final NaverBook naverBook = new NaverBook();
+  private final Auth auth;
+  private final OAuth2 oauth2;
+  private final NaverBook naverBook;
+
+  public AppProperties(Auth auth, OAuth2 oauth2, NaverBook naverBook) {
+    this.auth = auth;
+    this.oauth2 = oauth2;
+    this.naverBook = naverBook;
+  }
 
   @Getter
-  @Setter
   public static class Auth {
 
-    private String tokenSecret;
-    private long tokenExpirationMsec;
+    private final String tokenSecret;
+    private final long tokenExpirationMsec;
+
+    public Auth(String tokenSecret, long tokenExpirationMsec) {
+      this.tokenSecret = tokenSecret;
+      this.tokenExpirationMsec = tokenExpirationMsec;
+    }
   }
 
   @Getter
   public static final class OAuth2 {
 
-    private List<String> authorizedRedirectUris = new ArrayList<>();
+    private final List<String> authorizedRedirectUris;
 
-    public OAuth2 authorizedRedirectUris(List<String> authorizedRedirectUris) {
+    public OAuth2(List<String> authorizedRedirectUris) {
       this.authorizedRedirectUris = authorizedRedirectUris;
-      return this;
     }
   }
 
   @Getter
-  @Setter
   public static final class NaverBook {
 
-    private String clientId;
-    private String clientSecret;
+    private final String clientId;
+    private final String clientSecret;
+
+    public NaverBook(String clientId, String clientSecret) {
+      this.clientId = clientId;
+      this.clientSecret = clientSecret;
+    }
   }
 }
