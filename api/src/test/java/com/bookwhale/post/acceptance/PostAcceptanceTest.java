@@ -25,8 +25,6 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import io.restassured.specification.MultiPartSpecification;
 import java.util.List;
-import org.hamcrest.CoreMatchers;
-import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -115,7 +113,7 @@ public class PostAcceptanceTest extends AcceptanceTest {
 
     AcceptanceStep.assertThatStatusIsOk(response);
     PostAcceptanceStep.assertThatFindPost(postResponse, postRequest, user, true, false);
-    MatcherAssert.assertThat(postResponse.getViewCount(), CoreMatchers.is(2L));
+    assertThat(postResponse.getViewCount()).isEqualTo(2L);
   }
 
   @DisplayName("로그인한 유저가 게시글을 전체 조회한다.")

@@ -24,8 +24,6 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import io.restassured.specification.MultiPartSpecification;
 import java.util.List;
-import org.hamcrest.CoreMatchers;
-import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.MimeTypeUtils;
@@ -217,12 +215,14 @@ public class UserAcceptanceTest extends AcceptanceTest {
     List<LikeResponse> likeResponses = UserAcceptanceStep.findLikes(jwt).jsonPath()
         .getList(".", LikeResponse.class);
 
-    ExtractableResponse<Response> responseAfterDeleteLike = PostAcceptanceStep.requestToFindPost(jwt, postId);
-    PostResponse postResponse = responseAfterDeleteLike.jsonPath().getObject(".", PostResponse.class);
+    ExtractableResponse<Response> responseAfterDeleteLike = PostAcceptanceStep.requestToFindPost(
+        jwt, postId);
+    PostResponse postResponse = responseAfterDeleteLike.jsonPath()
+        .getObject(".", PostResponse.class);
 
     AcceptanceStep.assertThatStatusIsOk(response);
     assertThat(likeResponses.size()).isEqualTo(0);
-    MatcherAssert.assertThat(postResponse.getLikeCount(), CoreMatchers.is(likeCount - 1L));
+    assertThat(postResponse.getLikeCount()).isEqualTo(likeCount - 1L);
   }
 
   @DisplayName("나의 게시글들을 조회한다.")

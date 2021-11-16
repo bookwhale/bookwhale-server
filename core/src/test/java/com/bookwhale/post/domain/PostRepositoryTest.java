@@ -2,11 +2,9 @@ package com.bookwhale.post.domain;
 
 import static java.util.List.of;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.CoreMatchers.is;
 
 import com.bookwhale.common.TestConfig;
 import java.util.List;
-import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -133,14 +131,5 @@ public class PostRepositoryTest {
         () -> assertThat(res.get(1).getBook().getBookTitle()).isEqualTo(
             hrSpringPost.getBook().getBookTitle())
     );
-  }
-
-  @DisplayName("별도의 관심 수, 조회 수가 입력되지 않은 판매글을 조회 시 0으로 조회되는지 확인한다.")
-  @Test
-  void getInitPostWithfindByPostId() {
-    Post post = postRepository.getById(1L); // likeCount, viewCount를 입력하지 않은 post
-
-    MatcherAssert.assertThat(post.getLikeCount(), is(0L));
-    MatcherAssert.assertThat(post.getViewCount(), is(0L));
   }
 }
