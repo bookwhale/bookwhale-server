@@ -104,6 +104,16 @@ operation::post/findPosts[snippets='http-request,request-headers,request-paramet
 
 operation::post/updatePostStatus[snippets='http-request,request-headers,path-parameters,request-fields,http-response']
 
+=== 2.7 판매글 검색조건 - 판매상태
+
+operation::post/conditions/bookStatus[snippets='http-request,http-response,response-fields']
+
+=== 2.8 판매글 검색조건 - 판매지역
+* 설정된 판매지역은 대한민국의 17개 행정 구역을 기준으로 생성하였습니다.
+** https://ko.wikipedia.org/wiki/%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%EC%9D%98_%ED%96%89%EC%A0%95_%EA%B5%AC%EC%97%AD[위키백과 - 대한민국의 행정 구역]
+
+operation::post/conditions/locations[snippets='http-request,http-response,response-fields']
+
 == 3. 채팅
 
 === 3.1 채팅방 생성

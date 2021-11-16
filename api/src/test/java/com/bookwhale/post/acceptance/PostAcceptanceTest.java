@@ -99,6 +99,23 @@ public class PostAcceptanceTest extends AcceptanceTest {
     PostAcceptanceStep.assertThatFindPost(postResponse, postRequest, anotherUser, false, true);
   }
 
+  @DisplayName("게시글을 두번 상세 조회한다. (조회수 +2 확인)")
+  @Test
+  void findMyPost_twice() {
+    String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
+
+    Long postId = AcceptanceUtils.getIdFromResponse(
+        PostAcceptanceStep.requestToCreatePost(jwt, postRequest));
+
+    PostAcceptanceStep.requestToFindPost(jwt, postId);
+    ExtractableResponse<Response> response = PostAcceptanceStep.requestToFindPost(jwt, postId);
+    PostResponse postResponse = response.jsonPath().getObject(".", PostResponse.class);
+
+    AcceptanceStep.assertThatStatusIsOk(response);
+    PostAcceptanceStep.assertThatFindPost(postResponse, postRequest, user, true, false);
+    assertThat(postResponse.getViewCount()).isEqualTo(2L);
+  }
+
   @DisplayName("로그인한 유저가 게시글을 전체 조회한다.")
   @Test
   void findPosts_loginUser() {

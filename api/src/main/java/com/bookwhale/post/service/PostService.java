@@ -39,9 +39,9 @@ public class PostService {
     return postRepository.save(post).getId();
   }
 
-  @Transactional(readOnly = true)
   public PostResponse findPost(User user, Long postId) {
     Post post = validatePostIdAndGetPostWithSeller(postId);
+    post.increaseOneViewCount();
     return PostResponse.of(
         post,
         post.isMyPost(user),
@@ -65,7 +65,7 @@ public class PostService {
 
   public void updatePost(User user, Long postId, PostUpdateRequest request,
       List<MultipartFile> images) {
-    Post post = validatePostIdAndGetPost(postId);
+    Post post = getPostByPostId(postId);
     post.validateIsMyPost(user);
     post.update(request.toEntity());
     updateImages(post, images, request.getDeleteImgUrls());
@@ -87,18 +87,18 @@ public class PostService {
   }
 
   public void updatePostStatus(User user, Long postId, PostStatusUpdateRequest request) {
-    Post post = validatePostIdAndGetPost(postId);
+    Post post = getPostByPostId(postId);
     post.validateIsMyPost(user);
     post.updatePostStatus(request.getPostStatus());
   }
 
-  public Post validatePostIdAndGetPost(Long postId) {
+  public Post getPostByPostId(Long postId) {
     return postRepository.findById(postId)
         .orElseThrow(() -> new CustomException(ErrorCode.INVALID_POST_ID));
   }
 
   public void deletePost(User user, Long postId) {
-    Post post = validatePostIdAndGetPost(postId);
+    Post post = getPostByPostId(postId);
     post.validateIsMyPost(user);
     deleteAllImages(post);
     postRepository.delete(post);

@@ -59,7 +59,8 @@ public class PostAcceptanceStep {
         () -> assertThat(res.getBookResponse().getBookPubDate()).isEqualTo(
             req.getBookRequest().getBookPubDate()),
         () -> assertThat(res.getBookResponse().getBookListPrice()).isEqualTo(
-            req.getBookRequest().getBookListPrice())
+            req.getBookRequest().getBookListPrice()),
+        () -> assertThat(res.getViewCount()).isNotEqualTo(0L)
     );
   }
 

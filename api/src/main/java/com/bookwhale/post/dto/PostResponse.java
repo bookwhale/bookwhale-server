@@ -23,17 +23,21 @@ public class PostResponse {
   private String description;
   private String bookStatus;
   private String postStatus;
+  private String sellingLocation;
   private List<String> images;
   private BookResponse bookResponse;
   private boolean isMyPost;
   private boolean isMyLike;
+  private Long viewCount;
+  private Long likeCount;
   private String beforeTime;
 
   @Builder
   public PostResponse(Long sellerId, String sellerIdentity, String sellerProfileImage,
-      Long postId, String title, String price, String description,
-      String bookStatus, String postStatus, List<String> images,
-      BookResponse bookResponse, boolean isMyPost, boolean isMyLike, String beforeTime) {
+      Long postId, String title, String price, String description, String bookStatus,
+      String postStatus, String sellingLocation, List<String> images,
+      BookResponse bookResponse, boolean isMyPost, boolean isMyLike, Long viewCount,
+      Long likeCount, String beforeTime) {
     this.sellerId = sellerId;
     this.sellerIdentity = sellerIdentity;
     this.sellerProfileImage = sellerProfileImage;
@@ -43,10 +47,13 @@ public class PostResponse {
     this.description = description;
     this.bookStatus = bookStatus;
     this.postStatus = postStatus;
+    this.sellingLocation = sellingLocation;
     this.images = images;
     this.bookResponse = bookResponse;
     this.isMyPost = isMyPost;
     this.isMyLike = isMyLike;
+    this.viewCount = viewCount;
+    this.likeCount = likeCount;
     this.beforeTime = beforeTime;
   }
 
@@ -77,9 +84,13 @@ public class PostResponse {
         .description(post.getDescription())
         .bookStatus(post.getBookStatus().getName())
         .postStatus(post.getPostStatus().getName())
+        .sellingLocation(post.getSellingLocation().isPresent() ?
+            post.getSellingLocation().get().getName() : "")
         .images(imageResponse)
         .isMyPost(isMyPost)
         .isMyLike(isMyLike)
+        .viewCount(post.getViewCount())
+        .likeCount(post.getLikeCount())
         .beforeTime(TimeUtils.BeforeTime(LocalDateTime.now(), post.getCreatedDate()))
         .build();
   }

@@ -62,17 +62,19 @@ public class UserAcceptanceStep {
   public static void assertThatAddLike(List<LikeResponse> res, PostRequest req) {
     Assertions.assertAll(
         () -> assertThat(res.size()).isEqualTo(1),
-        () -> org.assertj.core.api.Assertions.assertThat(
+        () -> assertThat(
             res.get(0).getPostsResponse().getPostTitle()).isEqualTo(req.getTitle()),
-        () -> org.assertj.core.api.Assertions.assertThat(
+        () -> assertThat(
             res.get(0).getPostsResponse().getPostPrice()).isEqualTo(req.getPrice()),
-        () -> org.assertj.core.api.Assertions.assertThat(
+        () -> assertThat(
             res.get(0).getPostsResponse().getPostImage()).isNotNull(),
-        () -> org.assertj.core.api.Assertions.assertThat(
+        () -> assertThat(
             res.get(0).getPostsResponse().getBeforeTime()).isNotNull(),
-        () -> org.assertj.core.api.Assertions.assertThat(
+        () -> assertThat(
             res.get(0).getPostsResponse().getBookTitle()).isEqualTo(
-            req.getBookRequest().getBookTitle())
+            req.getBookRequest().getBookTitle()),
+        () -> assertThat(
+            res.get(0).getPostsResponse().getLikeCount()).isGreaterThan(0L)
     );
   }
 

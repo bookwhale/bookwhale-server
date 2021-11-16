@@ -2,6 +2,7 @@ package com.bookwhale.post.controller;
 
 import com.bookwhale.dto.Pagination;
 import com.bookwhale.post.dto.BookResponse;
+import com.bookwhale.common.dto.ConditionListResponse;
 import com.bookwhale.post.dto.NaverBookRequest;
 import com.bookwhale.post.dto.PostRequest;
 import com.bookwhale.post.dto.PostResponse;
@@ -87,4 +88,15 @@ public class PostController {
     postService.deletePost(user, postId);
     return ResponseEntity.ok().build();
   }
+
+  @GetMapping("/conditions/bookStatus")
+  public ResponseEntity<List<ConditionListResponse>> getAllBookStatus() {
+    return ResponseEntity.ok(ConditionListResponse.listOfBookStatus());
+  }
+
+  @GetMapping("/conditions/locations")
+  public ResponseEntity<List<ConditionListResponse>> getAllSellingLocation() {
+    return ResponseEntity.ok(ConditionListResponse.listOfSellingLocation());
+  }
+
 }

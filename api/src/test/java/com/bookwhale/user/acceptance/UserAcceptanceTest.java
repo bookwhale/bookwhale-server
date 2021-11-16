@@ -8,6 +8,7 @@ import com.bookwhale.common.acceptance.step.AcceptanceStep;
 import com.bookwhale.post.acceptance.step.PostAcceptanceStep;
 import com.bookwhale.post.dto.BookRequest;
 import com.bookwhale.post.dto.PostRequest;
+import com.bookwhale.post.dto.PostResponse;
 import com.bookwhale.post.dto.PostsResponse;
 import com.bookwhale.user.acceptance.step.UserAcceptanceStep;
 import com.bookwhale.user.dto.LikeRequest;
@@ -204,16 +205,24 @@ public class UserAcceptanceTest extends AcceptanceTest {
     Long postId = AcceptanceUtils.getIdFromResponse(
         PostAcceptanceStep.requestToCreatePost(jwt, postRequest));
     UserAcceptanceStep.addLike(jwt, new LikeRequest(postId));
-    Long likeId = UserAcceptanceStep.findLikes(jwt).jsonPath()
-        .getList(".", LikeResponse.class).get(0).getLikeId();
+    List<LikeResponse> likeResponseAfterAddLike = UserAcceptanceStep.findLikes(jwt).jsonPath()
+        .getList(".", LikeResponse.class);
+    Long likeCount = likeResponseAfterAddLike.get(0).getPostsResponse().getLikeCount();
+    Long likeId = likeResponseAfterAddLike.get(0).getLikeId();
 
     ExtractableResponse<Response> response = UserAcceptanceStep.deleteLike(
         jwt, likeId);
     List<LikeResponse> likeResponses = UserAcceptanceStep.findLikes(jwt).jsonPath()
         .getList(".", LikeResponse.class);
 
+    ExtractableResponse<Response> responseAfterDeleteLike = PostAcceptanceStep.requestToFindPost(
+        jwt, postId);
+    PostResponse postResponse = responseAfterDeleteLike.jsonPath()
+        .getObject(".", PostResponse.class);
+
     AcceptanceStep.assertThatStatusIsOk(response);
     assertThat(likeResponses.size()).isEqualTo(0);
+    assertThat(postResponse.getLikeCount()).isEqualTo(likeCount - 1L);
   }
 
   @DisplayName("나의 게시글들을 조회한다.")

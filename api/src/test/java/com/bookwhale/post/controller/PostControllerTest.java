@@ -196,6 +196,9 @@ public class PostControllerTest extends CommonApiTest {
         .bookResponse(bookResponse)
         .isMyPost(true)
         .isMyLike(true)
+        .sellingLocation("서울")
+        .viewCount(1L)
+        .likeCount(0L)
         .beforeTime("15분 전")
         .build();
 
@@ -227,6 +230,9 @@ public class PostControllerTest extends CommonApiTest {
         .bookTitle("토비의 스프링")
         .bookAuthor("이일민")
         .bookPublisher("허브출판사")
+        .sellingLocation("서울")
+        .viewCount(1L)
+        .likeCount(0L)
         .beforeTime("15분 전")
         .build();
 
@@ -314,5 +320,25 @@ public class PostControllerTest extends CommonApiTest {
         .andExpect(status().isOk())
         .andDo(print())
         .andDo(PostDocumentation.updatePostStatus());
+  }
+
+  @DisplayName("검색조건에 사용될 판매글 상태 목록을 조회한다.")
+  @Test
+  void getSearchConditionsOfAllBookStatus() throws Exception {
+    String kindOfCondition = "bookStatus";
+    mockMvc.perform(get("/api/post/conditions/" + kindOfCondition))
+        .andExpect(status().isOk())
+        .andDo(PostDocumentation.getSearchConditions(kindOfCondition))
+        .andDo(print());
+  }
+
+  @DisplayName("검색조건에 사용될 판매지역 목록을 조회한다.")
+  @Test
+  void getSearchConditionsOfAllSellingLocation() throws Exception {
+    String kindOfCondition = "locations";
+    mockMvc.perform(get("/api/post/conditions/" + kindOfCondition))
+        .andExpect(status().isOk())
+        .andDo(PostDocumentation.getSearchConditions(kindOfCondition))
+        .andDo(print());
   }
 }
