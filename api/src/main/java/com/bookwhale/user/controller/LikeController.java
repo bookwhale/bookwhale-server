@@ -26,46 +26,46 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class LikeController {
 
-  private final LikeService likeService;
+    private final LikeService likeService;
 
-  /**
-   * 사용자가 접근한 판매글에서 관심목록 추가를 요청
-   *
-   * @param user    현재 접속 중인 사용자
-   * @param request 관심목록 추가 처리 요청
-   * @return 요청 처리 성공 시 HttpStatus.OK (200)을 반환, 실패 시 Exception이 던져지며 ErrorCode를 반환
-   * @see ErrorCode
-   */
-  @PostMapping("/like")
-  public ResponseEntity<Void> addLike(@CurrentUser User user,
-      @Valid @RequestBody LikeRequest request) {
-    likeService.addLike(user, request);
-    return ResponseEntity.ok().build();
-  }
+    /**
+     * 사용자가 접근한 판매글에서 관심목록 추가를 요청
+     *
+     * @param user    현재 접속 중인 사용자
+     * @param request 관심목록 추가 처리 요청
+     * @return 요청 처리 성공 시 HttpStatus.OK (200)을 반환, 실패 시 Exception이 던져지며 ErrorCode를 반환
+     * @see ErrorCode
+     */
+    @PostMapping("/like")
+    public ResponseEntity<Void> addLike(@CurrentUser User user,
+        @Valid @RequestBody LikeRequest request) {
+        likeService.addLike(user, request);
+        return ResponseEntity.ok().build();
+    }
 
-  /**
-   * 사용자가 관심목록 추가한 전체 목록을 조회
-   *
-   * @param user 현재 접속 중인 사용자
-   * @return 요청 처리 성공 시 사용자의 전체 관심목록을 반환한다.
-   */
-  @GetMapping("/likes")
-  public ResponseEntity<List<LikeResponse>> findMyLikes(@CurrentUser User user) {
-    return ResponseEntity.ok(likeService.findAllLikes(user));
-  }
+    /**
+     * 사용자가 관심목록 추가한 전체 목록을 조회
+     *
+     * @param user 현재 접속 중인 사용자
+     * @return 요청 처리 성공 시 사용자의 전체 관심목록을 반환한다.
+     */
+    @GetMapping("/likes")
+    public ResponseEntity<List<LikeResponse>> findMyLikes(@CurrentUser User user) {
+        return ResponseEntity.ok(likeService.findAllLikes(user));
+    }
 
-  /**
-   * 사용자의 관심목록 중 선택한 관심을 삭제한다.
-   *
-   * @param user   현재 접속 중인 사용자
-   * @param likeId 관심 고유값 (ID)
-   * @return 요청 처리 성공 시 HttpStatus.OK (200)을 반환, 실패 시 Exception이 던져지며 ErrorCode를 반환
-   * @see ErrorCode
-   */
-  @DeleteMapping("like/{likeId}")
-  public ResponseEntity<Void> deleteLike(@CurrentUser User user,
-      @PathVariable Long likeId) {
-    likeService.deleteLike(user, likeId);
-    return ResponseEntity.ok().build();
-  }
+    /**
+     * 사용자의 관심목록 중 선택한 관심을 삭제한다.
+     *
+     * @param user   현재 접속 중인 사용자
+     * @param likeId 관심 고유값 (ID)
+     * @return 요청 처리 성공 시 HttpStatus.OK (200)을 반환, 실패 시 Exception이 던져지며 ErrorCode를 반환
+     * @see ErrorCode
+     */
+    @DeleteMapping("like/{likeId}")
+    public ResponseEntity<Void> deleteLike(@CurrentUser User user,
+        @PathVariable Long likeId) {
+        likeService.deleteLike(user, likeId);
+        return ResponseEntity.ok().build();
+    }
 }

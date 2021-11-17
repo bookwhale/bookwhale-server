@@ -32,139 +32,140 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @DisplayName("유저 단위 테스트(Service)")
 public class UserServiceTest {
 
-  @Mock
-  private UserRepository userRepository;
+    @Mock
+    private UserRepository userRepository;
 
-  @Mock
-  private PasswordEncoder passwordEncoder;
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
-  @Mock
-  private FileUploader fileUploader;
+    @Mock
+    private FileUploader fileUploader;
 
-  @Mock
-  private PostRepository postRepository;
+    @Mock
+    private PostRepository postRepository;
 
-  @Mock
-  private LikeRepository likeRepository;
+    @Mock
+    private LikeRepository likeRepository;
 
-  UserService userService;
+    UserService userService;
 
-  User user;
+    User user;
 
-  @BeforeEach
-  void setUp() {
-    userService = new UserService(userRepository, passwordEncoder, fileUploader, postRepository);
+    @BeforeEach
+    void setUp() {
+        userService = new UserService(userRepository, passwordEncoder, fileUploader,
+            postRepository);
 
-    user = User.builder()
-        .id(1L)
-        .identity("highright96")
-        .password("1234")
-        .name("남상우")
-        .email("highright96@email.com")
-        .phoneNumber("010-1234-1234")
-        .build();
-  }
+        user = User.builder()
+            .id(1L)
+            .identity("highright96")
+            .password("1234")
+            .name("남상우")
+            .email("highright96@email.com")
+            .phoneNumber("010-1234-1234")
+            .build();
+    }
 
-  @DisplayName("회원가입을 한다.")
-  @Test
-  void createUser_success() {
-    SignUpRequest signUpRequest = SignUpRequest.builder()
-        .identity("highright96")
-        .password("1234")
-        .name("남상우")
-        .email("highright96@email.com")
-        .phoneNumber("010-1234-1234")
-        .build();
+    @DisplayName("회원가입을 한다.")
+    @Test
+    void createUser_success() {
+        SignUpRequest signUpRequest = SignUpRequest.builder()
+            .identity("highright96")
+            .password("1234")
+            .name("남상우")
+            .email("highright96@email.com")
+            .phoneNumber("010-1234-1234")
+            .build();
 
-    when(userRepository.existsByIdentity(any())).thenReturn(false);
-    when(passwordEncoder.encode(any())).thenReturn(signUpRequest.getPassword());
-    when(userRepository.save(any())).thenReturn(user);
+        when(userRepository.existsByIdentity(any())).thenReturn(false);
+        when(passwordEncoder.encode(any())).thenReturn(signUpRequest.getPassword());
+        when(userRepository.save(any())).thenReturn(user);
 
-    userService.createUser(signUpRequest);
+        userService.createUser(signUpRequest);
 
-    verify(userRepository).existsByIdentity(any());
-    verify(passwordEncoder).encode(any());
-    verify(userRepository).save(any());
-  }
+        verify(userRepository).existsByIdentity(any());
+        verify(passwordEncoder).encode(any());
+        verify(userRepository).save(any());
+    }
 
-  @DisplayName("회원가입을 할 때 중복된 아이디면 예외가 발생한다.")
-  @Test
-  void createUser_duplicatedIdentity_failure() {
-    SignUpRequest signUpRequest = SignUpRequest.builder()
-        .identity("highright96")
-        .password("1234")
-        .name("남상우")
-        .email("highright96@email.com")
-        .phoneNumber("010-1234-1234")
-        .build();
+    @DisplayName("회원가입을 할 때 중복된 아이디면 예외가 발생한다.")
+    @Test
+    void createUser_duplicatedIdentity_failure() {
+        SignUpRequest signUpRequest = SignUpRequest.builder()
+            .identity("highright96")
+            .password("1234")
+            .name("남상우")
+            .email("highright96@email.com")
+            .phoneNumber("010-1234-1234")
+            .build();
 
-    when(userRepository.existsByIdentity(any())).thenReturn(true);
-    assertThatThrownBy(() -> userService.createUser(signUpRequest)).
-        isInstanceOf(CustomException.class)
-        .hasMessage(ErrorCode.DUPLICATED_USER_IDENTITY.getMessage());
-  }
+        when(userRepository.existsByIdentity(any())).thenReturn(true);
+        assertThatThrownBy(() -> userService.createUser(signUpRequest)).
+            isInstanceOf(CustomException.class)
+            .hasMessage(ErrorCode.DUPLICATED_USER_IDENTITY.getMessage());
+    }
 
-  @DisplayName("내 정보를 수정한다.")
-  @Test
-  void updateMyInfo_success() {
-    UserUpdateRequest userUpdateRequest = UserUpdateRequest.builder()
-        .name("테스터1")
-        .phoneNumber("010-0000-0000")
-        .email("tester1@email.com")
-        .build();
+    @DisplayName("내 정보를 수정한다.")
+    @Test
+    void updateMyInfo_success() {
+        UserUpdateRequest userUpdateRequest = UserUpdateRequest.builder()
+            .name("테스터1")
+            .phoneNumber("010-0000-0000")
+            .email("tester1@email.com")
+            .build();
 
-    userService.updateMyInfo(user, userUpdateRequest);
+        userService.updateMyInfo(user, userUpdateRequest);
 
-    Assertions.assertAll(
-        () -> assertThat(user.getName()).isEqualTo(userUpdateRequest.getName()),
-        () -> assertThat(user.getEmail()).isEqualTo(userUpdateRequest.getEmail()),
-        () -> assertThat(user.getPhoneNumber()).isEqualTo(userUpdateRequest.getPhoneNumber())
-    );
-  }
+        Assertions.assertAll(
+            () -> assertThat(user.getName()).isEqualTo(userUpdateRequest.getName()),
+            () -> assertThat(user.getEmail()).isEqualTo(userUpdateRequest.getEmail()),
+            () -> assertThat(user.getPhoneNumber()).isEqualTo(userUpdateRequest.getPhoneNumber())
+        );
+    }
 
-  @DisplayName("비밀번호를 수정한다.")
-  @Test
-  void updatePassword_success() {
-    PasswordUpdateRequest request = new PasswordUpdateRequest("1234", "12345");
+    @DisplayName("비밀번호를 수정한다.")
+    @Test
+    void updatePassword_success() {
+        PasswordUpdateRequest request = new PasswordUpdateRequest("1234", "12345");
 
-    when(passwordEncoder.matches(any(), any())).thenReturn(true);
-    when(passwordEncoder.encode(any())).thenReturn("encodedPassword");
-    userService.updatePassword(user, request);
+        when(passwordEncoder.matches(any(), any())).thenReturn(true);
+        when(passwordEncoder.encode(any())).thenReturn("encodedPassword");
+        userService.updatePassword(user, request);
 
-    assertThat(user.getPassword()).isEqualTo(passwordEncoder.encode(request.getNewPassword()));
-  }
+        assertThat(user.getPassword()).isEqualTo(passwordEncoder.encode(request.getNewPassword()));
+    }
 
-  @DisplayName("비밀번호를 수정을 할 때 기존 비밀번호가 틀리면 예외가 발생한다.")
-  @Test
-  void updatePassword_failure() {
-    PasswordUpdateRequest req = new PasswordUpdateRequest("invalidPassword", "12345");
+    @DisplayName("비밀번호를 수정을 할 때 기존 비밀번호가 틀리면 예외가 발생한다.")
+    @Test
+    void updatePassword_failure() {
+        PasswordUpdateRequest req = new PasswordUpdateRequest("invalidPassword", "12345");
 
-    when(passwordEncoder.matches(any(), any())).thenReturn(false);
+        when(passwordEncoder.matches(any(), any())).thenReturn(false);
 
-    assertThatThrownBy(() -> userService.updatePassword(user, req))
-        .isInstanceOf(CustomException.class)
-        .hasMessage(ErrorCode.INVALID_USER_PASSWORD.getMessage());
-  }
+        assertThatThrownBy(() -> userService.updatePassword(user, req))
+            .isInstanceOf(CustomException.class)
+            .hasMessage(ErrorCode.INVALID_USER_PASSWORD.getMessage());
+    }
 
-  @DisplayName("프로필 사진을 업로드한다.")
-  @Test
-  void uploadProfileImage_success() {
-    MockMultipartFile image = new MockMultipartFile("profileImage", "profileImage.jpg",
-        ContentType.IMAGE_JPEG.getMimeType(),
-        "프로필 이미지 입니다.".getBytes());
-    String uploadedImage = "uploadImage";
+    @DisplayName("프로필 사진을 업로드한다.")
+    @Test
+    void uploadProfileImage_success() {
+        MockMultipartFile image = new MockMultipartFile("profileImage", "profileImage.jpg",
+            ContentType.IMAGE_JPEG.getMimeType(),
+            "프로필 이미지 입니다.".getBytes());
+        String uploadedImage = "uploadImage";
 
-    when(fileUploader.uploadFile(any())).thenReturn(uploadedImage);
+        when(fileUploader.uploadFile(any())).thenReturn(uploadedImage);
 
-    ProfileResponse profileResponse = userService.uploadProfileImage(user, image);
+        ProfileResponse profileResponse = userService.uploadProfileImage(user, image);
 
-    assertThat(profileResponse.getProfileImage()).isEqualTo(uploadedImage);
-  }
+        assertThat(profileResponse.getProfileImage()).isEqualTo(uploadedImage);
+    }
 
-  @DisplayName("프로필 사진을 삭제한다.")
-  @Test
-  void deleteProfileImage_success() {
-    userService.deleteProfileImage(user);
-    assertThat(user.getProfileImage()).isEqualTo(null);
-  }
+    @DisplayName("프로필 사진을 삭제한다.")
+    @Test
+    void deleteProfileImage_success() {
+        userService.deleteProfileImage(user);
+        assertThat(user.getProfileImage()).isEqualTo(null);
+    }
 }

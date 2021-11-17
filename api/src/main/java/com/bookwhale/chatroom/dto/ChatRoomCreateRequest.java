@@ -9,15 +9,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ChatRoomCreateRequest {
 
-  @NotNull
-  private Long postId;
+    @NotNull
+    private Long postId;
 
-  @NotNull
-  private Long sellerId;
+    @NotNull
+    private Long sellerId;
 
-  @Builder
-  public ChatRoomCreateRequest(Long postId, Long sellerId) {
-    this.postId = postId;
-    this.sellerId = sellerId;
-  }
+    @Builder
+    public ChatRoomCreateRequest(Long postId, Long sellerId) {
+        this.postId = postId;
+        this.sellerId = sellerId;
+    }
 }

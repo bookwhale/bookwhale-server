@@ -25,34 +25,35 @@ import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class AcceptanceTest {
 
-  @LocalServerPort
-  int port;
+    @LocalServerPort
+    int port;
 
-  @Autowired
-  protected ObjectMapper objectMapper;
+    @Autowired
+    protected ObjectMapper objectMapper;
 
-  protected StompSession session;
+    protected StompSession session;
 
-  protected BlockingQueue<String> blockingQueue;
+    protected BlockingQueue<String> blockingQueue;
 
-  @BeforeEach
-  public void setUp() throws Exception {
-    if (RestAssured.port == RestAssured.UNDEFINED_PORT) {
-      RestAssured.port = port;
+    @BeforeEach
+    public void setUp() throws Exception {
+        if (RestAssured.port == RestAssured.UNDEFINED_PORT) {
+            RestAssured.port = port;
+        }
+
+        objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        WebSocketStompClient stompClient = new WebSocketStompClient(
+            new SockJsClient(List.of(new WebSocketTransport(new StandardWebSocketClient()))));
+
+        // STOMP + Web Socket 연결
+        session = stompClient.connect(
+            String.format("ws://localhost:%d" + StompWebSocketConfig.WS_ENDPOINT, port),
+            new StompSessionHandlerAdapter() {
+            }).get(1, SECONDS);
+
+        stompClient.setMessageConverter(new ByteArrayMessageConverter());
     }
-
-    objectMapper = new ObjectMapper();
-    objectMapper.registerModule(new JavaTimeModule());
-    objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-
-    WebSocketStompClient stompClient = new WebSocketStompClient(
-        new SockJsClient(List.of(new WebSocketTransport(new StandardWebSocketClient()))));
-
-    // STOMP + Web Socket 연결
-    session = stompClient.connect(String.format("ws://localhost:%d" + StompWebSocketConfig.WS_ENDPOINT, port),
-        new StompSessionHandlerAdapter() {
-        }).get(1, SECONDS);
-
-    stompClient.setMessageConverter(new ByteArrayMessageConverter());
-  }
 }

@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ProfileResponse {
 
-  private String profileImage;
+    private String profileImage;
 
-  public static ProfileResponse of(String imageUrl) {
-    return new ProfileResponse(imageUrl);
-  }
+    public static ProfileResponse of(String imageUrl) {
+        return new ProfileResponse(imageUrl);
+    }
 }

@@ -13,22 +13,22 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LikeResponse {
 
-  private Long likeId;
+    private Long likeId;
 
-  private PostsResponse postsResponse;
+    private PostsResponse postsResponse;
 
-  public LikeResponse(Long likeId,
-      PostsResponse postsResponse) {
-    this.likeId = likeId;
-    this.postsResponse = postsResponse;
-  }
+    public LikeResponse(Long likeId,
+        PostsResponse postsResponse) {
+        this.likeId = likeId;
+        this.postsResponse = postsResponse;
+    }
 
-  public static List<LikeResponse> listOf(List<Like> likes) {
-    LocalDateTime cur = LocalDateTime.now();
-    return likes.stream().map(likedPost -> {
-      Post post = likedPost.getPost();
-      return new LikeResponse(likedPost.getId(),
-          PostsResponse.of(post, post.getImages().getFirstImageUrl(), cur));
-    }).collect(Collectors.toList());
-  }
+    public static List<LikeResponse> listOf(List<Like> likes) {
+        LocalDateTime cur = LocalDateTime.now();
+        return likes.stream().map(likedPost -> {
+            Post post = likedPost.getPost();
+            return new LikeResponse(likedPost.getId(),
+                PostsResponse.of(post, post.getImages().getFirstImageUrl(), cur));
+        }).collect(Collectors.toList());
+    }
 }

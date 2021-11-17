@@ -20,27 +20,27 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class MessageController {
 
-  public static final String SUBSCRIBE = SUB_PREFIX + "/chat/room/";
-  public static final String PUBLISH = "/chat/message";
+    public static final String SUBSCRIBE = SUB_PREFIX + "/chat/room/";
+    public static final String PUBLISH = "/chat/message";
 
-  private final MessageService messageService;
+    private final MessageService messageService;
 
-  private final SimpMessagingTemplate messagingTemplate;
+    private final SimpMessagingTemplate messagingTemplate;
 
-  @GetMapping("/api/message/{roomId}")
-  public ResponseEntity<List<MessageResponse>> findMessages(@PathVariable Long roomId,
-      @Valid Pagination pagination) {
-    return ResponseEntity.ok(messageService.findMessages(roomId, pagination));
-  }
+    @GetMapping("/api/message/{roomId}")
+    public ResponseEntity<List<MessageResponse>> findMessages(@PathVariable Long roomId,
+        @Valid Pagination pagination) {
+        return ResponseEntity.ok(messageService.findMessages(roomId, pagination));
+    }
 
-  @GetMapping("/api/message/{roomId}/last")
-  public ResponseEntity<MessageResponse> findLastMessage(@PathVariable Long roomId) {
-    return ResponseEntity.ok(messageService.findLastMessage(roomId));
-  }
+    @GetMapping("/api/message/{roomId}/last")
+    public ResponseEntity<MessageResponse> findLastMessage(@PathVariable Long roomId) {
+        return ResponseEntity.ok(messageService.findLastMessage(roomId));
+    }
 
-  @MessageMapping(PUBLISH)
-  public void message(MessageRequest request) {
-    MessageResponse response = messageService.saveMessage(request);
-    messagingTemplate.convertAndSend(SUBSCRIBE + request.getRoomId(), response);
-  }
+    @MessageMapping(PUBLISH)
+    public void message(MessageRequest request) {
+        MessageResponse response = messageService.saveMessage(request);
+        messagingTemplate.convertAndSend(SUBSCRIBE + request.getRoomId(), response);
+    }
 }

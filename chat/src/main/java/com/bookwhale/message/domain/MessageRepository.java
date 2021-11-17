@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface MessageRepository extends MongoRepository<Message, Long> {
 
-  Page<Message> findAllByRoomIdOrderByCreatedDateDesc(Long roomId, Pageable pageable);
+    Page<Message> findAllByRoomIdOrderByCreatedDateDesc(Long roomId, Pageable pageable);
 
-  Optional<Message> findTopByRoomIdOrderByCreatedDateDesc(Long roomId);
+    Optional<Message> findTopByRoomIdOrderByCreatedDateDesc(Long roomId);
 }

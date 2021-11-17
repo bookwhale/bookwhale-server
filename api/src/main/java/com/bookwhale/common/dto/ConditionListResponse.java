@@ -17,62 +17,62 @@ import org.apache.commons.lang3.StringUtils;
 @Getter
 public class ConditionListResponse {
 
-  private String code;
-  private String name;
+    private String code;
+    private String name;
 
-  @Builder
-  public ConditionListResponse(String code, String name) {
-    this.code = code;
-    this.name = name;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
+    @Builder
+    public ConditionListResponse(String code, String name) {
+        this.code = code;
+        this.name = name;
     }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ConditionListResponse that = (ConditionListResponse) o;
+        return code.equals(that.code);
     }
-    ConditionListResponse that = (ConditionListResponse) o;
-    return code.equals(that.code);
-  }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(code);
-  }
+    @Override
+    public int hashCode() {
+        return Objects.hash(code);
+    }
 
-  @Override
-  public String toString() {
-    return "ConditionListResponse{" +
-        "code='" + code + '\'' +
-        ", name='" + name + '\'' +
-        '}';
-  }
+    @Override
+    public String toString() {
+        return "ConditionListResponse{" +
+            "code='" + code + '\'' +
+            ", name='" + name + '\'' +
+            '}';
+    }
 
-  public static ConditionListResponse of(String code, String name) {
-    Preconditions.checkArgument(StringUtils.isNotEmpty(code),
-        "조건 목록 - 코드 값은 빈 값이 될 수 없습니다.");
+    public static ConditionListResponse of(String code, String name) {
+        Preconditions.checkArgument(StringUtils.isNotEmpty(code),
+            "조건 목록 - 코드 값은 빈 값이 될 수 없습니다.");
 
-    return ConditionListResponse.builder()
-        .code(code)
-        .name(name)
-        .build();
-  }
+        return ConditionListResponse.builder()
+            .code(code)
+            .name(name)
+            .build();
+    }
 
-  public static List<ConditionListResponse> listOfBookStatus() {
-    return Arrays.stream(BookStatus.values())
-        .map(status ->
-            ConditionListResponse.of(status.getCode(), status.getName()))
-        .collect(Collectors.toList());
-  }
+    public static List<ConditionListResponse> listOfBookStatus() {
+        return Arrays.stream(BookStatus.values())
+            .map(status ->
+                ConditionListResponse.of(status.getCode(), status.getName()))
+            .collect(Collectors.toList());
+    }
 
-  public static List<ConditionListResponse> listOfSellingLocation() {
-    return Arrays.stream(Location.values())
-        .map(location ->
-            ConditionListResponse.of(location.getCode(), location.getName()))
-        .collect(Collectors.toList());
-  }
+    public static List<ConditionListResponse> listOfSellingLocation() {
+        return Arrays.stream(Location.values())
+            .map(location ->
+                ConditionListResponse.of(location.getCode(), location.getName()))
+            .collect(Collectors.toList());
+    }
 
 }

@@ -19,46 +19,46 @@ import org.springframework.boot.test.context.SpringBootTest;
 @DisplayName("Querydsl 테스트")
 public class QuerydslTest {
 
-  @Autowired
-  EntityManager em;
+    @Autowired
+    EntityManager em;
 
-  @Autowired
-  UserRepository userRepository;
+    @Autowired
+    UserRepository userRepository;
 
-  @Autowired
-  DatabaseCleanUp databaseCleanUp;
+    @Autowired
+    DatabaseCleanUp databaseCleanUp;
 
-  JPAQueryFactory queryFactory;
+    JPAQueryFactory queryFactory;
 
-  User user;
+    User user;
 
-  @BeforeEach
-  void setUp() {
-    databaseCleanUp.afterPropertiesSet();
-    databaseCleanUp.cleanUp();
+    @BeforeEach
+    void setUp() {
+        databaseCleanUp.afterPropertiesSet();
+        databaseCleanUp.cleanUp();
 
-    queryFactory = new JPAQueryFactory(em);
+        queryFactory = new JPAQueryFactory(em);
 
-    user = User.builder()
-        .identity("highright96")
-        .password("1234")
-        .name("남상우")
-        .email("highright96@email.com")
-        .phoneNumber("010-1234-1234")
-        .build();
-    userRepository.save(user);
-  }
+        user = User.builder()
+            .identity("highright96")
+            .password("1234")
+            .name("남상우")
+            .email("highright96@email.com")
+            .phoneNumber("010-1234-1234")
+            .build();
+        userRepository.save(user);
+    }
 
-  @DisplayName("Q 타입 클래스가 생성된다.")
-  @Test
-  void createQType() {
-    List<User> users = queryFactory
-        .selectFrom(QUser.user)
-        .fetch();
+    @DisplayName("Q 타입 클래스가 생성된다.")
+    @Test
+    void createQType() {
+        List<User> users = queryFactory
+            .selectFrom(QUser.user)
+            .fetch();
 
-    Assertions.assertAll(
-        () -> assertThat(users.size()).isEqualTo(1),
-        () -> assertThat(users.get(0).getIdentity()).isEqualTo(user.getIdentity())
-    );
-  }
+        Assertions.assertAll(
+            () -> assertThat(users.size()).isEqualTo(1),
+            () -> assertThat(users.get(0).getIdentity()).isEqualTo(user.getIdentity())
+        );
+    }
 }

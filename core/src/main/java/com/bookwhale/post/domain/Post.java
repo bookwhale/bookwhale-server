@@ -32,133 +32,133 @@ import lombok.NoArgsConstructor;
 @Entity
 public class Post extends BaseEntity {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "post_id")
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "post_id")
+    private Long id;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "seller_id")
-  private User seller;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "seller_id")
+    private User seller;
 
-  private String title;
+    private String title;
 
-  private String price;
+    private String price;
 
-  @Lob
-  private String description;
+    @Lob
+    private String description;
 
-  @Enumerated(EnumType.STRING)
-  private PostStatus postStatus;
+    @Enumerated(EnumType.STRING)
+    private PostStatus postStatus;
 
-  @Enumerated(EnumType.STRING)
-  private BookStatus bookStatus;
+    @Enumerated(EnumType.STRING)
+    private BookStatus bookStatus;
 
-  @Enumerated(EnumType.STRING)
-  private Location sellingLocation;
+    @Enumerated(EnumType.STRING)
+    private Location sellingLocation;
 
-  private Long likeCount = 0L;
+    private Long likeCount = 0L;
 
-  private Long viewCount = 0L;
+    private Long viewCount = 0L;
 
-  @Embedded
-  private Book book;
+    @Embedded
+    private Book book;
 
-  @Embedded
-  private final Images images = Images.empty();
+    @Embedded
+    private final Images images = Images.empty();
 
-  @Builder
-  public Post(Long id, User seller, String title, String price, String description,
-      PostStatus postStatus, BookStatus bookStatus,
-      Location sellingLocation, Long likeCount, Long viewCount, Book book) {
-    this.id = id;
-    this.seller = seller;
-    this.title = title;
-    this.price = price;
-    this.description = description;
-    this.postStatus = postStatus;
-    this.bookStatus = bookStatus;
-    this.sellingLocation = sellingLocation;
-    this.likeCount = likeCount == null ? 0L : likeCount;
-    this.viewCount = viewCount == null ? 0L : viewCount;
-    this.book = book;
-  }
-
-  public Optional<Location> getSellingLocation() {
-    return Optional.ofNullable(sellingLocation);
-  }
-
-  public static Post create(User loginUser, Post post) {
-    return Post.builder()
-        .seller(loginUser)
-        .title(post.getTitle())
-        .price(post.getPrice())
-        .postStatus(PostStatus.SALE)
-        .bookStatus(post.getBookStatus())
-        .description(post.getDescription())
-        .book(Book.create(post.getBook()))
-        .sellingLocation(post.getSellingLocation().orElse(null))
-        .likeCount(post.getLikeCount())
-        .viewCount(post.getViewCount())
-        .build();
-  }
-
-  public void update(Post post) {
-    this.title = post.getTitle();
-    this.price = post.getPrice();
-    this.description = post.getDescription();
-    this.bookStatus = post.getBookStatus();
-  }
-
-  public void validateIsMyPost(User loginUser) {
-    if (!this.isMyPost(loginUser)) {
-      throw new CustomException(ErrorCode.USER_ACCESS_DENIED);
+    @Builder
+    public Post(Long id, User seller, String title, String price, String description,
+        PostStatus postStatus, BookStatus bookStatus,
+        Location sellingLocation, Long likeCount, Long viewCount, Book book) {
+        this.id = id;
+        this.seller = seller;
+        this.title = title;
+        this.price = price;
+        this.description = description;
+        this.postStatus = postStatus;
+        this.bookStatus = bookStatus;
+        this.sellingLocation = sellingLocation;
+        this.likeCount = likeCount == null ? 0L : likeCount;
+        this.viewCount = viewCount == null ? 0L : viewCount;
+        this.book = book;
     }
-  }
 
-  public boolean isMyPost(User loginUser) {
-    return this.seller.getId().equals(loginUser.getId());
-  }
-
-  public void updatePostStatus(String postStatus) {
-    this.postStatus = PostStatus.valueOf(postStatus);
-  }
-
-  public void validatePostStatus() {
-    if (this.postStatus.equals(RESERVED) || this.postStatus.equals(SOLD_OUT)) {
-      throw new CustomException(ErrorCode.INVALID_POST_STATUS);
+    public Optional<Location> getSellingLocation() {
+        return Optional.ofNullable(sellingLocation);
     }
-  }
 
-  public void increaseOneViewCount() {
-    this.viewCount += 1L;
-  }
-
-  public void increaseOneLikeCount() {
-    this.likeCount += 1L;
-  }
-
-  public void decreaseOneLikeCount() {
-    if (this.likeCount > 0L) {
-      this.likeCount -= 1L;
+    public static Post create(User loginUser, Post post) {
+        return Post.builder()
+            .seller(loginUser)
+            .title(post.getTitle())
+            .price(post.getPrice())
+            .postStatus(PostStatus.SALE)
+            .bookStatus(post.getBookStatus())
+            .description(post.getDescription())
+            .book(Book.create(post.getBook()))
+            .sellingLocation(post.getSellingLocation().orElse(null))
+            .likeCount(post.getLikeCount())
+            .viewCount(post.getViewCount())
+            .build();
     }
-  }
 
-  @Override
-  public String toString() {
-    return "Post{" +
-        "id=" + id +
-        ", seller=" + seller +
-        ", title='" + title + '\'' +
-        ", price='" + price + '\'' +
-        ", description='" + description + '\'' +
-        ", postStatus=" + postStatus +
-        ", bookStatus=" + bookStatus +
-        ", sellingLocation=" + sellingLocation +
-        ", likeCount=" + likeCount +
-        ", viewCount=" + viewCount +
-        ", book=" + book +
-        ", images=" + images +
-        '}';
-  }
+    public void update(Post post) {
+        this.title = post.getTitle();
+        this.price = post.getPrice();
+        this.description = post.getDescription();
+        this.bookStatus = post.getBookStatus();
+    }
+
+    public void validateIsMyPost(User loginUser) {
+        if (!this.isMyPost(loginUser)) {
+            throw new CustomException(ErrorCode.USER_ACCESS_DENIED);
+        }
+    }
+
+    public boolean isMyPost(User loginUser) {
+        return this.seller.getId().equals(loginUser.getId());
+    }
+
+    public void updatePostStatus(String postStatus) {
+        this.postStatus = PostStatus.valueOf(postStatus);
+    }
+
+    public void validatePostStatus() {
+        if (this.postStatus.equals(RESERVED) || this.postStatus.equals(SOLD_OUT)) {
+            throw new CustomException(ErrorCode.INVALID_POST_STATUS);
+        }
+    }
+
+    public void increaseOneViewCount() {
+        this.viewCount += 1L;
+    }
+
+    public void increaseOneLikeCount() {
+        this.likeCount += 1L;
+    }
+
+    public void decreaseOneLikeCount() {
+        if (this.likeCount > 0L) {
+            this.likeCount -= 1L;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Post{" +
+            "id=" + id +
+            ", seller=" + seller +
+            ", title='" + title + '\'' +
+            ", price='" + price + '\'' +
+            ", description='" + description + '\'' +
+            ", postStatus=" + postStatus +
+            ", bookStatus=" + bookStatus +
+            ", sellingLocation=" + sellingLocation +
+            ", likeCount=" + likeCount +
+            ", viewCount=" + viewCount +
+            ", book=" + book +
+            ", images=" + images +
+            '}';
+    }
 }

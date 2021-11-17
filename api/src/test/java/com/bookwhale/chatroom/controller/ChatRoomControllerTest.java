@@ -28,65 +28,65 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 @WebMvcTest(controllers = ChatRoomController.class)
 public class ChatRoomControllerTest extends CommonApiTest {
 
-  @MockBean
-  ChatRoomService chatRoomService;
+    @MockBean
+    ChatRoomService chatRoomService;
 
-  @WithMockCustomUser
-  @DisplayName("거래 요청 메일을 보낸 후 채팅방을 생성한다.")
-  @Test
-  void createChatRoom() throws Exception {
-    ChatRoomCreateRequest request = ChatRoomCreateRequest.builder()
-        .postId(1L)
-        .sellerId(1L)
-        .build();
+    @WithMockCustomUser
+    @DisplayName("거래 요청 메일을 보낸 후 채팅방을 생성한다.")
+    @Test
+    void createChatRoom() throws Exception {
+        ChatRoomCreateRequest request = ChatRoomCreateRequest.builder()
+            .postId(1L)
+            .sellerId(1L)
+            .build();
 
-    doNothing().when(chatRoomService).createChatRoom(any(), any());
+        doNothing().when(chatRoomService).createChatRoom(any(), any());
 
-    mockMvc.perform(post("/api/room")
-            .header(HttpHeaders.AUTHORIZATION, "accessToken")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(request)))
-        .andExpect(header().string("location", "/api/room"))
-        .andExpect(status().isCreated())
-        .andDo(print())
-        .andDo(ChatRoomDocumentations.createChatRoom());
-  }
+        mockMvc.perform(post("/api/room")
+                .header(HttpHeaders.AUTHORIZATION, "accessToken")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+            .andExpect(header().string("location", "/api/room"))
+            .andExpect(status().isCreated())
+            .andDo(print())
+            .andDo(ChatRoomDocumentations.createChatRoom());
+    }
 
-  @WithMockCustomUser
-  @DisplayName("채팅방들을 조회한다.")
-  @Test
-  void findChatRooms() throws Exception {
-    ChatRoomResponse response = ChatRoomResponse.builder()
-        .roomId(1L)
-        .postId(1L)
-        .postTitle("토비의 스프링 팝니다.")
-        .postImage("이미지")
-        .opponentIdentity("highright96")
-        .opponentProfile("profile")
-        .isOpponentDelete(false)
-        .build();
+    @WithMockCustomUser
+    @DisplayName("채팅방들을 조회한다.")
+    @Test
+    void findChatRooms() throws Exception {
+        ChatRoomResponse response = ChatRoomResponse.builder()
+            .roomId(1L)
+            .postId(1L)
+            .postTitle("토비의 스프링 팝니다.")
+            .postImage("이미지")
+            .opponentIdentity("highright96")
+            .opponentProfile("profile")
+            .isOpponentDelete(false)
+            .build();
 
-    when(chatRoomService.findChatRooms(any())).thenReturn(of(response));
+        when(chatRoomService.findChatRooms(any())).thenReturn(of(response));
 
-    mockMvc.perform(get("/api/room")
-            .header(HttpHeaders.AUTHORIZATION, "accessToken"))
-        .andExpect(status().isOk())
-        .andDo(print())
-        .andDo(ChatRoomDocumentations.findChatRooms());
-  }
+        mockMvc.perform(get("/api/room")
+                .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+            .andExpect(status().isOk())
+            .andDo(print())
+            .andDo(ChatRoomDocumentations.findChatRooms());
+    }
 
-  @WithMockCustomUser
-  @DisplayName("채팅방을 삭제한다.")
-  @Test
-  void deleteChatRoom() throws Exception {
-    Long roomId = 1L;
+    @WithMockCustomUser
+    @DisplayName("채팅방을 삭제한다.")
+    @Test
+    void deleteChatRoom() throws Exception {
+        Long roomId = 1L;
 
-    doNothing().when(chatRoomService).deleteChatRoom(any(), any());
+        doNothing().when(chatRoomService).deleteChatRoom(any(), any());
 
-    mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/room/{roomId}", roomId)
-            .header(HttpHeaders.AUTHORIZATION, "accessToken"))
-        .andExpect(status().isOk())
-        .andDo(print())
-        .andDo(ChatRoomDocumentations.deleteChatRoom());
-  }
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/room/{roomId}", roomId)
+                .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+            .andExpect(status().isOk())
+            .andDo(print())
+            .andDo(ChatRoomDocumentations.deleteChatRoom());
+    }
 }

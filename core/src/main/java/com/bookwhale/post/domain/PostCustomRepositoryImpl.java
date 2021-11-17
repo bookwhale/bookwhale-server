@@ -15,43 +15,43 @@ import org.springframework.data.domain.Pageable;
 @RequiredArgsConstructor
 public class PostCustomRepositoryImpl implements PostCustomRepository {
 
-  private final JPAQueryFactory queryFactory;
+    private final JPAQueryFactory queryFactory;
 
-  @Override
-  public Optional<Post> findPostWithSellerById(Long id) {
-    Post result = queryFactory.selectFrom(post)
-        .leftJoin(post.seller, user).fetchJoin()
-        .where(post.id.eq(id))
-        .fetchOne();
-    return Optional.ofNullable(result);
-  }
+    @Override
+    public Optional<Post> findPostWithSellerById(Long id) {
+        Post result = queryFactory.selectFrom(post)
+            .leftJoin(post.seller, user).fetchJoin()
+            .where(post.id.eq(id))
+            .fetchOne();
+        return Optional.ofNullable(result);
+    }
 
-  @Override
-  public Page<Post> findAllOrderByCreatedDateDesc(String title, String author, String publisher,
-      Pageable pageable) {
-    QueryResults<Post> results = queryFactory
-        .selectFrom(post)
-        .where(
-            titleLike(title),
-            authorLike(author),
-            publisherLike(publisher)
-        )
-        .orderBy(post.createdDate.desc())
-        .offset(pageable.getOffset())
-        .limit(pageable.getPageSize())
-        .fetchResults();
-    return new PageImpl<>(results.getResults(), pageable, results.getTotal());
-  }
+    @Override
+    public Page<Post> findAllOrderByCreatedDateDesc(String title, String author, String publisher,
+        Pageable pageable) {
+        QueryResults<Post> results = queryFactory
+            .selectFrom(post)
+            .where(
+                titleLike(title),
+                authorLike(author),
+                publisherLike(publisher)
+            )
+            .orderBy(post.createdDate.desc())
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetchResults();
+        return new PageImpl<>(results.getResults(), pageable, results.getTotal());
+    }
 
-  public static BooleanExpression titleLike(String title) {
-    return title != null ? post.book.bookTitle.like("%" + title + "%") : null;
-  }
+    public static BooleanExpression titleLike(String title) {
+        return title != null ? post.book.bookTitle.like("%" + title + "%") : null;
+    }
 
-  public static BooleanExpression authorLike(String author) {
-    return author != null ? post.book.bookAuthor.like("%" + author + "%") : null;
-  }
+    public static BooleanExpression authorLike(String author) {
+        return author != null ? post.book.bookAuthor.like("%" + author + "%") : null;
+    }
 
-  public static BooleanExpression publisherLike(String publisher) {
-    return publisher != null ? post.book.bookPublisher.like("%" + publisher + "%") : null;
-  }
+    public static BooleanExpression publisherLike(String publisher) {
+        return publisher != null ? post.book.bookPublisher.like("%" + publisher + "%") : null;
+    }
 }

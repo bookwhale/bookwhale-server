@@ -24,23 +24,23 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ChatRoomController {
 
-  private final ChatRoomService chatRoomService;
+    private final ChatRoomService chatRoomService;
 
-  @PostMapping
-  public ResponseEntity<Void> createChatRoom(@CurrentUser User user,
-      @Valid @RequestBody ChatRoomCreateRequest request) throws URISyntaxException {
-    chatRoomService.createChatRoom(user, request);
-    return ResponseEntity.created(new URI("/api/room")).build();
-  }
+    @PostMapping
+    public ResponseEntity<Void> createChatRoom(@CurrentUser User user,
+        @Valid @RequestBody ChatRoomCreateRequest request) throws URISyntaxException {
+        chatRoomService.createChatRoom(user, request);
+        return ResponseEntity.created(new URI("/api/room")).build();
+    }
 
-  @GetMapping
-  public ResponseEntity<List<ChatRoomResponse>> findChatRooms(@CurrentUser User user) {
-    return ResponseEntity.ok(chatRoomService.findChatRooms(user));
-  }
+    @GetMapping
+    public ResponseEntity<List<ChatRoomResponse>> findChatRooms(@CurrentUser User user) {
+        return ResponseEntity.ok(chatRoomService.findChatRooms(user));
+    }
 
-  @DeleteMapping("/{roomId}")
-  public ResponseEntity<Void> deleteChatRoom(@CurrentUser User user, @PathVariable Long roomId) {
-    chatRoomService.deleteChatRoom(user, roomId);
-    return ResponseEntity.ok().build();
-  }
+    @DeleteMapping("/{roomId}")
+    public ResponseEntity<Void> deleteChatRoom(@CurrentUser User user, @PathVariable Long roomId) {
+        chatRoomService.deleteChatRoom(user, roomId);
+        return ResponseEntity.ok().build();
+    }
 }

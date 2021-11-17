@@ -8,14 +8,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PostsRequest {
 
-  private String title;
-  private String author;
-  private String publisher;
+    private String title;
+    private String author;
+    private String publisher;
 
-  @Builder
-  public PostsRequest(String title, String author, String publisher) {
-    this.title = title;
-    this.author = author;
-    this.publisher = publisher;
-  }
+    @Builder
+    public PostsRequest(String title, String author, String publisher) {
+        this.title = title;
+        this.author = author;
+        this.publisher = publisher;
+    }
 }

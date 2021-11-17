@@ -19,117 +19,120 @@ import org.springframework.data.domain.PageRequest;
 @DataJpaTest
 public class PostRepositoryTest {
 
-  @Autowired
-  private PostRepository postRepository;
+    @Autowired
+    private PostRepository postRepository;
 
-  Post tobySpringPost;
+    Post tobySpringPost;
 
-  Post hrSpringPost;
+    Post hrSpringPost;
 
-  Post effectiveJavaPost;
+    Post effectiveJavaPost;
 
-  @BeforeEach
-  void setUp() {
-    Book tobySpring = Book.builder()
-        .bookIsbn("12345678910")
-        .bookTitle("토비의 스프링")
-        .bookAuthor("이일민")
-        .bookPublisher("허브출판사")
-        .build();
+    @BeforeEach
+    void setUp() {
+        Book tobySpring = Book.builder()
+            .bookIsbn("12345678910")
+            .bookTitle("토비의 스프링")
+            .bookAuthor("이일민")
+            .bookPublisher("허브출판사")
+            .build();
 
-    Book hrSpring = Book.builder()
-        .bookIsbn("12345678911")
-        .bookTitle("상우의 스프링")
-        .bookAuthor("남상우")
-        .bookPublisher("허브출판사")
-        .build();
+        Book hrSpring = Book.builder()
+            .bookIsbn("12345678911")
+            .bookTitle("상우의 스프링")
+            .bookAuthor("남상우")
+            .bookPublisher("허브출판사")
+            .build();
 
-    Book effectiveJava = Book.builder()
-        .bookIsbn("12345678912")
-        .bookTitle("이펙티브 자바")
-        .bookAuthor("남상우 이일민")
-        .bookPublisher("한국출판사")
-        .build();
+        Book effectiveJava = Book.builder()
+            .bookIsbn("12345678912")
+            .bookTitle("이펙티브 자바")
+            .bookAuthor("남상우 이일민")
+            .bookPublisher("한국출판사")
+            .build();
 
-    tobySpringPost = Post.builder()
-        .title("토비의 스프링 팝니다.")
-        .book(tobySpring)
-        .build();
+        tobySpringPost = Post.builder()
+            .title("토비의 스프링 팝니다.")
+            .book(tobySpring)
+            .build();
 
-    hrSpringPost = Post.builder()
-        .title("상우의 스프링 팝니다.")
-        .book(hrSpring)
-        .build();
+        hrSpringPost = Post.builder()
+            .title("상우의 스프링 팝니다.")
+            .book(hrSpring)
+            .build();
 
-    effectiveJavaPost = Post.builder()
-        .title("이펙티브 자바 팝니다.")
-        .book(effectiveJava)
-        .build();
+        effectiveJavaPost = Post.builder()
+            .title("이펙티브 자바 팝니다.")
+            .book(effectiveJava)
+            .build();
 
-    postRepository.saveAll(of(tobySpringPost, hrSpringPost, effectiveJavaPost));
-  }
+        postRepository.saveAll(of(tobySpringPost, hrSpringPost, effectiveJavaPost));
+    }
 
-  @DisplayName("책 제목에 스프링이 포함된 게시글들을 오름차순으로 찾는다.")
-  @Test
-  void findAllOrderByCreatedDateDesc_bookTitle() {
-    PageRequest pageRequest = PageRequest.of(0, 10);
-    List<Post> res = postRepository.findAllOrderByCreatedDateDesc("스프링", null, null, pageRequest)
-        .getContent();
+    @DisplayName("책 제목에 스프링이 포함된 게시글들을 오름차순으로 찾는다.")
+    @Test
+    void findAllOrderByCreatedDateDesc_bookTitle() {
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        List<Post> res = postRepository.findAllOrderByCreatedDateDesc("스프링", null, null,
+                pageRequest)
+            .getContent();
 
-    Assertions.assertAll(
-        () -> assertThat(res.size()).isEqualTo(2),
-        () -> assertThat(res.get(0).getBook().getBookTitle()).isEqualTo(
-            hrSpringPost.getBook().getBookTitle()),
-        () -> assertThat(res.get(1).getBook().getBookTitle()).isEqualTo(
-            tobySpringPost.getBook().getBookTitle())
-    );
-  }
+        Assertions.assertAll(
+            () -> assertThat(res.size()).isEqualTo(2),
+            () -> assertThat(res.get(0).getBook().getBookTitle()).isEqualTo(
+                hrSpringPost.getBook().getBookTitle()),
+            () -> assertThat(res.get(1).getBook().getBookTitle()).isEqualTo(
+                tobySpringPost.getBook().getBookTitle())
+        );
+    }
 
-  @DisplayName("책 저자에 남상우가 포함된 게시글들을 오름차순으로 찾는다.")
-  @Test
-  void findAllOrderByCreatedDateDesc_bookAuthor() {
-    PageRequest pageRequest = PageRequest.of(0, 10);
-    List<Post> res = postRepository.findAllOrderByCreatedDateDesc(null, "남상우", null, pageRequest)
-        .getContent();
+    @DisplayName("책 저자에 남상우가 포함된 게시글들을 오름차순으로 찾는다.")
+    @Test
+    void findAllOrderByCreatedDateDesc_bookAuthor() {
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        List<Post> res = postRepository.findAllOrderByCreatedDateDesc(null, "남상우", null,
+                pageRequest)
+            .getContent();
 
-    Assertions.assertAll(
-        () -> assertThat(res.size()).isEqualTo(2),
-        () -> assertThat(res.get(0).getBook().getBookTitle()).isEqualTo(
-            effectiveJavaPost.getBook().getBookTitle()),
-        () -> assertThat(res.get(1).getBook().getBookTitle()).isEqualTo(
-            hrSpringPost.getBook().getBookTitle())
-    );
-  }
+        Assertions.assertAll(
+            () -> assertThat(res.size()).isEqualTo(2),
+            () -> assertThat(res.get(0).getBook().getBookTitle()).isEqualTo(
+                effectiveJavaPost.getBook().getBookTitle()),
+            () -> assertThat(res.get(1).getBook().getBookTitle()).isEqualTo(
+                hrSpringPost.getBook().getBookTitle())
+        );
+    }
 
-  @DisplayName("책 출판사에 허브가 포함된 게시글들을 오름차순으로 찾는다.")
-  @Test
-  void findAllOrderByCreatedDateDesc_bookPublisher() {
-    PageRequest pageRequest = PageRequest.of(0, 10);
-    List<Post> res = postRepository.findAllOrderByCreatedDateDesc(null, null, "허브", pageRequest)
-        .getContent();
+    @DisplayName("책 출판사에 허브가 포함된 게시글들을 오름차순으로 찾는다.")
+    @Test
+    void findAllOrderByCreatedDateDesc_bookPublisher() {
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        List<Post> res = postRepository.findAllOrderByCreatedDateDesc(null, null, "허브", pageRequest)
+            .getContent();
 
-    Assertions.assertAll(
-        () -> assertThat(res.size()).isEqualTo(2),
-        () -> assertThat(res.get(0).getBook().getBookTitle()).isEqualTo(
-            hrSpringPost.getBook().getBookTitle()),
-        () -> assertThat(res.get(1).getBook().getBookTitle()).isEqualTo(
-            tobySpringPost.getBook().getBookTitle())
-    );
-  }
+        Assertions.assertAll(
+            () -> assertThat(res.size()).isEqualTo(2),
+            () -> assertThat(res.get(0).getBook().getBookTitle()).isEqualTo(
+                hrSpringPost.getBook().getBookTitle()),
+            () -> assertThat(res.get(1).getBook().getBookTitle()).isEqualTo(
+                tobySpringPost.getBook().getBookTitle())
+        );
+    }
 
-  @DisplayName("페이징이 옳바르게 작동하는지 확인한다.")
-  @Test
-  void findAllOrderByCreatedDateDesc_paging() {
-    PageRequest pageRequest = PageRequest.of(0, 2);
-    List<Post> res = postRepository.findAllOrderByCreatedDateDesc(null, "남상우", null, pageRequest)
-        .getContent();
+    @DisplayName("페이징이 옳바르게 작동하는지 확인한다.")
+    @Test
+    void findAllOrderByCreatedDateDesc_paging() {
+        PageRequest pageRequest = PageRequest.of(0, 2);
+        List<Post> res = postRepository.findAllOrderByCreatedDateDesc(null, "남상우", null,
+                pageRequest)
+            .getContent();
 
-    Assertions.assertAll(
-        () -> assertThat(res.size()).isEqualTo(2),
-        () -> assertThat(res.get(0).getBook().getBookTitle()).isEqualTo(
-            effectiveJavaPost.getBook().getBookTitle()),
-        () -> assertThat(res.get(1).getBook().getBookTitle()).isEqualTo(
-            hrSpringPost.getBook().getBookTitle())
-    );
-  }
+        Assertions.assertAll(
+            () -> assertThat(res.size()).isEqualTo(2),
+            () -> assertThat(res.get(0).getBook().getBookTitle()).isEqualTo(
+                effectiveJavaPost.getBook().getBookTitle()),
+            () -> assertThat(res.get(1).getBook().getBookTitle()).isEqualTo(
+                hrSpringPost.getBook().getBookTitle())
+        );
+    }
 }

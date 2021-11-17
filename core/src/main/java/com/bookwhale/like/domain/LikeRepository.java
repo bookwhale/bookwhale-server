@@ -8,8 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface LikeRepository extends JpaRepository<Like, Long> {
 
-  @Query(value = "select i from Like i join fetch i.post where i.user = ?1")
-  List<Like> findAllByUser(User user);
+    @Query(value = "select i from Like i join fetch i.post where i.user = ?1")
+    List<Like> findAllByUser(User user);
 
-  boolean existsByUserAndPost(User user, Post post);
+    boolean existsByUserAndPost(User user, Post post);
 }
