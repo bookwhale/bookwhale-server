@@ -13,15 +13,15 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 @RequiredArgsConstructor
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
-  private final TokenProvider tokenProvider;
+    private final TokenProvider tokenProvider;
 
-  @Override
-  public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-      Authentication authentication) throws IOException {
-    response.setStatus(HttpStatus.OK.value());
-    response.setContentType("application/json");
-    response.setCharacterEncoding("UTF-8");
-    new ObjectMapper().writeValue(response.getWriter(),
-        new LoginResponse(tokenProvider.createToken(authentication)));
-  }
+    @Override
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+        Authentication authentication) throws IOException {
+        response.setStatus(HttpStatus.OK.value());
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        new ObjectMapper().writeValue(response.getWriter(),
+            new LoginResponse(tokenProvider.createToken(authentication)));
+    }
 }

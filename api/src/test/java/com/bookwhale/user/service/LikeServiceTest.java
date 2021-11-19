@@ -33,187 +33,187 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @DisplayName("관심목록 관련 기능 단위 테스트(Service)")
 public class LikeServiceTest {
 
-  @Mock
-  private PostRepository postRepository;
+    @Mock
+    private PostRepository postRepository;
 
-  @Mock
-  private LikeRepository likeRepository;
+    @Mock
+    private LikeRepository likeRepository;
 
-  LikeService likeService;
+    LikeService likeService;
 
-  User user;
+    User user;
 
-  @BeforeEach
-  void setUp() {
-    likeService = new LikeService(likeRepository, postRepository);
+    @BeforeEach
+    void setUp() {
+        likeService = new LikeService(likeRepository, postRepository);
 
-    user = User.builder()
-        .id(1L)
-        .identity("highright96")
-        .password("1234")
-        .name("남상우")
-        .email("highright96@email.com")
-        .phoneNumber("010-1234-1234")
-        .build();
-  }
+        user = User.builder()
+            .id(1L)
+            .identity("highright96")
+            .password("1234")
+            .name("남상우")
+            .email("highright96@email.com")
+            .phoneNumber("010-1234-1234")
+            .build();
+    }
 
-  @DisplayName("관심목록을 조회한다.")
-  @Test
-  void findLikes_success() {
-    BookRequest bookRequest = BookRequest.builder()
-        .bookSummary("설명")
-        .bookPubDate("2021-12-12")
-        .bookIsbn("12398128745902")
-        .bookListPrice("10000")
-        .bookThumbnail("썸네일")
-        .bookTitle("토비의 스프링")
-        .bookPublisher("출판사")
-        .bookAuthor("이일민")
-        .build();
+    @DisplayName("관심목록을 조회한다.")
+    @Test
+    void findLikes_success() {
+        BookRequest bookRequest = BookRequest.builder()
+            .bookSummary("설명")
+            .bookPubDate("2021-12-12")
+            .bookIsbn("12398128745902")
+            .bookListPrice("10000")
+            .bookThumbnail("썸네일")
+            .bookTitle("토비의 스프링")
+            .bookPublisher("출판사")
+            .bookAuthor("이일민")
+            .build();
 
-    PostRequest postRequest = PostRequest.builder()
-        .bookRequest(bookRequest)
-        .title("책 팝니다~")
-        .description("쿨 거래시 1000원 할인해드려요~")
-        .bookStatus("BEST")
-        .price("5000")
-        .build();
-    Post post = Post.create(user, postRequest.toEntity());
-    post.setCreatedDate(LocalDateTime.now());
+        PostRequest postRequest = PostRequest.builder()
+            .bookRequest(bookRequest)
+            .title("책 팝니다~")
+            .description("쿨 거래시 1000원 할인해드려요~")
+            .bookStatus("BEST")
+            .price("5000")
+            .build();
+        Post post = Post.create(user, postRequest.toEntity());
+        post.setCreatedDate(LocalDateTime.now());
 
-    when(likeRepository.findAllByUser(any())).thenReturn(List.of(Like.create(user, post)));
+        when(likeRepository.findAllByUser(any())).thenReturn(List.of(Like.create(user, post)));
 
-    List<LikeResponse> responses = likeService.findAllLikes(user);
+        List<LikeResponse> responses = likeService.findAllLikes(user);
 
-    verify(likeRepository).findAllByUser(any());
-    Assertions.assertAll(
-        () -> assertThat(responses.size()).isEqualTo(1),
-        () -> org.assertj.core.api.Assertions.assertThat(
-            responses.get(0).getPostsResponse().getPostImage()).isNull(),
-        () -> org.assertj.core.api.Assertions.assertThat(
-            responses.get(0).getPostsResponse().getBookTitle()).isEqualTo(
-            bookRequest.getBookTitle()),
-        () -> org.assertj.core.api.Assertions.assertThat(
-            responses.get(0).getPostsResponse().getPostTitle()).isEqualTo(
-            postRequest.getTitle()),
-        () -> org.assertj.core.api.Assertions.assertThat(
-            responses.get(0).getPostsResponse().getPostPrice()).isEqualTo(
-            postRequest.getPrice())
-    );
-  }
+        verify(likeRepository).findAllByUser(any());
+        Assertions.assertAll(
+            () -> assertThat(responses.size()).isEqualTo(1),
+            () -> org.assertj.core.api.Assertions.assertThat(
+                responses.get(0).getPostsResponse().getPostImage()).isNull(),
+            () -> org.assertj.core.api.Assertions.assertThat(
+                responses.get(0).getPostsResponse().getBookTitle()).isEqualTo(
+                bookRequest.getBookTitle()),
+            () -> org.assertj.core.api.Assertions.assertThat(
+                responses.get(0).getPostsResponse().getPostTitle()).isEqualTo(
+                postRequest.getTitle()),
+            () -> org.assertj.core.api.Assertions.assertThat(
+                responses.get(0).getPostsResponse().getPostPrice()).isEqualTo(
+                postRequest.getPrice())
+        );
+    }
 
-  @DisplayName("관심목록에 추가한다.")
-  @Test
-  void addLike_success() {
-    BookRequest bookRequest = BookRequest.builder()
-        .bookSummary("설명")
-        .bookPubDate("2021-12-12")
-        .bookIsbn("12398128745902")
-        .bookListPrice("10000")
-        .bookThumbnail("썸네일")
-        .bookTitle("토비의 스프링")
-        .bookPublisher("출판사")
-        .bookAuthor("이일민")
-        .build();
+    @DisplayName("관심목록에 추가한다.")
+    @Test
+    void addLike_success() {
+        BookRequest bookRequest = BookRequest.builder()
+            .bookSummary("설명")
+            .bookPubDate("2021-12-12")
+            .bookIsbn("12398128745902")
+            .bookListPrice("10000")
+            .bookThumbnail("썸네일")
+            .bookTitle("토비의 스프링")
+            .bookPublisher("출판사")
+            .bookAuthor("이일민")
+            .build();
 
-    PostRequest postRequest = PostRequest.builder()
-        .bookRequest(bookRequest)
-        .title("책 팝니다~")
-        .description("쿨 거래시 1000원 할인해드려요~")
-        .bookStatus("BEST")
-        .price("5000")
-        .build();
-    Post post = Post.create(user, postRequest.toEntity());
+        PostRequest postRequest = PostRequest.builder()
+            .bookRequest(bookRequest)
+            .title("책 팝니다~")
+            .description("쿨 거래시 1000원 할인해드려요~")
+            .bookStatus("BEST")
+            .price("5000")
+            .build();
+        Post post = Post.create(user, postRequest.toEntity());
 
-    when(postRepository.findById(any())).thenReturn(Optional.ofNullable(post));
-    when(likeRepository.save(any())).thenReturn(Like.create(user, post));
+        when(postRepository.findById(any())).thenReturn(Optional.ofNullable(post));
+        when(likeRepository.save(any())).thenReturn(Like.create(user, post));
 
-    likeService.addLike(user, new LikeRequest(1L));
+        likeService.addLike(user, new LikeRequest(1L));
 
-    verify(postRepository).findById(any());
-    verify(likeRepository).save(any());
-  }
+        verify(postRepository).findById(any());
+        verify(likeRepository).save(any());
+    }
 
-  @DisplayName("잘못된 post_id 로 관심목록에 추가하면 예외가 발생한다.")
-  @Test
-  void addLike_invalidPostId_failure() {
-    when(postRepository.findById(any())).thenReturn(Optional.empty());
+    @DisplayName("잘못된 post_id 로 관심목록에 추가하면 예외가 발생한다.")
+    @Test
+    void addLike_invalidPostId_failure() {
+        when(postRepository.findById(any())).thenReturn(Optional.empty());
 
-    assertThatThrownBy(() -> likeService.addLike(user, new LikeRequest(1L)))
-        .isInstanceOf(CustomException.class)
-        .hasMessage(ErrorCode.INVALID_POST_ID.getMessage());
-  }
+        assertThatThrownBy(() -> likeService.addLike(user, new LikeRequest(1L)))
+            .isInstanceOf(CustomException.class)
+            .hasMessage(ErrorCode.INVALID_POST_ID.getMessage());
+    }
 
-  @DisplayName("관심목록을 삭제한다.")
-  @Test
-  void deleteLike_success() {
-    BookRequest bookRequest = BookRequest.builder()
-        .bookSummary("설명")
-        .bookPubDate("2021-12-12")
-        .bookIsbn("12398128745902")
-        .bookListPrice("10000")
-        .bookThumbnail("썸네일")
-        .bookTitle("토비의 스프링")
-        .bookPublisher("출판사")
-        .bookAuthor("이일민")
-        .build();
+    @DisplayName("관심목록을 삭제한다.")
+    @Test
+    void deleteLike_success() {
+        BookRequest bookRequest = BookRequest.builder()
+            .bookSummary("설명")
+            .bookPubDate("2021-12-12")
+            .bookIsbn("12398128745902")
+            .bookListPrice("10000")
+            .bookThumbnail("썸네일")
+            .bookTitle("토비의 스프링")
+            .bookPublisher("출판사")
+            .bookAuthor("이일민")
+            .build();
 
-    PostRequest postRequest = PostRequest.builder()
-        .bookRequest(bookRequest)
-        .title("책 팝니다~")
-        .description("쿨 거래시 1000원 할인해드려요~")
-        .bookStatus("BEST")
-        .price("5000")
-        .build();
-    Post post = Post.create(user, postRequest.toEntity());
+        PostRequest postRequest = PostRequest.builder()
+            .bookRequest(bookRequest)
+            .title("책 팝니다~")
+            .description("쿨 거래시 1000원 할인해드려요~")
+            .bookStatus("BEST")
+            .price("5000")
+            .build();
+        Post post = Post.create(user, postRequest.toEntity());
 
-    when(likeRepository.findById(any())).thenReturn(Optional.of(Like.create(user, post)));
-    doNothing().when(likeRepository).delete(any());
+        when(likeRepository.findById(any())).thenReturn(Optional.of(Like.create(user, post)));
+        doNothing().when(likeRepository).delete(any());
 
-    likeService.deleteLike(user, 1L);
+        likeService.deleteLike(user, 1L);
 
-    verify(likeRepository).findById(any());
-  }
+        verify(likeRepository).findById(any());
+    }
 
-  @DisplayName("권한이 없는 유저가 관심목록을 삭제하면 예외가 발생한다.")
-  @Test
-  void deleteLike_isNotMyLike_failure() {
-    BookRequest bookRequest = BookRequest.builder()
-        .bookSummary("설명")
-        .bookPubDate("2021-12-12")
-        .bookIsbn("12398128745902")
-        .bookListPrice("10000")
-        .bookThumbnail("썸네일")
-        .bookTitle("토비의 스프링")
-        .bookPublisher("출판사")
-        .bookAuthor("이일민")
-        .build();
+    @DisplayName("권한이 없는 유저가 관심목록을 삭제하면 예외가 발생한다.")
+    @Test
+    void deleteLike_isNotMyLike_failure() {
+        BookRequest bookRequest = BookRequest.builder()
+            .bookSummary("설명")
+            .bookPubDate("2021-12-12")
+            .bookIsbn("12398128745902")
+            .bookListPrice("10000")
+            .bookThumbnail("썸네일")
+            .bookTitle("토비의 스프링")
+            .bookPublisher("출판사")
+            .bookAuthor("이일민")
+            .build();
 
-    PostRequest postRequest = PostRequest.builder()
-        .bookRequest(bookRequest)
-        .title("책 팝니다~")
-        .description("쿨 거래시 1000원 할인해드려요~")
-        .bookStatus("BEST")
-        .price("5000")
-        .build();
-    Post post = Post.create(user, postRequest.toEntity());
-    User otherUser = User.builder().id(2L).build();
+        PostRequest postRequest = PostRequest.builder()
+            .bookRequest(bookRequest)
+            .title("책 팝니다~")
+            .description("쿨 거래시 1000원 할인해드려요~")
+            .bookStatus("BEST")
+            .price("5000")
+            .build();
+        Post post = Post.create(user, postRequest.toEntity());
+        User otherUser = User.builder().id(2L).build();
 
-    when(likeRepository.findById(any())).thenReturn(
-        Optional.of(Like.create(otherUser, post)));
+        when(likeRepository.findById(any())).thenReturn(
+            Optional.of(Like.create(otherUser, post)));
 
-    assertThatThrownBy(() -> likeService.deleteLike(user, 1L))
-        .isInstanceOf(CustomException.class)
-        .hasMessage(ErrorCode.USER_ACCESS_DENIED.getMessage());
-  }
+        assertThatThrownBy(() -> likeService.deleteLike(user, 1L))
+            .isInstanceOf(CustomException.class)
+            .hasMessage(ErrorCode.USER_ACCESS_DENIED.getMessage());
+    }
 
-  @DisplayName("잘못된 like_id 로 관심목록을 삭제하면 예외가 발생한다.")
-  @Test
-  void deleteLike_invalidLikeId_failure() {
-    when(likeRepository.findById(any())).thenReturn(Optional.empty());
+    @DisplayName("잘못된 like_id 로 관심목록을 삭제하면 예외가 발생한다.")
+    @Test
+    void deleteLike_invalidLikeId_failure() {
+        when(likeRepository.findById(any())).thenReturn(Optional.empty());
 
-    assertThatThrownBy(() -> likeService.deleteLike(user, 1L))
-        .isInstanceOf(CustomException.class)
-        .hasMessage(ErrorCode.INVALID_LIKE_ID.getMessage());
-  }
+        assertThatThrownBy(() -> likeService.deleteLike(user, 1L))
+            .isInstanceOf(CustomException.class)
+            .hasMessage(ErrorCode.INVALID_LIKE_ID.getMessage());
+    }
 }

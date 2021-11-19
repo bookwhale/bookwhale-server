@@ -22,34 +22,34 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class AwsS3Uploader extends FileUploader {
 
-  private final AmazonS3 amazonS3;
+    private final AmazonS3 amazonS3;
 
-  @Value("${cloud.aws.s3.bucket}")
-  private String bucket;
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
 
-  @Override
-  public String uploadFile(MultipartFile multipartFile) {
-    ObjectMetadata objectMetadata = new ObjectMetadata();
-    objectMetadata.setContentType(multipartFile.getContentType());
-    String uploadFileName = createUploadFileName(multipartFile.getOriginalFilename());
-    try {
-      amazonS3.putObject(
-          new PutObjectRequest(bucket, uploadFileName, multipartFile.getInputStream(),
-              objectMetadata).withCannedAcl(CannedAccessControlList.PublicRead));
-    } catch (IOException e) {
-      log.error("IOException : {}", e.getMessage());
-      throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+    @Override
+    public String uploadFile(MultipartFile multipartFile) {
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentType(multipartFile.getContentType());
+        String uploadFileName = createUploadFileName(multipartFile.getOriginalFilename());
+        try {
+            amazonS3.putObject(
+                new PutObjectRequest(bucket, uploadFileName, multipartFile.getInputStream(),
+                    objectMetadata).withCannedAcl(CannedAccessControlList.PublicRead));
+        } catch (IOException e) {
+            log.error("IOException : {}", e.getMessage());
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
+        return valueOf(amazonS3.getUrl(bucket, uploadFileName));
     }
-    return valueOf(amazonS3.getUrl(bucket, uploadFileName));
-  }
 
-  public void deleteFile(String uploadFileUrl) {
-    String uploadFileName = extractUploadFileName(uploadFileUrl);
-    amazonS3.deleteObject(new DeleteObjectRequest(bucket, uploadFileName));
-  }
+    public void deleteFile(String uploadFileUrl) {
+        String uploadFileName = extractUploadFileName(uploadFileUrl);
+        amazonS3.deleteObject(new DeleteObjectRequest(bucket, uploadFileName));
+    }
 
-  public static String extractUploadFileName(String uploadFileUrl) {
-    int pos = uploadFileUrl.lastIndexOf("/");
-    return uploadFileUrl.substring(pos + 1);
-  }
+    public static String extractUploadFileName(String uploadFileUrl) {
+        int pos = uploadFileUrl.lastIndexOf("/");
+        return uploadFileUrl.substring(pos + 1);
+    }
 }

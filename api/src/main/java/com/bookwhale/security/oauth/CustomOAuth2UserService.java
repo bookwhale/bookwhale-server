@@ -23,67 +23,69 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
-  private final UserRepository userRepository;
+    private final UserRepository userRepository;
 
-  /**
-   * Authorization 서버에서 받아온 Access Token 으로 Resource Server 에게 유저 정보를 요청한다.
-   */
-  @Override
-  public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) {
-    OAuth2User oAuth2User = super.loadUser(oAuth2UserRequest);
-    try {
-      return processOAuth2User(oAuth2UserRequest, oAuth2User);
-    } catch (AuthenticationException e) {
-      throw e;
-    } catch (Exception e) {
-      throw new InternalAuthenticationServiceException(e.getMessage(), e.getCause());
+    /**
+     * Authorization 서버에서 받아온 Access Token 으로 Resource Server 에게 유저 정보를 요청한다.
+     */
+    @Override
+    public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) {
+        OAuth2User oAuth2User = super.loadUser(oAuth2UserRequest);
+        try {
+            return processOAuth2User(oAuth2UserRequest, oAuth2User);
+        } catch (AuthenticationException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new InternalAuthenticationServiceException(e.getMessage(), e.getCause());
+        }
     }
-  }
 
-  private OAuth2User processOAuth2User(OAuth2UserRequest oAuth2UserRequest, OAuth2User oAuth2User) {
-    OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(
-        oAuth2UserRequest.getClientRegistration().getRegistrationId(), oAuth2User.getAttributes());
-    if (StringUtils.isEmpty(oAuth2UserInfo.getEmail())) {
-      throw new OAuth2AuthenticationProcessingException("OAuth2 공급자에서 이메일을 찾을 수 없습니다.");
+    private OAuth2User processOAuth2User(OAuth2UserRequest oAuth2UserRequest,
+        OAuth2User oAuth2User) {
+        OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(
+            oAuth2UserRequest.getClientRegistration().getRegistrationId(),
+            oAuth2User.getAttributes());
+        if (StringUtils.isEmpty(oAuth2UserInfo.getEmail())) {
+            throw new OAuth2AuthenticationProcessingException("OAuth2 공급자에서 이메일을 찾을 수 없습니다.");
+        }
+        User user = findUserBySocialEmail(oAuth2UserInfo,
+            oAuth2UserRequest.getClientRegistration().getRegistrationId());
+        return UserPrincipal.create(user, oAuth2User.getAttributes());
     }
-    User user = findUserBySocialEmail(oAuth2UserInfo,
-        oAuth2UserRequest.getClientRegistration().getRegistrationId());
-    return UserPrincipal.create(user, oAuth2User.getAttributes());
-  }
 
-  public User findUserBySocialEmail(OAuth2UserInfo userInfo, String provider) {
-    Optional<User> userOptional = userRepository.findByIdentity(userInfo.getEmail());
-    User user;
-    if (userOptional.isPresent()) {
-      user = userOptional.get();
-      validateProvider(user, provider);
-      user = updateUser(user, userInfo);
-    } else {
-      user = createUser(userInfo, provider);
+    public User findUserBySocialEmail(OAuth2UserInfo userInfo, String provider) {
+        Optional<User> userOptional = userRepository.findByIdentity(userInfo.getEmail());
+        User user;
+        if (userOptional.isPresent()) {
+            user = userOptional.get();
+            validateProvider(user, provider);
+            user = updateUser(user, userInfo);
+        } else {
+            user = createUser(userInfo, provider);
+        }
+        return user;
     }
-    return user;
-  }
 
-  public void validateProvider(User user, String provider) {
-    if (!user.isSameProvider(provider)) {
-      throw new OAuth2AuthenticationProcessingException("이미 존재하는 아이디입니다.");
+    public void validateProvider(User user, String provider) {
+        if (!user.isSameProvider(provider)) {
+            throw new OAuth2AuthenticationProcessingException("이미 존재하는 아이디입니다.");
+        }
     }
-  }
 
-  public User updateUser(User user, OAuth2UserInfo userInfo) {
-    user.updateSocialUser(userInfo.getName());
-    return userRepository.save(user);
-  }
+    public User updateUser(User user, OAuth2UserInfo userInfo) {
+        user.updateSocialUser(userInfo.getName());
+        return userRepository.save(user);
+    }
 
-  public User createUser(OAuth2UserInfo userInfo, String provider) {
-    return userRepository.save(
-        User.builder()
-            .identity(userInfo.getEmail())
-            .name(userInfo.getName())
-            .email(userInfo.getEmail())
-            .role(Role.ROLE_USER)
-            .provider(AuthProvider.valueOf(provider.toUpperCase()))
-            .build()
-    );
-  }
+    public User createUser(OAuth2UserInfo userInfo, String provider) {
+        return userRepository.save(
+            User.builder()
+                .identity(userInfo.getEmail())
+                .name(userInfo.getName())
+                .email(userInfo.getEmail())
+                .role(Role.ROLE_USER)
+                .provider(AuthProvider.valueOf(provider.toUpperCase()))
+                .build()
+        );
+    }
 }

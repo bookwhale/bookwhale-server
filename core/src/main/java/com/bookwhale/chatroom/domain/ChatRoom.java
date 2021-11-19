@@ -23,86 +23,86 @@ import org.springframework.data.annotation.CreatedDate;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ChatRoom {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "room_id")
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "room_id")
+    private Long id;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "post_id")
-  private Post post;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
+    private Post post;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "buyer_id")
-  private User buyer;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "buyer_id")
+    private User buyer;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "seller_id")
-  private User seller;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "seller_id")
+    private User seller;
 
-  @Column(name = "buyer_delete_flag")
-  private boolean isBuyerDelete;
+    @Column(name = "buyer_delete_flag")
+    private boolean isBuyerDelete;
 
-  @Column(name = "seller_delete_flag")
-  private boolean isSellerDelete;
+    @Column(name = "seller_delete_flag")
+    private boolean isSellerDelete;
 
-  @CreatedDate
-  private LocalDateTime createdDate;
+    @CreatedDate
+    private LocalDateTime createdDate;
 
-  private ChatRoom(Post post, User buyer, User seller, boolean isBuyerDelete,
-      boolean isSellerDelete) {
-    this.post = post;
-    this.buyer = buyer;
-    this.seller = seller;
-    this.isBuyerDelete = isBuyerDelete;
-    this.isSellerDelete = isSellerDelete;
-  }
-
-  public static ChatRoom create(Post post, User buyer, User seller) {
-    return new ChatRoom(post, buyer, seller, false, false);
-  }
-
-  private boolean isLoginUserEqualBuyer(User loginUser) {
-    return this.buyer.getId().equals(loginUser.getId());
-  }
-
-  private boolean isLoginUserEqualSeller(User loginUser) {
-    return this.seller.getId().equals(loginUser.getId());
-  }
-
-  public void deleteChatRoom(User loginUser) {
-    if (isLoginUserEqualBuyer(loginUser)) {
-      this.isBuyerDelete = true;
-    } else if (isLoginUserEqualSeller(loginUser)) {
-      this.isSellerDelete = true;
-    } else {
-      throw new CustomException(ErrorCode.USER_ACCESS_DENIED);
+    private ChatRoom(Post post, User buyer, User seller, boolean isBuyerDelete,
+        boolean isSellerDelete) {
+        this.post = post;
+        this.buyer = buyer;
+        this.seller = seller;
+        this.isBuyerDelete = isBuyerDelete;
+        this.isSellerDelete = isSellerDelete;
     }
-  }
 
-  public boolean isLoginUserDelete(User loginUser) {
-    if (isLoginUserEqualBuyer(loginUser)) {
-      return isBuyerDelete;
+    public static ChatRoom create(Post post, User buyer, User seller) {
+        return new ChatRoom(post, buyer, seller, false, false);
     }
-    return isSellerDelete;
-  }
 
-  public boolean isOpponentDelete(User loginUser) {
-    if (isLoginUserEqualBuyer(loginUser)) {
-      return isSellerDelete;
+    private boolean isLoginUserEqualBuyer(User loginUser) {
+        return this.buyer.getId().equals(loginUser.getId());
     }
-    return isBuyerDelete;
-  }
 
-  public boolean isEmpty() {
-    return this.isBuyerDelete && this.isSellerDelete;
-  }
-
-  public Opponent getOpponent(User loginUser) {
-    if (isLoginUserEqualBuyer(loginUser)) {
-      return new Opponent(this.seller.getIdentity(), this.seller.getProfileImage());
+    private boolean isLoginUserEqualSeller(User loginUser) {
+        return this.seller.getId().equals(loginUser.getId());
     }
-    return new Opponent(this.buyer.getIdentity(), this.buyer.getProfileImage());
-  }
+
+    public void deleteChatRoom(User loginUser) {
+        if (isLoginUserEqualBuyer(loginUser)) {
+            this.isBuyerDelete = true;
+        } else if (isLoginUserEqualSeller(loginUser)) {
+            this.isSellerDelete = true;
+        } else {
+            throw new CustomException(ErrorCode.USER_ACCESS_DENIED);
+        }
+    }
+
+    public boolean isLoginUserDelete(User loginUser) {
+        if (isLoginUserEqualBuyer(loginUser)) {
+            return isBuyerDelete;
+        }
+        return isSellerDelete;
+    }
+
+    public boolean isOpponentDelete(User loginUser) {
+        if (isLoginUserEqualBuyer(loginUser)) {
+            return isSellerDelete;
+        }
+        return isBuyerDelete;
+    }
+
+    public boolean isEmpty() {
+        return this.isBuyerDelete && this.isSellerDelete;
+    }
+
+    public Opponent getOpponent(User loginUser) {
+        if (isLoginUserEqualBuyer(loginUser)) {
+            return new Opponent(this.seller.getIdentity(), this.seller.getProfileImage());
+        }
+        return new Opponent(this.buyer.getIdentity(), this.buyer.getProfileImage());
+    }
 }
 

@@ -5,6 +5,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 class BookstoreBackApplicationTests {
 
-  void contextLoads() {
-  }
+    void contextLoads() {
+    }
 }

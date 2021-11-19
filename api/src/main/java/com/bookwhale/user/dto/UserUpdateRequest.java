@@ -11,28 +11,28 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserUpdateRequest {
 
-  @NotBlank
-  private String name;
+    @NotBlank
+    private String name;
 
-  @NotBlank
-  private String phoneNumber;
+    @NotBlank
+    private String phoneNumber;
 
-  @NotBlank
-  @Email
-  private String email;
+    @NotBlank
+    @Email
+    private String email;
 
-  @Builder
-  public UserUpdateRequest(String name, String phoneNumber, String email) {
-    this.name = name;
-    this.phoneNumber = phoneNumber;
-    this.email = email;
-  }
+    @Builder
+    public UserUpdateRequest(String name, String phoneNumber, String email) {
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+    }
 
-  public User toEntity() {
-    return User.builder()
-        .name(name)
-        .phoneNumber(phoneNumber)
-        .email(email)
-        .build();
-  }
+    public User toEntity() {
+        return User.builder()
+            .name(name)
+            .phoneNumber(phoneNumber)
+            .email(email)
+            .build();
+    }
 }

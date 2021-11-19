@@ -16,40 +16,40 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PostRequest {
 
-  @Valid
-  BookRequest bookRequest;
+    @Valid
+    BookRequest bookRequest;
 
-  @NotBlank
-  private String title;
+    @NotBlank
+    private String title;
 
-  @NotBlank
-  private String price;
+    @NotBlank
+    private String price;
 
-  @NotBlank
-  private String description;
+    @NotBlank
+    private String description;
 
-  @NotBlank
-  @ValueOfEnum(enumClass = BookStatus.class)
-  private String bookStatus;
+    @NotBlank
+    @ValueOfEnum(enumClass = BookStatus.class)
+    private String bookStatus;
 
-  @Builder
-  public PostRequest(BookRequest bookRequest, String title, String price, String description,
-      String bookStatus) {
-    this.bookRequest = bookRequest;
-    this.title = title;
-    this.price = price;
-    this.description = description;
-    this.bookStatus = bookStatus;
-  }
+    @Builder
+    public PostRequest(BookRequest bookRequest, String title, String price, String description,
+        String bookStatus) {
+        this.bookRequest = bookRequest;
+        this.title = title;
+        this.price = price;
+        this.description = description;
+        this.bookStatus = bookStatus;
+    }
 
-  public Post toEntity() {
-    return Post.builder()
-        .title(title)
-        .price(price)
-        .postStatus(PostStatus.SALE)
-        .bookStatus(BookStatus.valueOf(bookStatus))
-        .description(description)
-        .book(Book.create(bookRequest.toEntity()))
-        .build();
-  }
+    public Post toEntity() {
+        return Post.builder()
+            .title(title)
+            .price(price)
+            .postStatus(PostStatus.SALE)
+            .bookStatus(BookStatus.valueOf(bookStatus))
+            .description(description)
+            .book(Book.create(bookRequest.toEntity()))
+            .build();
+    }
 }

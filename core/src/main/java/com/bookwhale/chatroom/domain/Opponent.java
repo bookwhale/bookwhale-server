@@ -8,11 +8,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Opponent {
 
-  private String identity;
-  private String profile;
+    private String identity;
+    private String profile;
 
-  public Opponent(String identity, String profile) {
-    this.identity = identity;
-    this.profile = profile;
-  }
+    public Opponent(String identity, String profile) {
+        this.identity = identity;
+        this.profile = profile;
+    }
 }

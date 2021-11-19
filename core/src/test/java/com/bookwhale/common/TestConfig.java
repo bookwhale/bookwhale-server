@@ -9,11 +9,11 @@ import org.springframework.context.annotation.Bean;
 @TestConfiguration
 public class TestConfig {
 
-  @Autowired
-  private EntityManager em;
+    @Autowired
+    private EntityManager em;
 
-  @Bean
-  public JPAQueryFactory jpaQueryFactory() {
-    return new JPAQueryFactory(em);
-  }
+    @Bean
+    public JPAQueryFactory jpaQueryFactory() {
+        return new JPAQueryFactory(em);
+    }
 }

@@ -12,39 +12,39 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SignUpRequest {
 
-  @NotBlank
-  private String identity;
+    @NotBlank
+    private String identity;
 
-  @NotBlank
-  private String password;
+    @NotBlank
+    private String password;
 
-  @NotBlank
-  private String name;
+    @NotBlank
+    private String name;
 
-  @NotBlank
-  @Email
-  private String email;
+    @NotBlank
+    @Email
+    private String email;
 
-  @NotBlank
-  private String phoneNumber;
+    @NotBlank
+    private String phoneNumber;
 
-  @Builder
-  public SignUpRequest(String identity, String password, String name, String email,
-      String phoneNumber) {
-    this.identity = identity;
-    this.password = password;
-    this.name = name;
-    this.email = email;
-    this.phoneNumber = phoneNumber;
-  }
+    @Builder
+    public SignUpRequest(String identity, String password, String name, String email,
+        String phoneNumber) {
+        this.identity = identity;
+        this.password = password;
+        this.name = name;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+    }
 
-  public User toEntity() {
-    return User.builder()
-        .identity(identity)
-        .email(email)
-        .name(name)
-        .phoneNumber(phoneNumber)
-        .role(Role.ROLE_USER)
-        .build();
-  }
+    public User toEntity() {
+        return User.builder()
+            .identity(identity)
+            .email(email)
+            .name(name)
+            .phoneNumber(phoneNumber)
+            .role(Role.ROLE_USER)
+            .build();
+    }
 }

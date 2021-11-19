@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PostStatusUpdateRequest {
 
-  @NotBlank
-  @ValueOfEnum(enumClass = PostStatus.class)
-  private String postStatus;
+    @NotBlank
+    @ValueOfEnum(enumClass = PostStatus.class)
+    private String postStatus;
 }
