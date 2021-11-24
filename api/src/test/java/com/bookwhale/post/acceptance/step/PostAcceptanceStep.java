@@ -74,7 +74,10 @@ public class PostAcceptanceStep {
         () -> assertThat(res.get(0).getBeforeTime()).isNotNull(),
         () -> assertThat(res.get(0).getPostStatus()).isEqualTo(PostStatus.SALE.getName()),
         () -> assertThat(res.get(0).getSellingLocation()).isEqualTo(Location.BUSAN.getName()),
-        () -> assertThat(res.get(0).getPostImage()).isNotNull()
+        () -> assertThat(res.get(0).getDescription()).isNotNull().isNotBlank(),
+        () -> assertThat(res.get(0).getPostImage()).isNotNull(),
+        () -> assertThat(res.get(0).getViewCount()).isEqualTo(0),
+        () -> assertThat(res.get(0).getLikeCount()).isEqualTo(0)
     );
   }
 
