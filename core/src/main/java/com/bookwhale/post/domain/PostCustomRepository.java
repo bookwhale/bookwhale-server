@@ -9,5 +9,5 @@ public interface PostCustomRepository {
   Optional<Post> findPostWithSellerById(Long id);
 
   Page<Post> findAllOrderByCreatedDateDesc(String title, String author, String publisher,
-      Pageable pageable);
+      String sellingLocation, String postStatus, Pageable pageable);
 }

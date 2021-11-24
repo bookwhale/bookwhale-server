@@ -53,6 +53,7 @@ public class PostRequest {
         .price(price)
         .postStatus(PostStatus.SALE)
         .bookStatus(BookStatus.valueOf(bookStatus))
+        .sellingLocation(Location.valueOf(sellingLocation))
         .description(description)
         .book(Book.create(bookRequest.toEntity()))
         .build();
