@@ -70,7 +70,8 @@ public class PostDocumentation {
             fieldWithPath("title").description("게시글 제목"),
             fieldWithPath("price").description("게시글 가격"),
             fieldWithPath("description").description("게시글 설명"),
-            fieldWithPath("bookStatus").description("책 상태 [LOWER, MIDDLE, UPPER, BEST]")
+            fieldWithPath("bookStatus").description("책 상태 [LOWER, MIDDLE, UPPER, BEST]"),
+            fieldWithPath("sellingLocation").description("판매(거래)지역")
         ));
   }
 
@@ -127,16 +128,15 @@ public class PostDocumentation {
         fieldWithPath("postId").type(JsonFieldType.NUMBER).description("게시글 ID"),
         fieldWithPath("postTitle").type(JsonFieldType.STRING).description("게시글 제목"),
         fieldWithPath("postPrice").type(JsonFieldType.STRING).description("게시글 가격"),
-        fieldWithPath("bookTitle").type(JsonFieldType.STRING).description("책 제목"),
-        fieldWithPath("bookAuthor").type(JsonFieldType.STRING).description("작가"),
-        fieldWithPath("bookPublisher").type(JsonFieldType.STRING).description("출판사"),
         fieldWithPath("beforeTime").type(JsonFieldType.STRING).description("등록한 시간 - 현재 시간"),
         fieldWithPath("sellingLocation").type(JsonFieldType.STRING).description("게시글에 등록한 판매지역"),
         fieldWithPath("viewCount").type(JsonFieldType.NUMBER).description("게시글 조회수"),
         fieldWithPath("likeCount").type(JsonFieldType.NUMBER).description("게시글 관심수"),
         fieldWithPath("postImage").type(JsonFieldType.STRING).description("판매자가 올린 이미지"),
         fieldWithPath("postStatus").type(JsonFieldType.STRING).description(
-            "게시글 상태 [SALE, RESERVED, SOLD_OUT]")
+            "게시글 상태 [SALE, RESERVED, SOLD_OUT]"),
+        fieldWithPath("description").type(JsonFieldType.STRING).description(
+            "판매자가 작성한 게시글 설명")
     };
 
     return document("post/findPosts",
@@ -169,6 +169,7 @@ public class PostDocumentation {
             fieldWithPath("price").description("게시글 가격 (필수)"),
             fieldWithPath("description").description("게시글 설명 (필수)"),
             fieldWithPath("bookStatus").description("책 상태 [LOWER, MIDDLE, UPPER, BEST] (필수)"),
+            fieldWithPath("sellingLocation").description("판매(거래)지역 (필수)"),
             fieldWithPath("deleteImgUrls").description("삭제할 이미지 URL")
         )
     );

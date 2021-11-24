@@ -3,6 +3,7 @@ package com.bookwhale.post.acceptance.step;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.bookwhale.common.domain.Location;
 import com.bookwhale.dto.Pagination;
 import com.bookwhale.post.domain.BookStatus;
 import com.bookwhale.post.domain.PostStatus;
@@ -72,11 +73,7 @@ public class PostAcceptanceStep {
         () -> assertThat(res.get(0).getPostPrice()).isEqualTo(req.getPrice()),
         () -> assertThat(res.get(0).getBeforeTime()).isNotNull(),
         () -> assertThat(res.get(0).getPostStatus()).isEqualTo(PostStatus.SALE.getName()),
-        () -> assertThat(res.get(0).getBookTitle()).isEqualTo(req.getBookRequest().getBookTitle()),
-        () -> assertThat(res.get(0).getBookAuthor()).isEqualTo(
-            req.getBookRequest().getBookAuthor()),
-        () -> assertThat(res.get(0).getBookPublisher()).isEqualTo(
-            req.getBookRequest().getBookPublisher()),
+        () -> assertThat(res.get(0).getSellingLocation()).isEqualTo(Location.BUSAN.getName()),
         () -> assertThat(res.get(0).getPostImage()).isNotNull()
     );
   }
@@ -152,6 +149,8 @@ public class PostAcceptanceStep {
             + (req.getTitle() != null ? "title=" + req.getTitle() + "&" : "")
             + (req.getAuthor() != null ? "author=" + req.getAuthor() + "&" : "")
             + (req.getPublisher() != null ? "publisher=" + req.getPublisher() + "&" : "")
+            + (req.getSellingLocation() != null ? "sellingLocation=" + req.getSellingLocation() + "&" : "")
+            + (req.getPostStatus() != null ? "postStatus=" + req.getPostStatus() + "&" : "")
             + "page=" + page.getPage()
             + "&size=" + page.getSize())
         .then().log().all()

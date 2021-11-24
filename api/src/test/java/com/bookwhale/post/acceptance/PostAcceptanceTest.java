@@ -53,6 +53,7 @@ public class PostAcceptanceTest extends AcceptanceTest {
     postRequest = PostRequest.builder()
         .bookRequest(toby)
         .title("토비의 스프링 팝니다~")
+        .sellingLocation("BUSAN")
         .description("책 설명")
         .bookStatus("BEST")
         .price("5000")
@@ -211,6 +212,7 @@ public class PostAcceptanceTest extends AcceptanceTest {
         .description("책 설명 (수정)")
         .bookStatus(BookStatus.MIDDLE.toString())
         .price("25000")
+        .sellingLocation("SEOUL")
         .deleteImgUrls(List.of(deleteImgUrl))
         .build();
 

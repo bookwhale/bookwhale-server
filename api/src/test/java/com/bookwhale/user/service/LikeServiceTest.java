@@ -75,6 +75,7 @@ public class LikeServiceTest {
         .bookRequest(bookRequest)
         .title("책 팝니다~")
         .description("쿨 거래시 1000원 할인해드려요~")
+        .sellingLocation("SEOUL")
         .bookStatus("BEST")
         .price("5000")
         .build();
@@ -90,9 +91,6 @@ public class LikeServiceTest {
         () -> assertThat(responses.size()).isEqualTo(1),
         () -> org.assertj.core.api.Assertions.assertThat(
             responses.get(0).getPostsResponse().getPostImage()).isNull(),
-        () -> org.assertj.core.api.Assertions.assertThat(
-            responses.get(0).getPostsResponse().getBookTitle()).isEqualTo(
-            bookRequest.getBookTitle()),
         () -> org.assertj.core.api.Assertions.assertThat(
             responses.get(0).getPostsResponse().getPostTitle()).isEqualTo(
             postRequest.getTitle()),
@@ -120,6 +118,7 @@ public class LikeServiceTest {
         .bookRequest(bookRequest)
         .title("책 팝니다~")
         .description("쿨 거래시 1000원 할인해드려요~")
+        .sellingLocation("SEOUL")
         .bookStatus("BEST")
         .price("5000")
         .build();
@@ -162,6 +161,7 @@ public class LikeServiceTest {
         .bookRequest(bookRequest)
         .title("책 팝니다~")
         .description("쿨 거래시 1000원 할인해드려요~")
+        .sellingLocation("SEOUL")
         .bookStatus("BEST")
         .price("5000")
         .build();
@@ -193,6 +193,7 @@ public class LikeServiceTest {
         .bookRequest(bookRequest)
         .title("책 팝니다~")
         .description("쿨 거래시 1000원 할인해드려요~")
+        .sellingLocation("SEOUL")
         .bookStatus("BEST")
         .price("5000")
         .build();

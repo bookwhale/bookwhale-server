@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.bookwhale.common.acceptance.AcceptanceTest;
 import com.bookwhale.common.acceptance.AcceptanceUtils;
 import com.bookwhale.common.acceptance.step.AcceptanceStep;
+import com.bookwhale.common.domain.Location;
 import com.bookwhale.post.acceptance.step.PostAcceptanceStep;
 import com.bookwhale.post.dto.BookRequest;
 import com.bookwhale.post.dto.PostRequest;
@@ -164,6 +165,7 @@ public class UserAcceptanceTest extends AcceptanceTest {
             .build())
         .title("토비의 스프링 팝니다~")
         .description("책 설명")
+        .sellingLocation("DAEGU")
         .bookStatus("BEST")
         .price("5000")
         .build();
@@ -197,6 +199,7 @@ public class UserAcceptanceTest extends AcceptanceTest {
             .build())
         .title("토비의 스프링 팝니다~")
         .description("책 설명")
+        .sellingLocation("DAEGU")
         .bookStatus("BEST")
         .price("5000")
         .build();
@@ -241,6 +244,7 @@ public class UserAcceptanceTest extends AcceptanceTest {
             .build())
         .title("토비의 스프링 팝니다~")
         .description("책 설명")
+        .sellingLocation("DAEGU")
         .bookStatus("BEST")
         .price("5000")
         .build();

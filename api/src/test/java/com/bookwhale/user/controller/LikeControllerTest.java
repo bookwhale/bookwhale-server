@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.bookwhale.common.controller.CommonApiTest;
+import com.bookwhale.common.domain.Location;
 import com.bookwhale.common.security.WithMockCustomUser;
 import com.bookwhale.post.domain.PostStatus;
 import com.bookwhale.post.dto.PostsResponse;
@@ -46,10 +47,8 @@ public class LikeControllerTest extends CommonApiTest {
                 .postTitle("책 팝니다~")
                 .postPrice("20000원")
                 .postStatus(PostStatus.SALE.getName())
-                .bookTitle("토비의 스프링")
-                .bookAuthor("이일민")
-                .bookPublisher("허브출판사")
-                .sellingLocation("서울")
+                .description("책 설명 보충합니다.")
+                .sellingLocation(Location.SEOUL.getName())
                 .viewCount(1L)
                 .likeCount(1L)
                 .beforeTime("15분 전")
