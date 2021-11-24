@@ -13,15 +13,15 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
-  private final UserRepository userRepository;
+    private final UserRepository userRepository;
 
-  @Override
-  @Transactional(readOnly = true)
-  public UserDetails loadUserByUsername(String identity) throws UsernameNotFoundException {
-    User findUser = userRepository.findByIdentity(identity)
-        .orElseThrow(() ->
-            new UsernameNotFoundException("유저를 찾을 수 없습니다. 아이디 : " + identity)
-        );
-    return UserPrincipal.create(findUser);
-  }
+    @Override
+    @Transactional(readOnly = true)
+    public UserDetails loadUserByUsername(String identity) throws UsernameNotFoundException {
+        User findUser = userRepository.findByIdentity(identity)
+            .orElseThrow(() ->
+                new UsernameNotFoundException("유저를 찾을 수 없습니다. 아이디 : " + identity)
+            );
+        return UserPrincipal.create(findUser);
+    }
 }

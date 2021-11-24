@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PostRepository extends JpaRepository<Post, Long>, PostCustomRepository {
 
-  List<Post> findAllBySeller(User user);
+    List<Post> findAllBySeller(User user);
 }

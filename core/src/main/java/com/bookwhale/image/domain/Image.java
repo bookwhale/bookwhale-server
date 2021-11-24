@@ -18,23 +18,23 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Image {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "image_id")
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "image_id")
+    private Long id;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "post_id")
-  private Post post;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
+    private Post post;
 
-  private String url;
+    private String url;
 
-  private Image(Post post, String url) {
-    this.post = post;
-    this.url = url;
-  }
+    private Image(Post post, String url) {
+        this.post = post;
+        this.url = url;
+    }
 
-  public static Image createPostImage(Post post, String url) {
-    return new Image(post, url);
-  }
+    public static Image createPostImage(Post post, String url) {
+        return new Image(post, url);
+    }
 }

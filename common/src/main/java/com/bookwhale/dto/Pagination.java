@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Pagination {
 
-  @NotNull
-  private Integer page;
+    @NotNull
+    private Integer page;
 
-  @NotNull
-  private Integer size;
+    @NotNull
+    private Integer size;
 }

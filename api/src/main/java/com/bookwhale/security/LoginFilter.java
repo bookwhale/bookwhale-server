@@ -17,32 +17,32 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
-  private final AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
-  @Override
-  public Authentication attemptAuthentication(
-      HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+    @Override
+    public Authentication attemptAuthentication(
+        HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
-    if (!request.getMethod().equals("POST")) {
-      throw new AuthenticationServiceException(
-          "Authentication method not supported: " + request.getMethod());
+        if (!request.getMethod().equals("POST")) {
+            throw new AuthenticationServiceException(
+                "Authentication method not supported: " + request.getMethod());
+        }
+
+        LoginRequest loginRequest = null;
+        try {
+            loginRequest = new ObjectMapper()
+                .readValue(request.getInputStream(), LoginRequest.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String identity = loginRequest.getIdentity();
+        identity = (identity != null) ? identity : "";
+        identity = identity.trim();
+        String password = loginRequest.getPassword();
+        password = (password != null) ? password : "";
+
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+            identity, password);
+        return authenticationManager.authenticate(authenticationToken);
     }
-
-    LoginRequest loginRequest = null;
-    try {
-      loginRequest = new ObjectMapper()
-          .readValue(request.getInputStream(), LoginRequest.class);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    String identity = loginRequest.getIdentity();
-    identity = (identity != null) ? identity : "";
-    identity = identity.trim();
-    String password = loginRequest.getPassword();
-    password = (password != null) ? password : "";
-
-    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-        identity, password);
-    return authenticationManager.authenticate(authenticationToken);
-  }
 }

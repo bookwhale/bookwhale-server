@@ -32,67 +32,67 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 @WebMvcTest(controllers = LikeController.class)
 public class LikeControllerTest extends CommonApiTest {
 
-  @MockBean
-  LikeService likeService;
+    @MockBean
+    LikeService likeService;
 
-  @WithMockCustomUser
-  @DisplayName("관심목록을 조회한다.")
-  @Test
-  void findLikes() throws Exception {
-    List<LikeResponse> responses = List.of(
-        new LikeResponse(1L,
-            PostsResponse.builder()
-                .postId(1L)
-                .postImage("이미지")
-                .postTitle("책 팝니다~")
-                .postPrice("20000원")
-                .postStatus(PostStatus.SALE.getName())
-                .description("책 설명 보충합니다.")
-                .sellingLocation(Location.SEOUL.getName())
-                .viewCount(1L)
-                .likeCount(1L)
-                .beforeTime("15분 전")
-                .build()
-        )
-    );
+    @WithMockCustomUser
+    @DisplayName("관심목록을 조회한다.")
+    @Test
+    void findLikes() throws Exception {
+        List<LikeResponse> responses = List.of(
+            new LikeResponse(1L,
+                PostsResponse.builder()
+                    .postId(1L)
+                    .postImage("이미지")
+                    .postTitle("책 팝니다~")
+                    .postPrice("20000원")
+                    .postStatus(PostStatus.SALE.getName())
+                    .description("책 설명 보충합니다.")
+                    .sellingLocation(Location.SEOUL.getName())
+                    .viewCount(1L)
+                    .likeCount(1L)
+                    .beforeTime("15분 전")
+                    .build()
+            )
+        );
 
-    when(likeService.findAllLikes(any())).thenReturn(responses);
+        when(likeService.findAllLikes(any())).thenReturn(responses);
 
-    mockMvc.perform(get("/api/user/me/likes")
-            .header(HttpHeaders.AUTHORIZATION, "accessToken"))
-        .andExpect(status().isOk())
-        .andDo(print())
-        .andDo(UserDocumentation.userFindLikes());
-  }
-
-  @WithMockCustomUser
-  @DisplayName("관심목록에 추가한다.")
-  @Test
-  void addLike() throws Exception {
-    LikeRequest likeRequest = new LikeRequest(1L);
-
-    doNothing().when(likeService).addLike(any(), any());
-
-    mockMvc.perform(post("/api/user/me/like")
-            .header(HttpHeaders.AUTHORIZATION, "accessToken")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(likeRequest)))
-        .andExpect(status().isOk())
-        .andDo(print())
-        .andDo(UserDocumentation.userAddLike());
-  }
-
-  @WithMockCustomUser
-  @DisplayName("관심목록에서 삭제한다.")
-  @Test
-  void deleteLike() throws Exception {
-    doNothing().when(likeService).deleteLike(any(), any());
-
-    mockMvc.perform(
-            RestDocumentationRequestBuilders.delete("/api/user/me/like/{likeId}", 1L)
+        mockMvc.perform(get("/api/user/me/likes")
                 .header(HttpHeaders.AUTHORIZATION, "accessToken"))
-        .andExpect(status().isOk())
-        .andDo(print())
-        .andDo(UserDocumentation.userDeleteLike());
-  }
+            .andExpect(status().isOk())
+            .andDo(print())
+            .andDo(UserDocumentation.userFindLikes());
+    }
+
+    @WithMockCustomUser
+    @DisplayName("관심목록에 추가한다.")
+    @Test
+    void addLike() throws Exception {
+        LikeRequest likeRequest = new LikeRequest(1L);
+
+        doNothing().when(likeService).addLike(any(), any());
+
+        mockMvc.perform(post("/api/user/me/like")
+                .header(HttpHeaders.AUTHORIZATION, "accessToken")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(likeRequest)))
+            .andExpect(status().isOk())
+            .andDo(print())
+            .andDo(UserDocumentation.userAddLike());
+    }
+
+    @WithMockCustomUser
+    @DisplayName("관심목록에서 삭제한다.")
+    @Test
+    void deleteLike() throws Exception {
+        doNothing().when(likeService).deleteLike(any(), any());
+
+        mockMvc.perform(
+                RestDocumentationRequestBuilders.delete("/api/user/me/like/{likeId}", 1L)
+                    .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+            .andExpect(status().isOk())
+            .andDo(print())
+            .andDo(UserDocumentation.userDeleteLike());
+    }
 }

@@ -12,18 +12,18 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 @RequiredArgsConstructor
 public class ApiConfig {
 
-  private final AmazonS3 amazonS3;
+    private final AmazonS3 amazonS3;
 
-  @Bean
-  public FileUploader fileUploader() {
-    return new AwsS3Uploader(amazonS3);
-  }
+    @Bean
+    public FileUploader fileUploader() {
+        return new AwsS3Uploader(amazonS3);
+    }
 
-  @Bean
-  public CharacterEncodingFilter characterEncodingFilter() {
-    CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
-    characterEncodingFilter.setEncoding("UTF-8");
-    characterEncodingFilter.setForceEncoding(true);
-    return characterEncodingFilter;
-  }
+    @Bean
+    public CharacterEncodingFilter characterEncodingFilter() {
+        CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
+        characterEncodingFilter.setEncoding("UTF-8");
+        characterEncodingFilter.setForceEncoding(true);
+        return characterEncodingFilter;
+    }
 }

@@ -16,24 +16,24 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class MessageService {
 
-  private final MessageRepository messageRepository;
+    private final MessageRepository messageRepository;
 
-  @Transactional(readOnly = true)
-  public List<MessageResponse> findMessages(Long roomId, Pagination pagination) {
-    PageRequest pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
-    return MessageResponse.listOf(
-        messageRepository.findAllByRoomIdOrderByCreatedDateDesc(roomId, pageable).getContent());
-  }
+    @Transactional(readOnly = true)
+    public List<MessageResponse> findMessages(Long roomId, Pagination pagination) {
+        PageRequest pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
+        return MessageResponse.listOf(
+            messageRepository.findAllByRoomIdOrderByCreatedDateDesc(roomId, pageable).getContent());
+    }
 
-  @Transactional(readOnly = true)
-  public MessageResponse findLastMessage(Long roomId) {
-    Message message = messageRepository.findTopByRoomIdOrderByCreatedDateDesc(roomId)
-        .orElseGet(Message::createEmptyMessage);
-    return MessageResponse.of(message);
-  }
+    @Transactional(readOnly = true)
+    public MessageResponse findLastMessage(Long roomId) {
+        Message message = messageRepository.findTopByRoomIdOrderByCreatedDateDesc(roomId)
+            .orElseGet(Message::createEmptyMessage);
+        return MessageResponse.of(message);
+    }
 
-  public MessageResponse saveMessage(MessageRequest request) {
-    Message message = messageRepository.save(Message.create(request.toEntity()));
-    return MessageResponse.of(message);
-  }
+    public MessageResponse saveMessage(MessageRequest request) {
+        Message message = messageRepository.save(Message.create(request.toEntity()));
+        return MessageResponse.of(message);
+    }
 }

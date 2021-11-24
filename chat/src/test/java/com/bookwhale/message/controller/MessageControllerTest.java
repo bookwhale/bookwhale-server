@@ -30,64 +30,64 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 @WebMvcTest(controllers = MessageController.class)
 public class MessageControllerTest {
 
-  MockMvc mockMvc;
+    MockMvc mockMvc;
 
-  ObjectMapper objectMapper;
+    ObjectMapper objectMapper;
 
-  @MockBean
-  MessageService messageService;
+    @MockBean
+    MessageService messageService;
 
-  @MockBean
-  SimpMessagingTemplate messagingTemplate;
+    @MockBean
+    SimpMessagingTemplate messagingTemplate;
 
-  @BeforeEach
-  public void setUp(WebApplicationContext webApplicationContext) {
-    objectMapper = new ObjectMapper();
-    objectMapper.registerModule(new JavaTimeModule());
-    objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    @BeforeEach
+    public void setUp(WebApplicationContext webApplicationContext) {
+        objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-    this.mockMvc = MockMvcBuilders
-        .webAppContextSetup(webApplicationContext)
-        .addFilters(new CharacterEncodingFilter("UTF-8", true))
-        .build();
-  }
+        this.mockMvc = MockMvcBuilders
+            .webAppContextSetup(webApplicationContext)
+            .addFilters(new CharacterEncodingFilter("UTF-8", true))
+            .build();
+    }
 
-  @Test
-  @DisplayName("채팅방의 이전 메세지들을 조회한다.")
-  public void findMessages() throws Exception {
-    Long roomId = 1L;
-    Pagination pagination = new Pagination(0, 10);
-    MessageResponse messageResponse = MessageResponse.builder()
-        .senderId(1L)
-        .senderIdentity("highright96")
-        .content("안녕하세요.")
-        .createdDate(LocalDateTime.now())
-        .build();
+    @Test
+    @DisplayName("채팅방의 이전 메세지들을 조회한다.")
+    public void findMessages() throws Exception {
+        Long roomId = 1L;
+        Pagination pagination = new Pagination(0, 10);
+        MessageResponse messageResponse = MessageResponse.builder()
+            .senderId(1L)
+            .senderIdentity("highright96")
+            .content("안녕하세요.")
+            .createdDate(LocalDateTime.now())
+            .build();
 
-    when(messageService.findMessages(any(), any())).thenReturn(List.of(messageResponse));
+        when(messageService.findMessages(any(), any())).thenReturn(List.of(messageResponse));
 
-    mockMvc.perform(get(
-            "/api/message/{roomId}?page={page}&size={size}", roomId,
-            pagination.getPage(), pagination.getSize()))
-        .andExpect(status().isOk())
-        .andDo(print());
-  }
+        mockMvc.perform(get(
+                "/api/message/{roomId}?page={page}&size={size}", roomId,
+                pagination.getPage(), pagination.getSize()))
+            .andExpect(status().isOk())
+            .andDo(print());
+    }
 
-  @Test
-  @DisplayName("채팅방의 마지막 메세지를 조회한다.")
-  public void findLastMessage() throws Exception {
-    Long roomId = 1L;
-    MessageResponse messageResponse = MessageResponse.builder()
-        .senderId(1L)
-        .senderIdentity("highright96")
-        .content("안녕하세요.")
-        .createdDate(LocalDateTime.now())
-        .build();
+    @Test
+    @DisplayName("채팅방의 마지막 메세지를 조회한다.")
+    public void findLastMessage() throws Exception {
+        Long roomId = 1L;
+        MessageResponse messageResponse = MessageResponse.builder()
+            .senderId(1L)
+            .senderIdentity("highright96")
+            .content("안녕하세요.")
+            .createdDate(LocalDateTime.now())
+            .build();
 
-    when(messageService.findLastMessage(any())).thenReturn(messageResponse);
+        when(messageService.findLastMessage(any())).thenReturn(messageResponse);
 
-    mockMvc.perform(get("/api/message/{roomId}/last", roomId))
-        .andExpect(status().isOk())
-        .andDo(print());
-  }
+        mockMvc.perform(get("/api/message/{roomId}/last", roomId))
+            .andExpect(status().isOk())
+            .andDo(print());
+    }
 }

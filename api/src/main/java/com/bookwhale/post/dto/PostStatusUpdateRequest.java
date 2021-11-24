@@ -11,15 +11,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PostStatusUpdateRequest {
 
-  @NotBlank
-  @ValueOfEnum(enumClass = PostStatus.class)
-  private String postStatus;
+    @NotBlank
+    @ValueOfEnum(enumClass = PostStatus.class)
+    private String postStatus;
 
-  public String getPostStatus() {
-    return postStatus;
-  }
+    public String getPostStatus() {
+        return postStatus;
+    }
 
-  public PostStatus getPostStatusByName(String name) {
-    return PostStatus.valueOf(name);
-  }
+    public PostStatus getPostStatusByName(String name) {
+        return PostStatus.valueOf(name);
+    }
 }

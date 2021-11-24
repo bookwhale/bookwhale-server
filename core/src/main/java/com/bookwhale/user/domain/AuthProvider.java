@@ -1,7 +1,7 @@
 package com.bookwhale.user.domain;
 
 public enum AuthProvider {
-  LOCAL,
-  GOOGLE,
-  NAVER
+    LOCAL,
+    GOOGLE,
+    NAVER
 }

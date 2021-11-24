@@ -7,32 +7,32 @@ import org.springframework.web.multipart.MultipartFile;
 
 public abstract class FileUploader {
 
-  public abstract String uploadFile(MultipartFile multipartFile);
+    public abstract String uploadFile(MultipartFile multipartFile);
 
-  public abstract void deleteFile(String uploadFileUrl);
+    public abstract void deleteFile(String uploadFileUrl);
 
-  public List<String> uploadFiles(List<MultipartFile> multipartFiles) {
-    List<String> uploadFileResult = new ArrayList<>();
-    for (MultipartFile multipartFile : multipartFiles) {
-      uploadFileResult.add(uploadFile(multipartFile));
+    public List<String> uploadFiles(List<MultipartFile> multipartFiles) {
+        List<String> uploadFileResult = new ArrayList<>();
+        for (MultipartFile multipartFile : multipartFiles) {
+            uploadFileResult.add(uploadFile(multipartFile));
+        }
+        return uploadFileResult;
     }
-    return uploadFileResult;
-  }
 
-  public void deleteFiles(List<String> uploadFileUrls) {
-    for (String url : uploadFileUrls) {
-      deleteFile(url);
+    public void deleteFiles(List<String> uploadFileUrls) {
+        for (String url : uploadFileUrls) {
+            deleteFile(url);
+        }
     }
-  }
 
-  public String createUploadFileName(String originalFilename) {
-    String uuid = UUID.randomUUID().toString();
-    String ext = extractExt(originalFilename);
-    return uuid + "." + ext;
-  }
+    public String createUploadFileName(String originalFilename) {
+        String uuid = UUID.randomUUID().toString();
+        String ext = extractExt(originalFilename);
+        return uuid + "." + ext;
+    }
 
-  public String extractExt(String originalFilename) {
-    int pos = originalFilename.lastIndexOf(".");
-    return originalFilename.substring(pos + 1);
-  }
+    public String extractExt(String originalFilename) {
+        int pos = originalFilename.lastIndexOf(".");
+        return originalFilename.substring(pos + 1);
+    }
 }
