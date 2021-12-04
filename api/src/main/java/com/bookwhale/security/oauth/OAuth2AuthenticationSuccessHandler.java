@@ -6,7 +6,7 @@ import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.config.AppProperties;
 import com.bookwhale.security.TokenProvider;
-import com.bookwhale.utils.CookieUtils;
+import com.bookwhale.common.utils.CookieUtils;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Optional;

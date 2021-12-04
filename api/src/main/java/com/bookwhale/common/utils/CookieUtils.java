@@ -1,4 +1,4 @@
-package com.bookwhale.utils;
+package com.bookwhale.common.utils;
 
 import java.util.Base64;
 import java.util.Optional;

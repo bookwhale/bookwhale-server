@@ -1,7 +1,7 @@
 package com.bookwhale.post.dto;
 
 import com.bookwhale.post.domain.Post;
-import com.bookwhale.utils.TimeUtils;
+import com.bookwhale.common.utils.TimeUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;

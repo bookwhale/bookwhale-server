@@ -2,7 +2,6 @@ package com.bookwhale.common.utils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.bookwhale.utils.TimeUtils;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

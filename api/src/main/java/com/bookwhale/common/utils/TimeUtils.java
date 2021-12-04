@@ -1,4 +1,4 @@
-package com.bookwhale.utils;
+package com.bookwhale.common.utils;
 
 import java.time.Duration;
 import java.time.LocalDateTime;

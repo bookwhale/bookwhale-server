@@ -1,6 +1,6 @@
 package com.bookwhale.security.oauth;
 
-import com.bookwhale.utils.CookieUtils;
+import com.bookwhale.common.utils.CookieUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
