@@ -14,6 +14,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.bookwhale.common.domain.Location;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.common.upload.FileUploader;
@@ -82,6 +83,7 @@ public class PostServiceTest {
             .description("쿨 거래시 1000원 할인해드려요~")
             .bookStatus("BEST")
             .price("5000")
+            .sellingLocation(Location.JEJU.getCode())
             .build();
 
         user = User.builder()

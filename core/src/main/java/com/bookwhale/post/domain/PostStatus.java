@@ -14,4 +14,8 @@ public enum PostStatus {
     PostStatus(String name) {
         this.name = name;
     }
+
+    public String getCode() {
+        return this.name();
+    }
 }

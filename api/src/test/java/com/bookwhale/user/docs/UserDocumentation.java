@@ -118,12 +118,10 @@ public class UserDocumentation {
                 "게시글 제목"),
             fieldWithPath("postsResponse.postPrice").type(JsonFieldType.STRING).description(
                 "게시글 가격"),
-            fieldWithPath("postsResponse.bookTitle").type(JsonFieldType.STRING).description("책 제목"),
-            fieldWithPath("postsResponse.bookAuthor").type(JsonFieldType.STRING).description("작가"),
-            fieldWithPath("postsResponse.bookPublisher").type(JsonFieldType.STRING).description(
-                "출판사"),
             fieldWithPath("postsResponse.sellingLocation").type(JsonFieldType.STRING).description(
                 "게시글에 등록한 판매지역"),
+            fieldWithPath("postsResponse.description").type(JsonFieldType.STRING).description(
+                "게시글에 작성한 설명"),
             fieldWithPath("postsResponse.viewCount").type(JsonFieldType.NUMBER).description(
                 "게시글 조회수"),
             fieldWithPath("postsResponse.likeCount").type(JsonFieldType.NUMBER).description(
@@ -176,11 +174,9 @@ public class UserDocumentation {
             fieldWithPath("postId").type(JsonFieldType.NUMBER).description("게시글 ID"),
             fieldWithPath("postTitle").type(JsonFieldType.STRING).description("게시글 제목"),
             fieldWithPath("postPrice").type(JsonFieldType.STRING).description("게시글 가격"),
-            fieldWithPath("bookTitle").type(JsonFieldType.STRING).description("책 제목"),
-            fieldWithPath("bookAuthor").type(JsonFieldType.STRING).description("작가"),
-            fieldWithPath("bookPublisher").type(JsonFieldType.STRING).description("출판사"),
             fieldWithPath("sellingLocation").type(JsonFieldType.STRING).description(
                 "게시글에 등록한 판매지역"),
+            fieldWithPath("description").type(JsonFieldType.STRING).description("게시글에 작성한 설명"),
             fieldWithPath("viewCount").type(JsonFieldType.NUMBER).description("게시글 조회수"),
             fieldWithPath("likeCount").type(JsonFieldType.NUMBER).description("게시글 관심수"),
             fieldWithPath("beforeTime").type(JsonFieldType.STRING).description("등록한 시간 - 현재 시간"),

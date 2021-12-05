@@ -59,7 +59,7 @@ public class PostService {
         PageRequest pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
         List<Post> posts = postRepository.findAllOrderByCreatedDateDesc(req.getTitle(),
                 req.getAuthor(),
-                req.getPublisher(), pageable)
+                req.getPublisher(), req.getSellingLocation(), req.getPostStatus(), pageable)
             .getContent();
         return PostsResponse.listOf(posts);
     }

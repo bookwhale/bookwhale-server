@@ -1,9 +1,9 @@
 package com.bookwhale.post.dto;
 
+import com.bookwhale.common.domain.Location;
 import com.bookwhale.common.validator.ValueOfEnum;
 import com.bookwhale.post.domain.BookStatus;
 import com.bookwhale.post.domain.Post;
-
 import java.util.List;
 import javax.validation.constraints.NotBlank;
 import lombok.Builder;
@@ -27,15 +27,20 @@ public class PostUpdateRequest {
     @ValueOfEnum(enumClass = BookStatus.class)
     private String bookStatus;
 
+    @NotBlank
+    @ValueOfEnum(enumClass = Location.class)
+    private String sellingLocation;
+
     private List<String> deleteImgUrls;
 
     @Builder
     public PostUpdateRequest(String title, String price, String description, String bookStatus,
-        List<String> deleteImgUrls) {
+        String sellingLocation, List<String> deleteImgUrls) {
         this.title = title;
         this.price = price;
         this.description = description;
         this.bookStatus = bookStatus;
+        this.sellingLocation = sellingLocation;
         this.deleteImgUrls = deleteImgUrls;
     }
 

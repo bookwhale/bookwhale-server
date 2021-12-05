@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.bookwhale.common.controller.CommonApiTest;
+import com.bookwhale.common.domain.Location;
 import com.bookwhale.common.security.WithMockCustomUser;
 import com.bookwhale.dto.Pagination;
 import com.bookwhale.post.docs.PostDocumentation;
@@ -110,6 +111,7 @@ public class PostControllerTest extends CommonApiTest {
             .description("쿨 거래시 1000원 할인해드려요~")
             .bookStatus("BEST")
             .price("5000")
+            .sellingLocation("BUSAN")
             .build();
 
         String content = objectMapper.writeValueAsString(postRequest);
@@ -227,10 +229,8 @@ public class PostControllerTest extends CommonApiTest {
             .postTitle("책 팝니다~")
             .postPrice("20000원")
             .postStatus(PostStatus.SALE.getName())
-            .bookTitle("토비의 스프링")
-            .bookAuthor("이일민")
-            .bookPublisher("허브출판사")
-            .sellingLocation("서울")
+            .description("판매자가 작성한 게시글 설₩")
+            .sellingLocation(Location.SEOUL.getName())
             .viewCount(1L)
             .likeCount(0L)
             .beforeTime("15분 전")
@@ -261,9 +261,6 @@ public class PostControllerTest extends CommonApiTest {
             .postTitle("책 팝니다~")
             .postPrice("20000원")
             .postStatus(PostStatus.SALE.getName())
-            .bookTitle("토비의 스프링")
-            .bookAuthor("이일민")
-            .bookPublisher("허브출판사")
             .beforeTime("15분 전")
             .build();
 
@@ -288,6 +285,7 @@ public class PostControllerTest extends CommonApiTest {
             .description("쿨 거래시 1000원 할인해드려요~ (가격 내림)")
             .bookStatus("LOWER")
             .price("2000")
+            .sellingLocation("SEOUL")
             .deleteImgUrls(List.of("image1", "image2"))
             .build();
 

@@ -71,9 +71,6 @@ public class UserAcceptanceStep {
             () -> assertThat(
                 res.get(0).getPostsResponse().getBeforeTime()).isNotNull(),
             () -> assertThat(
-                res.get(0).getPostsResponse().getBookTitle()).isEqualTo(
-                req.getBookRequest().getBookTitle()),
-            () -> assertThat(
                 res.get(0).getPostsResponse().getLikeCount()).isGreaterThan(0L)
         );
     }
@@ -85,13 +82,7 @@ public class UserAcceptanceStep {
             () -> assertThat(res.get(0).getPostPrice()).isEqualTo(req.getPrice()),
             () -> assertThat(res.get(0).getPostStatus()).isEqualTo(PostStatus.SALE.getName()),
             () -> assertThat(res.get(0).getPostImage()).isNotNull(),
-            () -> assertThat(res.get(0).getBeforeTime()).isNotNull(),
-            () -> assertThat(res.get(0).getBookTitle()).isEqualTo(
-                req.getBookRequest().getBookTitle()),
-            () -> assertThat(res.get(0).getBookAuthor()).isEqualTo(
-                req.getBookRequest().getBookAuthor()),
-            () -> assertThat(res.get(0).getBookPublisher()).isEqualTo(
-                req.getBookRequest().getBookPublisher())
+            () -> assertThat(res.get(0).getBeforeTime()).isNotNull()
         );
     }
 

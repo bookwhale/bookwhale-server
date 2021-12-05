@@ -3,6 +3,7 @@ package com.bookwhale.post.domain;
 import static com.bookwhale.post.domain.QPost.post;
 import static com.bookwhale.user.domain.QUser.user;
 
+import com.bookwhale.common.domain.Location;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -28,13 +29,15 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 
     @Override
     public Page<Post> findAllOrderByCreatedDateDesc(String title, String author, String publisher,
-        Pageable pageable) {
+        String sellingLocation, String postStatus, Pageable pageable) {
         QueryResults<Post> results = queryFactory
             .selectFrom(post)
             .where(
                 titleLike(title),
                 authorLike(author),
-                publisherLike(publisher)
+                publisherLike(publisher),
+                sellingLocationEq(sellingLocation),
+                postStatusEq(postStatus)
             )
             .orderBy(post.createdDate.desc())
             .offset(pageable.getOffset())
@@ -44,14 +47,32 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
     }
 
     public static BooleanExpression titleLike(String title) {
-        return title != null ? post.book.bookTitle.like("%" + title + "%") : null;
+        return Optional.ofNullable(title)
+            .map(keyword -> post.book.bookTitle.like("%" + keyword + "%"))
+            .orElse(null);
     }
 
     public static BooleanExpression authorLike(String author) {
-        return author != null ? post.book.bookAuthor.like("%" + author + "%") : null;
+        return Optional.ofNullable(author)
+            .map(keyword -> post.book.bookAuthor.like("%" + keyword + "%"))
+            .orElse(null);
     }
 
     public static BooleanExpression publisherLike(String publisher) {
-        return publisher != null ? post.book.bookPublisher.like("%" + publisher + "%") : null;
+        return Optional.ofNullable(publisher)
+            .map(keyword -> post.book.bookPublisher.like("%" + keyword + "%"))
+            .orElse(null);
     }
+
+    public static BooleanExpression sellingLocationEq(String sellingLocation) {
+        return Optional.ofNullable(sellingLocation)
+            .map(keyword -> post.sellingLocation.eq(Location.valueOf(keyword))).orElse(null);
+    }
+
+    public static BooleanExpression postStatusEq(String postStatus) {
+        return Optional.ofNullable(postStatus)
+            .map(keyword -> post.postStatus.eq(PostStatus.valueOf(keyword))).orElse(null);
+    }
+
+
 }

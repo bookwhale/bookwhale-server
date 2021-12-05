@@ -13,6 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.bookwhale.common.controller.CommonApiTest;
+import com.bookwhale.common.domain.Location;
 import com.bookwhale.common.security.WithMockCustomUser;
 import com.bookwhale.post.domain.PostStatus;
 import com.bookwhale.post.dto.PostsResponse;
@@ -175,10 +176,8 @@ public class UserControllerTest extends CommonApiTest {
             .postTitle("책 팝니다~")
             .postPrice("20000원")
             .postStatus(PostStatus.SALE.getName())
-            .bookTitle("토비의 스프링")
-            .bookAuthor("이일민")
-            .bookPublisher("허브출판사")
-            .sellingLocation("서울")
+            .sellingLocation(Location.SEOUL.getName())
+            .description("정가 5만원인데 급처합니다.")
             .viewCount(1L)
             .likeCount(1L)
             .beforeTime("15분 전")

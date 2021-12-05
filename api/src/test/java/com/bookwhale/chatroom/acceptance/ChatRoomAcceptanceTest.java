@@ -2,6 +2,7 @@ package com.bookwhale.chatroom.acceptance;
 
 import com.bookwhale.chatroom.acceptance.step.ChatRoomAcceptanceStep;
 import com.bookwhale.chatroom.dto.ChatRoomResponse;
+import com.bookwhale.common.domain.Location;
 import com.bookwhale.post.dto.BookRequest;
 import com.bookwhale.post.dto.PostRequest;
 import com.bookwhale.common.acceptance.AcceptanceTest;
@@ -37,6 +38,7 @@ public class ChatRoomAcceptanceTest extends AcceptanceTest {
                 .build())
             .title("토비의 스프링 팝니다~")
             .description("책 설명")
+            .sellingLocation("INCHEON")
             .bookStatus("BEST")
             .price("5000")
             .build();
