@@ -1,10 +1,9 @@
 package com.bookwhale.article.dto;
 
+import com.bookwhale.article.domain.Article;
+import com.bookwhale.article.domain.BookStatus;
 import com.bookwhale.common.domain.Location;
 import com.bookwhale.common.validator.ValueOfEnum;
-import com.bookwhale.article.domain.BookStatus;
-import com.bookwhale.article.domain.Article;
-
 import java.util.List;
 import javax.validation.constraints.NotBlank;
 import lombok.Builder;
@@ -51,7 +50,7 @@ public class ArticleUpdateRequest {
             .price(price)
             .description(description)
             .bookStatus(BookStatus.valueOf(bookStatus))
-            .sellingLocaltion(SellingLocation.valueOf(sellingLocation))
+            .sellingLocation(Location.valueOf(sellingLocation))
             .build();
     }
 }

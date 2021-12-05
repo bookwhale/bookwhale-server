@@ -2,8 +2,6 @@ package com.bookwhale.article.dto;
 
 import com.bookwhale.article.domain.ArticleStatus;
 import com.bookwhale.common.validator.ValueOfEnum;
-import com.bookwhale.post.domain.PostStatus;
-
 import javax.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -23,7 +21,7 @@ public class ArticleStatusUpdateRequest {
         return this.articleStatus;
     }
 
-    public PostStatus getArticleStatusByName(String name) {
+    public ArticleStatus getArticleStatusByName(String name) {
         return ArticleStatus.valueOf(name);
     }
 }

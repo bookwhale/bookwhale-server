@@ -130,7 +130,7 @@ public class ArticleRepositoryTest {
     @Test
     void findAllOrderByCreatedDateDesc_sellingLocation() {
         PageRequest pageRequest = PageRequest.of(0, 10);
-        List<Post> res = postRepository.findAllOrderByCreatedDateDesc(null, null, null, "SEOUL",
+        List<Article> res = articleRepository.findAllOrderByCreatedDateDesc(null, null, null, "SEOUL",
                 null,
                 pageRequest)
             .getContent();
@@ -138,13 +138,13 @@ public class ArticleRepositoryTest {
         Assertions.assertAll(
             () -> assertThat(res.size()).isEqualTo(2),
             () -> assertThat(res.get(0).getBook().getBookTitle()).isEqualTo(
-                effectiveJavaPost.getBook().getBookTitle()),
+                effectiveJavaArticle.getBook().getBookTitle()),
             () -> assertThat(res.get(0).getSellingLocation()).isEqualTo(
-                effectiveJavaPost.getSellingLocation()),
+                effectiveJavaArticle.getSellingLocation()),
             () -> assertThat(res.get(1).getBook().getBookTitle()).isEqualTo(
-                tobySpringPost.getBook().getBookTitle()),
+                tobySpringArticle.getBook().getBookTitle()),
             () -> assertThat(res.get(1).getSellingLocation()).isEqualTo(
-                tobySpringPost.getSellingLocation())
+                tobySpringArticle.getSellingLocation())
         );
     }
 
@@ -152,7 +152,7 @@ public class ArticleRepositoryTest {
     @Test
     void findAllOrderByCreatedDateDesc_sellingLocationAndPublisher() {
         PageRequest pageRequest = PageRequest.of(0, 10);
-        List<Post> res = postRepository.findAllOrderByCreatedDateDesc(null, null, "허브", "SEOUL",
+        List<Article> res = articleRepository.findAllOrderByCreatedDateDesc(null, null, "허브", "SEOUL",
                 null,
                 pageRequest)
             .getContent();
@@ -160,9 +160,9 @@ public class ArticleRepositoryTest {
         Assertions.assertAll(
             () -> assertThat(res.size()).isEqualTo(1),
             () -> assertThat(res.get(0).getBook().getBookTitle()).isEqualTo(
-                tobySpringPost.getBook().getBookTitle()),
+                tobySpringArticle.getBook().getBookTitle()),
             () -> assertThat(res.get(0).getSellingLocation()).isEqualTo(
-                tobySpringPost.getSellingLocation())
+                tobySpringArticle.getSellingLocation())
         );
     }
 
@@ -170,7 +170,7 @@ public class ArticleRepositoryTest {
     @Test
     void findAllOrderByCreatedDateDesc_postStatus() {
         PageRequest pageRequest = PageRequest.of(0, 10);
-        List<Post> res = postRepository.findAllOrderByCreatedDateDesc(null, null, null, null,
+        List<Article> res = articleRepository.findAllOrderByCreatedDateDesc(null, null, null, null,
                 "SOLD_OUT",
                 pageRequest)
             .getContent();
@@ -178,9 +178,9 @@ public class ArticleRepositoryTest {
         Assertions.assertAll(
             () -> assertThat(res.size()).isEqualTo(1),
             () -> assertThat(res.get(0).getBook().getBookTitle()).isEqualTo(
-                effectiveJavaPost.getBook().getBookTitle()),
+                effectiveJavaArticle.getBook().getBookTitle()),
             () -> assertThat(res.get(0).getArticleStatus()).isEqualTo(
-                effectiveJavaPost.getArticleStatus())
+                effectiveJavaArticle.getArticleStatus())
         );
     }
 

@@ -84,8 +84,7 @@ public class ArticleResponse {
             .description(article.getDescription())
             .bookStatus(article.getBookStatus().getName())
             .articleStatus(article.getArticleStatus().getName())
-            .sellingLocation(article.getSellingLocation().isPresent() ?
-                article.getSellingLocation().get().getName() : "")
+            .sellingLocation(article.getSellingLocation().getName())
             .images(imageResponse)
             .isMyArticle(isMyArticle)
             .isMyFavorite(isMyFavorite)

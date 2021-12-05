@@ -47,11 +47,11 @@ public class ArticleCustomRepositoryImpl implements ArticleCustomRepository {
     }
 
     public static BooleanExpression titleLike(String title) {
-        return title != null ? post.book.bookTitle.like("%" + title + "%") : null;
+        return title != null ? article.book.bookTitle.like("%" + title + "%") : null;
     }
 
     public static BooleanExpression authorLike(String author) {
-        return author != null ? post.book.bookAuthor.like("%" + author + "%") : null;
+        return author != null ? article.book.bookAuthor.like("%" + author + "%") : null;
     }
 
     public static BooleanExpression publisherLike(String publisher) {
@@ -60,7 +60,7 @@ public class ArticleCustomRepositoryImpl implements ArticleCustomRepository {
 
     public static BooleanExpression sellingLocationEq(String sellingLocation) {
         return Optional.ofNullable(sellingLocation)
-            .map(keyword -> post.sellingLocation.eq(Location.valueOf(keyword))).orElse(null);
+            .map(keyword -> article.sellingLocation.eq(Location.valueOf(keyword))).orElse(null);
     }
 
     public static BooleanExpression articleStatusEq(String articleStatus) {

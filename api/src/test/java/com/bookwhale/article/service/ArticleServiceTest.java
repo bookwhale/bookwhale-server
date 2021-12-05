@@ -15,18 +15,19 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.bookwhale.article.domain.Article;
-import com.bookwhale.common.exception.CustomException;
-import com.bookwhale.common.exception.ErrorCode;
-import com.bookwhale.common.upload.FileUploader;
-import com.bookwhale.favorite.domain.FavoriteRepository;
-import com.bookwhale.article.domain.BookStatus;
 import com.bookwhale.article.domain.ArticleRepository;
 import com.bookwhale.article.domain.ArticleStatus;
-import com.bookwhale.article.dto.BookRequest;
+import com.bookwhale.article.domain.BookStatus;
 import com.bookwhale.article.dto.ArticleRequest;
 import com.bookwhale.article.dto.ArticleResponse;
 import com.bookwhale.article.dto.ArticleStatusUpdateRequest;
 import com.bookwhale.article.dto.ArticleUpdateRequest;
+import com.bookwhale.article.dto.BookRequest;
+import com.bookwhale.common.domain.Location;
+import com.bookwhale.common.exception.CustomException;
+import com.bookwhale.common.exception.ErrorCode;
+import com.bookwhale.common.upload.FileUploader;
+import com.bookwhale.favorite.domain.FavoriteRepository;
 import com.bookwhale.user.domain.User;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -82,6 +83,7 @@ public class ArticleServiceTest {
             .description("쿨 거래시 1000원 할인해드려요~")
             .bookStatus("BEST")
             .price("5000")
+            .sellingLocation("JEJU")
             .build();
 
         user = User.builder()
@@ -211,6 +213,7 @@ public class ArticleServiceTest {
             .description("이펙티브 자바입니다.")
             .price("15000")
             .bookStatus("BEST")
+            .sellingLocation("GWANGJU")
             .build();
 
         List<MultipartFile> images = of(
@@ -229,6 +232,8 @@ public class ArticleServiceTest {
             () -> assertThat(article.getTitle()).isEqualTo(request.getTitle()),
             () -> assertThat(article.getPrice()).isEqualTo(request.getPrice()),
             () -> assertThat(article.getDescription()).isEqualTo(request.getDescription()),
+            () -> assertThat(article.getSellingLocation().getName()).isEqualTo(
+                Location.valueOf(request.getSellingLocation()).getName()),
             () -> Assertions.assertThat(article.getImages().getSize()).isEqualTo(2),
             () -> assertThat(article.getBookStatus()).isEqualTo(
                 BookStatus.valueOf(request.getBookStatus()))
@@ -246,6 +251,7 @@ public class ArticleServiceTest {
             .description("이펙티브 자바입니다.")
             .price("15000")
             .bookStatus("BEST")
+            .sellingLocation("JEJU")
             .deleteImgUrls(List.of("image2"))
             .build();
 
@@ -283,6 +289,7 @@ public class ArticleServiceTest {
             .description("이펙티브 자바입니다.")
             .price("15000")
             .bookStatus("BEST")
+            .sellingLocation("JEJU")
             .deleteImgUrls(List.of("image2", "image3"))
             .build();
 
@@ -344,7 +351,8 @@ public class ArticleServiceTest {
         articleService.updateArticleStatus(user, 1L, request);
 
         verify(articleRepository).findById(any());
-        assertThat(article.getArticleStatus()).isEqualTo(ArticleStatus.valueOf(request.getArticleStatus()));
+        assertThat(article.getArticleStatus()).isEqualTo(
+            ArticleStatus.valueOf(request.getArticleStatus()));
     }
 
     @DisplayName("잘못된 article_id 로 게시글 상태를 변경하면 예외가 발생한다.")

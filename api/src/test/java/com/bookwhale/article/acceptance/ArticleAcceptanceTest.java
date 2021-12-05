@@ -55,6 +55,7 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
             .title("토비의 스프링 팝니다~")
             .description("책 설명")
             .bookStatus("BEST")
+            .sellingLocation("BUSAN")
             .price("5000")
             .build();
     }
@@ -144,6 +145,7 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
     void findArticles_anonymousUser() {
         ArticlesRequest articlesRequest = ArticlesRequest.builder()
             .title("스프링")
+            .sellingLocation("BUSAN")
             .build();
 
         Pagination pagination = new Pagination(0, 10);
@@ -214,6 +216,7 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
             .description("책 설명 (수정)")
             .bookStatus(BookStatus.MIDDLE.toString())
             .price("25000")
+            .sellingLocation("INCHEON")
             .deleteImgUrls(List.of(deleteImgUrl))
             .build();
 

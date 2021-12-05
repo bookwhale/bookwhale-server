@@ -74,10 +74,9 @@ public class ArticleAcceptanceStep {
             () -> assertThat(res.get(0).getBeforeTime()).isNotNull(),
             () -> assertThat(res.get(0).getArticleStatus()).isEqualTo(ArticleStatus.SALE.getName()),
             () -> assertThat(res.get(0).getSellingLocation()).isEqualTo(Location.BUSAN.getName()),
-            () -> assertThat(res.get(0).getDescription()).isNotNull().isNotBlank(),
-            () -> assertThat(res.get(0).getArticleImage()).isNotNull()
+            () -> assertThat(res.get(0).getArticleImage()).isNotNull(),
             () -> assertThat(res.get(0).getViewCount()).isEqualTo(0),
-            () -> assertThat(res.get(0).getLikeCount()).isEqualTo(0)
+            () -> assertThat(res.get(0).getFavoriteCount()).isEqualTo(0)
         );
     }
 
@@ -96,6 +95,7 @@ public class ArticleAcceptanceStep {
             () -> assertThat(res.getPrice()).isEqualTo(req.getPrice()),
             () -> assertThat(res.getBookStatus()).isEqualTo(
                 BookStatus.valueOf(req.getBookStatus()).getName()),
+            () -> assertThat(res.getSellingLocation()).isEqualTo(Location.valueOf(req.getSellingLocation()).getName()),
             () -> assertThat(res.getImages().size()).isEqualTo(size)
         );
     }

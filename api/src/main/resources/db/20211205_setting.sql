@@ -1,5 +1,5 @@
 #schema 선택
-use herb_bookstore;
+use bookwhale;
 
 #character utf8mb4 확인
 show variables like 'c%';

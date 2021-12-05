@@ -19,31 +19,30 @@ public class ArticlesResponse {
     private String articleTitle;
     private String articlePrice;
     private String articleStatus;
-    private String bookTitle;
-    private String bookAuthor;
-    private String bookPublisher;
+    private String description;
     private String sellingLocation;
     private Long viewCount;
     private Long favoriteCount;
     private String beforeTime;
 
     @Builder
-    public ArticlesResponse(Long articleId, String articleImage, String articleTitle, String articlePrice,
-        String articleStatus, String bookTitle, String bookAuthor, String bookPublisher,
-        String sellingLocation, Long viewCount, Long favoriteCount, String beforeTime) {
+    public ArticlesResponse(Long articleId, String articleImage, String articleTitle,
+        String articlePrice, String articleStatus, String description, String bookTitle,
+        String bookAuthor, String bookPublisher, String sellingLocation, Long viewCount,
+        Long favoriteCount, String beforeTime) {
         this.articleId = articleId;
         this.articleImage = articleImage;
         this.articleTitle = articleTitle;
         this.articlePrice = articlePrice;
         this.articleStatus = articleStatus;
-        this.bookTitle = bookTitle;
-        this.bookAuthor = bookAuthor;
-        this.bookPublisher = bookPublisher;
+        this.description = description;
         this.sellingLocation = sellingLocation;
         this.viewCount = viewCount;
         this.favoriteCount = favoriteCount;
         this.beforeTime = beforeTime;
     }
+
+
 
     public static ArticlesResponse of(Article article, String articleImage, LocalDateTime currentTime) {
         return ArticlesResponse.builder()
@@ -52,11 +51,8 @@ public class ArticlesResponse {
             .articleTitle(article.getTitle())
             .articlePrice(article.getPrice())
             .articleStatus(article.getArticleStatus().getName())
-            .bookTitle(article.getBook().getBookTitle())
-            .bookAuthor(article.getBook().getBookAuthor())
-            .bookPublisher(article.getBook().getBookPublisher())
-            .sellingLocation(article.getSellingLocation().isPresent() ?
-                article.getSellingLocation().get().getName() : "")
+            .description(article.getDescription())
+            .sellingLocation(article.getSellingLocation().getName())
             .viewCount(article.getViewCount())
             .favoriteCount(article.getFavoriteCount())
             .beforeTime(TimeUtils.BeforeTime(currentTime, article.getCreatedDate()))

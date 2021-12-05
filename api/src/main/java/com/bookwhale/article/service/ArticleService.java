@@ -58,8 +58,8 @@ public class ArticleService {
     public List<ArticlesResponse> findArticles(ArticlesRequest req, Pagination pagination) {
         PageRequest pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
         List<Article> articles = articleRepository.findAllOrderByCreatedDateDesc(req.getTitle(),
-                req.getAuthor(),
-                req.getPublisher(), pageable)
+                req.getAuthor(), req.getPublisher(), req.getSellingLocation(),
+                req.getArticleStatus(), pageable)
             .getContent();
         return ArticlesResponse.listOf(articles);
     }

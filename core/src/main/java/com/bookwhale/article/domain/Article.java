@@ -9,7 +9,6 @@ import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.image.domain.Images;
 import com.bookwhale.user.domain.User;
-import java.util.Optional;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -84,8 +83,8 @@ public class Article extends BaseEntity {
         this.book = book;
     }
 
-    public Optional<Location> getSellingLocation() {
-        return Optional.ofNullable(sellingLocation);
+    public Location getSellingLocation() {
+        return sellingLocation;
     }
 
     public static Article create(User loginUser, Article article) {
@@ -97,7 +96,7 @@ public class Article extends BaseEntity {
             .bookStatus(article.getBookStatus())
             .description(article.getDescription())
             .book(Book.create(article.getBook()))
-            .sellingLocation(article.getSellingLocation().orElse(null))
+            .sellingLocation(article.getSellingLocation())
             .favoriteCount(article.getFavoriteCount())
             .viewCount(article.getViewCount())
             .build();
@@ -108,6 +107,7 @@ public class Article extends BaseEntity {
         this.price = article.getPrice();
         this.description = article.getDescription();
         this.bookStatus = article.getBookStatus();
+        this.sellingLocation = article.getSellingLocation();
     }
 
     public void validateIsMyArticle(User loginUser) {

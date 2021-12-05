@@ -139,6 +139,7 @@ public class ArticleDocumentation {
                 "게시글 상태 [SALE, RESERVED, SOLD_OUT]"),
             fieldWithPath("description").type(JsonFieldType.STRING).description(
                 "판매자가 작성한 게시글 설명")
+        };
 
         return document("article/findArticles",
             preprocessRequest(prettyPrint()),

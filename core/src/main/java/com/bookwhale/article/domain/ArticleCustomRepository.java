@@ -9,5 +9,5 @@ public interface ArticleCustomRepository {
     Optional<Article> findArticleWithSellerById(Long id);
 
     Page<Article> findAllOrderByCreatedDateDesc(String title, String author, String publisher,
-        Pageable pageable);
+        String sellingLocation, String articleStatus, Pageable pageable);
 }
