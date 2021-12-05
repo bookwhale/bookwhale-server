@@ -1,9 +1,9 @@
 package com.bookwhale.like.domain;
 
+import com.bookwhale.article.domain.Article;
 import com.bookwhale.common.domain.BaseEntity;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
-import com.bookwhale.post.domain.Post;
 import com.bookwhale.user.domain.User;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-@Table(name = "post_like")
+@Table(name = "article_like")
 public class Like extends BaseEntity {
 
     @Id
@@ -34,16 +34,16 @@ public class Like extends BaseEntity {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id")
-    private Post post;
+    @JoinColumn(name = "article_id")
+    private Article article;
 
-    private Like(User user, Post post) {
+    private Like(User user, Article article) {
         this.user = user;
-        this.post = post;
+        this.article = article;
     }
 
-    public static Like create(User loginUser, Post post) {
-        return new Like(loginUser, post);
+    public static Like create(User loginUser, Article article) {
+        return new Like(loginUser, article);
     }
 
     public void validateIsMyLike(User loginUser) {

@@ -1,6 +1,6 @@
 package com.bookwhale.image.domain;
 
-import com.bookwhale.post.domain.Post;
+import com.bookwhale.article.domain.Article;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -24,17 +24,17 @@ public class Image {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id")
-    private Post post;
+    @JoinColumn(name = "article_id")
+    private Article article;
 
     private String url;
 
-    private Image(Post post, String url) {
-        this.post = post;
+    private Image(Article article, String url) {
+        this.article = article;
         this.url = url;
     }
 
-    public static Image createPostImage(Post post, String url) {
-        return new Image(post, url);
+    public static Image createArticleImage(Article article, String url) {
+        return new Image(article, url);
     }
 }

@@ -10,14 +10,14 @@ import lombok.NoArgsConstructor;
 public class ChatRoomCreateRequest {
 
     @NotNull
-    private Long postId;
+    private Long articleId;
 
     @NotNull
     private Long sellerId;
 
     @Builder
-    public ChatRoomCreateRequest(Long postId, Long sellerId) {
-        this.postId = postId;
+    public ChatRoomCreateRequest(Long articleId, Long sellerId) {
+        this.articleId = articleId;
         this.sellerId = sellerId;
     }
 }

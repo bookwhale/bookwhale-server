@@ -1,5 +1,6 @@
 package com.bookwhale.chatroom.service;
 
+import com.bookwhale.article.domain.Article;
 import com.bookwhale.chatroom.domain.ChatRoom;
 import com.bookwhale.chatroom.domain.ChatRoomRepository;
 import com.bookwhale.chatroom.dto.ChatRoomCreateRequest;
@@ -7,8 +8,7 @@ import com.bookwhale.chatroom.dto.ChatRoomResponse;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.common.mail.SmtpMailSender;
-import com.bookwhale.post.domain.Post;
-import com.bookwhale.post.domain.PostRepository;
+import com.bookwhale.article.domain.ArticleRepository;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.domain.UserRepository;
 import java.util.List;
@@ -26,16 +26,16 @@ public class ChatRoomService {
 
     private final UserRepository userRepository;
 
-    private final PostRepository postRepository;
+    private final ArticleRepository articleRepository;
 
     private final SmtpMailSender smtpMailSender;
 
     public void createChatRoom(User user, ChatRoomCreateRequest request) {
         User seller = validateSellerIdAndGetSeller(request.getSellerId());
-        Post post = validatePostIdAndGetPost(request.getPostId());
-        post.validatePostStatus();
-        smtpMailSender.sendChatRoomCreationMail(post, seller, user);
-        chatRoomRepository.save(ChatRoom.create(post, user, seller));
+        Article article = getArticleByArticleId(request.getArticleId());
+        article.validateArticleStatus();
+        smtpMailSender.sendChatRoomCreationMail(article, seller, user);
+        chatRoomRepository.save(ChatRoom.create(article, user, seller));
     }
 
     public User validateSellerIdAndGetSeller(Long sellerId) {
@@ -43,9 +43,9 @@ public class ChatRoomService {
             .orElseThrow(() -> new CustomException(ErrorCode.INVALID_SELLER_ID));
     }
 
-    public Post validatePostIdAndGetPost(Long postId) {
-        return postRepository.findById(postId)
-            .orElseThrow(() -> new CustomException(ErrorCode.INVALID_POST_ID));
+    public Article getArticleByArticleId(Long articleId) {
+        return articleRepository.findById(articleId)
+            .orElseThrow(() -> new CustomException(ErrorCode.INVALID_ARTICLE_ID));
     }
 
     @Transactional(readOnly = true)

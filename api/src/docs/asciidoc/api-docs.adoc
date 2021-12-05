@@ -76,25 +76,25 @@ operation::user/deleteLike[snippets='http-request,request-headers,path-parameter
 
 === 1.11 내 게시글 조회
 
-operation::user/findMyPosts[snippets='http-request,request-headers,request-parameters,http-response,response-fields']
+operation::user/findMyArticles[snippets='http-request,request-headers,http-response,response-fields']
 
 == 2. 게시글
 
 === 2.1 네이버 책 API
 
-operation::post/findNaverBooks[snippets='http-request,request-headers,request-parameters,http-response,response-fields']
+operation::article/findNaverBooks[snippets='http-request,request-headers,request-parameters,http-response,response-fields']
 
 === 2.2 게시글 등록
 
-operation::post/createPost[snippets='http-request,request-headers,request-part-postRequest-fields,http-response']
+operation::article/createArticle[snippets='http-request,request-headers,request-part-articleRequest-fields,http-response']
 
 === 2.3 게시글 상세 조회
 
-operation::post/findPost[snippets='http-request,request-headers,path-parameters,http-response,response-fields']
+operation::article/findArticle[snippets='http-request,request-headers,path-parameters,http-response,response-fields']
 
 === 2.4 게시글 전체 조회
 
-operation::post/findPosts[snippets='http-request,request-headers,request-parameters,http-response,response-fields']
+operation::article/findArticles[snippets='http-request,request-headers,request-parameters,http-response,response-fields']
 
 === 2.5 게시글 수정
 
@@ -102,17 +102,17 @@ operation::post/findPosts[snippets='http-request,request-headers,request-paramet
 
 === 2.6 게시글 상태 변경
 
-operation::post/updatePostStatus[snippets='http-request,request-headers,path-parameters,request-fields,http-response']
+operation::article/updateArticleStatus[snippets='http-request,request-headers,path-parameters,request-fields,http-response']
 
 === 2.7 판매글 검색조건 - 판매상태
 
-operation::post/conditions/bookStatus[snippets='http-request,http-response,response-fields']
+operation::article/conditions/bookStatus[snippets='http-request,http-response,response-fields']
 
 === 2.8 판매글 검색조건 - 판매지역
 * 설정된 판매지역은 대한민국의 17개 행정 구역을 기준으로 생성하였습니다.
 ** https://ko.wikipedia.org/wiki/%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%EC%9D%98_%ED%96%89%EC%A0%95_%EA%B5%AC%EC%97%AD[위키백과 - 대한민국의 행정 구역]
 
-operation::post/conditions/locations[snippets='http-request,http-response,response-fields']
+operation::article/conditions/locations[snippets='http-request,http-response,response-fields']
 
 == 3. 채팅
 

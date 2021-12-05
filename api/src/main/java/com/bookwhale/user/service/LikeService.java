@@ -1,11 +1,11 @@
 package com.bookwhale.user.service;
 
+import com.bookwhale.article.domain.Article;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.like.domain.Like;
 import com.bookwhale.like.domain.LikeRepository;
-import com.bookwhale.post.domain.Post;
-import com.bookwhale.post.domain.PostRepository;
+import com.bookwhale.article.domain.ArticleRepository;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.dto.LikeRequest;
 import com.bookwhale.user.dto.LikeResponse;
@@ -23,30 +23,30 @@ import org.springframework.transaction.annotation.Transactional;
 public class LikeService {
 
     private final LikeRepository likeRepository;
-    private final PostRepository postRepository;
+    private final ArticleRepository articleRepository;
 
     /**
-     * 현재 접속중인 사용자가 대상 판매글(post)에 관심 추가
+     * 현재 접속중인 사용자가 대상 판매글(article)에 관심 추가
      *
      * @param user    현재 접속 중인 사용자
      * @param request 관심목록 추가 처리 요청
      */
     @Transactional
     public void addLike(User user, LikeRequest request) {
-        Post post = getPostById(request.getPostId());
-        validateIsDuplicatedLike(user, post);
+        Article article = getArticleById(request.getArticleId());
+        validateIsDuplicatedLike(user, article);
 
-        likeRepository.save(Like.create(user, post));
-        post.increaseOneLikeCount();
+        likeRepository.save(Like.create(user, article));
+        article.increaseOneLikeCount();
     }
 
-    public Post getPostById(Long postId) {
-        return postRepository.findById(postId)
-            .orElseThrow(() -> new CustomException(ErrorCode.INVALID_POST_ID));
+    public Article getArticleById(Long articleId) {
+        return articleRepository.findById(articleId)
+            .orElseThrow(() -> new CustomException(ErrorCode.INVALID_ARTICLE_ID));
     }
 
-    public void validateIsDuplicatedLike(User user, Post post) {
-        if (likeRepository.existsByUserAndPost(user, post)) {
+    public void validateIsDuplicatedLike(User user, Article article) {
+        if (likeRepository.existsByUserAndArticle(user, article)) {
             throw new CustomException(ErrorCode.DUPLICATED_LIKE);
         }
     }
@@ -63,7 +63,7 @@ public class LikeService {
         like.validateIsMyLike(user);
 
         likeRepository.delete(like);
-        like.getPost().decreaseOneLikeCount();
+        like.getArticle().decreaseOneLikeCount();
     }
 
     private Like getLikeById(Long likeId) {
@@ -75,7 +75,7 @@ public class LikeService {
      * 사용자의 관심목록을 전체 조회
      *
      * @param user 현재 접속 중인 사용자
-     * @return 좋아요 id에 해당하는 Post 정보로 구성된 LikeResponse 를 반환 (likeId, PostsResponse)
+     * @return 좋아요 id에 해당하는 Article 정보로 구성된 LikeResponse 를 반환 (likeId, ArticlesResponse)
      */
     @Transactional(readOnly = true)
     public List<LikeResponse> findAllLikes(User user) {

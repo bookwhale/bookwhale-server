@@ -13,7 +13,7 @@ create table if not exists user
     primary key (user_id)
 ) engine = InnoDB;
 
-create table if not exists post
+create table if not exists article
 (
     post_id            bigint not null auto_increment,
     created_date       timestamp,
@@ -76,7 +76,7 @@ create table if not exists message
     primary key (message_id)
 ) engine = InnoDB;
 
-alter table post
+alter table article
     add constraint post_fk_user
         foreign key (seller_id)
             references user (user_id)
@@ -85,13 +85,13 @@ alter table post
 alter table image
     add constraint image_fk_post
         foreign key (post_id)
-            references post (post_id)
+            references article (post_id)
             on delete cascade;
 
 alter table post_like
     add constraint like_fk_post
         foreign key (post_id)
-            references post (post_id)
+            references article (post_id)
             on delete cascade;
 
 alter table post_like
@@ -113,4 +113,4 @@ alter table chat_room
 alter table chat_room
     add constraint chat_room_fk_post
         foreign key (post_id)
-            references post (post_id);
+            references article (post_id);

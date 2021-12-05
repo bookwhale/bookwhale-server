@@ -7,14 +7,14 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.bookwhale.article.domain.Article;
+import com.bookwhale.article.dto.ArticleRequest;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.like.domain.Like;
 import com.bookwhale.like.domain.LikeRepository;
-import com.bookwhale.post.domain.Post;
-import com.bookwhale.post.domain.PostRepository;
-import com.bookwhale.post.dto.BookRequest;
-import com.bookwhale.post.dto.PostRequest;
+import com.bookwhale.article.domain.ArticleRepository;
+import com.bookwhale.article.dto.BookRequest;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.dto.LikeRequest;
 import com.bookwhale.user.dto.LikeResponse;
@@ -34,7 +34,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 public class LikeServiceTest {
 
     @Mock
-    private PostRepository postRepository;
+    private ArticleRepository articleRepository;
 
     @Mock
     private LikeRepository likeRepository;
@@ -45,7 +45,7 @@ public class LikeServiceTest {
 
     @BeforeEach
     void setUp() {
-        likeService = new LikeService(likeRepository, postRepository);
+        likeService = new LikeService(likeRepository, articleRepository);
 
         user = User.builder()
             .id(1L)
@@ -71,7 +71,7 @@ public class LikeServiceTest {
             .bookAuthor("이일민")
             .build();
 
-        PostRequest postRequest = PostRequest.builder()
+        ArticleRequest articleRequest = ArticleRequest.builder()
             .bookRequest(bookRequest)
             .title("책 팝니다~")
             .description("쿨 거래시 1000원 할인해드려요~")
@@ -79,10 +79,10 @@ public class LikeServiceTest {
             .bookStatus("BEST")
             .price("5000")
             .build();
-        Post post = Post.create(user, postRequest.toEntity());
-        post.setCreatedDate(LocalDateTime.now());
+        Article article = Article.create(user, articleRequest.toEntity());
+        article.setCreatedDate(LocalDateTime.now());
 
-        when(likeRepository.findAllByUser(any())).thenReturn(List.of(Like.create(user, post)));
+        when(likeRepository.findAllByUser(any())).thenReturn(List.of(Like.create(user, article)));
 
         List<LikeResponse> responses = likeService.findAllLikes(user);
 
@@ -90,13 +90,13 @@ public class LikeServiceTest {
         Assertions.assertAll(
             () -> assertThat(responses.size()).isEqualTo(1),
             () -> org.assertj.core.api.Assertions.assertThat(
-                responses.get(0).getPostsResponse().getPostImage()).isNull(),
+                responses.get(0).getArticlesResponse().getArticleImage()).isNull(),
             () -> org.assertj.core.api.Assertions.assertThat(
-                responses.get(0).getPostsResponse().getPostTitle()).isEqualTo(
-                postRequest.getTitle()),
+                responses.get(0).getArticlesResponse().getArticleTitle()).isEqualTo(
+                articleRequest.getTitle()),
             () -> org.assertj.core.api.Assertions.assertThat(
-                responses.get(0).getPostsResponse().getPostPrice()).isEqualTo(
-                postRequest.getPrice())
+                responses.get(0).getArticlesResponse().getArticlePrice()).isEqualTo(
+                articleRequest.getPrice())
         );
     }
 
@@ -114,7 +114,7 @@ public class LikeServiceTest {
             .bookAuthor("이일민")
             .build();
 
-        PostRequest postRequest = PostRequest.builder()
+        ArticleRequest articleRequest = ArticleRequest.builder()
             .bookRequest(bookRequest)
             .title("책 팝니다~")
             .description("쿨 거래시 1000원 할인해드려요~")
@@ -122,25 +122,25 @@ public class LikeServiceTest {
             .bookStatus("BEST")
             .price("5000")
             .build();
-        Post post = Post.create(user, postRequest.toEntity());
+        Article article = Article.create(user, articleRequest.toEntity());
 
-        when(postRepository.findById(any())).thenReturn(Optional.ofNullable(post));
-        when(likeRepository.save(any())).thenReturn(Like.create(user, post));
+        when(articleRepository.findById(any())).thenReturn(Optional.ofNullable(article));
+        when(likeRepository.save(any())).thenReturn(Like.create(user, article));
 
         likeService.addLike(user, new LikeRequest(1L));
 
-        verify(postRepository).findById(any());
+        verify(articleRepository).findById(any());
         verify(likeRepository).save(any());
     }
 
-    @DisplayName("잘못된 post_id 로 관심목록에 추가하면 예외가 발생한다.")
+    @DisplayName("잘못된 article_id 로 관심목록에 추가하면 예외가 발생한다.")
     @Test
-    void addLike_invalidPostId_failure() {
-        when(postRepository.findById(any())).thenReturn(Optional.empty());
+    void addLike_invalidArticleId_failure() {
+        when(articleRepository.findById(any())).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> likeService.addLike(user, new LikeRequest(1L)))
             .isInstanceOf(CustomException.class)
-            .hasMessage(ErrorCode.INVALID_POST_ID.getMessage());
+            .hasMessage(ErrorCode.INVALID_ARTICLE_ID.getMessage());
     }
 
     @DisplayName("관심목록을 삭제한다.")
@@ -157,7 +157,7 @@ public class LikeServiceTest {
             .bookAuthor("이일민")
             .build();
 
-        PostRequest postRequest = PostRequest.builder()
+        ArticleRequest articleRequest = ArticleRequest.builder()
             .bookRequest(bookRequest)
             .title("책 팝니다~")
             .description("쿨 거래시 1000원 할인해드려요~")
@@ -165,9 +165,9 @@ public class LikeServiceTest {
             .bookStatus("BEST")
             .price("5000")
             .build();
-        Post post = Post.create(user, postRequest.toEntity());
+        Article article = Article.create(user, articleRequest.toEntity());
 
-        when(likeRepository.findById(any())).thenReturn(Optional.of(Like.create(user, post)));
+        when(likeRepository.findById(any())).thenReturn(Optional.of(Like.create(user, article)));
         doNothing().when(likeRepository).delete(any());
 
         likeService.deleteLike(user, 1L);
@@ -189,7 +189,7 @@ public class LikeServiceTest {
             .bookAuthor("이일민")
             .build();
 
-        PostRequest postRequest = PostRequest.builder()
+        ArticleRequest articleRequest = ArticleRequest.builder()
             .bookRequest(bookRequest)
             .title("책 팝니다~")
             .description("쿨 거래시 1000원 할인해드려요~")
@@ -197,11 +197,11 @@ public class LikeServiceTest {
             .bookStatus("BEST")
             .price("5000")
             .build();
-        Post post = Post.create(user, postRequest.toEntity());
+        Article article = Article.create(user, articleRequest.toEntity());
         User otherUser = User.builder().id(2L).build();
 
         when(likeRepository.findById(any())).thenReturn(
-            Optional.of(Like.create(otherUser, post)));
+            Optional.of(Like.create(otherUser, article)));
 
         assertThatThrownBy(() -> likeService.deleteLike(user, 1L))
             .isInstanceOf(CustomException.class)

@@ -12,8 +12,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.bookwhale.common.controller.CommonApiTest;
 import com.bookwhale.common.domain.Location;
 import com.bookwhale.common.security.WithMockCustomUser;
-import com.bookwhale.post.domain.PostStatus;
-import com.bookwhale.post.dto.PostsResponse;
+import com.bookwhale.article.dto.ArticlesResponse;
+import com.bookwhale.article.domain.ArticleStatus;
 import com.bookwhale.user.docs.UserDocumentation;
 import com.bookwhale.user.dto.LikeRequest;
 import com.bookwhale.user.dto.LikeResponse;
@@ -41,12 +41,12 @@ public class LikeControllerTest extends CommonApiTest {
     void findLikes() throws Exception {
         List<LikeResponse> responses = List.of(
             new LikeResponse(1L,
-                PostsResponse.builder()
-                    .postId(1L)
-                    .postImage("이미지")
-                    .postTitle("책 팝니다~")
-                    .postPrice("20000원")
-                    .postStatus(PostStatus.SALE.getName())
+                ArticlesResponse.builder()
+                    .articleId(1L)
+                    .articleImage("이미지")
+                    .articleTitle("책 팝니다~")
+                    .articlePrice("20000원")
+                    .articleStatus(ArticleStatus.SALE.getName())
                     .description("책 설명 보충합니다.")
                     .sellingLocation(Location.SEOUL.getName())
                     .viewCount(1L)

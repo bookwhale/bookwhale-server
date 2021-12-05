@@ -1,7 +1,7 @@
 package com.bookwhale.chatroom.domain;
 
 import static com.bookwhale.chatroom.domain.QChatRoom.chatRoom;
-import static com.bookwhale.post.domain.QPost.post;
+import static com.bookwhale.article.domain.QArticle.article;
 import static com.bookwhale.user.domain.QUser.user;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -17,7 +17,7 @@ public class ChatRoomRepositoryImpl implements ChatRoomQuerydsl {
     @Override
     public List<ChatRoom> findAllByBuyerOrSellerCreatedDateDesc(User loginUser) {
         return queryFactory.selectFrom(chatRoom)
-            .leftJoin(chatRoom.post, post).fetchJoin()
+            .leftJoin(chatRoom.article, article).fetchJoin()
             .leftJoin(chatRoom.buyer, user).fetchJoin()
             .leftJoin(chatRoom.seller, user).fetchJoin()
             .where(chatRoom.buyer.eq(loginUser).or(chatRoom.seller.eq(loginUser)))

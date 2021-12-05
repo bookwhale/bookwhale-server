@@ -3,9 +3,9 @@ package com.bookwhale.user.acceptance.step;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.bookwhale.post.domain.PostStatus;
-import com.bookwhale.post.dto.PostRequest;
-import com.bookwhale.post.dto.PostsResponse;
+import com.bookwhale.article.domain.ArticleStatus;
+import com.bookwhale.article.dto.ArticleRequest;
+import com.bookwhale.article.dto.ArticlesResponse;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.dto.LikeRequest;
 import com.bookwhale.user.dto.LikeResponse;
@@ -59,29 +59,29 @@ public class UserAcceptanceStep {
         assertThat(res.getProfileImage()).isNull();
     }
 
-    public static void assertThatAddLike(List<LikeResponse> res, PostRequest req) {
+    public static void assertThatAddLike(List<LikeResponse> res, ArticleRequest req) {
         Assertions.assertAll(
             () -> assertThat(res.size()).isEqualTo(1),
             () -> assertThat(
-                res.get(0).getPostsResponse().getPostTitle()).isEqualTo(req.getTitle()),
+                res.get(0).getArticlesResponse().getArticleTitle()).isEqualTo(req.getTitle()),
             () -> assertThat(
-                res.get(0).getPostsResponse().getPostPrice()).isEqualTo(req.getPrice()),
+                res.get(0).getArticlesResponse().getArticlePrice()).isEqualTo(req.getPrice()),
             () -> assertThat(
-                res.get(0).getPostsResponse().getPostImage()).isNotNull(),
+                res.get(0).getArticlesResponse().getArticleImage()).isNotNull(),
             () -> assertThat(
-                res.get(0).getPostsResponse().getBeforeTime()).isNotNull(),
+                res.get(0).getArticlesResponse().getBeforeTime()).isNotNull(),
             () -> assertThat(
-                res.get(0).getPostsResponse().getLikeCount()).isGreaterThan(0L)
+                res.get(0).getArticlesResponse().getLikeCount()).isGreaterThan(0L)
         );
     }
 
-    public static void assertThatFindMyPosts(List<PostsResponse> res, PostRequest req) {
+    public static void assertThatFindMyArticles(List<ArticlesResponse> res, ArticleRequest req) {
         Assertions.assertAll(
             () -> assertThat(res.size()).isEqualTo(1),
-            () -> assertThat(res.get(0).getPostTitle()).isEqualTo(req.getTitle()),
-            () -> assertThat(res.get(0).getPostPrice()).isEqualTo(req.getPrice()),
-            () -> assertThat(res.get(0).getPostStatus()).isEqualTo(PostStatus.SALE.getName()),
-            () -> assertThat(res.get(0).getPostImage()).isNotNull(),
+            () -> assertThat(res.get(0).getArticleTitle()).isEqualTo(req.getTitle()),
+            () -> assertThat(res.get(0).getArticlePrice()).isEqualTo(req.getPrice()),
+            () -> assertThat(res.get(0).getArticleStatus()).isEqualTo(ArticleStatus.SALE.getName()),
+            () -> assertThat(res.get(0).getArticleImage()).isNotNull(),
             () -> assertThat(res.get(0).getBeforeTime()).isNotNull()
         );
     }
@@ -196,11 +196,11 @@ public class UserAcceptanceStep {
             .extract();
     }
 
-    public static ExtractableResponse<Response> requestToFindMyPosts(String jwt) {
+    public static ExtractableResponse<Response> requestToFindMyArticles(String jwt) {
         return given().log().all()
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .when()
-            .get("/api/user/me/post")
+            .get("/api/user/me/article")
             .then().log().all()
             .extract();
     }

@@ -1,6 +1,6 @@
 package com.bookwhale.user.controller;
 
-import com.bookwhale.post.dto.PostsResponse;
+import com.bookwhale.article.dto.ArticlesResponse;
 import com.bookwhale.security.CurrentUser;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.dto.PasswordUpdateRequest;
@@ -70,9 +70,9 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/me/post")
-    public ResponseEntity<List<PostsResponse>> findMyPosts(@CurrentUser User user) {
-        List<PostsResponse> response = userService.findMyPost(user);
+    @GetMapping("/me/article")
+    public ResponseEntity<List<ArticlesResponse>> findMyArticles(@CurrentUser User user) {
+        List<ArticlesResponse> response = userService.findMyArticle(user);
         return ResponseEntity.ok(response);
     }
 }
