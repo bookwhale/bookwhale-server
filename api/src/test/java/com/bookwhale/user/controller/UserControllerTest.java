@@ -23,7 +23,7 @@ import com.bookwhale.user.dto.PasswordUpdateRequest;
 import com.bookwhale.user.dto.ProfileResponse;
 import com.bookwhale.user.dto.SignUpRequest;
 import com.bookwhale.user.dto.UserUpdateRequest;
-import com.bookwhale.user.service.LikeService;
+import com.bookwhale.user.service.FavoriteService;
 import com.bookwhale.user.service.UserService;
 import java.util.List;
 import org.apache.http.entity.ContentType;
@@ -44,7 +44,7 @@ public class UserControllerTest extends CommonApiTest {
     UserService userService;
 
     @MockBean
-    LikeService likeService;
+    FavoriteService favoriteService;
 
     @DisplayName("유저 회원가입을 한다.")
     @Test
@@ -179,7 +179,7 @@ public class UserControllerTest extends CommonApiTest {
             .sellingLocation("서울")
             .description("정가 5만원인데 급처합니다.")
             .viewCount(1L)
-            .likeCount(1L)
+            .favoriteCount(1L)
             .beforeTime("15분 전")
             .build();
 

@@ -7,7 +7,7 @@ import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.common.upload.FileUploader;
 import com.bookwhale.dto.Pagination;
 import com.bookwhale.image.domain.Images;
-import com.bookwhale.like.domain.LikeRepository;
+import com.bookwhale.favorite.domain.FavoriteRepository;
 import com.bookwhale.article.domain.ArticleRepository;
 import com.bookwhale.article.dto.ArticleRequest;
 import com.bookwhale.article.dto.ArticleResponse;
@@ -31,7 +31,7 @@ public class ArticleService {
 
     private final FileUploader fileUploader;
 
-    private final LikeRepository likeRepository;
+    private final FavoriteRepository favoriteRepository;
 
     public Long createArticle(User user, ArticleRequest request, List<MultipartFile> images) {
         Article article = Article.create(user, request.toEntity());
@@ -45,7 +45,7 @@ public class ArticleService {
         return ArticleResponse.of(
             article,
             article.isMyArticle(user),
-            likeRepository.existsByUserAndArticle(user, article)
+            favoriteRepository.existsByUserAndArticle(user, article)
         );
     }
 

@@ -19,7 +19,7 @@ import com.bookwhale.article.dto.ArticleUpdateRequest;
 import com.bookwhale.article.dto.ArticlesRequest;
 import com.bookwhale.article.dto.ArticlesResponse;
 import com.bookwhale.user.acceptance.step.UserAcceptanceStep;
-import com.bookwhale.user.dto.LikeRequest;
+import com.bookwhale.user.dto.FavoriteRequest;
 import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -70,7 +70,7 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
 
     @DisplayName("게시글을 상세 조회한다. (나의 게시글, 관심목록 X)")
     @Test
-    void findArticle_isMyArticleAndIsNotMyLike() {
+    void findArticle_isMyArticleAndIsNotMyFavorite() {
         String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
 
         Long articleId = AcceptanceUtils.getIdFromResponse(
@@ -85,14 +85,14 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
 
     @DisplayName("게시글을 상세 조회한다. (다른 유저의 게시글, 관심목록 O)")
     @Test
-    void findArticle_isNotMyArticleAndIsMyLike() {
+    void findArticle_isNotMyArticleAndIsMyFavorite() {
         String anotherUserJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(
             anotherLoginRequest);
         Long articleId = AcceptanceUtils.getIdFromResponse(
             ArticleAcceptanceStep.requestToCreateArticle(anotherUserJwt, articleRequest));
 
         String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
-        UserAcceptanceStep.addLike(jwt, new LikeRequest(articleId));
+        UserAcceptanceStep.addFavorite(jwt, new FavoriteRequest(articleId));
 
         ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToFindArticle(jwt, articleId);
         ArticleResponse articleResponse = response.jsonPath().getObject(".", ArticleResponse.class);

@@ -1,4 +1,4 @@
-package com.bookwhale.like.domain;
+package com.bookwhale.favorite.domain;
 
 import com.bookwhale.article.domain.Article;
 import com.bookwhale.common.domain.BaseEntity;
@@ -21,12 +21,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-@Table(name = "article_like")
-public class Like extends BaseEntity {
+@Table(name = "article_favorite")
+public class Favorite extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "like_id")
+    @Column(name = "favorite_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -37,22 +37,22 @@ public class Like extends BaseEntity {
     @JoinColumn(name = "article_id")
     private Article article;
 
-    private Like(User user, Article article) {
+    private Favorite(User user, Article article) {
         this.user = user;
         this.article = article;
     }
 
-    public static Like create(User loginUser, Article article) {
-        return new Like(loginUser, article);
+    public static Favorite create(User loginUser, Article article) {
+        return new Favorite(loginUser, article);
     }
 
-    public void validateIsMyLike(User loginUser) {
-        if (!isMyLike(loginUser)) {
+    public void validateIsMyFavorite(User loginUser) {
+        if (!isMyFavorite(loginUser)) {
             throw new CustomException(ErrorCode.USER_ACCESS_DENIED);
         }
     }
 
-    public boolean isMyLike(User loginUser) {
+    public boolean isMyFavorite(User loginUser) {
         return this.getUser().getId().equals(loginUser.getId());
     }
 }

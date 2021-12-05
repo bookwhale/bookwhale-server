@@ -12,8 +12,8 @@ import com.bookwhale.article.dto.ArticleRequest;
 import com.bookwhale.article.dto.ArticleResponse;
 import com.bookwhale.article.dto.BookRequest;
 import com.bookwhale.user.acceptance.step.UserAcceptanceStep;
-import com.bookwhale.user.dto.LikeRequest;
-import com.bookwhale.user.dto.LikeResponse;
+import com.bookwhale.user.dto.FavoriteRequest;
+import com.bookwhale.user.dto.FavoriteResponse;
 import com.bookwhale.user.dto.LoginRequest;
 import com.bookwhale.user.dto.PasswordUpdateRequest;
 import com.bookwhale.user.dto.ProfileResponse;
@@ -155,7 +155,7 @@ public class UserAcceptanceTest extends AcceptanceTest {
 
     @DisplayName("관심목록에 추가한다.")
     @Test
-    void addLike() {
+    void addFavorite() {
         ArticleRequest articleRequest = ArticleRequest.builder()
             .bookRequest(BookRequest.builder()
                 .bookSummary("책 설명")
@@ -178,18 +178,18 @@ public class UserAcceptanceTest extends AcceptanceTest {
         Long articleId = AcceptanceUtils.getIdFromResponse(
             ArticleAcceptanceStep.requestToCreateArticle(jwt, articleRequest));
 
-        ExtractableResponse<Response> response = UserAcceptanceStep.addLike(jwt,
-            new LikeRequest(articleId));
-        List<LikeResponse> likeResponses = UserAcceptanceStep.findLikes(jwt).jsonPath()
-            .getList(".", LikeResponse.class);
+        ExtractableResponse<Response> response = UserAcceptanceStep.addFavorite(jwt,
+            new FavoriteRequest(articleId));
+        List<FavoriteResponse> favoriteRespons = UserAcceptanceStep.findFavorites(jwt).jsonPath()
+            .getList(".", FavoriteResponse.class);
 
         AcceptanceStep.assertThatStatusIsOk(response);
-        UserAcceptanceStep.assertThatAddLike(likeResponses, articleRequest);
+        UserAcceptanceStep.assertThatAddFavorite(favoriteRespons, articleRequest);
     }
 
     @DisplayName("관심목록에서 삭제한다.")
     @Test
-    void deleteLike() {
+    void deleteFavorite() {
         ArticleRequest articleRequest = ArticleRequest.builder()
             .bookRequest(BookRequest.builder()
                 .bookSummary("책 설명")
@@ -211,25 +211,25 @@ public class UserAcceptanceTest extends AcceptanceTest {
         String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
         Long articleId = AcceptanceUtils.getIdFromResponse(
             ArticleAcceptanceStep.requestToCreateArticle(jwt, articleRequest));
-        UserAcceptanceStep.addLike(jwt, new LikeRequest(articleId));
-        List<LikeResponse> likeResponseAfterAddLike = UserAcceptanceStep.findLikes(jwt).jsonPath()
-            .getList(".", LikeResponse.class);
-        Long likeCount = likeResponseAfterAddLike.get(0).getArticlesResponse().getLikeCount();
-        Long likeId = likeResponseAfterAddLike.get(0).getLikeId();
+        UserAcceptanceStep.addFavorite(jwt, new FavoriteRequest(articleId));
+        List<FavoriteResponse> favoriteResponseAfterAddFavorite = UserAcceptanceStep.findFavorites(jwt).jsonPath()
+            .getList(".", FavoriteResponse.class);
+        Long favoriteCount = favoriteResponseAfterAddFavorite.get(0).getArticlesResponse().getFavoriteCount();
+        Long favoriteId = favoriteResponseAfterAddFavorite.get(0).getFavoriteId();
 
-        ExtractableResponse<Response> response = UserAcceptanceStep.deleteLike(
-            jwt, likeId);
-        List<LikeResponse> likeResponses = UserAcceptanceStep.findLikes(jwt).jsonPath()
-            .getList(".", LikeResponse.class);
+        ExtractableResponse<Response> response = UserAcceptanceStep.deleteFavorite(
+            jwt, favoriteId);
+        List<FavoriteResponse> favoriteRespons = UserAcceptanceStep.findFavorites(jwt).jsonPath()
+            .getList(".", FavoriteResponse.class);
 
-        ExtractableResponse<Response> responseAfterDeleteLike = ArticleAcceptanceStep.requestToFindArticle(
+        ExtractableResponse<Response> responseAfterDeleteFavorite = ArticleAcceptanceStep.requestToFindArticle(
             jwt, articleId);
-        ArticleResponse articleResponse = responseAfterDeleteLike.jsonPath()
+        ArticleResponse articleResponse = responseAfterDeleteFavorite.jsonPath()
             .getObject(".", ArticleResponse.class);
 
         AcceptanceStep.assertThatStatusIsOk(response);
-        assertThat(likeResponses.size()).isEqualTo(0);
-        assertThat(articleResponse.getLikeCount()).isEqualTo(likeCount - 1L);
+        assertThat(favoriteRespons.size()).isEqualTo(0);
+        assertThat(articleResponse.getFavoriteCount()).isEqualTo(favoriteCount - 1L);
     }
 
     @DisplayName("나의 게시글들을 조회한다.")

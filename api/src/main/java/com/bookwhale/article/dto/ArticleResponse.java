@@ -27,17 +27,17 @@ public class ArticleResponse {
     private List<String> images;
     private BookResponse bookResponse;
     private boolean isMyArticle;
-    private boolean isMyLike;
+    private boolean isMyFavorite;
     private Long viewCount;
-    private Long likeCount;
+    private Long favoriteCount;
     private String beforeTime;
 
     @Builder
     public ArticleResponse(Long sellerId, String sellerIdentity, String sellerProfileImage,
         Long articleId, String title, String price, String description, String bookStatus,
         String articleStatus, String sellingLocation, List<String> images,
-        BookResponse bookResponse, boolean isMyArticle, boolean isMyLike, Long viewCount,
-        Long likeCount, String beforeTime) {
+        BookResponse bookResponse, boolean isMyArticle, boolean isMyFavorite, Long viewCount,
+        Long favoriteCount, String beforeTime) {
         this.sellerId = sellerId;
         this.sellerIdentity = sellerIdentity;
         this.sellerProfileImage = sellerProfileImage;
@@ -51,14 +51,14 @@ public class ArticleResponse {
         this.images = images;
         this.bookResponse = bookResponse;
         this.isMyArticle = isMyArticle;
-        this.isMyLike = isMyLike;
+        this.isMyFavorite = isMyFavorite;
         this.viewCount = viewCount;
-        this.likeCount = likeCount;
+        this.favoriteCount = favoriteCount;
         this.beforeTime = beforeTime;
     }
 
     public static ArticleResponse of(Article article, boolean isMyArticle,
-        boolean isMyLike) {
+        boolean isMyFavorite) {
         BookResponse bookResponse = BookResponse.builder()
             .bookAuthor(article.getBook().getBookAuthor())
             .bookIsbn(article.getBook().getBookIsbn())
@@ -88,9 +88,9 @@ public class ArticleResponse {
                 article.getSellingLocation().get().getName() : "")
             .images(imageResponse)
             .isMyArticle(isMyArticle)
-            .isMyLike(isMyLike)
+            .isMyFavorite(isMyFavorite)
             .viewCount(article.getViewCount())
-            .likeCount(article.getLikeCount())
+            .favoriteCount(article.getFavoriteCount())
             .beforeTime(TimeUtils.BeforeTime(LocalDateTime.now(), article.getCreatedDate()))
             .build();
     }

@@ -3,9 +3,9 @@ package com.bookwhale.user.controller;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.security.CurrentUser;
 import com.bookwhale.user.domain.User;
-import com.bookwhale.user.dto.LikeRequest;
-import com.bookwhale.user.dto.LikeResponse;
-import com.bookwhale.user.service.LikeService;
+import com.bookwhale.user.dto.FavoriteRequest;
+import com.bookwhale.user.dto.FavoriteResponse;
+import com.bookwhale.user.service.FavoriteService;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,9 +24,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/user/me")
 @RequiredArgsConstructor
-public class LikeController {
+public class FavoriteController {
 
-    private final LikeService likeService;
+    private final FavoriteService favoriteService;
 
     /**
      * 사용자가 접근한 판매글에서 관심목록 추가를 요청
@@ -36,10 +36,10 @@ public class LikeController {
      * @return 요청 처리 성공 시 HttpStatus.OK (200)을 반환, 실패 시 Exception이 던져지며 ErrorCode를 반환
      * @see ErrorCode
      */
-    @PostMapping("/like")
-    public ResponseEntity<Void> addLike(@CurrentUser User user,
-        @Valid @RequestBody LikeRequest request) {
-        likeService.addLike(user, request);
+    @PostMapping("/favorite")
+    public ResponseEntity<Void> addFavorite(@CurrentUser User user,
+        @Valid @RequestBody FavoriteRequest request) {
+        favoriteService.addFavorite(user, request);
         return ResponseEntity.ok().build();
     }
 
@@ -49,23 +49,23 @@ public class LikeController {
      * @param user 현재 접속 중인 사용자
      * @return 요청 처리 성공 시 사용자의 전체 관심목록을 반환한다.
      */
-    @GetMapping("/likes")
-    public ResponseEntity<List<LikeResponse>> findMyLikes(@CurrentUser User user) {
-        return ResponseEntity.ok(likeService.findAllLikes(user));
+    @GetMapping("/favorites")
+    public ResponseEntity<List<FavoriteResponse>> findMyFavorites(@CurrentUser User user) {
+        return ResponseEntity.ok(favoriteService.findAllFavorites(user));
     }
 
     /**
      * 사용자의 관심목록 중 선택한 관심을 삭제한다.
      *
      * @param user   현재 접속 중인 사용자
-     * @param likeId 관심 고유값 (ID)
+     * @param favoriteId 관심 고유값 (ID)
      * @return 요청 처리 성공 시 HttpStatus.OK (200)을 반환, 실패 시 Exception이 던져지며 ErrorCode를 반환
      * @see ErrorCode
      */
-    @DeleteMapping("like/{likeId}")
-    public ResponseEntity<Void> deleteLike(@CurrentUser User user,
-        @PathVariable Long likeId) {
-        likeService.deleteLike(user, likeId);
+    @DeleteMapping("favorite/{favoriteId}")
+    public ResponseEntity<Void> deleteFavorite(@CurrentUser User user,
+        @PathVariable Long favoriteId) {
+        favoriteService.deleteFavorite(user, favoriteId);
         return ResponseEntity.ok().build();
     }
 }

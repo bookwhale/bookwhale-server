@@ -9,7 +9,7 @@ import static org.mockito.Mockito.when;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.common.upload.FileUploader;
-import com.bookwhale.like.domain.LikeRepository;
+import com.bookwhale.favorite.domain.FavoriteRepository;
 import com.bookwhale.article.domain.ArticleRepository;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.domain.UserRepository;
@@ -45,7 +45,7 @@ public class UserServiceTest {
     private ArticleRepository articleRepository;
 
     @Mock
-    private LikeRepository likeRepository;
+    private FavoriteRepository favoriteRepository;
 
     UserService userService;
 

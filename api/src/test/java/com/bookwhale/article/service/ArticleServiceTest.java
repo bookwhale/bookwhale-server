@@ -18,7 +18,7 @@ import com.bookwhale.article.domain.Article;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.common.upload.FileUploader;
-import com.bookwhale.like.domain.LikeRepository;
+import com.bookwhale.favorite.domain.FavoriteRepository;
 import com.bookwhale.article.domain.BookStatus;
 import com.bookwhale.article.domain.ArticleRepository;
 import com.bookwhale.article.domain.ArticleStatus;
@@ -53,7 +53,7 @@ public class ArticleServiceTest {
     FileUploader fileUploader;
 
     @Mock
-    LikeRepository likeRepository;
+    FavoriteRepository favoriteRepository;
 
     ArticleService articleService;
 
@@ -63,7 +63,7 @@ public class ArticleServiceTest {
 
     @BeforeEach
     void setUp() {
-        articleService = new ArticleService(articleRepository, fileUploader, likeRepository);
+        articleService = new ArticleService(articleRepository, fileUploader, favoriteRepository);
 
         BookRequest bookRequest = BookRequest.builder()
             .bookSummary("설명")
@@ -118,7 +118,7 @@ public class ArticleServiceTest {
         article.setCreatedDate(LocalDateTime.now());
 
         when(articleRepository.findArticleWithSellerById(any())).thenReturn(Optional.of(article));
-        when(likeRepository.existsByUserAndArticle(any(), any())).thenReturn(true);
+        when(favoriteRepository.existsByUserAndArticle(any(), any())).thenReturn(true);
 
         ArticleResponse response = articleService.findArticle(user, 1L);
 
@@ -130,7 +130,7 @@ public class ArticleServiceTest {
             () -> assertThat(response.getArticleStatus()).isEqualTo(ArticleStatus.SALE.getName()),
             () -> assertThat(response.getTitle()).isEqualTo(articleRequest.getTitle()),
             () -> assertThat(response.isMyArticle()).isEqualTo(true),
-            () -> assertThat(response.isMyLike()).isEqualTo(true),
+            () -> assertThat(response.isMyFavorite()).isEqualTo(true),
             () -> assertThat(response.getBookStatus()).isEqualTo(
                 BookStatus.valueOf(articleRequest.getBookStatus()).getName()),
             () -> assertThat(response.getImages().size()).isEqualTo(2),

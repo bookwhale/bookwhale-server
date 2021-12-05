@@ -7,8 +7,8 @@ import com.bookwhale.article.domain.ArticleStatus;
 import com.bookwhale.article.dto.ArticleRequest;
 import com.bookwhale.article.dto.ArticlesResponse;
 import com.bookwhale.user.domain.User;
-import com.bookwhale.user.dto.LikeRequest;
-import com.bookwhale.user.dto.LikeResponse;
+import com.bookwhale.user.dto.FavoriteRequest;
+import com.bookwhale.user.dto.FavoriteResponse;
 import com.bookwhale.user.dto.LoginRequest;
 import com.bookwhale.user.dto.LoginResponse;
 import com.bookwhale.user.dto.PasswordUpdateRequest;
@@ -59,7 +59,7 @@ public class UserAcceptanceStep {
         assertThat(res.getProfileImage()).isNull();
     }
 
-    public static void assertThatAddLike(List<LikeResponse> res, ArticleRequest req) {
+    public static void assertThatAddFavorite(List<FavoriteResponse> res, ArticleRequest req) {
         Assertions.assertAll(
             () -> assertThat(res.size()).isEqualTo(1),
             () -> assertThat(
@@ -71,7 +71,7 @@ public class UserAcceptanceStep {
             () -> assertThat(
                 res.get(0).getArticlesResponse().getBeforeTime()).isNotNull(),
             () -> assertThat(
-                res.get(0).getArticlesResponse().getLikeCount()).isGreaterThan(0L)
+                res.get(0).getArticlesResponse().getFavoriteCount()).isGreaterThan(0L)
         );
     }
 
@@ -167,31 +167,31 @@ public class UserAcceptanceStep {
             .extract();
     }
 
-    public static ExtractableResponse<Response> addLike(String jwt, LikeRequest request) {
+    public static ExtractableResponse<Response> addFavorite(String jwt, FavoriteRequest request) {
         return given().log().all()
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .body(request)
             .when()
-            .post("/api/user/me/like")
+            .post("/api/user/me/favorite")
             .then().log().all()
             .extract();
     }
 
-    public static ExtractableResponse<Response> findLikes(String jwt) {
+    public static ExtractableResponse<Response> findFavorites(String jwt) {
         return given().log().all()
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .when()
-            .get("/api/user/me/likes")
+            .get("/api/user/me/favorites")
             .then().log().all()
             .extract();
     }
 
-    public static ExtractableResponse<Response> deleteLike(String jwt, Long likeId) {
+    public static ExtractableResponse<Response> deleteFavorite(String jwt, Long favoriteId) {
         return given().log().all()
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .when()
-            .delete("/api/user/me/like/{likeId}", likeId)
+            .delete("/api/user/me/favorite/{favoriteId}", favoriteId)
             .then().log().all()
             .extract();
     }

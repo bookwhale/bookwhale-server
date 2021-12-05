@@ -110,9 +110,9 @@ public class UserDocumentation {
         );
     }
 
-    public static RestDocumentationResultHandler userFindLikes() {
+    public static RestDocumentationResultHandler userFindFavorites() {
         FieldDescriptor[] response = new FieldDescriptor[]{
-            fieldWithPath("likeId").type(JsonFieldType.NUMBER).description("관심목록 ID"),
+            fieldWithPath("favoriteId").type(JsonFieldType.NUMBER).description("관심목록 ID"),
             fieldWithPath("articlesResponse.articleId").type(JsonFieldType.NUMBER).description("게시글 ID"),
             fieldWithPath("articlesResponse.articleTitle").type(JsonFieldType.STRING).description(
                 "게시글 제목"),
@@ -124,7 +124,7 @@ public class UserDocumentation {
                 "게시글에 작성한 설명"),
             fieldWithPath("articlesResponse.viewCount").type(JsonFieldType.NUMBER).description(
                 "게시글 조회수"),
-            fieldWithPath("articlesResponse.likeCount").type(JsonFieldType.NUMBER).description(
+            fieldWithPath("articlesResponse.favoriteCount").type(JsonFieldType.NUMBER).description(
                 "게시글 관심수"),
             fieldWithPath("articlesResponse.beforeTime").type(JsonFieldType.STRING).description(
                 "등록한 시간 - 현재 시간"),
@@ -134,7 +134,7 @@ public class UserDocumentation {
                 "게시글 상태 [SALE, RESERVED, SOLD_OUT]")
         };
 
-        return document("user/findLikes",
+        return document("user/findFavorites",
             preprocessRequest(prettyPrint()),
             preprocessResponse(prettyPrint()),
             requestHeaders(
@@ -145,8 +145,8 @@ public class UserDocumentation {
         );
     }
 
-    public static RestDocumentationResultHandler userAddLike() {
-        return document("user/addLike",
+    public static RestDocumentationResultHandler userAddFavorite() {
+        return document("user/addFavorite",
             preprocessRequest(prettyPrint()),
             preprocessResponse(prettyPrint()),
             requestHeaders(
@@ -157,14 +157,14 @@ public class UserDocumentation {
         );
     }
 
-    public static RestDocumentationResultHandler userDeleteLike() {
-        return document("user/deleteLike",
+    public static RestDocumentationResultHandler userDeleteFavorite() {
+        return document("user/deleteFavorite",
             preprocessResponse(prettyPrint()),
             requestHeaders(
                 headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
             ),
             pathParameters(
-                parameterWithName("likeId").description("관심목록 ID")
+                parameterWithName("favoriteId").description("관심목록 ID")
             )
         );
     }
@@ -178,7 +178,7 @@ public class UserDocumentation {
                 "게시글에 등록한 판매지역"),
             fieldWithPath("description").type(JsonFieldType.STRING).description("게시글에 작성한 설명"),
             fieldWithPath("viewCount").type(JsonFieldType.NUMBER).description("게시글 조회수"),
-            fieldWithPath("likeCount").type(JsonFieldType.NUMBER).description("게시글 관심수"),
+            fieldWithPath("favoriteCount").type(JsonFieldType.NUMBER).description("게시글 관심수"),
             fieldWithPath("beforeTime").type(JsonFieldType.STRING).description("등록한 시간 - 현재 시간"),
             fieldWithPath("articleImage").type(JsonFieldType.STRING).description("판매자가 올린 이미지"),
             fieldWithPath("articleStatus").type(JsonFieldType.STRING).description(

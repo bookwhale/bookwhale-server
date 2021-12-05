@@ -197,10 +197,10 @@ public class ArticleControllerTest extends CommonApiTest {
             .images(of("image1", "image2"))
             .bookResponse(bookResponse)
             .isMyArticle(true)
-            .isMyLike(true)
+            .isMyFavorite(true)
             .sellingLocation("서울")
             .viewCount(1L)
-            .likeCount(0L)
+            .favoriteCount(0L)
             .beforeTime("15분 전")
             .build();
 
@@ -232,7 +232,7 @@ public class ArticleControllerTest extends CommonApiTest {
             .description("판매자가 작성한 게시글 설명")
             .sellingLocation(Location.SEOUL.getName())
             .viewCount(1L)
-            .likeCount(0L)
+            .favoriteCount(0L)
             .beforeTime("15분 전")
             .build();
 

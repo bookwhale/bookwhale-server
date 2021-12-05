@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LikeRequest {
+public class FavoriteRequest {
 
     @NotNull
     private Long articleId;

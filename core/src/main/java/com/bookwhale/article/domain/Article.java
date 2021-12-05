@@ -57,7 +57,7 @@ public class Article extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Location sellingLocation;
 
-    private Long likeCount = 0L;
+    private Long favoriteCount = 0L;
 
     private Long viewCount = 0L;
 
@@ -70,7 +70,7 @@ public class Article extends BaseEntity {
     @Builder
     public Article(Long id, User seller, String title, String price, String description,
         ArticleStatus articleStatus, BookStatus bookStatus,
-        Location sellingLocation, Long likeCount, Long viewCount, Book book) {
+        Location sellingLocation, Long favoriteCount, Long viewCount, Book book) {
         this.id = id;
         this.seller = seller;
         this.title = title;
@@ -79,7 +79,7 @@ public class Article extends BaseEntity {
         this.articleStatus = articleStatus;
         this.bookStatus = bookStatus;
         this.sellingLocation = sellingLocation;
-        this.likeCount = likeCount == null ? 0L : likeCount;
+        this.favoriteCount = favoriteCount == null ? 0L : favoriteCount;
         this.viewCount = viewCount == null ? 0L : viewCount;
         this.book = book;
     }
@@ -98,7 +98,7 @@ public class Article extends BaseEntity {
             .description(article.getDescription())
             .book(Book.create(article.getBook()))
             .sellingLocation(article.getSellingLocation().orElse(null))
-            .likeCount(article.getLikeCount())
+            .favoriteCount(article.getFavoriteCount())
             .viewCount(article.getViewCount())
             .build();
     }
@@ -134,13 +134,13 @@ public class Article extends BaseEntity {
         this.viewCount += 1L;
     }
 
-    public void increaseOneLikeCount() {
-        this.likeCount += 1L;
+    public void increaseOneFavoriteCount() {
+        this.favoriteCount += 1L;
     }
 
-    public void decreaseOneLikeCount() {
-        if (this.likeCount > 0L) {
-            this.likeCount -= 1L;
+    public void decreaseOneFavoriteCount() {
+        if (this.favoriteCount > 0L) {
+            this.favoriteCount -= 1L;
         }
     }
 
@@ -155,7 +155,7 @@ public class Article extends BaseEntity {
             ", articleStatus=" + articleStatus +
             ", bookStatus=" + bookStatus +
             ", sellingLocation=" + sellingLocation +
-            ", likeCount=" + likeCount +
+            ", favoriteCount=" + favoriteCount +
             ", viewCount=" + viewCount +
             ", book=" + book +
             ", images=" + images +

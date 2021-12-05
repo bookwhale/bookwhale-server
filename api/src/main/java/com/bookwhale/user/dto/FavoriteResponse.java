@@ -1,7 +1,7 @@
 package com.bookwhale.user.dto;
 
 import com.bookwhale.article.domain.Article;
-import com.bookwhale.like.domain.Like;
+import com.bookwhale.favorite.domain.Favorite;
 import com.bookwhale.article.dto.ArticlesResponse;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,23 +11,23 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class LikeResponse {
+public class FavoriteResponse {
 
-    private Long likeId;
+    private Long favoriteId;
 
     private ArticlesResponse articlesResponse;
 
-    public LikeResponse(Long likeId,
+    public FavoriteResponse(Long favoriteId,
         ArticlesResponse articlesResponse) {
-        this.likeId = likeId;
+        this.favoriteId = favoriteId;
         this.articlesResponse = articlesResponse;
     }
 
-    public static List<LikeResponse> listOf(List<Like> likes) {
+    public static List<FavoriteResponse> listOf(List<Favorite> favorites) {
         LocalDateTime cur = LocalDateTime.now();
-        return likes.stream().map(likedArticle -> {
-            Article article = likedArticle.getArticle();
-            return new LikeResponse(likedArticle.getId(),
+        return favorites.stream().map(favoritedArticle -> {
+            Article article = favoritedArticle.getArticle();
+            return new FavoriteResponse(favoritedArticle.getId(),
                 ArticlesResponse.of(article, article.getImages().getFirstImageUrl(), cur));
         }).collect(Collectors.toList());
     }

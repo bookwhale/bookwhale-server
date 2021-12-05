@@ -24,13 +24,13 @@ public class ArticlesResponse {
     private String bookPublisher;
     private String sellingLocation;
     private Long viewCount;
-    private Long likeCount;
+    private Long favoriteCount;
     private String beforeTime;
 
     @Builder
     public ArticlesResponse(Long articleId, String articleImage, String articleTitle, String articlePrice,
         String articleStatus, String bookTitle, String bookAuthor, String bookPublisher,
-        String sellingLocation, Long viewCount, Long likeCount, String beforeTime) {
+        String sellingLocation, Long viewCount, Long favoriteCount, String beforeTime) {
         this.articleId = articleId;
         this.articleImage = articleImage;
         this.articleTitle = articleTitle;
@@ -41,7 +41,7 @@ public class ArticlesResponse {
         this.bookPublisher = bookPublisher;
         this.sellingLocation = sellingLocation;
         this.viewCount = viewCount;
-        this.likeCount = likeCount;
+        this.favoriteCount = favoriteCount;
         this.beforeTime = beforeTime;
     }
 
@@ -58,7 +58,7 @@ public class ArticlesResponse {
             .sellingLocation(article.getSellingLocation().isPresent() ?
                 article.getSellingLocation().get().getName() : "")
             .viewCount(article.getViewCount())
-            .likeCount(article.getLikeCount())
+            .favoriteCount(article.getFavoriteCount())
             .beforeTime(TimeUtils.BeforeTime(currentTime, article.getCreatedDate()))
             .build();
     }

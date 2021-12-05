@@ -30,7 +30,7 @@ import org.springframework.util.MimeTypeUtils;
 public class ArticleAcceptanceStep {
 
     public static void assertThatFindArticle(ArticleResponse res, ArticleRequest req, User seller,
-        boolean isMyArticle, boolean isMyLike) {
+        boolean isMyArticle, boolean isMyFavorite) {
         Assertions.assertAll(
             () -> assertThat(res.getSellerId()).isEqualTo(seller.getId()),
             () -> assertThat(res.getSellerIdentity()).isEqualTo(seller.getIdentity()),
@@ -41,7 +41,7 @@ public class ArticleAcceptanceStep {
             () -> assertThat(res.getArticleStatus()).isEqualTo(ArticleStatus.SALE.getName()),
             () -> assertThat(res.getTitle()).isEqualTo(req.getTitle()),
             () -> assertThat(res.isMyArticle()).isEqualTo(isMyArticle),
-            () -> assertThat(res.isMyLike()).isEqualTo(isMyLike),
+            () -> assertThat(res.isMyFavorite()).isEqualTo(isMyFavorite),
             () -> assertThat(res.getBeforeTime()).isNotNull(),
             () -> assertThat(res.getBookStatus()).isEqualTo(
                 BookStatus.valueOf(req.getBookStatus()).getName()),

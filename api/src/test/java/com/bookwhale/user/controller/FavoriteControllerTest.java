@@ -15,9 +15,9 @@ import com.bookwhale.common.security.WithMockCustomUser;
 import com.bookwhale.article.dto.ArticlesResponse;
 import com.bookwhale.article.domain.ArticleStatus;
 import com.bookwhale.user.docs.UserDocumentation;
-import com.bookwhale.user.dto.LikeRequest;
-import com.bookwhale.user.dto.LikeResponse;
-import com.bookwhale.user.service.LikeService;
+import com.bookwhale.user.dto.FavoriteRequest;
+import com.bookwhale.user.dto.FavoriteResponse;
+import com.bookwhale.user.service.FavoriteService;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,18 +29,18 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 
 
 @DisplayName("관심목록 관련 기능 단위 테스트(Controller)")
-@WebMvcTest(controllers = LikeController.class)
-public class LikeControllerTest extends CommonApiTest {
+@WebMvcTest(controllers = FavoriteController.class)
+public class FavoriteControllerTest extends CommonApiTest {
 
     @MockBean
-    LikeService likeService;
+    FavoriteService favoriteService;
 
     @WithMockCustomUser
     @DisplayName("관심목록을 조회한다.")
     @Test
-    void findLikes() throws Exception {
-        List<LikeResponse> responses = List.of(
-            new LikeResponse(1L,
+    void findFavorites() throws Exception {
+        List<FavoriteResponse> responses = List.of(
+            new FavoriteResponse(1L,
                 ArticlesResponse.builder()
                     .articleId(1L)
                     .articleImage("이미지")
@@ -50,49 +50,49 @@ public class LikeControllerTest extends CommonApiTest {
                     .description("책 설명 보충합니다.")
                     .sellingLocation(Location.SEOUL.getName())
                     .viewCount(1L)
-                    .likeCount(1L)
+                    .favoriteCount(1L)
                     .beforeTime("15분 전")
                     .build()
             )
         );
 
-        when(likeService.findAllLikes(any())).thenReturn(responses);
+        when(favoriteService.findAllFavorites(any())).thenReturn(responses);
 
-        mockMvc.perform(get("/api/user/me/likes")
+        mockMvc.perform(get("/api/user/me/favorites")
                 .header(HttpHeaders.AUTHORIZATION, "accessToken"))
             .andExpect(status().isOk())
             .andDo(print())
-            .andDo(UserDocumentation.userFindLikes());
+            .andDo(UserDocumentation.userFindFavorites());
     }
 
     @WithMockCustomUser
     @DisplayName("관심목록에 추가한다.")
     @Test
-    void addLike() throws Exception {
-        LikeRequest likeRequest = new LikeRequest(1L);
+    void addFavorite() throws Exception {
+        FavoriteRequest favoriteRequest = new FavoriteRequest(1L);
 
-        doNothing().when(likeService).addLike(any(), any());
+        doNothing().when(favoriteService).addFavorite(any(), any());
 
-        mockMvc.perform(post("/api/user/me/like")
+        mockMvc.perform(post("/api/user/me/favorite")
                 .header(HttpHeaders.AUTHORIZATION, "accessToken")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(likeRequest)))
+                .content(objectMapper.writeValueAsString(favoriteRequest)))
             .andExpect(status().isOk())
             .andDo(print())
-            .andDo(UserDocumentation.userAddLike());
+            .andDo(UserDocumentation.userAddFavorite());
     }
 
     @WithMockCustomUser
     @DisplayName("관심목록에서 삭제한다.")
     @Test
-    void deleteLike() throws Exception {
-        doNothing().when(likeService).deleteLike(any(), any());
+    void deleteFavorite() throws Exception {
+        doNothing().when(favoriteService).deleteFavorite(any(), any());
 
         mockMvc.perform(
-                RestDocumentationRequestBuilders.delete("/api/user/me/like/{likeId}", 1L)
+                RestDocumentationRequestBuilders.delete("/api/user/me/favorite/{favoriteId}", 1L)
                     .header(HttpHeaders.AUTHORIZATION, "accessToken"))
             .andExpect(status().isOk())
             .andDo(print())
-            .andDo(UserDocumentation.userDeleteLike());
+            .andDo(UserDocumentation.userDeleteFavorite());
     }
 }

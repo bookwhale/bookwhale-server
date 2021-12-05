@@ -16,7 +16,7 @@ create table if not exists article
     price              varchar(255) comment '판매가격',
     description        longtext comment '판매글 설명',
     seller_id          bigint comment '판매자 키값',
-    like_count         bigint default 0 comment '판매글 관심(좋아요)수',
+    favorite_count         bigint default 0 comment '판매글 관심(좋아요)수',
     view_count         bigint default 0 comment '판매글 조회수',
     created_date       timestamp comment '생성일시',
     last_modified_date timestamp comment '최종수정일',
