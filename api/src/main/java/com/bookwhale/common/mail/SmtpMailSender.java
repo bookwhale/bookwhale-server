@@ -2,9 +2,9 @@ package com.bookwhale.common.mail;
 
 import static java.lang.String.format;
 
+import com.bookwhale.article.domain.Article;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
-import com.bookwhale.post.domain.Post;
 import com.bookwhale.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,10 +22,10 @@ public class SmtpMailSender {
     @Value("${spring.mail.username}")
     private String email;
 
-    public void sendChatRoomCreationMail(Post post, User seller, User buyer) {
-        String subject = format("%s 게시글에 대한 새로운 채팅방이 개설되었습니다.", post.getTitle());
+    public void sendChatRoomCreationMail(Article article, User seller, User buyer) {
+        String subject = format("%s 게시글에 대한 새로운 채팅방이 개설되었습니다.", article.getTitle());
         String content = format("[%s]님이 [%s] 게시글에 대한 새로운 채팅방을 개설했습니다. 채팅을 확인해주세요.",
-            buyer.getIdentity(), post.getTitle());
+            buyer.getIdentity(), article.getTitle());
         mailSend(email, seller.getEmail(), subject, content);
     }
 

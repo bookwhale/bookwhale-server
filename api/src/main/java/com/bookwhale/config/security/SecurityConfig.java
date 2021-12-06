@@ -84,26 +84,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
             .authorizeRequests()
             .antMatchers("/api/user/signup", "/api/oauth2/**").permitAll()
-            .antMatchers(HttpMethod.GET, "/api/post", "/api/post/conditions/**").permitAll()
-            .antMatchers("/api/**").hasRole(USER)
-            .and()
+            .antMatchers(HttpMethod.GET, "/api/article", "/api/article/conditions/**").permitAll()
+            .antMatchers("/api/**").hasRole(USER);
+//            .and()
+//
+//            .oauth2Login()
+//            .authorizationEndpoint()
+//            .baseUri("/api/oauth2/authorization")
+//            .authorizationRequestRepository(cookieAuthorizationRequestRepository())
+//            .and()
+//
+//            .redirectionEndpoint()
+//            .baseUri("/*/oauth2/code/*")
+//            .and()
 
-            .oauth2Login()
-            .authorizationEndpoint()
-            .baseUri("/api/oauth2/authorization")
-            .authorizationRequestRepository(cookieAuthorizationRequestRepository())
-            .and()
+//            .userInfoEndpoint()
+//            .userService(customOAuth2UserService)
+//            .and()
 
-            .redirectionEndpoint()
-            .baseUri("/*/oauth2/code/*")
-            .and()
-
-            .userInfoEndpoint()
-            .userService(customOAuth2UserService)
-            .and()
-
-            .successHandler(oAuth2AuthenticationSuccessHandler)
-            .failureHandler(oAuth2AuthenticationFailureHandler);
+//            .successHandler(oAuth2AuthenticationSuccessHandler)
+//            .failureHandler(oAuth2AuthenticationFailureHandler);
 
         http.addFilterBefore(tokenAuthenticationFilter(),
             UsernamePasswordAuthenticationFilter.class);

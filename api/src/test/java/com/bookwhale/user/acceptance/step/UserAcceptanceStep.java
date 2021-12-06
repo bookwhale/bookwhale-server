@@ -3,12 +3,12 @@ package com.bookwhale.user.acceptance.step;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.bookwhale.post.domain.PostStatus;
-import com.bookwhale.post.dto.PostRequest;
-import com.bookwhale.post.dto.PostsResponse;
+import com.bookwhale.article.domain.ArticleStatus;
+import com.bookwhale.article.dto.ArticleRequest;
+import com.bookwhale.article.dto.ArticlesResponse;
 import com.bookwhale.user.domain.User;
-import com.bookwhale.user.dto.LikeRequest;
-import com.bookwhale.user.dto.LikeResponse;
+import com.bookwhale.user.dto.FavoriteRequest;
+import com.bookwhale.user.dto.FavoriteResponse;
 import com.bookwhale.user.dto.LoginRequest;
 import com.bookwhale.user.dto.LoginResponse;
 import com.bookwhale.user.dto.PasswordUpdateRequest;
@@ -59,39 +59,30 @@ public class UserAcceptanceStep {
         assertThat(res.getProfileImage()).isNull();
     }
 
-    public static void assertThatAddLike(List<LikeResponse> res, PostRequest req) {
+    public static void assertThatAddFavorite(List<FavoriteResponse> res, ArticleRequest req) {
         Assertions.assertAll(
             () -> assertThat(res.size()).isEqualTo(1),
             () -> assertThat(
-                res.get(0).getPostsResponse().getPostTitle()).isEqualTo(req.getTitle()),
+                res.get(0).getArticlesResponse().getArticleTitle()).isEqualTo(req.getTitle()),
             () -> assertThat(
-                res.get(0).getPostsResponse().getPostPrice()).isEqualTo(req.getPrice()),
+                res.get(0).getArticlesResponse().getArticlePrice()).isEqualTo(req.getPrice()),
             () -> assertThat(
-                res.get(0).getPostsResponse().getPostImage()).isNotNull(),
+                res.get(0).getArticlesResponse().getArticleImage()).isNotNull(),
             () -> assertThat(
-                res.get(0).getPostsResponse().getBeforeTime()).isNotNull(),
+                res.get(0).getArticlesResponse().getBeforeTime()).isNotNull(),
             () -> assertThat(
-                res.get(0).getPostsResponse().getBookTitle()).isEqualTo(
-                req.getBookRequest().getBookTitle()),
-            () -> assertThat(
-                res.get(0).getPostsResponse().getLikeCount()).isGreaterThan(0L)
+                res.get(0).getArticlesResponse().getFavoriteCount()).isGreaterThan(0L)
         );
     }
 
-    public static void assertThatFindMyPosts(List<PostsResponse> res, PostRequest req) {
+    public static void assertThatFindMyArticles(List<ArticlesResponse> res, ArticleRequest req) {
         Assertions.assertAll(
             () -> assertThat(res.size()).isEqualTo(1),
-            () -> assertThat(res.get(0).getPostTitle()).isEqualTo(req.getTitle()),
-            () -> assertThat(res.get(0).getPostPrice()).isEqualTo(req.getPrice()),
-            () -> assertThat(res.get(0).getPostStatus()).isEqualTo(PostStatus.SALE.getName()),
-            () -> assertThat(res.get(0).getPostImage()).isNotNull(),
-            () -> assertThat(res.get(0).getBeforeTime()).isNotNull(),
-            () -> assertThat(res.get(0).getBookTitle()).isEqualTo(
-                req.getBookRequest().getBookTitle()),
-            () -> assertThat(res.get(0).getBookAuthor()).isEqualTo(
-                req.getBookRequest().getBookAuthor()),
-            () -> assertThat(res.get(0).getBookPublisher()).isEqualTo(
-                req.getBookRequest().getBookPublisher())
+            () -> assertThat(res.get(0).getArticleTitle()).isEqualTo(req.getTitle()),
+            () -> assertThat(res.get(0).getArticlePrice()).isEqualTo(req.getPrice()),
+            () -> assertThat(res.get(0).getArticleStatus()).isEqualTo(ArticleStatus.SALE.getName()),
+            () -> assertThat(res.get(0).getArticleImage()).isNotNull(),
+            () -> assertThat(res.get(0).getBeforeTime()).isNotNull()
         );
     }
 
@@ -176,40 +167,40 @@ public class UserAcceptanceStep {
             .extract();
     }
 
-    public static ExtractableResponse<Response> addLike(String jwt, LikeRequest request) {
+    public static ExtractableResponse<Response> addFavorite(String jwt, FavoriteRequest request) {
         return given().log().all()
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .body(request)
             .when()
-            .post("/api/user/me/like")
+            .post("/api/user/me/favorite")
             .then().log().all()
             .extract();
     }
 
-    public static ExtractableResponse<Response> findLikes(String jwt) {
+    public static ExtractableResponse<Response> findFavorites(String jwt) {
         return given().log().all()
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .when()
-            .get("/api/user/me/likes")
+            .get("/api/user/me/favorites")
             .then().log().all()
             .extract();
     }
 
-    public static ExtractableResponse<Response> deleteLike(String jwt, Long likeId) {
+    public static ExtractableResponse<Response> deleteFavorite(String jwt, Long favoriteId) {
         return given().log().all()
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .when()
-            .delete("/api/user/me/like/{likeId}", likeId)
+            .delete("/api/user/me/favorite/{favoriteId}", favoriteId)
             .then().log().all()
             .extract();
     }
 
-    public static ExtractableResponse<Response> requestToFindMyPosts(String jwt) {
+    public static ExtractableResponse<Response> requestToFindMyArticles(String jwt) {
         return given().log().all()
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .when()
-            .get("/api/user/me/post")
+            .get("/api/user/me/article")
             .then().log().all()
             .extract();
     }

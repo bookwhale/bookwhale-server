@@ -1,6 +1,6 @@
 package com.bookwhale.image.domain;
 
-import com.bookwhale.post.domain.Post;
+import com.bookwhale.article.domain.Article;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -19,7 +19,7 @@ import org.hibernate.annotations.BatchSize;
 public class Images {
 
     @BatchSize(size = 10)
-    @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(mappedBy = "article", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Image> images = new ArrayList<>();
 
     public static Images empty() {
@@ -34,10 +34,10 @@ public class Images {
         return images.isEmpty();
     }
 
-    public void addAll(Post post, List<String> imageUrls) {
+    public void addAll(Article article, List<String> imageUrls) {
         //TODO : Bulk Insert
         for (String imagePath : imageUrls) {
-            Image image = Image.createPostImage(post, imagePath);
+            Image image = Image.createArticleImage(article, imagePath);
             this.images.add(image);
         }
     }

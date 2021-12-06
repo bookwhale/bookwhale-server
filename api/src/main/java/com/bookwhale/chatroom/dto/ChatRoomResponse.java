@@ -11,20 +11,20 @@ import lombok.NoArgsConstructor;
 public class ChatRoomResponse {
 
     private Long roomId;
-    private Long postId;
-    private String postTitle;
-    private String postImage;
+    private Long articleId;
+    private String articleTitle;
+    private String articleImage;
     private String opponentIdentity;
     private String opponentProfile;
     private boolean isOpponentDelete;
 
     @Builder
-    public ChatRoomResponse(Long roomId, Long postId, String postTitle, String postImage,
+    public ChatRoomResponse(Long roomId, Long articleId, String articleTitle, String articleImage,
         String opponentIdentity, String opponentProfile, boolean isOpponentDelete) {
         this.roomId = roomId;
-        this.postId = postId;
-        this.postTitle = postTitle;
-        this.postImage = postImage;
+        this.articleId = articleId;
+        this.articleTitle = articleTitle;
+        this.articleImage = articleImage;
         this.opponentIdentity = opponentIdentity;
         this.opponentProfile = opponentProfile;
         this.isOpponentDelete = isOpponentDelete;
@@ -34,9 +34,9 @@ public class ChatRoomResponse {
         boolean isOpponentDelete) {
         return ChatRoomResponse.builder()
             .roomId(chatRoom.getId())
-            .postId(chatRoom.getPost().getId())
-            .postTitle(chatRoom.getPost().getTitle())
-            .postImage(chatRoom.getPost().getImages().getFirstImageUrl())
+            .articleId(chatRoom.getArticle().getId())
+            .articleTitle(chatRoom.getArticle().getTitle())
+            .articleImage(chatRoom.getArticle().getImages().getFirstImageUrl())
             .opponentIdentity(opponent.getIdentity())
             .opponentProfile(opponent.getProfile())
             .isOpponentDelete(isOpponentDelete)

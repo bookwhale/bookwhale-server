@@ -26,7 +26,7 @@ public class ChatRoomDocumentations {
                 headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
             ),
             requestFields(
-                fieldWithPath("postId").type(JsonFieldType.NUMBER).description("게시글 ID"),
+                fieldWithPath("articleId").type(JsonFieldType.NUMBER).description("게시글 ID"),
                 fieldWithPath("sellerId").type(JsonFieldType.NUMBER).description("판매자 ID")
             )
         );
@@ -35,9 +35,9 @@ public class ChatRoomDocumentations {
     public static RestDocumentationResultHandler findChatRooms() {
         FieldDescriptor[] response = new FieldDescriptor[]{
             fieldWithPath("roomId").type(JsonFieldType.NUMBER).description("채팅방 ID"),
-            fieldWithPath("postId").type(JsonFieldType.NUMBER).description("게시글 ID"),
-            fieldWithPath("postTitle").type(JsonFieldType.STRING).description("게시글 제목"),
-            fieldWithPath("postImage").type(JsonFieldType.STRING).description("유저가 올린 이미지"),
+            fieldWithPath("articleId").type(JsonFieldType.NUMBER).description("게시글 ID"),
+            fieldWithPath("articleTitle").type(JsonFieldType.STRING).description("게시글 제목"),
+            fieldWithPath("articleImage").type(JsonFieldType.STRING).description("유저가 올린 이미지"),
             fieldWithPath("opponentIdentity").type(JsonFieldType.STRING).description("상대방 아이디"),
             fieldWithPath("opponentProfile").type(JsonFieldType.STRING).description("상대방 프로필 사진"),
             fieldWithPath("opponentDelete").type(JsonFieldType.BOOLEAN).description(

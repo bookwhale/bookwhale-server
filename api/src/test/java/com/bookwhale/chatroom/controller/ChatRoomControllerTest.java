@@ -36,7 +36,7 @@ public class ChatRoomControllerTest extends CommonApiTest {
     @Test
     void createChatRoom() throws Exception {
         ChatRoomCreateRequest request = ChatRoomCreateRequest.builder()
-            .postId(1L)
+            .articleId(1L)
             .sellerId(1L)
             .build();
 
@@ -58,9 +58,9 @@ public class ChatRoomControllerTest extends CommonApiTest {
     void findChatRooms() throws Exception {
         ChatRoomResponse response = ChatRoomResponse.builder()
             .roomId(1L)
-            .postId(1L)
-            .postTitle("토비의 스프링 팝니다.")
-            .postImage("이미지")
+            .articleId(1L)
+            .articleTitle("토비의 스프링 팝니다.")
+            .articleImage("이미지")
             .opponentIdentity("highright96")
             .opponentProfile("profile")
             .isOpponentDelete(false)

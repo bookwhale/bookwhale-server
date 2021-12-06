@@ -1,8 +1,8 @@
 package com.bookwhale.common.mail;
 
 import com.bookwhale.common.acceptance.AcceptanceTest;
-import com.bookwhale.post.domain.Book;
-import com.bookwhale.post.domain.Post;
+import com.bookwhale.article.domain.Book;
+import com.bookwhale.article.domain.Article;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ class SmtpMailSenderTest extends AcceptanceTest {
     @Disabled
     @DisplayName("메일을 전송한다.")
     void sendMailTest() {
-        Post post = Post.builder()
+        Article article = Article.builder()
             .title("이펙티브 자바 팝니다.")
             .book(
                 Book.builder()
@@ -28,6 +28,6 @@ class SmtpMailSenderTest extends AcceptanceTest {
                     .bookPublisher("한국출판사")
                     .build())
             .build();
-        smtpMailSender.sendChatRoomCreationMail(post, user, anotherUser);
+        smtpMailSender.sendChatRoomCreationMail(article, user, anotherUser);
     }
 }

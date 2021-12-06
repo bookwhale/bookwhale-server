@@ -13,16 +13,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.bookwhale.common.controller.CommonApiTest;
+import com.bookwhale.common.domain.Location;
 import com.bookwhale.common.security.WithMockCustomUser;
-import com.bookwhale.post.domain.PostStatus;
-import com.bookwhale.post.dto.PostsResponse;
+import com.bookwhale.article.dto.ArticlesResponse;
+import com.bookwhale.article.domain.ArticleStatus;
 import com.bookwhale.user.docs.UserDocumentation;
 import com.bookwhale.user.dto.LoginRequest;
 import com.bookwhale.user.dto.PasswordUpdateRequest;
 import com.bookwhale.user.dto.ProfileResponse;
 import com.bookwhale.user.dto.SignUpRequest;
 import com.bookwhale.user.dto.UserUpdateRequest;
-import com.bookwhale.user.service.LikeService;
+import com.bookwhale.user.service.FavoriteService;
 import com.bookwhale.user.service.UserService;
 import java.util.List;
 import org.apache.http.entity.ContentType;
@@ -43,7 +44,7 @@ public class UserControllerTest extends CommonApiTest {
     UserService userService;
 
     @MockBean
-    LikeService likeService;
+    FavoriteService favoriteService;
 
     @DisplayName("유저 회원가입을 한다.")
     @Test
@@ -168,28 +169,26 @@ public class UserControllerTest extends CommonApiTest {
     @WithMockCustomUser
     @DisplayName("내 판매글들을 조회한다.")
     @Test
-    void findMyPosts() throws Exception {
-        PostsResponse postsResponse = PostsResponse.builder()
-            .postId(1L)
-            .postImage("이미지")
-            .postTitle("책 팝니다~")
-            .postPrice("20000원")
-            .postStatus(PostStatus.SALE.getName())
-            .bookTitle("토비의 스프링")
-            .bookAuthor("이일민")
-            .bookPublisher("허브출판사")
+    void findMyArticles() throws Exception {
+        ArticlesResponse articlesResponse = ArticlesResponse.builder()
+            .articleId(1L)
+            .articleImage("이미지")
+            .articleTitle("책 팝니다~")
+            .articlePrice("20000원")
+            .articleStatus(ArticleStatus.SALE.getName())
             .sellingLocation("서울")
+            .description("정가 5만원인데 급처합니다.")
             .viewCount(1L)
-            .likeCount(1L)
+            .favoriteCount(1L)
             .beforeTime("15분 전")
             .build();
 
-        when(userService.findMyPost(any())).thenReturn(List.of(postsResponse));
+        when(userService.findMyArticle(any())).thenReturn(List.of(articlesResponse));
 
-        mockMvc.perform(get("/api/user/me/post")
+        mockMvc.perform(get("/api/user/me/article")
                 .header(HttpHeaders.AUTHORIZATION, "accessToken"))
             .andExpect(status().isOk())
             .andDo(print())
-            .andDo(UserDocumentation.userFindMyPosts());
+            .andDo(UserDocumentation.userFindMyArticles());
     }
 }

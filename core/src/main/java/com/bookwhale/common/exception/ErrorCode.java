@@ -21,15 +21,15 @@ public enum ErrorCode {
     DUPLICATED_USER_IDENTITY(400, "U_001", "이미 존재하는 아이디입니다."),
     INVALID_USER_PASSWORD(400, "U_002", "잘못된 비밀번호입니다."),
 
-    INVALID_POST_ID(400, "P_001", "잘못된 게시글 ID 입니다."),
-    NOT_EXIST_POST_ID(400, "P_002", "존재하지 않는 게시글 ID 입니다."),
+    INVALID_ARTICLE_ID(400, "A_001", "잘못된 게시글 ID 입니다."),
+    NOT_EXIST_ARTICLE_ID(400, "A_002", "존재하지 않는 게시글 ID 입니다."),
+    INVALID_ARTICLE_STATUS(400, "A_003", "판매중인 게시글만 판매자에게 채팅을 보낼 수 있습니다."),
 
-    INVALID_LIKE_ID(400, "I_001", "잘못된 관심목록 ID 입니다."),
-    DUPLICATED_LIKE(400, "I_002", "이미 관심목록에 등록된 게시글입니다."),
+    INVALID_FAVORITE_ID(400, "I_001", "잘못된 관심목록 ID 입니다."),
+    DUPLICATED_FAVORITE(400, "I_002", "이미 관심목록에 등록된 게시글입니다."),
 
     INVALID_CHATROOM_ID(400, "CHAT_001", "잘못된 채팅방 ID 입니다."),
-    INVALID_SELLER_ID(400, "CHAT_002", "잘못된 판매자 ID 입니다."),
-    INVALID_POST_STATUS(400, "P_003", "판매중인 게시글만 판매자에게 채팅을 보낼 수 있습니다.");
+    INVALID_SELLER_ID(400, "CHAT_002", "잘못된 판매자 ID 입니다.");
 
     private final int status;
     private final String code;

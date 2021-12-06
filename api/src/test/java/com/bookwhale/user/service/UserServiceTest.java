@@ -9,8 +9,8 @@ import static org.mockito.Mockito.when;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.common.upload.FileUploader;
-import com.bookwhale.like.domain.LikeRepository;
-import com.bookwhale.post.domain.PostRepository;
+import com.bookwhale.favorite.domain.FavoriteRepository;
+import com.bookwhale.article.domain.ArticleRepository;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.domain.UserRepository;
 import com.bookwhale.user.dto.PasswordUpdateRequest;
@@ -42,10 +42,10 @@ public class UserServiceTest {
     private FileUploader fileUploader;
 
     @Mock
-    private PostRepository postRepository;
+    private ArticleRepository articleRepository;
 
     @Mock
-    private LikeRepository likeRepository;
+    private FavoriteRepository favoriteRepository;
 
     UserService userService;
 
@@ -54,7 +54,7 @@ public class UserServiceTest {
     @BeforeEach
     void setUp() {
         userService = new UserService(userRepository, passwordEncoder, fileUploader,
-            postRepository);
+            articleRepository);
 
         user = User.builder()
             .id(1L)

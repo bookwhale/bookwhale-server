@@ -2,7 +2,7 @@ package com.bookwhale.security.oauth;
 
 import static com.bookwhale.security.oauth.HttpCookieOAuth2AuthorizationRequestRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
 
-import com.bookwhale.utils.CookieUtils;
+import com.bookwhale.common.utils.CookieUtils;
 import java.io.IOException;
 import java.net.URLEncoder;
 import javax.servlet.http.Cookie;

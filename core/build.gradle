@@ -5,7 +5,7 @@ apply plugin: 'com.ewerk.gradle.plugins.querydsl'
 
 dependencies {
     //project
-    implementation project(path: ':common', configuration: 'default')
+
     //database
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'mysql:mysql-connector-java'

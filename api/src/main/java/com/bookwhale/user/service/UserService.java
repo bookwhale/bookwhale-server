@@ -3,9 +3,8 @@ package com.bookwhale.user.service;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.common.upload.FileUploader;
-import com.bookwhale.post.domain.Post;
-import com.bookwhale.post.domain.PostRepository;
-import com.bookwhale.post.dto.PostsResponse;
+import com.bookwhale.article.domain.ArticleRepository;
+import com.bookwhale.article.dto.ArticlesResponse;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.domain.UserRepository;
 import com.bookwhale.user.dto.PasswordUpdateRequest;
@@ -30,7 +29,7 @@ public class UserService {
 
     private final FileUploader fileUploader;
 
-    private final PostRepository postRepository;
+    private final ArticleRepository articleRepository;
 
     public void createUser(SignUpRequest request) {
         validateIsDuplicateIdentity(request);
@@ -88,7 +87,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public List<PostsResponse> findMyPost(User user) {
-        return PostsResponse.listOf(postRepository.findAllBySeller(user));
+    public List<ArticlesResponse> findMyArticle(User user) {
+        return ArticlesResponse.listOf(articleRepository.findAllBySeller(user));
     }
 }

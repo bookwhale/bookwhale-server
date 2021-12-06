@@ -1,14 +1,14 @@
 package com.bookwhale.chatroom.acceptance.step;
 
-import static com.bookwhale.post.acceptance.step.PostAcceptanceStep.requestToCreatePost;
-import static com.bookwhale.post.acceptance.step.PostAcceptanceStep.requestToFindPost;
+import static com.bookwhale.article.acceptance.step.ArticleAcceptanceStep.requestToCreateArticle;
+import static com.bookwhale.article.acceptance.step.ArticleAcceptanceStep.requestToFindArticle;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.bookwhale.chatroom.dto.ChatRoomCreateRequest;
 import com.bookwhale.chatroom.dto.ChatRoomResponse;
-import com.bookwhale.post.dto.PostRequest;
-import com.bookwhale.post.dto.PostResponse;
+import com.bookwhale.article.dto.ArticleRequest;
+import com.bookwhale.article.dto.ArticleResponse;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.common.acceptance.AcceptanceUtils;
 import io.restassured.response.ExtractableResponse;
@@ -21,11 +21,11 @@ import org.springframework.http.MediaType;
 public class ChatRoomAcceptanceStep {
 
     public static void assertThatFindChatRooms(List<ChatRoomResponse> responses,
-        PostRequest request, User opponent) {
+        ArticleRequest request, User opponent) {
         Assertions.assertAll(
             () -> assertThat(responses.size()).isEqualTo(1),
-            () -> assertThat(responses.get(0).getPostTitle()).isEqualTo(request.getTitle()),
-            () -> assertThat(responses.get(0).getPostImage()).isNotNull(),
+            () -> assertThat(responses.get(0).getArticleTitle()).isEqualTo(request.getTitle()),
+            () -> assertThat(responses.get(0).getArticleImage()).isNotNull(),
             () -> assertThat(responses.get(0).getOpponentIdentity()).isEqualTo(
                 opponent.getIdentity()),
             () -> assertThat(responses.get(0).getOpponentProfile()).isEqualTo(
@@ -74,15 +74,15 @@ public class ChatRoomAcceptanceStep {
 
     public static ExtractableResponse<Response> createChatRoom(String loginUserJwt,
         String sellerJwt,
-        PostRequest postRequest) {
-        Long postId = AcceptanceUtils.getIdFromResponse(
-            requestToCreatePost(sellerJwt, postRequest));
-        PostResponse postResponse = requestToFindPost(loginUserJwt, postId).jsonPath()
-            .getObject("", PostResponse.class);
+        ArticleRequest articleRequest) {
+        Long articleId = AcceptanceUtils.getIdFromResponse(
+            requestToCreateArticle(sellerJwt, articleRequest));
+        ArticleResponse articleResponse = requestToFindArticle(loginUserJwt, articleId).jsonPath()
+            .getObject("", ArticleResponse.class);
 
         ChatRoomCreateRequest request = ChatRoomCreateRequest.builder()
-            .postId(postResponse.getPostId())
-            .sellerId(postResponse.getSellerId())
+            .articleId(articleResponse.getArticleId())
+            .sellerId(articleResponse.getSellerId())
             .build();
 
         return ChatRoomAcceptanceStep.requestToCreateChatRoom(loginUserJwt, request);

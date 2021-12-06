@@ -2,8 +2,9 @@ package com.bookwhale.chatroom.acceptance;
 
 import com.bookwhale.chatroom.acceptance.step.ChatRoomAcceptanceStep;
 import com.bookwhale.chatroom.dto.ChatRoomResponse;
-import com.bookwhale.post.dto.BookRequest;
-import com.bookwhale.post.dto.PostRequest;
+import com.bookwhale.article.dto.BookRequest;
+import com.bookwhale.article.dto.ArticleRequest;
+import com.bookwhale.common.domain.Location;
 import com.bookwhale.common.acceptance.AcceptanceTest;
 import com.bookwhale.common.acceptance.step.AcceptanceStep;
 import com.bookwhale.user.acceptance.step.UserAcceptanceStep;
@@ -18,13 +19,13 @@ import org.junit.jupiter.api.Test;
 @DisplayName("채팅방 통합 테스트")
 public class ChatRoomAcceptanceTest extends AcceptanceTest {
 
-    PostRequest postRequest;
+    ArticleRequest articleRequest;
 
     @BeforeEach
     @Override
     public void setUp() {
         super.setUp();
-        postRequest = PostRequest.builder()
+        articleRequest = ArticleRequest.builder()
             .bookRequest(BookRequest.builder()
                 .bookSummary("책 설명")
                 .bookPubDate("2021-12-12")
@@ -37,6 +38,7 @@ public class ChatRoomAcceptanceTest extends AcceptanceTest {
                 .build())
             .title("토비의 스프링 팝니다~")
             .description("책 설명")
+            .sellingLocation("INCHEON")
             .bookStatus("BEST")
             .price("5000")
             .build();
@@ -53,7 +55,7 @@ public class ChatRoomAcceptanceTest extends AcceptanceTest {
         String sellerJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(anotherLoginRequest);
 
         ExtractableResponse<Response> res = ChatRoomAcceptanceStep.createChatRoom(loginUserJwt,
-            sellerJwt, postRequest);
+            sellerJwt, articleRequest);
 
         AcceptanceStep.assertThatStatusIsCreated(res);
     }
@@ -64,7 +66,7 @@ public class ChatRoomAcceptanceTest extends AcceptanceTest {
         String loginUserJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
         String sellerJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(anotherLoginRequest);
 
-        ChatRoomAcceptanceStep.createChatRoom(loginUserJwt, sellerJwt, postRequest);
+        ChatRoomAcceptanceStep.createChatRoom(loginUserJwt, sellerJwt, articleRequest);
 
         ExtractableResponse<Response> loginUserRes = ChatRoomAcceptanceStep.requestToFindChatRooms(
             loginUserJwt);
@@ -79,8 +81,8 @@ public class ChatRoomAcceptanceTest extends AcceptanceTest {
         AcceptanceStep.assertThatStatusIsOk(loginUserRes);
         AcceptanceStep.assertThatStatusIsOk(anotherUserRes);
 
-        ChatRoomAcceptanceStep.assertThatFindChatRooms(loginUserRoomRes, postRequest, anotherUser);
-        ChatRoomAcceptanceStep.assertThatFindChatRooms(anotherRoomRes, postRequest, user);
+        ChatRoomAcceptanceStep.assertThatFindChatRooms(loginUserRoomRes, articleRequest, anotherUser);
+        ChatRoomAcceptanceStep.assertThatFindChatRooms(anotherRoomRes, articleRequest, user);
     }
 
     @DisplayName("상대방이 나간 채팅방은 isOpponentDelete 가 false 로 조회된다.")
@@ -89,7 +91,7 @@ public class ChatRoomAcceptanceTest extends AcceptanceTest {
         String loginUserJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
         String sellerJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(anotherLoginRequest);
 
-        ChatRoomAcceptanceStep.createChatRoom(loginUserJwt, sellerJwt, postRequest);
+        ChatRoomAcceptanceStep.createChatRoom(loginUserJwt, sellerJwt, articleRequest);
 
         //상대방이 채팅방을 나간다
         ExtractableResponse<Response> anotherUserRes = ChatRoomAcceptanceStep.requestToFindChatRooms(
@@ -114,7 +116,7 @@ public class ChatRoomAcceptanceTest extends AcceptanceTest {
         String loginUserJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
         String sellerJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(anotherLoginRequest);
 
-        ChatRoomAcceptanceStep.createChatRoom(loginUserJwt, sellerJwt, postRequest);
+        ChatRoomAcceptanceStep.createChatRoom(loginUserJwt, sellerJwt, articleRequest);
 
         //채팅방을 나간다
         List<ChatRoomResponse> loginUserRoomRes = ChatRoomAcceptanceStep.requestToFindChatRooms(
@@ -136,7 +138,7 @@ public class ChatRoomAcceptanceTest extends AcceptanceTest {
         String loginUserJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
         String sellerJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(anotherLoginRequest);
 
-        ChatRoomAcceptanceStep.createChatRoom(loginUserJwt, sellerJwt, postRequest);
+        ChatRoomAcceptanceStep.createChatRoom(loginUserJwt, sellerJwt, articleRequest);
         Long roomId = ChatRoomAcceptanceStep.requestToFindChatRooms(loginUserJwt).jsonPath()
             .getList("", ChatRoomResponse.class).get(0).getRoomId();
 

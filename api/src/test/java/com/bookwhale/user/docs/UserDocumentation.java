@@ -110,33 +110,31 @@ public class UserDocumentation {
         );
     }
 
-    public static RestDocumentationResultHandler userFindLikes() {
+    public static RestDocumentationResultHandler userFindFavorites() {
         FieldDescriptor[] response = new FieldDescriptor[]{
-            fieldWithPath("likeId").type(JsonFieldType.NUMBER).description("관심목록 ID"),
-            fieldWithPath("postsResponse.postId").type(JsonFieldType.NUMBER).description("게시글 ID"),
-            fieldWithPath("postsResponse.postTitle").type(JsonFieldType.STRING).description(
+            fieldWithPath("favoriteId").type(JsonFieldType.NUMBER).description("관심목록 ID"),
+            fieldWithPath("articlesResponse.articleId").type(JsonFieldType.NUMBER).description("게시글 ID"),
+            fieldWithPath("articlesResponse.articleTitle").type(JsonFieldType.STRING).description(
                 "게시글 제목"),
-            fieldWithPath("postsResponse.postPrice").type(JsonFieldType.STRING).description(
+            fieldWithPath("articlesResponse.articlePrice").type(JsonFieldType.STRING).description(
                 "게시글 가격"),
-            fieldWithPath("postsResponse.bookTitle").type(JsonFieldType.STRING).description("책 제목"),
-            fieldWithPath("postsResponse.bookAuthor").type(JsonFieldType.STRING).description("작가"),
-            fieldWithPath("postsResponse.bookPublisher").type(JsonFieldType.STRING).description(
-                "출판사"),
-            fieldWithPath("postsResponse.sellingLocation").type(JsonFieldType.STRING).description(
+            fieldWithPath("articlesResponse.sellingLocation").type(JsonFieldType.STRING).description(
                 "게시글에 등록한 판매지역"),
-            fieldWithPath("postsResponse.viewCount").type(JsonFieldType.NUMBER).description(
+            fieldWithPath("articlesResponse.description").type(JsonFieldType.STRING).description(
+                "게시글에 작성한 설명"),
+            fieldWithPath("articlesResponse.viewCount").type(JsonFieldType.NUMBER).description(
                 "게시글 조회수"),
-            fieldWithPath("postsResponse.likeCount").type(JsonFieldType.NUMBER).description(
+            fieldWithPath("articlesResponse.favoriteCount").type(JsonFieldType.NUMBER).description(
                 "게시글 관심수"),
-            fieldWithPath("postsResponse.beforeTime").type(JsonFieldType.STRING).description(
+            fieldWithPath("articlesResponse.beforeTime").type(JsonFieldType.STRING).description(
                 "등록한 시간 - 현재 시간"),
-            fieldWithPath("postsResponse.postImage").type(JsonFieldType.STRING).description(
+            fieldWithPath("articlesResponse.articleImage").type(JsonFieldType.STRING).description(
                 "판매자가 올린 이미지"),
-            fieldWithPath("postsResponse.postStatus").type(JsonFieldType.STRING).description(
+            fieldWithPath("articlesResponse.articleStatus").type(JsonFieldType.STRING).description(
                 "게시글 상태 [SALE, RESERVED, SOLD_OUT]")
         };
 
-        return document("user/findLikes",
+        return document("user/findFavorites",
             preprocessRequest(prettyPrint()),
             preprocessResponse(prettyPrint()),
             requestHeaders(
@@ -147,55 +145,53 @@ public class UserDocumentation {
         );
     }
 
-    public static RestDocumentationResultHandler userAddLike() {
-        return document("user/addLike",
+    public static RestDocumentationResultHandler userAddFavorite() {
+        return document("user/addFavorite",
             preprocessRequest(prettyPrint()),
             preprocessResponse(prettyPrint()),
             requestHeaders(
                 headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
             ), requestFields(
-                fieldWithPath("postId").type(JsonFieldType.NUMBER).description("게시글 ID")
+                fieldWithPath("articleId").type(JsonFieldType.NUMBER).description("게시글 ID")
             )
         );
     }
 
-    public static RestDocumentationResultHandler userDeleteLike() {
-        return document("user/deleteLike",
+    public static RestDocumentationResultHandler userDeleteFavorite() {
+        return document("user/deleteFavorite",
             preprocessResponse(prettyPrint()),
             requestHeaders(
                 headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
             ),
             pathParameters(
-                parameterWithName("likeId").description("관심목록 ID")
+                parameterWithName("favoriteId").description("관심목록 ID")
             )
         );
     }
 
-    public static RestDocumentationResultHandler userFindMyPosts() {
+    public static RestDocumentationResultHandler userFindMyArticles() {
         FieldDescriptor[] response = new FieldDescriptor[]{
-            fieldWithPath("postId").type(JsonFieldType.NUMBER).description("게시글 ID"),
-            fieldWithPath("postTitle").type(JsonFieldType.STRING).description("게시글 제목"),
-            fieldWithPath("postPrice").type(JsonFieldType.STRING).description("게시글 가격"),
-            fieldWithPath("bookTitle").type(JsonFieldType.STRING).description("책 제목"),
-            fieldWithPath("bookAuthor").type(JsonFieldType.STRING).description("작가"),
-            fieldWithPath("bookPublisher").type(JsonFieldType.STRING).description("출판사"),
+            fieldWithPath("articleId").type(JsonFieldType.NUMBER).description("게시글 ID"),
+            fieldWithPath("articleTitle").type(JsonFieldType.STRING).description("게시글 제목"),
+            fieldWithPath("articlePrice").type(JsonFieldType.STRING).description("게시글 가격"),
             fieldWithPath("sellingLocation").type(JsonFieldType.STRING).description(
                 "게시글에 등록한 판매지역"),
+            fieldWithPath("description").type(JsonFieldType.STRING).description("게시글에 작성한 설명"),
             fieldWithPath("viewCount").type(JsonFieldType.NUMBER).description("게시글 조회수"),
-            fieldWithPath("likeCount").type(JsonFieldType.NUMBER).description("게시글 관심수"),
+            fieldWithPath("favoriteCount").type(JsonFieldType.NUMBER).description("게시글 관심수"),
             fieldWithPath("beforeTime").type(JsonFieldType.STRING).description("등록한 시간 - 현재 시간"),
-            fieldWithPath("postImage").type(JsonFieldType.STRING).description("판매자가 올린 이미지"),
-            fieldWithPath("postStatus").type(JsonFieldType.STRING).description(
+            fieldWithPath("articleImage").type(JsonFieldType.STRING).description("판매자가 올린 이미지"),
+            fieldWithPath("articleStatus").type(JsonFieldType.STRING).description(
                 "게시글 상태 [SALE, RESERVED, SOLD_OUT]")
         };
 
-        return document("user/findMyPosts",
+        return document("user/findMyArticles",
             preprocessRequest(prettyPrint()),
             preprocessResponse(prettyPrint()),
             requestHeaders(
                 headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
             ),
-            responseFields(fieldWithPath("[]").description("An arrays of postsResponse"))
+            responseFields(fieldWithPath("[]").description("An arrays of articlesResponse"))
                 .andWithPrefix("[].", response)
         );
     }

@@ -1,7 +1,7 @@
 package com.bookwhale.common.dto;
 
 import com.bookwhale.common.domain.Location;
-import com.bookwhale.post.domain.BookStatus;
+import com.bookwhale.article.domain.BookStatus;
 import com.google.common.base.Preconditions;
 import java.util.Arrays;
 import java.util.List;

@@ -1,8 +1,8 @@
 package com.bookwhale.chatroom.domain;
 
+import com.bookwhale.article.domain.Article;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
-import com.bookwhale.post.domain.Post;
 import com.bookwhale.user.domain.User;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
@@ -29,8 +29,8 @@ public class ChatRoom {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id")
-    private Post post;
+    @JoinColumn(name = "article_id")
+    private Article article;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "buyer_id")
@@ -49,17 +49,17 @@ public class ChatRoom {
     @CreatedDate
     private LocalDateTime createdDate;
 
-    private ChatRoom(Post post, User buyer, User seller, boolean isBuyerDelete,
+    private ChatRoom(Article article, User buyer, User seller, boolean isBuyerDelete,
         boolean isSellerDelete) {
-        this.post = post;
+        this.article = article;
         this.buyer = buyer;
         this.seller = seller;
         this.isBuyerDelete = isBuyerDelete;
         this.isSellerDelete = isSellerDelete;
     }
 
-    public static ChatRoom create(Post post, User buyer, User seller) {
-        return new ChatRoom(post, buyer, seller, false, false);
+    public static ChatRoom create(Article article, User buyer, User seller) {
+        return new ChatRoom(article, buyer, seller, false, false);
     }
 
     private boolean isLoginUserEqualBuyer(User loginUser) {

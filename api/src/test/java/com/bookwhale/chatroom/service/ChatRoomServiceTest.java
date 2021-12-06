@@ -10,6 +10,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.bookwhale.article.domain.ArticleStatus;
 import com.bookwhale.chatroom.domain.ChatRoom;
 import com.bookwhale.chatroom.domain.ChatRoomRepository;
 import com.bookwhale.chatroom.dto.ChatRoomCreateRequest;
@@ -18,11 +19,10 @@ import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.common.mail.SmtpMailSender;
 import com.bookwhale.user.domain.User;
-import com.bookwhale.post.domain.Book;
-import com.bookwhale.post.domain.BookStatus;
-import com.bookwhale.post.domain.Post;
-import com.bookwhale.post.domain.PostRepository;
-import com.bookwhale.post.domain.PostStatus;
+import com.bookwhale.article.domain.Book;
+import com.bookwhale.article.domain.BookStatus;
+import com.bookwhale.article.domain.Article;
+import com.bookwhale.article.domain.ArticleRepository;
 import com.bookwhale.user.domain.UserRepository;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +43,7 @@ public class ChatRoomServiceTest {
     private UserRepository userRepository;
 
     @Mock
-    private PostRepository postRepository;
+    private ArticleRepository articleRepository;
 
     @Mock
     private SmtpMailSender smtpMailSender;
@@ -54,11 +54,11 @@ public class ChatRoomServiceTest {
 
     User seller;
 
-    Post post;
+    Article article;
 
     @BeforeEach
     void setUp() {
-        chatRoomService = new ChatRoomService(chatRoomRepository, userRepository, postRepository,
+        chatRoomService = new ChatRoomService(chatRoomRepository, userRepository, articleRepository,
             smtpMailSender);
 
         buyer = User.builder()
@@ -79,8 +79,8 @@ public class ChatRoomServiceTest {
 
         ;
 
-        post = Post.create(seller,
-            Post.builder()
+        article = Article.create(seller,
+            Article.builder()
                 .book(Book.builder()
                     .bookSummary("설명")
                     .bookPubDate("2021-12-12")
@@ -101,49 +101,49 @@ public class ChatRoomServiceTest {
 
     @DisplayName("거래 요청 메일을 보낸 후 채팅방을 생성한다.")
     @Test
-    void createPost() {
-        ChatRoom chatRoom = ChatRoom.create(post, buyer, seller);
+    void createArticle() {
+        ChatRoom chatRoom = ChatRoom.create(article, buyer, seller);
 
         when(userRepository.findById(any())).thenReturn(of(seller));
-        when(postRepository.findById(any())).thenReturn(of(post));
+        when(articleRepository.findById(any())).thenReturn(of(article));
         doNothing().when(smtpMailSender).sendChatRoomCreationMail(any(), any(), any());
         when(chatRoomRepository.save(any())).thenReturn(chatRoom);
 
         chatRoomService.createChatRoom(buyer,
-            ChatRoomCreateRequest.builder().sellerId(1L).postId(1L).build());
+            ChatRoomCreateRequest.builder().sellerId(1L).articleId(1L).build());
 
         verify(userRepository).findById(any());
-        verify(postRepository).findById(any());
+        verify(articleRepository).findById(any());
         verify(smtpMailSender).sendChatRoomCreationMail(any(), any(), any());
         verify(chatRoomRepository).save(any());
     }
 
     @DisplayName("채팅방을 생성할 때 게시글 상태가 판매완료이면 예외가 발생한다.")
     @Test
-    void createPost_postStatus_soldOut_failure() {
-        post.updatePostStatus(PostStatus.SOLD_OUT.toString());
+    void createArticle_articleStatus_soldOut_failure() {
+        article.updateArticleStatus(ArticleStatus.SOLD_OUT.toString());
 
         when(userRepository.findById(any())).thenReturn(of(seller));
-        when(postRepository.findById(any())).thenReturn(of(post));
+        when(articleRepository.findById(any())).thenReturn(of(article));
 
         assertThatThrownBy(() -> chatRoomService.createChatRoom(buyer,
-            ChatRoomCreateRequest.builder().sellerId(1L).postId(1L).build()))
+            ChatRoomCreateRequest.builder().sellerId(1L).articleId(1L).build()))
             .isInstanceOf(CustomException.class)
-            .hasMessage(ErrorCode.INVALID_POST_STATUS.getMessage());
+            .hasMessage(ErrorCode.INVALID_ARTICLE_STATUS.getMessage());
     }
 
     @DisplayName("채팅방을 생성할 때 게시글 상태가 예약중이면 예외가 발생한다.")
     @Test
-    void createPost_postStatus_reserved_failure() {
-        post.updatePostStatus(PostStatus.RESERVED.toString());
+    void createArticle_articleStatus_reserved_failure() {
+        article.updateArticleStatus(ArticleStatus.RESERVED.toString());
 
         when(userRepository.findById(any())).thenReturn(of(seller));
-        when(postRepository.findById(any())).thenReturn(of(post));
+        when(articleRepository.findById(any())).thenReturn(of(article));
 
         assertThatThrownBy(() -> chatRoomService.createChatRoom(buyer,
-            ChatRoomCreateRequest.builder().sellerId(1L).postId(1L).build()))
+            ChatRoomCreateRequest.builder().sellerId(1L).articleId(1L).build()))
             .isInstanceOf(CustomException.class)
-            .hasMessage(ErrorCode.INVALID_POST_STATUS.getMessage());
+            .hasMessage(ErrorCode.INVALID_ARTICLE_STATUS.getMessage());
     }
 
     /*
@@ -154,14 +154,14 @@ public class ChatRoomServiceTest {
     @Test
     void findChatRooms() {
         // 로그인한 유저와 상대방 모두 존재하는 채팅방
-        ChatRoom chatRoom = ChatRoom.create(post, buyer, seller);
+        ChatRoom chatRoom = ChatRoom.create(article, buyer, seller);
 
         // 로그인한 유저만 존재하는 채팅방
-        ChatRoom chatRoomOpponentDelete = ChatRoom.create(post, buyer, seller);
+        ChatRoom chatRoomOpponentDelete = ChatRoom.create(article, buyer, seller);
         chatRoomOpponentDelete.deleteChatRoom(seller);
 
         // 상대방만 존재하는 채팅방
-        ChatRoom chatRoomUserDelete = ChatRoom.create(post, buyer, seller);
+        ChatRoom chatRoomUserDelete = ChatRoom.create(article, buyer, seller);
         chatRoomUserDelete.deleteChatRoom(buyer);
 
         List<ChatRoom> rooms = List.of(chatRoom, chatRoomOpponentDelete, chatRoomUserDelete);
@@ -173,15 +173,15 @@ public class ChatRoomServiceTest {
         verify(chatRoomRepository).findAllByBuyerOrSellerCreatedDateDesc(any());
         assertAll(
             () -> assertThat(responses.size()).isEqualTo(2),
-            () -> assertThat(responses.get(0).getPostTitle()).isEqualTo(post.getTitle()),
-            () -> assertThat(responses.get(0).getPostImage()).isEqualTo(
-                post.getImages().getFirstImageUrl()),
+            () -> assertThat(responses.get(0).getArticleTitle()).isEqualTo(article.getTitle()),
+            () -> assertThat(responses.get(0).getArticleImage()).isEqualTo(
+                article.getImages().getFirstImageUrl()),
             () -> assertThat(responses.get(0).getOpponentIdentity()).isEqualTo(
                 seller.getIdentity()),
             () -> assertThat(responses.get(0).isOpponentDelete()).isEqualTo(false),
-            () -> assertThat(responses.get(1).getPostTitle()).isEqualTo(post.getTitle()),
-            () -> assertThat(responses.get(1).getPostImage()).isEqualTo(
-                post.getImages().getFirstImageUrl()),
+            () -> assertThat(responses.get(1).getArticleTitle()).isEqualTo(article.getTitle()),
+            () -> assertThat(responses.get(1).getArticleImage()).isEqualTo(
+                article.getImages().getFirstImageUrl()),
             () -> assertThat(responses.get(1).getOpponentIdentity()).isEqualTo(
                 seller.getIdentity()),
             () -> assertThat(responses.get(1).isOpponentDelete()).isEqualTo(true)
@@ -195,7 +195,7 @@ public class ChatRoomServiceTest {
     @DisplayName("상대방이 나가지 않은 채팅방을 삭제한다.")
     @Test
     void deleteChatRoom_loginUser_success() {
-        ChatRoom chatRoom = ChatRoom.create(post, buyer, seller);
+        ChatRoom chatRoom = ChatRoom.create(article, buyer, seller);
 
         when(chatRoomRepository.findById(any())).thenReturn(of(chatRoom));
 
@@ -212,7 +212,7 @@ public class ChatRoomServiceTest {
     @DisplayName("상대방이 나간 채팅방을 삭제한다.")
     @Test
     void deleteChatRoom_both_success() {
-        ChatRoom chatRoom = ChatRoom.create(post, buyer, seller);
+        ChatRoom chatRoom = ChatRoom.create(article, buyer, seller);
         chatRoom.deleteChatRoom(seller);
 
         when(chatRoomRepository.findById(any())).thenReturn(of(chatRoom));

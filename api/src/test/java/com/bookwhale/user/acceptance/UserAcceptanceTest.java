@@ -5,14 +5,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.bookwhale.common.acceptance.AcceptanceTest;
 import com.bookwhale.common.acceptance.AcceptanceUtils;
 import com.bookwhale.common.acceptance.step.AcceptanceStep;
-import com.bookwhale.post.acceptance.step.PostAcceptanceStep;
-import com.bookwhale.post.dto.BookRequest;
-import com.bookwhale.post.dto.PostRequest;
-import com.bookwhale.post.dto.PostResponse;
-import com.bookwhale.post.dto.PostsResponse;
+import com.bookwhale.common.domain.Location;
+import com.bookwhale.article.acceptance.step.ArticleAcceptanceStep;
+import com.bookwhale.article.dto.ArticlesResponse;
+import com.bookwhale.article.dto.ArticleRequest;
+import com.bookwhale.article.dto.ArticleResponse;
+import com.bookwhale.article.dto.BookRequest;
 import com.bookwhale.user.acceptance.step.UserAcceptanceStep;
-import com.bookwhale.user.dto.LikeRequest;
-import com.bookwhale.user.dto.LikeResponse;
+import com.bookwhale.user.dto.FavoriteRequest;
+import com.bookwhale.user.dto.FavoriteResponse;
 import com.bookwhale.user.dto.LoginRequest;
 import com.bookwhale.user.dto.PasswordUpdateRequest;
 import com.bookwhale.user.dto.ProfileResponse;
@@ -154,8 +155,8 @@ public class UserAcceptanceTest extends AcceptanceTest {
 
     @DisplayName("관심목록에 추가한다.")
     @Test
-    void addLike() {
-        PostRequest postRequest = PostRequest.builder()
+    void addFavorite() {
+        ArticleRequest articleRequest = ArticleRequest.builder()
             .bookRequest(BookRequest.builder()
                 .bookSummary("책 설명")
                 .bookPubDate("2021-12-12")
@@ -168,27 +169,28 @@ public class UserAcceptanceTest extends AcceptanceTest {
                 .build())
             .title("토비의 스프링 팝니다~")
             .description("책 설명")
+            .sellingLocation("DAEGU")
             .bookStatus("BEST")
             .price("5000")
             .build();
 
         String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
-        Long postId = AcceptanceUtils.getIdFromResponse(
-            PostAcceptanceStep.requestToCreatePost(jwt, postRequest));
+        Long articleId = AcceptanceUtils.getIdFromResponse(
+            ArticleAcceptanceStep.requestToCreateArticle(jwt, articleRequest));
 
-        ExtractableResponse<Response> response = UserAcceptanceStep.addLike(jwt,
-            new LikeRequest(postId));
-        List<LikeResponse> likeResponses = UserAcceptanceStep.findLikes(jwt).jsonPath()
-            .getList(".", LikeResponse.class);
+        ExtractableResponse<Response> response = UserAcceptanceStep.addFavorite(jwt,
+            new FavoriteRequest(articleId));
+        List<FavoriteResponse> favoriteRespons = UserAcceptanceStep.findFavorites(jwt).jsonPath()
+            .getList(".", FavoriteResponse.class);
 
         AcceptanceStep.assertThatStatusIsOk(response);
-        UserAcceptanceStep.assertThatAddLike(likeResponses, postRequest);
+        UserAcceptanceStep.assertThatAddFavorite(favoriteRespons, articleRequest);
     }
 
     @DisplayName("관심목록에서 삭제한다.")
     @Test
-    void deleteLike() {
-        PostRequest postRequest = PostRequest.builder()
+    void deleteFavorite() {
+        ArticleRequest articleRequest = ArticleRequest.builder()
             .bookRequest(BookRequest.builder()
                 .bookSummary("책 설명")
                 .bookPubDate("2021-12-12")
@@ -201,38 +203,39 @@ public class UserAcceptanceTest extends AcceptanceTest {
                 .build())
             .title("토비의 스프링 팝니다~")
             .description("책 설명")
+            .sellingLocation("DAEGU")
             .bookStatus("BEST")
             .price("5000")
             .build();
 
         String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
-        Long postId = AcceptanceUtils.getIdFromResponse(
-            PostAcceptanceStep.requestToCreatePost(jwt, postRequest));
-        UserAcceptanceStep.addLike(jwt, new LikeRequest(postId));
-        List<LikeResponse> likeResponseAfterAddLike = UserAcceptanceStep.findLikes(jwt).jsonPath()
-            .getList(".", LikeResponse.class);
-        Long likeCount = likeResponseAfterAddLike.get(0).getPostsResponse().getLikeCount();
-        Long likeId = likeResponseAfterAddLike.get(0).getLikeId();
+        Long articleId = AcceptanceUtils.getIdFromResponse(
+            ArticleAcceptanceStep.requestToCreateArticle(jwt, articleRequest));
+        UserAcceptanceStep.addFavorite(jwt, new FavoriteRequest(articleId));
+        List<FavoriteResponse> favoriteResponseAfterAddFavorite = UserAcceptanceStep.findFavorites(jwt).jsonPath()
+            .getList(".", FavoriteResponse.class);
+        Long favoriteCount = favoriteResponseAfterAddFavorite.get(0).getArticlesResponse().getFavoriteCount();
+        Long favoriteId = favoriteResponseAfterAddFavorite.get(0).getFavoriteId();
 
-        ExtractableResponse<Response> response = UserAcceptanceStep.deleteLike(
-            jwt, likeId);
-        List<LikeResponse> likeResponses = UserAcceptanceStep.findLikes(jwt).jsonPath()
-            .getList(".", LikeResponse.class);
+        ExtractableResponse<Response> response = UserAcceptanceStep.deleteFavorite(
+            jwt, favoriteId);
+        List<FavoriteResponse> favoriteRespons = UserAcceptanceStep.findFavorites(jwt).jsonPath()
+            .getList(".", FavoriteResponse.class);
 
-        ExtractableResponse<Response> responseAfterDeleteLike = PostAcceptanceStep.requestToFindPost(
-            jwt, postId);
-        PostResponse postResponse = responseAfterDeleteLike.jsonPath()
-            .getObject(".", PostResponse.class);
+        ExtractableResponse<Response> responseAfterDeleteFavorite = ArticleAcceptanceStep.requestToFindArticle(
+            jwt, articleId);
+        ArticleResponse articleResponse = responseAfterDeleteFavorite.jsonPath()
+            .getObject(".", ArticleResponse.class);
 
         AcceptanceStep.assertThatStatusIsOk(response);
-        assertThat(likeResponses.size()).isEqualTo(0);
-        assertThat(postResponse.getLikeCount()).isEqualTo(likeCount - 1L);
+        assertThat(favoriteRespons.size()).isEqualTo(0);
+        assertThat(articleResponse.getFavoriteCount()).isEqualTo(favoriteCount - 1L);
     }
 
     @DisplayName("나의 게시글들을 조회한다.")
     @Test
-    void findPosts_one() {
-        PostRequest postRequest = PostRequest.builder()
+    void findArticles_one() {
+        ArticleRequest articleRequest = ArticleRequest.builder()
             .bookRequest(BookRequest.builder()
                 .bookSummary("책 설명")
                 .bookPubDate("2021-12-12")
@@ -245,24 +248,25 @@ public class UserAcceptanceTest extends AcceptanceTest {
                 .build())
             .title("토비의 스프링 팝니다~")
             .description("책 설명")
+            .sellingLocation("DAEGU")
             .bookStatus("BEST")
             .price("5000")
             .build();
 
         String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
-        PostAcceptanceStep.requestToCreatePost(jwt, postRequest);
+        ArticleAcceptanceStep.requestToCreateArticle(jwt, articleRequest);
 
-        ExtractableResponse<Response> response = UserAcceptanceStep.requestToFindMyPosts(jwt);
-        List<PostsResponse> postsResponses = response.jsonPath().getList(".", PostsResponse.class);
+        ExtractableResponse<Response> response = UserAcceptanceStep.requestToFindMyArticles(jwt);
+        List<ArticlesResponse> articlesRespons = response.jsonPath().getList(".", ArticlesResponse.class);
 
         AcceptanceStep.assertThatStatusIsOk(response);
-        UserAcceptanceStep.assertThatFindMyPosts(postsResponses, postRequest);
+        UserAcceptanceStep.assertThatFindMyArticles(articlesRespons, articleRequest);
     }
 
     @DisplayName("나의 게시글들을 조회할 때 다른 유저의 게시글을 조회되지 않는다.")
     @Test
-    void findPosts_empty() {
-        PostRequest postRequest = PostRequest.builder()
+    void findArticles_empty() {
+        ArticleRequest articleRequest = ArticleRequest.builder()
             .bookRequest(BookRequest.builder()
                 .bookSummary("책 설명")
                 .bookPubDate("2021-12-12")
@@ -281,12 +285,12 @@ public class UserAcceptanceTest extends AcceptanceTest {
 
         String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
         String anotherJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(anotherLoginRequest);
-        PostAcceptanceStep.requestToCreatePost(anotherJwt, postRequest);
+        ArticleAcceptanceStep.requestToCreateArticle(anotherJwt, articleRequest);
 
-        ExtractableResponse<Response> response = UserAcceptanceStep.requestToFindMyPosts(jwt);
-        List<PostsResponse> postsResponses = response.jsonPath().getList(".", PostsResponse.class);
+        ExtractableResponse<Response> response = UserAcceptanceStep.requestToFindMyArticles(jwt);
+        List<ArticlesResponse> articlesRespons = response.jsonPath().getList(".", ArticlesResponse.class);
 
         AcceptanceStep.assertThatStatusIsOk(response);
-        assertThat(postsResponses.size()).isEqualTo(0);
+        assertThat(articlesRespons.size()).isEqualTo(0);
     }
 }

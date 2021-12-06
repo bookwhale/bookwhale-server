@@ -1,6 +1,7 @@
+apply plugin: 'org.asciidoctor.convert'
+
 dependencies {
     //project
-    implementation project(path: ':common', configuration: 'default')
     implementation project(path: ':core', configuration: 'default')
     //spring
     implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -13,4 +14,20 @@ dependencies {
     //test
     testImplementation group: 'io.rest-assured', name: 'rest-assured', version: '4.3.3'
     testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'
+    //api docs
+    asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 }
+
+ext {
+    snippetsDir = file('build/generated-snippets')
+}
+
+test {
+    outputs.dir snippetsDir
+}
+
+asciidoctor {
+    inputs.dir snippetsDir
+    dependsOn test
+}
+
