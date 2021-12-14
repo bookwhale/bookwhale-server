@@ -5,7 +5,7 @@ import com.bookwhale.article.dto.ArticlesResponse;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.common.upload.FileUploader;
-import com.bookwhale.dto.Pagination;
+import com.bookwhale.common.dto.Pagination;
 import com.bookwhale.image.domain.Images;
 import com.bookwhale.favorite.domain.FavoriteRepository;
 import com.bookwhale.article.domain.ArticleRepository;

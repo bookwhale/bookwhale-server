@@ -17,7 +17,7 @@ import com.bookwhale.article.dto.ArticlesResponse;
 import com.bookwhale.common.controller.CommonApiTest;
 import com.bookwhale.common.domain.Location;
 import com.bookwhale.common.security.WithMockCustomUser;
-import com.bookwhale.dto.Pagination;
+import com.bookwhale.common.dto.Pagination;
 import com.bookwhale.article.docs.ArticleDocumentation;
 import com.bookwhale.article.domain.BookStatus;
 import com.bookwhale.article.dto.BookRequest;

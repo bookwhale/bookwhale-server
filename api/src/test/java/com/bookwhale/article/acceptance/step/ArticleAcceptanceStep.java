@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.bookwhale.article.dto.ArticleRequest;
 import com.bookwhale.common.domain.Location;
-import com.bookwhale.dto.Pagination;
+import com.bookwhale.common.dto.Pagination;
 import com.bookwhale.article.domain.BookStatus;
 import com.bookwhale.article.domain.ArticleStatus;
 import com.bookwhale.article.dto.BookResponse;

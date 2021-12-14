@@ -1,6 +1,6 @@
 package com.bookwhale.message.acceptance;
 
-import com.bookwhale.dto.Pagination;
+import com.bookwhale.common.dto.Pagination;
 import com.bookwhale.message.acceptance.step.AcceptanceStep;
 import com.bookwhale.message.acceptance.step.MessageAcceptanceStep;
 import com.bookwhale.message.domain.Message;

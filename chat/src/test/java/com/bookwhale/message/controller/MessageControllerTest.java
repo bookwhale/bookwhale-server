@@ -6,7 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.bookwhale.dto.Pagination;
+import com.bookwhale.common.dto.Pagination;
 import com.bookwhale.message.dto.MessageResponse;
 import com.bookwhale.message.service.MessageService;
 import com.fasterxml.jackson.databind.ObjectMapper;

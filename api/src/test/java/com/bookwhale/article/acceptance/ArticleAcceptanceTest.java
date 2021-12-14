@@ -6,7 +6,7 @@ import com.bookwhale.article.domain.ArticleStatus;
 import com.bookwhale.common.acceptance.AcceptanceTest;
 import com.bookwhale.common.acceptance.AcceptanceUtils;
 import com.bookwhale.common.acceptance.step.AcceptanceStep;
-import com.bookwhale.dto.Pagination;
+import com.bookwhale.common.dto.Pagination;
 import com.bookwhale.article.acceptance.step.ArticleAcceptanceStep;
 import com.bookwhale.article.domain.BookStatus;
 import com.bookwhale.article.dto.BookRequest;

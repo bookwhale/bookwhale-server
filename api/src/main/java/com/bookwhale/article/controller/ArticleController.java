@@ -1,7 +1,7 @@
 package com.bookwhale.article.controller;
 
 import com.bookwhale.article.dto.ArticlesResponse;
-import com.bookwhale.dto.Pagination;
+import com.bookwhale.common.dto.Pagination;
 import com.bookwhale.article.dto.BookResponse;
 import com.bookwhale.common.dto.ConditionListResponse;
 import com.bookwhale.article.dto.NaverBookRequest;

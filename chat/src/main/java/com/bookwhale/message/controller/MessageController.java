@@ -2,7 +2,7 @@ package com.bookwhale.message.controller;
 
 import static com.bookwhale.config.StompWebSocketConfig.SUB_PREFIX;
 
-import com.bookwhale.dto.Pagination;
+import com.bookwhale.common.dto.Pagination;
 import com.bookwhale.message.dto.MessageRequest;
 import com.bookwhale.message.dto.MessageResponse;
 import com.bookwhale.message.service.MessageService;

@@ -3,7 +3,7 @@ package com.bookwhale.message.acceptance.step;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.bookwhale.dto.Pagination;
+import com.bookwhale.common.dto.Pagination;
 import com.bookwhale.message.dto.MessageResponse;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;

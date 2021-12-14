@@ -7,7 +7,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.bookwhale.dto.Pagination;
+import com.bookwhale.common.dto.Pagination;
 import com.bookwhale.message.domain.Message;
 import com.bookwhale.message.domain.MessageRepository;
 import com.bookwhale.message.dto.MessageResponse;
