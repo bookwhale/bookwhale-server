@@ -75,17 +75,6 @@ public class UserAcceptanceStep {
         );
     }
 
-    public static void assertThatFindMyArticles(List<ArticlesResponse> res, ArticleRequest req) {
-        Assertions.assertAll(
-            () -> assertThat(res.size()).isEqualTo(1),
-            () -> assertThat(res.get(0).getArticleTitle()).isEqualTo(req.getTitle()),
-            () -> assertThat(res.get(0).getArticlePrice()).isEqualTo(req.getPrice()),
-            () -> assertThat(res.get(0).getArticleStatus()).isEqualTo(ArticleStatus.SALE.getName()),
-            () -> assertThat(res.get(0).getArticleImage()).isNotNull(),
-            () -> assertThat(res.get(0).getBeforeTime()).isNotNull()
-        );
-    }
-
     public static ExtractableResponse<Response> requestToSignUp(SignUpRequest signUpRequest) {
         return given().log().all()
             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -192,15 +181,6 @@ public class UserAcceptanceStep {
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .when()
             .delete("/api/user/me/favorite/{favoriteId}", favoriteId)
-            .then().log().all()
-            .extract();
-    }
-
-    public static ExtractableResponse<Response> requestToFindMyArticles(String jwt) {
-        return given().log().all()
-            .header(HttpHeaders.AUTHORIZATION, jwt)
-            .when()
-            .get("/api/user/me/article")
             .then().log().all()
             .extract();
     }
