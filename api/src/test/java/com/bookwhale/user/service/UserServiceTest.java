@@ -53,8 +53,7 @@ public class UserServiceTest {
 
     @BeforeEach
     void setUp() {
-        userService = new UserService(userRepository, passwordEncoder, fileUploader,
-            articleRepository);
+        userService = new UserService(userRepository, passwordEncoder, fileUploader);
 
         user = User.builder()
             .id(1L)
