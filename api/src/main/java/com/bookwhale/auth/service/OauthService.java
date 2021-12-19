@@ -23,12 +23,11 @@ public class OauthService {
 
     public void sendLoginRequest(OAuthProviderType providerType) {
         try {
-            String providerName = providerType.getProviderName();
             String redirectUrl = null;
-            if (providerName.equalsIgnoreCase(OAuthProviderType.GOOGLE.getProviderName())) {
+            if (providerType.equals(OAuthProviderType.GOOGLE)) {
                 GoogleOAuthProvider oAuthProvider = (GoogleOAuthProvider) oAuthProviders.get("GoogleOAuthProvider");
                 redirectUrl = oAuthProvider.getOAuthRedirectURL();
-            } else if (providerName.equalsIgnoreCase(OAuthProviderType.NAVER.getProviderName())) {
+            } else if (providerType.equals(OAuthProviderType.NAVER)) {
                 NaverOAuthProvider oAuthProvider = (NaverOAuthProvider) oAuthProviders.get("NaverOAuthProvider");
                 redirectUrl = oAuthProvider.getOAuthRedirectURL();
             }
@@ -39,7 +38,7 @@ public class OauthService {
         }
     }
 
-    public OAuthLoginResponse processLogin(OAuthLoginRequest oAuthLoginRequest) {
+    public OAuthLoginResponse processLogin(OAuthProviderType providerType, String accessCode) {
         return null;
     }
 
