@@ -4,7 +4,6 @@ import com.bookwhale.auth.domain.provider.GoogleOAuthProvider;
 import com.bookwhale.auth.domain.provider.NaverOAuthProvider;
 import com.bookwhale.auth.domain.provider.OAuthProvider;
 import com.bookwhale.auth.domain.provider.OAuthProviderType;
-import com.bookwhale.auth.dto.OAuthLoginRequest;
 import com.bookwhale.auth.dto.OAuthLoginResponse;
 import java.io.IOException;
 import java.util.Map;
@@ -38,8 +37,17 @@ public class OauthService {
         }
     }
 
-    public OAuthLoginResponse processLogin(OAuthProviderType providerType, String accessCode) {
-        return null;
+    public OAuthLoginResponse loginProcess(OAuthProviderType providerType, String accessCode) {
+        String result = null;
+        if (providerType.equals(OAuthProviderType.GOOGLE)) {
+            GoogleOAuthProvider oAuthProvider = (GoogleOAuthProvider) oAuthProviders.get("GoogleOAuthProvider");
+            result = oAuthProvider.requestAccessToken(accessCode);
+
+        } else if (providerType.equals(OAuthProviderType.NAVER)) {
+            NaverOAuthProvider oAuthProvider = (NaverOAuthProvider) oAuthProviders.get("NaverOAuthProvider");
+            result = oAuthProvider.requestAccessToken(accessCode);
+        }
+        return new OAuthLoginResponse(result);
     }
 
 }
