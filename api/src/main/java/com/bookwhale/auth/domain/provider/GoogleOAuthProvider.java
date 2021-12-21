@@ -1,11 +1,15 @@
 package com.bookwhale.auth.domain.provider;
 
+import com.bookwhale.auth.domain.token.GoogleOAuthToken;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -14,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 @Component("GoogleOAuthProvider")
 public class GoogleOAuthProvider implements OAuthProvider {
+
     @Value("${external-api.auth.google.client-id}")
     private String clientId;
     @Value("${external-api.auth.google.client-key}")
@@ -25,25 +30,26 @@ public class GoogleOAuthProvider implements OAuthProvider {
     @Value("${external-api.auth.google.access-token-url}")
     private String accessTokenRequestURL;
 
+    private final RestTemplate restTemplate = new RestTemplate();
+
     @Override
     public String getOAuthRedirectURL() {
         Map<String, Object> params = new HashMap<>();
-        params.put("scope", "profile");
+        params.put("scope", "profile, email");
         params.put("response_type", "code");
         params.put("client_id", clientId);
         params.put("redirect_uri", callbackURL);
 
+        String oAuthRequestUrl = "/v2/auth";
         String parameterString = params.entrySet().stream()
             .map(x -> x.getKey() + "=" + x.getValue())
             .collect(Collectors.joining("&"));
 
-        return baseRequestURL + "?" + parameterString;
+        return baseRequestURL + oAuthRequestUrl + "?" + parameterString;
     }
 
     @Override
-    public String requestAccessToken(String accessCode) {
-        RestTemplate restTemplate = new RestTemplate();
-
+    public ResponseEntity<String> requestAccessToken(String accessCode) {
         Map<String, Object> params = new HashMap<>();
         params.put("code", accessCode);
         params.put("client_id", clientId);
@@ -51,12 +57,19 @@ public class GoogleOAuthProvider implements OAuthProvider {
         params.put("redirect_uri", callbackURL);
         params.put("grant_type", "authorization_code");
 
-        ResponseEntity<String> responseEntity =
-            restTemplate.postForEntity(accessTokenRequestURL, params, String.class);
-        String body = responseEntity.getBody();
-        log.info("조회된 body 확인 : {}", body);
+        return restTemplate.postForEntity(accessTokenRequestURL, params, String.class);
+    }
 
-        return body;
+    public ResponseEntity<String> getUserInfoFromProvider(GoogleOAuthToken oAuthToken) {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + oAuthToken.getAccessToken());
+
+        HttpEntity<Map<String, String>> request = new HttpEntity(headers);
+
+        String url = "https://www.googleapis.com/oauth2/v2/userinfo";
+
+        return restTemplate.exchange(url, HttpMethod.GET, request, String.class);
     }
 
 

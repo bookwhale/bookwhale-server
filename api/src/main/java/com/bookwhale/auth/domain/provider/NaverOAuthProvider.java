@@ -44,14 +44,13 @@ public class NaverOAuthProvider implements OAuthProvider {
         params.put("state", Hashing.sha512().hashString(state, StandardCharsets.UTF_8).toString());
 
         String parameterString = params.entrySet().stream()
-            .map(x -> x.getKey() + "=" + x.getValue())
-            .collect(Collectors.joining("&"));
+            .map(x -> x.getKey() + "=" + x.getValue()).collect(Collectors.joining("&"));
 
         return baseRequestURL + "?" + parameterString;
     }
 
     @Override
-    public String requestAccessToken(String accessCode) {
+    public ResponseEntity<String> requestAccessToken(String accessCode) {
         RestTemplate restTemplate = new RestTemplate();
 
         MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
@@ -65,20 +64,10 @@ public class NaverOAuthProvider implements OAuthProvider {
         HttpHeaders requestHeader = new HttpHeaders();
         requestHeader.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
-        var requestEntity = new HttpEntity<>(
-            requestBody, requestHeader);
+        var requestEntity = new HttpEntity<>(requestBody, requestHeader);
 
-        ResponseEntity<String> responseEntity =
-            restTemplate.exchange(
-                accessTokenRequestURL,
-                HttpMethod.POST,
-                requestEntity,
-                String.class
-            );
-        String body = responseEntity.getBody();
-        log.info("조회된 body 확인 : {}", body);
-
-        return body;
+        return restTemplate.exchange(accessTokenRequestURL, HttpMethod.POST, requestEntity,
+            String.class);
     }
 
 

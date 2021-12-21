@@ -1,6 +1,10 @@
 package com.bookwhale.auth.domain.provider;
 
+import org.springframework.http.ResponseEntity;
+
 public interface OAuthProvider {
+
     String getOAuthRedirectURL();
-    String requestAccessToken(String accessCode);
+
+    ResponseEntity<String> requestAccessToken(String accessCode);
 }
