@@ -19,6 +19,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -56,11 +57,21 @@ public class OauthService {
                 "GoogleOAuthProvider");
             ResponseEntity<String> accessTokenResponse = oAuthProvider.requestAccessToken(
                 accessCode);
+
+            if (!accessTokenResponse.getStatusCode().equals(HttpStatus.OK)) {
+                throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
+            }
+
             GoogleOAuthToken accessToken = (GoogleOAuthToken) getTokenFromResponse(
                 accessTokenResponse, providerType);
-            ResponseEntity<String> userInfo = oAuthProvider.getUserInfoFromProvider(
+            ResponseEntity<String> userInfoResponse = oAuthProvider.getUserInfoFromProvider(
                 accessToken);
-            log.info("조회결과 확인 : {}", userInfo);
+
+            if (!userInfoResponse.getStatusCode().equals(HttpStatus.OK)) {
+                throw new CustomException(ErrorCode.INFORMATION_NOT_FOUND);
+            }
+
+            log.info("조회결과 확인 : {}", userInfoResponse);
 
         } else if (providerType.equals(OAuthProviderType.NAVER)) {
             NaverOAuthProvider oAuthProvider = (NaverOAuthProvider) oAuthProviders.get(
