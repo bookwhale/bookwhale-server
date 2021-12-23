@@ -42,6 +42,6 @@ public class OAuthController {
 
         OAuthLoginResponse result = oauthService.loginProcess(providerType, accessCode);
 
-        return null;
+        return ResponseEntity.ok(result);
     }
 }
