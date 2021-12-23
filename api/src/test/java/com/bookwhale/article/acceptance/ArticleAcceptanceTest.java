@@ -183,7 +183,7 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
     @Test
     void findArticles_loginUser() {
         ArticlesRequest articlesRequest = ArticlesRequest.builder()
-            .title("스프링")
+            .search("스프링")
             .build();
 
         Pagination pagination = new Pagination(0, 10);
@@ -193,19 +193,18 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
 
         ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToFindArticles(jwt,
             articlesRequest, pagination);
-        List<ArticlesResponse> articlesRespons = response.jsonPath()
+        List<ArticlesResponse> articlesResponses = response.jsonPath()
             .getList(".", ArticlesResponse.class);
 
         AcceptanceStep.assertThatStatusIsOk(response);
-        ArticleAcceptanceStep.assertThatFindArticles(articlesRespons, articleRequest);
+        ArticleAcceptanceStep.assertThatFindArticles(articlesResponses, articleRequest);
     }
 
     @DisplayName("로그인하지 않은 유저가 게시글을 전체 조회한다.")
     @Test
     void findArticles_anonymousUser() {
         ArticlesRequest articlesRequest = ArticlesRequest.builder()
-            .title("스프링")
-            .sellingLocation("BUSAN")
+            .search("스프링")
             .build();
 
         Pagination pagination = new Pagination(0, 10);
@@ -216,13 +215,13 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
         ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToFindArticles(
             "anonymousUser",
             articlesRequest, pagination);
-        List<ArticlesResponse> articlesRespons = response.jsonPath()
+        List<ArticlesResponse> articlesResponses = response.jsonPath()
             .getList(".", ArticlesResponse.class);
 
         AcceptanceStep.assertThatStatusIsOk(response);
-        ArticleAcceptanceStep.assertThatFindArticles(articlesRespons, articleRequest);
+        ArticleAcceptanceStep.assertThatFindArticles(articlesResponses, articleRequest);
     }
-    
+
     /*
     TODO : 네이버 책 API 안됨
     @DisplayName("ISBN 으로 네이버 책(API)을 검색한다.")
@@ -322,17 +321,21 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
     @DisplayName("게시글을 삭제한다.")
     @Test
     void deleteArticle() {
+        ArticlesRequest articlesRequest = ArticlesRequest.builder()
+            .search("스프링")
+            .build();
+
         String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
         Long articleId = AcceptanceUtils.getIdFromResponse(
             ArticleAcceptanceStep.requestToCreateArticle(jwt, articleRequest));
 
         ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToDeleteArticle(jwt,
             articleId);
-        List<ArticlesResponse> articlesRespons = ArticleAcceptanceStep.requestToFindArticles(
-                jwt, new ArticlesRequest(), new Pagination(0, 10))
+        List<ArticlesResponse> articlesResponses = ArticleAcceptanceStep.requestToFindArticles(
+                jwt, articlesRequest, new Pagination(0, 10))
             .jsonPath().getList(".", ArticlesResponse.class);
 
         AcceptanceStep.assertThatStatusIsOk(response);
-        assertThat(articlesRespons.size()).isEqualTo(0);
+        assertThat(articlesResponses.size()).isEqualTo(0);
     }
 }

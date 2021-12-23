@@ -222,10 +222,9 @@ public class ArticleControllerTest extends CommonApiTest {
             .articleImage("이미지")
             .articleTitle("책 팝니다~")
             .articlePrice("20000원")
-            .articleStatus(ArticleStatus.SALE.getName())
+            .bookStatus(BookStatus.BEST.getName())
             .sellingLocation("서울")
-            .description("정가 5만원인데 급처합니다.")
-            .viewCount(1L)
+            .chatCount(1L)
             .favoriteCount(1L)
             .beforeTime("15분 전")
             .build();
@@ -246,7 +245,7 @@ public class ArticleControllerTest extends CommonApiTest {
         Pagination pagination = new Pagination(0, 10);
 
         ArticlesRequest articlesRequest = ArticlesRequest.builder()
-            .title("책 제목")
+            .search("책 제목")
             .build();
 
         ArticlesResponse articlesResponse = ArticlesResponse.builder()
@@ -254,17 +253,16 @@ public class ArticleControllerTest extends CommonApiTest {
             .articleImage("이미지")
             .articleTitle("책 팝니다~")
             .articlePrice("20000원")
-            .articleStatus(ArticleStatus.SALE.getName())
-            .description("판매자가 작성한 게시글 설명")
+            .bookStatus(BookStatus.BEST.getName())
             .sellingLocation(Location.SEOUL.getName())
-            .viewCount(1L)
+            .chatCount(1L)
             .favoriteCount(0L)
             .beforeTime("15분 전")
             .build();
 
         when(articleService.findArticles(any(), any())).thenReturn(of(articlesResponse));
 
-        mockMvc.perform(get(format("/api/articles?title=%s&page=%d&size=%d", articlesRequest.getTitle(),
+        mockMvc.perform(get(format("/api/articles?search=%s&page=%d&size=%d", articlesRequest.getSearch(),
                 pagination.getPage(), pagination.getSize()))
                 .header(HttpHeaders.AUTHORIZATION, "accessToken"))
             .andExpect(status().isOk())
@@ -278,7 +276,7 @@ public class ArticleControllerTest extends CommonApiTest {
         Pagination pagination = new Pagination(0, 10);
 
         ArticlesRequest articlesRequest = ArticlesRequest.builder()
-            .title("책 제목")
+            .search("책 제목")
             .build();
 
         ArticlesResponse articlesResponse = ArticlesResponse.builder()
@@ -286,13 +284,16 @@ public class ArticleControllerTest extends CommonApiTest {
             .articleImage("이미지")
             .articleTitle("책 팝니다~")
             .articlePrice("20000원")
-            .articleStatus(ArticleStatus.SALE.getName())
+            .bookStatus(BookStatus.BEST.getName())
+            .sellingLocation(Location.SEOUL.getName())
+            .chatCount(1L)
+            .favoriteCount(0L)
             .beforeTime("15분 전")
             .build();
 
         when(articleService.findArticles(any(), any())).thenReturn(of(articlesResponse));
 
-        mockMvc.perform(get(format("/api/articles?title=%s&page=%d&size=%d", articlesRequest.getTitle(),
+        mockMvc.perform(get(format("/api/articles?search=%s&page=%d&size=%d", articlesRequest.getSearch(),
                 pagination.getPage(), pagination.getSize())))
             .andExpect(status().isOk())
             .andDo(print());

@@ -32,11 +32,15 @@ public class ArticleAcceptanceStep {
     public static void assertThatFindMyArticles(List<ArticlesResponse> res, ArticleRequest req) {
         Assertions.assertAll(
             () -> assertThat(res.size()).isEqualTo(1),
+            () -> assertThat(res.get(0).getArticlePrice()).isEqualTo(req.getPrice()),
             () -> assertThat(res.get(0).getArticleTitle()).isEqualTo(req.getTitle()),
             () -> assertThat(res.get(0).getArticlePrice()).isEqualTo(req.getPrice()),
-            () -> assertThat(res.get(0).getArticleStatus()).isEqualTo(ArticleStatus.SALE.getName()),
+            () -> assertThat(res.get(0).getBeforeTime()).isNotNull(),
+            () -> assertThat(res.get(0).getBookStatus()).isEqualTo(BookStatus.BEST.getName()),
+            () -> assertThat(res.get(0).getSellingLocation()).isEqualTo(Location.DAEGU.getName()),
             () -> assertThat(res.get(0).getArticleImage()).isNotNull(),
-            () -> assertThat(res.get(0).getBeforeTime()).isNotNull()
+            () -> assertThat(res.get(0).getFavoriteCount()).isEqualTo(0),
+            () -> assertThat(res.get(0).getChatCount()).isEqualTo(0)
         );
     }
 
@@ -83,11 +87,11 @@ public class ArticleAcceptanceStep {
             () -> assertThat(res.get(0).getArticleTitle()).isEqualTo(req.getTitle()),
             () -> assertThat(res.get(0).getArticlePrice()).isEqualTo(req.getPrice()),
             () -> assertThat(res.get(0).getBeforeTime()).isNotNull(),
-            () -> assertThat(res.get(0).getArticleStatus()).isEqualTo(ArticleStatus.SALE.getName()),
+            () -> assertThat(res.get(0).getBookStatus()).isEqualTo(BookStatus.BEST.getName()),
             () -> assertThat(res.get(0).getSellingLocation()).isEqualTo(Location.BUSAN.getName()),
             () -> assertThat(res.get(0).getArticleImage()).isNotNull(),
-            () -> assertThat(res.get(0).getViewCount()).isEqualTo(0),
-            () -> assertThat(res.get(0).getFavoriteCount()).isEqualTo(0)
+            () -> assertThat(res.get(0).getFavoriteCount()).isEqualTo(0),
+            () -> assertThat(res.get(0).getChatCount()).isEqualTo(0)
         );
     }
 
@@ -169,12 +173,7 @@ public class ArticleAcceptanceStep {
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .when()
             .get("/api/articles?"
-                + (req.getTitle() != null ? "title=" + req.getTitle() + "&" : "")
-                + (req.getAuthor() != null ? "author=" + req.getAuthor() + "&" : "")
-                + (req.getPublisher() != null ? "publisher=" + req.getPublisher() + "&" : "")
-                + (req.getSellingLocation() != null ? "sellingLocation=" + req.getSellingLocation()
-                + "&" : "")
-                + (req.getArticleStatus() != null ? "articleStatus=" + req.getArticleStatus() + "&" : "")
+                + (req.getSearch() != null ? "search=" + req.getSearch() + "&" : "")
                 + "page=" + page.getPage()
                 + "&size=" + page.getSize())
             .then().log().all()
