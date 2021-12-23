@@ -1,19 +1,19 @@
 package com.bookwhale.article.service;
 
 import com.bookwhale.article.domain.Article;
-import com.bookwhale.article.dto.ArticlesResponse;
-import com.bookwhale.common.exception.CustomException;
-import com.bookwhale.common.exception.ErrorCode;
-import com.bookwhale.common.upload.FileUploader;
-import com.bookwhale.common.dto.Pagination;
-import com.bookwhale.image.domain.Images;
-import com.bookwhale.favorite.domain.FavoriteRepository;
 import com.bookwhale.article.domain.ArticleRepository;
 import com.bookwhale.article.dto.ArticleRequest;
 import com.bookwhale.article.dto.ArticleResponse;
 import com.bookwhale.article.dto.ArticleStatusUpdateRequest;
 import com.bookwhale.article.dto.ArticleUpdateRequest;
 import com.bookwhale.article.dto.ArticlesRequest;
+import com.bookwhale.article.dto.ArticlesResponse;
+import com.bookwhale.common.dto.Pagination;
+import com.bookwhale.common.exception.CustomException;
+import com.bookwhale.common.exception.ErrorCode;
+import com.bookwhale.common.upload.FileUploader;
+import com.bookwhale.favorite.domain.FavoriteRepository;
+import com.bookwhale.image.domain.Images;
 import com.bookwhale.user.domain.User;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +37,11 @@ public class ArticleService {
         Article article = Article.create(user, request.toEntity());
         saveAllImages(article, images);
         return articleRepository.save(article).getId();
+    }
+
+    @Transactional(readOnly = true)
+    public List<ArticlesResponse> findMyArticles(User user) {
+        return ArticlesResponse.listOf(articleRepository.findAllBySeller(user));
     }
 
     public ArticleResponse findArticle(User user, Long articleId) {

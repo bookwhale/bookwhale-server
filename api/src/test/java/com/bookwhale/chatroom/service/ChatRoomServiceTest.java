@@ -5,24 +5,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.bookwhale.article.domain.Article;
+import com.bookwhale.article.domain.ArticleRepository;
 import com.bookwhale.article.domain.ArticleStatus;
+import com.bookwhale.article.domain.Book;
+import com.bookwhale.article.domain.BookStatus;
 import com.bookwhale.chatroom.domain.ChatRoom;
 import com.bookwhale.chatroom.domain.ChatRoomRepository;
 import com.bookwhale.chatroom.dto.ChatRoomCreateRequest;
 import com.bookwhale.chatroom.dto.ChatRoomResponse;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
-import com.bookwhale.common.mail.SmtpMailSender;
 import com.bookwhale.user.domain.User;
-import com.bookwhale.article.domain.Book;
-import com.bookwhale.article.domain.BookStatus;
-import com.bookwhale.article.domain.Article;
-import com.bookwhale.article.domain.ArticleRepository;
 import com.bookwhale.user.domain.UserRepository;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,9 +43,6 @@ public class ChatRoomServiceTest {
     @Mock
     private ArticleRepository articleRepository;
 
-    @Mock
-    private SmtpMailSender smtpMailSender;
-
     ChatRoomService chatRoomService;
 
     User buyer;
@@ -58,8 +53,7 @@ public class ChatRoomServiceTest {
 
     @BeforeEach
     void setUp() {
-        chatRoomService = new ChatRoomService(chatRoomRepository, userRepository, articleRepository,
-            smtpMailSender);
+        chatRoomService = new ChatRoomService(chatRoomRepository, userRepository, articleRepository);
 
         buyer = User.builder()
             .id(1L)
@@ -106,7 +100,6 @@ public class ChatRoomServiceTest {
 
         when(userRepository.findById(any())).thenReturn(of(seller));
         when(articleRepository.findById(any())).thenReturn(of(article));
-        doNothing().when(smtpMailSender).sendChatRoomCreationMail(any(), any(), any());
         when(chatRoomRepository.save(any())).thenReturn(chatRoom);
 
         chatRoomService.createChatRoom(buyer,
@@ -114,7 +107,6 @@ public class ChatRoomServiceTest {
 
         verify(userRepository).findById(any());
         verify(articleRepository).findById(any());
-        verify(smtpMailSender).sendChatRoomCreationMail(any(), any(), any());
         verify(chatRoomRepository).save(any());
     }
 

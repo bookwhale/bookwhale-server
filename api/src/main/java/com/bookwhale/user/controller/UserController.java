@@ -1,6 +1,5 @@
 package com.bookwhale.user.controller;
 
-import com.bookwhale.article.dto.ArticlesResponse;
 import com.bookwhale.security.CurrentUser;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.dto.PasswordUpdateRequest;
@@ -11,7 +10,6 @@ import com.bookwhale.user.dto.UserUpdateRequest;
 import com.bookwhale.user.service.UserService;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -68,11 +66,5 @@ public class UserController {
     public ResponseEntity<Void> deleteProfileImage(@CurrentUser User user) {
         userService.deleteProfileImage(user);
         return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("/me/article")
-    public ResponseEntity<List<ArticlesResponse>> findMyArticles(@CurrentUser User user) {
-        List<ArticlesResponse> response = userService.findMyArticle(user);
-        return ResponseEntity.ok(response);
     }
 }

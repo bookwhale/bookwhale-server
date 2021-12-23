@@ -3,18 +3,18 @@ package com.bookwhale.article.acceptance.step;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.bookwhale.article.dto.ArticleRequest;
-import com.bookwhale.common.domain.Location;
-import com.bookwhale.common.dto.Pagination;
-import com.bookwhale.article.domain.BookStatus;
 import com.bookwhale.article.domain.ArticleStatus;
-import com.bookwhale.article.dto.BookResponse;
-import com.bookwhale.article.dto.NaverBookRequest;
+import com.bookwhale.article.domain.BookStatus;
+import com.bookwhale.article.dto.ArticleRequest;
 import com.bookwhale.article.dto.ArticleResponse;
 import com.bookwhale.article.dto.ArticleStatusUpdateRequest;
 import com.bookwhale.article.dto.ArticleUpdateRequest;
 import com.bookwhale.article.dto.ArticlesRequest;
 import com.bookwhale.article.dto.ArticlesResponse;
+import com.bookwhale.article.dto.BookResponse;
+import com.bookwhale.article.dto.NaverBookRequest;
+import com.bookwhale.common.domain.Location;
+import com.bookwhale.common.dto.Pagination;
 import com.bookwhale.user.domain.User;
 import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.response.ExtractableResponse;
@@ -28,6 +28,17 @@ import org.springframework.http.MediaType;
 import org.springframework.util.MimeTypeUtils;
 
 public class ArticleAcceptanceStep {
+
+    public static void assertThatFindMyArticles(List<ArticlesResponse> res, ArticleRequest req) {
+        Assertions.assertAll(
+            () -> assertThat(res.size()).isEqualTo(1),
+            () -> assertThat(res.get(0).getArticleTitle()).isEqualTo(req.getTitle()),
+            () -> assertThat(res.get(0).getArticlePrice()).isEqualTo(req.getPrice()),
+            () -> assertThat(res.get(0).getArticleStatus()).isEqualTo(ArticleStatus.SALE.getName()),
+            () -> assertThat(res.get(0).getArticleImage()).isNotNull(),
+            () -> assertThat(res.get(0).getBeforeTime()).isNotNull()
+        );
+    }
 
     public static void assertThatFindArticle(ArticleResponse res, ArticleRequest req, User seller,
         boolean isMyArticle, boolean isMyFavorite) {
@@ -133,6 +144,15 @@ public class ArticleAcceptanceStep {
             .extract();
     }
 
+    public static ExtractableResponse<Response> requestToFindMyArticles(String jwt) {
+        return given().log().all()
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .when()
+            .get("/api/articles/me")
+            .then().log().all()
+            .extract();
+    }
+
     public static ExtractableResponse<Response> requestToFindArticle(String jwt, Long articleId) {
         return given().log().all()
             .header(HttpHeaders.AUTHORIZATION, jwt)
@@ -148,7 +168,7 @@ public class ArticleAcceptanceStep {
         return given().log().all()
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .when()
-            .get("/api/article?"
+            .get("/api/articles?"
                 + (req.getTitle() != null ? "title=" + req.getTitle() + "&" : "")
                 + (req.getAuthor() != null ? "author=" + req.getAuthor() + "&" : "")
                 + (req.getPublisher() != null ? "publisher=" + req.getPublisher() + "&" : "")
@@ -168,7 +188,7 @@ public class ArticleAcceptanceStep {
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .body(req)
             .when()
-            .get("/api/article/naverBookAPI?"
+            .get("/api/article/naver-book?"
                 + (req.getTitle() == null ? "" : "title=" + req.getTitle())
                 + (req.getIsbn() == null ? "" : "isbn=" + req.getIsbn())
                 + (req.getAuthor() == null ? "" : "author=" + req.getAuthor())
@@ -205,7 +225,7 @@ public class ArticleAcceptanceStep {
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .body(request)
             .when()
-            .patch("/api/article/articleStatus/{articleId}", articleId)
+            .patch("/api/article/{articleId}/status", articleId)
             .then().log().all()
             .extract();
     }

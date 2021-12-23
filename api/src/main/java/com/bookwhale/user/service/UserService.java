@@ -3,15 +3,12 @@ package com.bookwhale.user.service;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.common.upload.FileUploader;
-import com.bookwhale.article.domain.ArticleRepository;
-import com.bookwhale.article.dto.ArticlesResponse;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.domain.UserRepository;
 import com.bookwhale.user.dto.PasswordUpdateRequest;
 import com.bookwhale.user.dto.ProfileResponse;
 import com.bookwhale.user.dto.SignUpRequest;
 import com.bookwhale.user.dto.UserUpdateRequest;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,8 +25,6 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     private final FileUploader fileUploader;
-
-    private final ArticleRepository articleRepository;
 
     public void createUser(SignUpRequest request) {
         validateIsDuplicateIdentity(request);
@@ -84,10 +79,5 @@ public class UserService {
         if (!passwordEncoder.matches(password, encodedPassword)) {
             throw new CustomException(ErrorCode.INVALID_USER_PASSWORD);
         }
-    }
-
-    @Transactional(readOnly = true)
-    public List<ArticlesResponse> findMyArticle(User user) {
-        return ArticlesResponse.listOf(articleRepository.findAllBySeller(user));
     }
 }
