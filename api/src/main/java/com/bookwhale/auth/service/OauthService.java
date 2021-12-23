@@ -50,7 +50,7 @@ public class OauthService {
     }
 
     public OAuthLoginResponse loginProcess(OAuthProviderType providerType, String accessCode) {
-        String result = null;
+        OAuthLoginResponse result = null;
         if (providerType.equals(OAuthProviderType.GOOGLE)) {
             // step 1 : accessToken 요청
             GoogleOAuthProvider oAuthProvider = (GoogleOAuthProvider) oAuthProviders.get(
@@ -84,7 +84,7 @@ public class OauthService {
             );
 
             String newToken = apiToken.createNewToken(userClaim);
-            new OAuthLoginResponse(newToken);
+            result = new OAuthLoginResponse(newToken);
 
 
         } else if (providerType.equals(OAuthProviderType.NAVER)) {
@@ -92,7 +92,8 @@ public class OauthService {
                 "NaverOAuthProvider");
             oAuthProvider.requestAccessToken(accessCode);
         }
-        return new OAuthLoginResponse(result);
+
+        return result;
     }
 
 
