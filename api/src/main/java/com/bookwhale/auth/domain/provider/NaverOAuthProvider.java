@@ -1,5 +1,7 @@
 package com.bookwhale.auth.domain.provider;
 
+import com.bookwhale.auth.domain.token.GoogleOAuthToken;
+import com.bookwhale.auth.domain.token.NaverOAuthToken;
 import com.google.common.hash.Hashing;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -35,6 +37,8 @@ public class NaverOAuthProvider implements OAuthProvider {
     @Value("${external-api.auth.naver.access-token-url}")
     private String accessTokenRequestURL;
 
+    private final RestTemplate restTemplate = new RestTemplate();
+
     @Override
     public String getOAuthRedirectURL() {
         Map<String, Object> params = new HashMap<>();
@@ -68,6 +72,18 @@ public class NaverOAuthProvider implements OAuthProvider {
 
         return restTemplate.exchange(accessTokenRequestURL, HttpMethod.POST, requestEntity,
             String.class);
+    }
+
+    public ResponseEntity<String> getUserInfoFromProvider(NaverOAuthToken oAuthToken) {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + oAuthToken.getAccessToken());
+
+        HttpEntity<Map<String, String>> request = new HttpEntity(headers);
+
+        String url = "https://openapi.naver.com/v1/nid/me";
+
+        return restTemplate.exchange(url, HttpMethod.GET, request, String.class);
     }
 
 
