@@ -56,6 +56,7 @@ public class ArticleRepositoryTest {
             .title("토비의 스프링 팝니다.")
             .book(tobySpring)
             .sellingLocation(Location.SEOUL)
+            .articleStatus(ArticleStatus.SALE)
             .build();
 
         hrSpringArticle = Article.builder()
@@ -69,7 +70,7 @@ public class ArticleRepositoryTest {
             .title("이펙티브 자바 팝니다.")
             .book(effectiveJava)
             .sellingLocation(Location.SEOUL)
-            .articleStatus(ArticleStatus.SOLD_OUT)
+            .articleStatus(ArticleStatus.SALE)
             .build();
 
         articleRepository.saveAll(of(tobySpringArticle, hrSpringArticle, effectiveJavaArticle));
@@ -79,9 +80,7 @@ public class ArticleRepositoryTest {
     @Test
     void findAllOrderByCreatedDateDesc_bookTitle() {
         PageRequest pageRequest = PageRequest.of(0, 10);
-        List<Article> res = articleRepository.findAllOrderByCreatedDateDesc("스프링", null, null, null, null,
-                pageRequest)
-            .getContent();
+        List<Article> res = articleRepository.findAllBySearch("스프링", pageRequest);
 
         Assertions.assertAll(
             () -> assertThat(res.size()).isEqualTo(2),
@@ -96,9 +95,7 @@ public class ArticleRepositoryTest {
     @Test
     void findAllOrderByCreatedDateDesc_bookAuthor() {
         PageRequest pageRequest = PageRequest.of(0, 10);
-        List<Article> res = articleRepository.findAllOrderByCreatedDateDesc(null, "남상우", null, null, null,
-                pageRequest)
-            .getContent();
+        List<Article> res = articleRepository.findAllBySearch("남상우", pageRequest);
 
         Assertions.assertAll(
             () -> assertThat(res.size()).isEqualTo(2),
@@ -109,6 +106,7 @@ public class ArticleRepositoryTest {
         );
     }
 
+    /*
     @DisplayName("책 출판사에 허브가 포함된 게시글들을 오름차순으로 찾는다.")
     @Test
     void findAllOrderByCreatedDateDesc_bookPublisher() {
@@ -183,14 +181,13 @@ public class ArticleRepositoryTest {
                 effectiveJavaArticle.getArticleStatus())
         );
     }
+    */
 
     @DisplayName("페이징이 옳바르게 작동하는지 확인한다.")
     @Test
     void findAllOrderByCreatedDateDesc_paging() {
         PageRequest pageRequest = PageRequest.of(0, 2);
-        List<Article> res = articleRepository.findAllOrderByCreatedDateDesc(null, "남상우", null, null, null,
-                pageRequest)
-            .getContent();
+        List<Article> res = articleRepository.findAllBySearch("남상우", pageRequest);
 
         Assertions.assertAll(
             () -> assertThat(res.size()).isEqualTo(2),
