@@ -69,7 +69,7 @@ public class ArticleController {
     }
 
     @GetMapping("/articles")
-    public ResponseEntity<List<ArticlesResponse>> findArticles(ArticlesRequest articlesRequest,
+    public ResponseEntity<List<ArticlesResponse>> findArticles(@Valid @ModelAttribute ArticlesRequest articlesRequest,
         @Valid Pagination pagination) {
         return ResponseEntity.ok(articleService.findArticles(articlesRequest, pagination));
     }
