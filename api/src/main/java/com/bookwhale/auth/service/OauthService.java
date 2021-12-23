@@ -1,5 +1,8 @@
 package com.bookwhale.auth.service;
 
+import com.bookwhale.auth.domain.OAuthObjectConverter;
+import com.bookwhale.auth.domain.info.UserInfo;
+import com.bookwhale.auth.domain.info.UserInfoFromGoogle;
 import com.bookwhale.auth.domain.provider.GoogleOAuthProvider;
 import com.bookwhale.auth.domain.provider.NaverOAuthProvider;
 import com.bookwhale.auth.domain.provider.OAuthProvider;
@@ -53,6 +56,7 @@ public class OauthService {
     public OAuthLoginResponse loginProcess(OAuthProviderType providerType, String accessCode) {
         String result = null;
         if (providerType.equals(OAuthProviderType.GOOGLE)) {
+            // step 1 : accessToken 요청
             GoogleOAuthProvider oAuthProvider = (GoogleOAuthProvider) oAuthProviders.get(
                 "GoogleOAuthProvider");
             ResponseEntity<String> accessTokenResponse = oAuthProvider.requestAccessToken(
@@ -62,16 +66,21 @@ public class OauthService {
                 throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
             }
 
-            GoogleOAuthToken accessToken = (GoogleOAuthToken) getTokenFromResponse(
+            GoogleOAuthToken accessToken = (GoogleOAuthToken) OAuthObjectConverter.getTokenFromResponse(
                 accessTokenResponse, providerType);
+
+            // step 2 : 로그인된 사용자의 정보 요청
             ResponseEntity<String> userInfoResponse = oAuthProvider.getUserInfoFromProvider(
                 accessToken);
 
             if (!userInfoResponse.getStatusCode().equals(HttpStatus.OK)) {
-                throw new CustomException(ErrorCode.INFORMATION_NOT_FOUND);
+                throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
             }
 
-            log.info("조회결과 확인 : {}", userInfoResponse);
+            UserInfoFromGoogle userInfo = (UserInfoFromGoogle) OAuthObjectConverter.getUserInfoFromProvider(
+                userInfoResponse, providerType);
+
+            // step 3 : 확인된 사용자 정보를 바탕으로 JWT 생성
 
         } else if (providerType.equals(OAuthProviderType.NAVER)) {
             NaverOAuthProvider oAuthProvider = (NaverOAuthProvider) oAuthProviders.get(
@@ -81,23 +90,6 @@ public class OauthService {
         return new OAuthLoginResponse(result);
     }
 
-    private OAuthToken getTokenFromResponse(ResponseEntity<String> response,
-        OAuthProviderType providerType) {
-        OAuthToken oAuthToken = null;
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            if (providerType.equals(OAuthProviderType.GOOGLE)) {
-                String body = response.getBody().replaceAll("\\R", "");
-                oAuthToken = objectMapper.readValue(body, GoogleOAuthToken.class);
-            } else if (providerType.equals(OAuthProviderType.NAVER)) {
-                // TODO naver token 변환 추가
-            }
-        } catch (JsonProcessingException e) {
-            log.debug("token converting failed.", e);
-            throw new CustomException(ErrorCode.INVALID_ACCESS_TOKEN);
-        }
 
-        return oAuthToken;
-    }
 
 }
