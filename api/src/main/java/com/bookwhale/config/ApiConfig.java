@@ -33,11 +33,13 @@ public class ApiConfig {
     String issuer;
     @Value("${jwt.token.clientSecret}")
     String clientSecret;
-    @Value("${jwt.token.expiryMilliSecond}")
-    int expiryMilliSecond;
+    @Value("${jwt.token.expirySecond}")
+    int expirySecond;
+    @Value("${jwt.token.expiryRefreshSecond}")
+    int expiryRefreshSecond;
 
     @Bean
     public JWT jwt() {
-        return new JWT(issuer, clientSecret, expiryMilliSecond);
+        return new JWT(issuer, clientSecret, expirySecond, expiryRefreshSecond);
     }
 }

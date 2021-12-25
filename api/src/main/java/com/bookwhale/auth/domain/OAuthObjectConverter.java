@@ -10,11 +10,11 @@ import com.bookwhale.auth.domain.provider.OAuthProviderType;
 import com.bookwhale.auth.domain.token.GoogleOAuthToken;
 import com.bookwhale.auth.domain.token.NaverOAuthToken;
 import com.bookwhale.auth.domain.token.OAuthToken;
-import com.bookwhale.auth.dto.OAuthLoginResponse;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.common.token.JWT;
 import com.bookwhale.common.token.JWT.Claims;
+import com.bookwhale.common.token.JWT.ClaimsForRefresh;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.LinkedHashMap;
@@ -30,11 +30,11 @@ public class OAuthObjectConverter {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public static Optional<OAuthLoginResponse> getOAuthLoginResponse(
+    public static Optional<UserInfo> getOAuthLoginResponse(
         Map<String, OAuthProvider> oAuthProviders,
         OAuthProviderType providerType,
         String accessCode, JWT apiToken) {
-        OAuthLoginResponse result = null;
+        UserInfo result = null;
         if (providerType.equals(OAuthProviderType.GOOGLE)) {
             // step 1 : accessToken 요청
             GoogleOAuthProvider oAuthProvider = (GoogleOAuthProvider) oAuthProviders.get(
@@ -57,20 +57,11 @@ public class OAuthObjectConverter {
                 throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
             }
 
-            UserInfoFromGoogle userInfo = (UserInfoFromGoogle) OAuthObjectConverter.getUserInfoFromProvider(
+            result = OAuthObjectConverter.getUserInfoFromProvider(
                 userInfoResponse, providerType);
 
-            // step 3 : 확인된 사용자 정보를 바탕으로 JWT 생성
-            Claims userClaim = Claims.of(
-                userInfo.getName(),
-                userInfo.getEmail(),
-                userInfo.getPicture()
-            );
-
-            String newToken = apiToken.createNewToken(userClaim);
-            result = new OAuthLoginResponse(newToken);
-
         } else if (providerType.equals(OAuthProviderType.NAVER)) {
+            // step 1 : accessToken 요청
             NaverOAuthProvider oAuthProvider = (NaverOAuthProvider) oAuthProviders.get(
                 "NaverOAuthProvider");
             ResponseEntity<String> accessTokenResponse = oAuthProvider.requestAccessToken(
@@ -91,19 +82,10 @@ public class OAuthObjectConverter {
                 throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
             }
 
-            UserInfoFromNaver userInfo = (UserInfoFromNaver) OAuthObjectConverter.getUserInfoFromProvider(
+            result = OAuthObjectConverter.getUserInfoFromProvider(
                 userInfoResponse, providerType);
-
-            // step 3 : 확인된 사용자 정보를 바탕으로 JWT 생성
-            Claims userClaim = Claims.of(
-                userInfo.getName(),
-                userInfo.getEmail(),
-                userInfo.getPicture()
-            );
-
-            String newToken = apiToken.createNewToken(userClaim);
-            result = new OAuthLoginResponse(newToken);
         }
+
         return Optional.ofNullable(result);
     }
 
@@ -158,5 +140,21 @@ public class OAuthObjectConverter {
         }
 
         return userInfo;
+    }
+
+    // 확인된 사용자 정보를 바탕으로 API Token을 JWT로 생성
+    public static String createApiToken(JWT apiToken, UserInfo userInfo) {
+        Claims userClaim = Claims.of(
+            userInfo.getName(),
+            userInfo.getEmail(),
+            userInfo.getPicture()
+        );
+
+        return apiToken.createNewToken(userClaim);
+    }
+
+    // 생성된 랜덤 문자열로 Refresh Token을 JWT로 생성
+    public static String createRefreshToken(JWT apiToken, String rid) {
+        return apiToken.createNewRefreshToken(ClaimsForRefresh.of(rid));
     }
 }

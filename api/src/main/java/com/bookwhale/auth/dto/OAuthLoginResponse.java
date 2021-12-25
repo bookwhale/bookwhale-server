@@ -11,9 +11,12 @@ import org.apache.commons.lang3.StringUtils;
 public class OAuthLoginResponse {
 
     private final String apiToken;
+    private final String refreshToken;
 
-    public OAuthLoginResponse(String apiToken) {
-        checkArgument(StringUtils.isNotEmpty(apiToken), ErrorCode.INVALID_TOKEN.getMessage());
+    public OAuthLoginResponse(String apiToken, String refreshToken) {
+        checkArgument(StringUtils.isNotEmpty(apiToken) || StringUtils.isNotEmpty(refreshToken),
+            ErrorCode.INVALID_TOKEN.getMessage());
         this.apiToken = apiToken;
+        this.refreshToken = refreshToken;
     }
 }

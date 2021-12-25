@@ -27,14 +27,16 @@ public final class JWT {
 
     private final String issuer;
     private final String clientSecret;
-    private final long expirySeconds;
+    private final long expiryMilliSeconds;
+    private final long expiryRefreshMilliSeconds;
     private final Algorithm algorithm;
     private final JWTVerifier jwtVerifier;
 
-    public JWT(String issuer, String clientSecret, int expiryMilliSecond) {
+    public JWT(String issuer, String clientSecret, int expirySecond, int expiryRefreshSecond) {
         this.issuer = issuer;
         this.clientSecret = clientSecret;
-        this.expirySeconds = expiryMilliSecond * 1_000L;
+        this.expiryMilliSeconds = expirySecond * 1_000L;
+        this.expiryRefreshMilliSeconds = expiryRefreshSecond * 1_000L;
         this.algorithm = Algorithm.HMAC512(clientSecret);
         this.jwtVerifier = com.auth0.jwt.JWT.require(algorithm).withIssuer(issuer).build();
     }
@@ -48,12 +50,32 @@ public final class JWT {
         tokenBuilder.withIssuer(issuer);
         tokenBuilder.withIssuedAt(current);
 
-        if (expirySeconds > 0) {
-            tokenBuilder.withExpiresAt(new Date(instant.toEpochMilli() + expirySeconds));
+        if (expiryMilliSeconds > 0) {
+            tokenBuilder.withExpiresAt(new Date(instant.toEpochMilli() + expiryMilliSeconds));
         }
+
         tokenBuilder.withClaim("name", claims.name);
         tokenBuilder.withClaim("email", claims.email);
         tokenBuilder.withClaim("image", claims.image);
+
+        return tokenBuilder.sign(algorithm);
+    }
+
+    public String createNewRefreshToken(ClaimsForRefresh claims) {
+        LocalDateTime now = LocalDateTime.now();
+        Instant instant = now.atZone(ZoneId.systemDefault()).toInstant();
+        Date current = Date.from(instant);
+
+        JWTCreator.Builder tokenBuilder = com.auth0.jwt.JWT.create();
+        tokenBuilder.withIssuer(issuer);
+        tokenBuilder.withIssuedAt(current);
+
+        if (expiryRefreshMilliSeconds > 0) {
+            tokenBuilder.withExpiresAt(
+                new Date(instant.toEpochMilli() + expiryRefreshMilliSeconds));
+        }
+
+        tokenBuilder.withClaim("rid", claims.rid);
 
         return tokenBuilder.sign(algorithm);
     }
@@ -67,7 +89,7 @@ public final class JWT {
 
     public Claims verify(String token) {
         DecodedJWT verify = null;
-        try{
+        try {
             verify = jwtVerifier.verify(token);
         } catch (AlgorithmMismatchException e) {
             log.error("not defined algorithm used.", e);
@@ -155,6 +177,43 @@ public final class JWT {
 
         void removeExpiresAt() {
             expiresAt = null;
+        }
+    }
+
+    public static class ClaimsForRefresh {
+
+        String rid;
+        LocalDateTime issuedAt;
+        LocalDateTime expiresAt;
+
+        protected ClaimsForRefresh() {
+        }
+
+        ClaimsForRefresh(DecodedJWT decodedJWT) {
+            Claim rid = decodedJWT.getClaim("rid");
+            if (!rid.isNull()) {
+                this.rid = rid.asString();
+            }
+            this.issuedAt = LocalDateTime.ofInstant(decodedJWT.getIssuedAt().toInstant(),
+                ZoneId.systemDefault());
+            this.expiresAt = LocalDateTime.ofInstant(decodedJWT.getExpiresAt().toInstant(),
+                ZoneId.systemDefault());
+        }
+
+        public static ClaimsForRefresh of(String rid) {
+            ClaimsForRefresh claims = new ClaimsForRefresh();
+            claims.rid = rid;
+            return claims;
+        }
+
+        public long getIssuedAt() {
+            return issuedAt == null ? -1 :
+                issuedAt.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        }
+
+        public long getExpiresAt() {
+            return expiresAt == null ? -1 :
+                expiresAt.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         }
     }
 }
