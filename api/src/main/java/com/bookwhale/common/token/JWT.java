@@ -63,7 +63,7 @@ public final class JWT {
         return new Claims(jwtVerifier.verify(token));
     }
 
-    static public class Claims {
+    public static class Claims {
 
         String name;
         String email;
@@ -99,6 +99,18 @@ public final class JWT {
             claims.email = email;
             claims.image = image;
             return claims;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public String getImage() {
+            return image;
         }
 
         public long getIssuedAt() {

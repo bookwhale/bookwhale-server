@@ -1,6 +1,11 @@
 package com.bookwhale.config;
 
+import com.bookwhale.auth.domain.CurrentUser;
+import com.bookwhale.auth.dto.OAuthTokenExtractor;
 import com.bookwhale.auth.service.OauthService;
+import com.bookwhale.common.exception.CustomException;
+import com.bookwhale.common.exception.ErrorCode;
+import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -15,12 +20,17 @@ public class CurrentUserArgumentResolver implements HandlerMethodArgumentResolve
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return false;
+        return parameter.hasParameterAnnotation(CurrentUser.class);
     }
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
         NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        return null;
+        HttpServletRequest httpServletRequest = webRequest.getNativeRequest(HttpServletRequest.class);
+        if (httpServletRequest == null) {
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
+        String apiToken = OAuthTokenExtractor.extract(httpServletRequest);
+        return oauthService.getUserFromApiToken(apiToken);
     }
 }

@@ -1,5 +1,6 @@
 package com.bookwhale.auth.service;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.bookwhale.auth.domain.OAuthObjectConverter;
 import com.bookwhale.auth.domain.info.UserInfoFromGoogle;
 import com.bookwhale.auth.domain.info.UserInfoFromNaver;
@@ -14,6 +15,7 @@ import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.common.token.JWT;
 import com.bookwhale.common.token.JWT.Claims;
+import com.bookwhale.user.domain.ApiUser;
 import java.io.IOException;
 import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
@@ -92,7 +94,8 @@ public class OauthService {
         } else if (providerType.equals(OAuthProviderType.NAVER)) {
             NaverOAuthProvider oAuthProvider = (NaverOAuthProvider) oAuthProviders.get(
                 "NaverOAuthProvider");
-            ResponseEntity<String> accessTokenResponse = oAuthProvider.requestAccessToken(accessCode);
+            ResponseEntity<String> accessTokenResponse = oAuthProvider.requestAccessToken(
+                accessCode);
 
             if (!accessTokenResponse.getStatusCode().equals(HttpStatus.OK)) {
                 throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
@@ -124,6 +127,22 @@ public class OauthService {
         }
 
         return result;
+    }
+
+    public ApiUser getUserFromApiToken(String token) {
+        Claims userClaim;
+        try {
+            userClaim = apiToken.verify(token);
+        } catch (JWTVerificationException e) {
+            log.error("token verify failed.", e);
+            throw new CustomException(ErrorCode.INVALID_TOKEN);
+        }
+
+        return ApiUser.builder()
+            .name(userClaim.getName())
+            .image(userClaim.getImage())
+            .email(userClaim.getEmail())
+            .build();
     }
 
 
