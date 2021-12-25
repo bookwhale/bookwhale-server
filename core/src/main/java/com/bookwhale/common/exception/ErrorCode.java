@@ -31,7 +31,7 @@ public enum ErrorCode {
     INVALID_CHATROOM_ID(400, "CHAT_001", "잘못된 채팅방 ID 입니다."),
     INVALID_SELLER_ID(400, "CHAT_002", "잘못된 판매자 ID 입니다."),
 
-    INVALID_ACCESS_TOKEN(400, "T_001", "유효하지 않은 토큰 입니다."),
+    INVALID_TOKEN(400, "T_001", "유효하지 않은 토큰 입니다."),
     UNAUTHORIZED_ACCESS(401, "T_002", "OAuth 로그인 인증에 실패하였습니다."),
     INFORMATION_NOT_FOUND(404, "T_003", "OAuth 요청으로 요청한 정보를 불러오지 못했습니다.");
 

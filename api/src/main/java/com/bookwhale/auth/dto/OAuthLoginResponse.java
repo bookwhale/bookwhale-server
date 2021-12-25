@@ -13,7 +13,7 @@ public class OAuthLoginResponse {
     private final String apiToken;
 
     public OAuthLoginResponse(String apiToken) {
-        checkArgument(StringUtils.isNotEmpty(apiToken), ErrorCode.INVALID_ACCESS_TOKEN.getMessage());
+        checkArgument(StringUtils.isNotEmpty(apiToken), ErrorCode.INVALID_TOKEN.getMessage());
         this.apiToken = apiToken;
     }
 }

@@ -38,7 +38,7 @@ public class OAuthObjectConverter {
             }
         } catch (JsonProcessingException e) {
             log.debug("token converting failed.", e);
-            throw new CustomException(ErrorCode.INVALID_ACCESS_TOKEN);
+            throw new CustomException(ErrorCode.INVALID_TOKEN);
         }
 
         return oAuthToken;
@@ -66,7 +66,7 @@ public class OAuthObjectConverter {
             }
         } catch (JsonProcessingException e) {
             log.debug("token converting failed.", e);
-            throw new CustomException(ErrorCode.INVALID_ACCESS_TOKEN);
+            throw new CustomException(ErrorCode.INVALID_TOKEN);
         } catch (Exception e) {
             log.debug("unexpected exception occurred.", e);
             throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);

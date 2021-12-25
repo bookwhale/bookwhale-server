@@ -13,7 +13,7 @@ public class OAuthTokenExtractor {
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             result = bearerToken.substring(7);
         } else {
-            throw new CustomException(ErrorCode.INVALID_ACCESS_TOKEN);
+            throw new CustomException(ErrorCode.INVALID_TOKEN);
         }
         return result;
     }
