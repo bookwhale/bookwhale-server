@@ -1,6 +1,5 @@
 package com.bookwhale.auth.service;
 
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.bookwhale.auth.domain.OAuthObjectConverter;
 import com.bookwhale.auth.domain.info.UserInfoFromGoogle;
 import com.bookwhale.auth.domain.info.UserInfoFromNaver;
@@ -130,13 +129,7 @@ public class OauthService {
     }
 
     public ApiUser getUserFromApiToken(String token) {
-        Claims userClaim;
-        try {
-            userClaim = apiToken.verify(token);
-        } catch (JWTVerificationException e) {
-            log.error("token verify failed.", e);
-            throw new CustomException(ErrorCode.INVALID_TOKEN);
-        }
+        Claims userClaim = apiToken.verify(token);
 
         return ApiUser.builder()
             .name(userClaim.getName())

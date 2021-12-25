@@ -3,9 +3,15 @@ package com.bookwhale.common.token;
 import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.AlgorithmMismatchException;
+import com.auth0.jwt.exceptions.InvalidClaimException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.bookwhale.common.exception.CustomException;
+import com.bookwhale.common.exception.ErrorCode;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -59,8 +65,28 @@ public final class JWT {
         return createNewToken(claims);
     }
 
-    public Claims verify(String token) throws JWTVerificationException {
-        return new Claims(jwtVerifier.verify(token));
+    public Claims verify(String token) {
+        DecodedJWT verify = null;
+        try{
+            verify = jwtVerifier.verify(token);
+        } catch (AlgorithmMismatchException e) {
+            log.error("not defined algorithm used.", e);
+            throw new CustomException(ErrorCode.FORBIDDEN);
+        } catch (SignatureVerificationException e) {
+            log.error("invalid signature.", e);
+            throw new CustomException(ErrorCode.FORBIDDEN);
+        } catch (TokenExpiredException e) {
+            log.error("token has expired.", e);
+            throw new CustomException(ErrorCode.FORBIDDEN);
+        } catch (InvalidClaimException e) {
+            log.error("not expected claim contained.", e);
+            throw new CustomException(ErrorCode.FORBIDDEN);
+        } catch (JWTVerificationException e) {
+            log.error("token verify failed.", e);
+            throw new CustomException(ErrorCode.FORBIDDEN);
+        }
+
+        return new Claims(verify);
     }
 
     public static class Claims {
