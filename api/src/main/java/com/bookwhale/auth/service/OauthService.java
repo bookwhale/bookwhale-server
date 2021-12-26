@@ -93,7 +93,8 @@ public class OauthService {
         String rid = refreshClaim.getRid();
         String email = refreshClaim.getEmail();
 
-        Token userRid = tokenRepository.findTokenByEmail(email);
+        Token userRid = tokenRepository.findTokenByEmail(email)
+            .orElseThrow(() -> new CustomException(ErrorCode.FORBIDDEN));
 
         if (!rid.equals(userRid.getTokenValue())) {
             throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
