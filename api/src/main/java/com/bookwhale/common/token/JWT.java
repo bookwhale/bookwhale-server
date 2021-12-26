@@ -76,12 +76,14 @@ public final class JWT {
         }
 
         tokenBuilder.withClaim("rid", claims.rid);
+        tokenBuilder.withClaim("email", claims.email);
 
         return tokenBuilder.sign(algorithm);
     }
 
-    public String refreshToken(String token) throws JWTVerificationException {
-        Claims claims = verify(token);
+    public String refreshApiToken(String token) throws JWTVerificationException {
+        DecodedJWT decodedJWT = com.auth0.jwt.JWT.decode(token);
+        Claims claims = new Claims(decodedJWT);
         claims.removeIssuedAt();
         claims.removeExpiresAt();
         return createNewToken(claims);
@@ -109,6 +111,30 @@ public final class JWT {
         }
 
         return new Claims(verify);
+    }
+
+    public ClaimsForRefresh verifyForRefresh(String token) {
+        DecodedJWT verify = null;
+        try {
+            verify = jwtVerifier.verify(token);
+        } catch (AlgorithmMismatchException e) {
+            log.error("not defined algorithm used.", e);
+            throw new CustomException(ErrorCode.FORBIDDEN);
+        } catch (SignatureVerificationException e) {
+            log.error("invalid signature.", e);
+            throw new CustomException(ErrorCode.FORBIDDEN);
+        } catch (TokenExpiredException e) {
+            log.error("token has expired.", e);
+            throw new CustomException(ErrorCode.FORBIDDEN);
+        } catch (InvalidClaimException e) {
+            log.error("not expected claim contained.", e);
+            throw new CustomException(ErrorCode.FORBIDDEN);
+        } catch (JWTVerificationException e) {
+            log.error("token verify failed.", e);
+            throw new CustomException(ErrorCode.FORBIDDEN);
+        }
+
+        return new ClaimsForRefresh(verify);
     }
 
     public static class Claims {
@@ -162,13 +188,13 @@ public final class JWT {
         }
 
         public long getIssuedAt() {
-            return issuedAt == null ? -1 :
-                issuedAt.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+            return issuedAt == null ? -1
+                : issuedAt.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         }
 
         public long getExpiresAt() {
-            return expiresAt == null ? -1 :
-                expiresAt.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+            return expiresAt == null ? -1
+                : expiresAt.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         }
 
         void removeIssuedAt() {
@@ -183,6 +209,7 @@ public final class JWT {
     public static class ClaimsForRefresh {
 
         String rid;
+        String email;
         LocalDateTime issuedAt;
         LocalDateTime expiresAt;
 
@@ -194,26 +221,39 @@ public final class JWT {
             if (!rid.isNull()) {
                 this.rid = rid.asString();
             }
+            Claim email = decodedJWT.getClaim("email");
+            if (!email.isNull()) {
+                this.email = email.asString();
+            }
             this.issuedAt = LocalDateTime.ofInstant(decodedJWT.getIssuedAt().toInstant(),
                 ZoneId.systemDefault());
             this.expiresAt = LocalDateTime.ofInstant(decodedJWT.getExpiresAt().toInstant(),
                 ZoneId.systemDefault());
         }
 
-        public static ClaimsForRefresh of(String rid) {
+        public static ClaimsForRefresh of(String rid, String email) {
             ClaimsForRefresh claims = new ClaimsForRefresh();
             claims.rid = rid;
+            claims.email = email;
             return claims;
         }
 
+        public String getRid() {
+            return rid;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
         public long getIssuedAt() {
-            return issuedAt == null ? -1 :
-                issuedAt.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+            return issuedAt == null ? -1
+                : issuedAt.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         }
 
         public long getExpiresAt() {
-            return expiresAt == null ? -1 :
-                expiresAt.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+            return expiresAt == null ? -1
+                : expiresAt.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         }
     }
 }

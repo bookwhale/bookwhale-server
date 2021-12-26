@@ -31,9 +31,8 @@ public class OAuthObjectConverter {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public static Optional<UserInfo> getOAuthLoginResponse(
-        Map<String, OAuthProvider> oAuthProviders,
-        OAuthProviderType providerType,
-        String accessCode, JWT apiToken) {
+        Map<String, OAuthProvider> oAuthProviders, OAuthProviderType providerType,
+        String accessCode) {
         UserInfo result = null;
         if (providerType.equals(OAuthProviderType.GOOGLE)) {
             // step 1 : accessToken 요청
@@ -57,8 +56,7 @@ public class OAuthObjectConverter {
                 throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
             }
 
-            result = OAuthObjectConverter.getUserInfoFromProvider(
-                userInfoResponse, providerType);
+            result = OAuthObjectConverter.getUserInfoFromProvider(userInfoResponse, providerType);
 
         } else if (providerType.equals(OAuthProviderType.NAVER)) {
             // step 1 : accessToken 요청
@@ -82,8 +80,7 @@ public class OAuthObjectConverter {
                 throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
             }
 
-            result = OAuthObjectConverter.getUserInfoFromProvider(
-                userInfoResponse, providerType);
+            result = OAuthObjectConverter.getUserInfoFromProvider(userInfoResponse, providerType);
         }
 
         return Optional.ofNullable(result);
@@ -144,17 +141,14 @@ public class OAuthObjectConverter {
 
     // 확인된 사용자 정보를 바탕으로 API Token을 JWT로 생성
     public static String createApiToken(JWT apiToken, UserInfo userInfo) {
-        Claims userClaim = Claims.of(
-            userInfo.getName(),
-            userInfo.getEmail(),
-            userInfo.getPicture()
-        );
+        Claims userClaim = Claims.of(userInfo.getName(), userInfo.getEmail(),
+            userInfo.getPicture());
 
         return apiToken.createNewToken(userClaim);
     }
 
     // 생성된 랜덤 문자열로 Refresh Token을 JWT로 생성
-    public static String createRefreshToken(JWT apiToken, String rid) {
-        return apiToken.createNewRefreshToken(ClaimsForRefresh.of(rid));
+    public static String createRefreshToken(JWT apiToken, String rid, String email) {
+        return apiToken.createNewRefreshToken(ClaimsForRefresh.of(rid, email));
     }
 }
