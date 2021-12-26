@@ -11,24 +11,24 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.bookwhale.article.domain.ArticleStatus;
-import com.bookwhale.article.dto.ArticleRequest;
-import com.bookwhale.article.dto.ArticlesResponse;
-import com.bookwhale.common.controller.CommonApiTest;
-import com.bookwhale.common.domain.Location;
-import com.bookwhale.common.security.WithMockCustomUser;
-import com.bookwhale.common.dto.Pagination;
 import com.bookwhale.article.docs.ArticleDocumentation;
+import com.bookwhale.article.domain.ArticleStatus;
 import com.bookwhale.article.domain.BookStatus;
-import com.bookwhale.article.dto.BookRequest;
-import com.bookwhale.article.dto.BookResponse;
-import com.bookwhale.article.dto.NaverBookRequest;
+import com.bookwhale.article.dto.ArticleRequest;
 import com.bookwhale.article.dto.ArticleResponse;
 import com.bookwhale.article.dto.ArticleStatusUpdateRequest;
 import com.bookwhale.article.dto.ArticleUpdateRequest;
 import com.bookwhale.article.dto.ArticlesRequest;
-import com.bookwhale.article.service.NaverBookAPIService;
+import com.bookwhale.article.dto.ArticlesResponse;
+import com.bookwhale.article.dto.BookRequest;
+import com.bookwhale.article.dto.BookResponse;
+import com.bookwhale.article.dto.NaverBookRequest;
 import com.bookwhale.article.service.ArticleService;
+import com.bookwhale.article.service.NaverBookAPIService;
+import com.bookwhale.common.controller.CommonApiTest;
+import com.bookwhale.common.domain.Location;
+import com.bookwhale.common.dto.Pagination;
+import com.bookwhale.common.security.WithMockCustomUser;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import org.apache.http.entity.ContentType;
@@ -74,7 +74,7 @@ public class ArticleControllerTest extends CommonApiTest {
 
         when(naverBookAPIService.getNaverBooks(any())).thenReturn(of(bookResponse));
 
-        mockMvc.perform(get(format("/api/article/naverBookAPI?title=%s&display=%d&start=%d",
+        mockMvc.perform(get(format("/api/article/naver-book?title=%s&display=%d&start=%d",
                 request.getTitle(), request.getDisplay(), request.getStart()))
                 .header(HttpHeaders.AUTHORIZATION, "accessToken"))
             .andExpect(status().isOk())
@@ -214,13 +214,38 @@ public class ArticleControllerTest extends CommonApiTest {
     }
 
     @WithMockCustomUser
+    @DisplayName("내 판매글들을 조회한다.")
+    @Test
+    void findMyArticles() throws Exception {
+        ArticlesResponse articlesResponse = ArticlesResponse.builder()
+            .articleId(1L)
+            .articleImage("이미지")
+            .articleTitle("책 팝니다~")
+            .articlePrice("20000원")
+            .bookStatus(BookStatus.BEST.getName())
+            .sellingLocation("서울")
+            .chatCount(1L)
+            .favoriteCount(1L)
+            .beforeTime("15분 전")
+            .build();
+
+        when(articleService.findMyArticles(any())).thenReturn(List.of(articlesResponse));
+
+        mockMvc.perform(get("/api/articles/me")
+                .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+            .andExpect(status().isOk())
+            .andDo(print())
+            .andDo(ArticleDocumentation.findMyArticles());
+    }
+
+    @WithMockCustomUser
     @DisplayName("로그인한 유저가 게시글을 전체 조회한다.")
     @Test
     void findArticles_loginUser() throws Exception {
         Pagination pagination = new Pagination(0, 10);
 
         ArticlesRequest articlesRequest = ArticlesRequest.builder()
-            .title("책 제목")
+            .search("책 제목")
             .build();
 
         ArticlesResponse articlesResponse = ArticlesResponse.builder()
@@ -228,17 +253,16 @@ public class ArticleControllerTest extends CommonApiTest {
             .articleImage("이미지")
             .articleTitle("책 팝니다~")
             .articlePrice("20000원")
-            .articleStatus(ArticleStatus.SALE.getName())
-            .description("판매자가 작성한 게시글 설명")
+            .bookStatus(BookStatus.BEST.getName())
             .sellingLocation(Location.SEOUL.getName())
-            .viewCount(1L)
+            .chatCount(1L)
             .favoriteCount(0L)
             .beforeTime("15분 전")
             .build();
 
         when(articleService.findArticles(any(), any())).thenReturn(of(articlesResponse));
 
-        mockMvc.perform(get(format("/api/article?title=%s&page=%d&size=%d", articlesRequest.getTitle(),
+        mockMvc.perform(get(format("/api/articles?search=%s&page=%d&size=%d", articlesRequest.getSearch(),
                 pagination.getPage(), pagination.getSize()))
                 .header(HttpHeaders.AUTHORIZATION, "accessToken"))
             .andExpect(status().isOk())
@@ -252,7 +276,7 @@ public class ArticleControllerTest extends CommonApiTest {
         Pagination pagination = new Pagination(0, 10);
 
         ArticlesRequest articlesRequest = ArticlesRequest.builder()
-            .title("책 제목")
+            .search("책 제목")
             .build();
 
         ArticlesResponse articlesResponse = ArticlesResponse.builder()
@@ -260,13 +284,16 @@ public class ArticleControllerTest extends CommonApiTest {
             .articleImage("이미지")
             .articleTitle("책 팝니다~")
             .articlePrice("20000원")
-            .articleStatus(ArticleStatus.SALE.getName())
+            .bookStatus(BookStatus.BEST.getName())
+            .sellingLocation(Location.SEOUL.getName())
+            .chatCount(1L)
+            .favoriteCount(0L)
             .beforeTime("15분 전")
             .build();
 
         when(articleService.findArticles(any(), any())).thenReturn(of(articlesResponse));
 
-        mockMvc.perform(get(format("/api/article?title=%s&page=%d&size=%d", articlesRequest.getTitle(),
+        mockMvc.perform(get(format("/api/articles?search=%s&page=%d&size=%d", articlesRequest.getSearch(),
                 pagination.getPage(), pagination.getSize())))
             .andExpect(status().isOk())
             .andDo(print());
@@ -312,7 +339,7 @@ public class ArticleControllerTest extends CommonApiTest {
         ArticleStatusUpdateRequest request = new ArticleStatusUpdateRequest(
             ArticleStatus.SOLD_OUT.toString());
 
-        mockMvc.perform(RestDocumentationRequestBuilders.patch("/api/article/articleStatus/{articleId}", 1L)
+        mockMvc.perform(RestDocumentationRequestBuilders.patch("/api/article/{articleId}/status", 1L)
                 .header(HttpHeaders.AUTHORIZATION, "accessToken")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))

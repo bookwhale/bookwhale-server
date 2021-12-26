@@ -1,5 +1,6 @@
 package com.bookwhale.article.dto;
 
+import javax.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,19 +9,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ArticlesRequest {
 
-    private String title;
-    private String author;
-    private String publisher;
-    private String sellingLocation;
-    private String articleStatus;
+    @NotBlank
+    private String search;
 
     @Builder
-    public ArticlesRequest(String title, String author, String publisher, String sellingLocation,
-        String articleStatus) {
-        this.title = title;
-        this.author = author;
-        this.publisher = publisher;
-        this.sellingLocation = sellingLocation;
-        this.articleStatus = articleStatus;
+    public ArticlesRequest(String search) {
+        this.search = search;
     }
 }

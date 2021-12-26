@@ -5,7 +5,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -13,10 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.bookwhale.common.controller.CommonApiTest;
-import com.bookwhale.common.domain.Location;
 import com.bookwhale.common.security.WithMockCustomUser;
-import com.bookwhale.article.dto.ArticlesResponse;
-import com.bookwhale.article.domain.ArticleStatus;
 import com.bookwhale.user.docs.UserDocumentation;
 import com.bookwhale.user.dto.LoginRequest;
 import com.bookwhale.user.dto.PasswordUpdateRequest;
@@ -25,7 +21,6 @@ import com.bookwhale.user.dto.SignUpRequest;
 import com.bookwhale.user.dto.UserUpdateRequest;
 import com.bookwhale.user.service.FavoriteService;
 import com.bookwhale.user.service.UserService;
-import java.util.List;
 import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -164,31 +159,5 @@ public class UserControllerTest extends CommonApiTest {
             .andExpect(status().isOk())
             .andDo(print())
             .andDo(UserDocumentation.userDeleteProfileImage());
-    }
-
-    @WithMockCustomUser
-    @DisplayName("내 판매글들을 조회한다.")
-    @Test
-    void findMyArticles() throws Exception {
-        ArticlesResponse articlesResponse = ArticlesResponse.builder()
-            .articleId(1L)
-            .articleImage("이미지")
-            .articleTitle("책 팝니다~")
-            .articlePrice("20000원")
-            .articleStatus(ArticleStatus.SALE.getName())
-            .sellingLocation("서울")
-            .description("정가 5만원인데 급처합니다.")
-            .viewCount(1L)
-            .favoriteCount(1L)
-            .beforeTime("15분 전")
-            .build();
-
-        when(userService.findMyArticle(any())).thenReturn(List.of(articlesResponse));
-
-        mockMvc.perform(get("/api/user/me/article")
-                .header(HttpHeaders.AUTHORIZATION, "accessToken"))
-            .andExpect(status().isOk())
-            .andDo(print())
-            .andDo(UserDocumentation.userFindMyArticles());
     }
 }

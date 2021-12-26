@@ -2,22 +2,20 @@ package com.bookwhale.article.acceptance;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.bookwhale.article.domain.ArticleStatus;
-import com.bookwhale.common.acceptance.AcceptanceTest;
-import com.bookwhale.common.acceptance.AcceptanceUtils;
-import com.bookwhale.common.acceptance.step.AcceptanceStep;
-import com.bookwhale.common.dto.Pagination;
 import com.bookwhale.article.acceptance.step.ArticleAcceptanceStep;
+import com.bookwhale.article.domain.ArticleStatus;
 import com.bookwhale.article.domain.BookStatus;
-import com.bookwhale.article.dto.BookRequest;
-import com.bookwhale.article.dto.BookResponse;
-import com.bookwhale.article.dto.NaverBookRequest;
 import com.bookwhale.article.dto.ArticleRequest;
 import com.bookwhale.article.dto.ArticleResponse;
 import com.bookwhale.article.dto.ArticleStatusUpdateRequest;
 import com.bookwhale.article.dto.ArticleUpdateRequest;
 import com.bookwhale.article.dto.ArticlesRequest;
 import com.bookwhale.article.dto.ArticlesResponse;
+import com.bookwhale.article.dto.BookRequest;
+import com.bookwhale.common.acceptance.AcceptanceTest;
+import com.bookwhale.common.acceptance.AcceptanceUtils;
+import com.bookwhale.common.acceptance.step.AcceptanceStep;
+import com.bookwhale.common.dto.Pagination;
 import com.bookwhale.user.acceptance.step.UserAcceptanceStep;
 import com.bookwhale.user.dto.FavoriteRequest;
 import io.restassured.builder.MultiPartSpecBuilder;
@@ -67,6 +65,68 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
         ExtractableResponse<Response> res = ArticleAcceptanceStep.requestToCreateArticle(jwt,
             articleRequest);
         AcceptanceStep.assertThatStatusIsCreated(res);
+    }
+
+    @DisplayName("나의 게시글들을 조회한다.")
+    @Test
+    void findArticles_one() {
+        ArticleRequest articleRequest = ArticleRequest.builder()
+            .bookRequest(BookRequest.builder()
+                .bookSummary("책 설명")
+                .bookPubDate("2021-12-12")
+                .bookIsbn("12345678910")
+                .bookListPrice("10000")
+                .bookThumbnail("썸네일")
+                .bookTitle("토비의 스프링")
+                .bookPublisher("허브출판사")
+                .bookAuthor("이일민")
+                .build())
+            .title("토비의 스프링 팝니다~")
+            .description("책 설명")
+            .sellingLocation("DAEGU")
+            .bookStatus("BEST")
+            .price("5000")
+            .build();
+
+        String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
+        ArticleAcceptanceStep.requestToCreateArticle(jwt, articleRequest);
+
+        ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToFindMyArticles(jwt);
+        List<ArticlesResponse> articlesResponse = response.jsonPath().getList(".", ArticlesResponse.class);
+
+        AcceptanceStep.assertThatStatusIsOk(response);
+        ArticleAcceptanceStep.assertThatFindMyArticles(articlesResponse, articleRequest);
+    }
+
+    @DisplayName("나의 게시글들을 조회할 때 다른 유저의 게시글을 조회되지 않는다.")
+    @Test
+    void findArticles_empty() {
+        ArticleRequest articleRequest = ArticleRequest.builder()
+            .bookRequest(BookRequest.builder()
+                .bookSummary("책 설명")
+                .bookPubDate("2021-12-12")
+                .bookIsbn("12345678910")
+                .bookListPrice("10000")
+                .bookThumbnail("썸네일")
+                .bookTitle("토비의 스프링")
+                .bookPublisher("허브출판사")
+                .bookAuthor("이일민")
+                .build())
+            .title("토비의 스프링 팝니다~")
+            .description("책 설명")
+            .bookStatus("BEST")
+            .price("5000")
+            .build();
+
+        String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
+        String anotherJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(anotherLoginRequest);
+        ArticleAcceptanceStep.requestToCreateArticle(anotherJwt, articleRequest);
+
+        ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToFindMyArticles(jwt);
+        List<ArticlesResponse> articlesResponse = response.jsonPath().getList(".", ArticlesResponse.class);
+
+        AcceptanceStep.assertThatStatusIsOk(response);
+        assertThat(articlesResponse.size()).isEqualTo(0);
     }
 
     @DisplayName("게시글을 상세 조회한다. (나의 게시글, 관심목록 X)")
@@ -123,7 +183,7 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
     @Test
     void findArticles_loginUser() {
         ArticlesRequest articlesRequest = ArticlesRequest.builder()
-            .title("스프링")
+            .search("스프링")
             .build();
 
         Pagination pagination = new Pagination(0, 10);
@@ -133,19 +193,18 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
 
         ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToFindArticles(jwt,
             articlesRequest, pagination);
-        List<ArticlesResponse> articlesRespons = response.jsonPath()
+        List<ArticlesResponse> articlesResponses = response.jsonPath()
             .getList(".", ArticlesResponse.class);
 
         AcceptanceStep.assertThatStatusIsOk(response);
-        ArticleAcceptanceStep.assertThatFindArticles(articlesRespons, articleRequest);
+        ArticleAcceptanceStep.assertThatFindArticles(articlesResponses, articleRequest);
     }
 
     @DisplayName("로그인하지 않은 유저가 게시글을 전체 조회한다.")
     @Test
     void findArticles_anonymousUser() {
         ArticlesRequest articlesRequest = ArticlesRequest.builder()
-            .title("스프링")
-            .sellingLocation("BUSAN")
+            .search("스프링")
             .build();
 
         Pagination pagination = new Pagination(0, 10);
@@ -156,13 +215,15 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
         ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToFindArticles(
             "anonymousUser",
             articlesRequest, pagination);
-        List<ArticlesResponse> articlesRespons = response.jsonPath()
+        List<ArticlesResponse> articlesResponses = response.jsonPath()
             .getList(".", ArticlesResponse.class);
 
         AcceptanceStep.assertThatStatusIsOk(response);
-        ArticleAcceptanceStep.assertThatFindArticles(articlesRespons, articleRequest);
+        ArticleAcceptanceStep.assertThatFindArticles(articlesResponses, articleRequest);
     }
 
+    /*
+    TODO : 네이버 책 API 안됨
     @DisplayName("ISBN 으로 네이버 책(API)을 검색한다.")
     @Test
     void findNaverBooks_isbn() {
@@ -199,7 +260,7 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
 
         AcceptanceStep.assertThatStatusIsOk(response);
         assertThat(bookResponses.size()).isEqualTo(naverBookRequest.getDisplay());
-    }
+    }*/
 
     @DisplayName("게시글을 수정한다.")
     @Test
@@ -260,17 +321,21 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
     @DisplayName("게시글을 삭제한다.")
     @Test
     void deleteArticle() {
+        ArticlesRequest articlesRequest = ArticlesRequest.builder()
+            .search("스프링")
+            .build();
+
         String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
         Long articleId = AcceptanceUtils.getIdFromResponse(
             ArticleAcceptanceStep.requestToCreateArticle(jwt, articleRequest));
 
         ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToDeleteArticle(jwt,
             articleId);
-        List<ArticlesResponse> articlesRespons = ArticleAcceptanceStep.requestToFindArticles(
-                jwt, new ArticlesRequest(), new Pagination(0, 10))
+        List<ArticlesResponse> articlesResponses = ArticleAcceptanceStep.requestToFindArticles(
+                jwt, articlesRequest, new Pagination(0, 10))
             .jsonPath().getList(".", ArticlesResponse.class);
 
         AcceptanceStep.assertThatStatusIsOk(response);
-        assertThat(articlesRespons.size()).isEqualTo(0);
+        assertThat(articlesResponses.size()).isEqualTo(0);
     }
 }

@@ -75,6 +75,31 @@ public class ArticleDocumentation {
             ));
     }
 
+    public static RestDocumentationResultHandler findMyArticles() {
+        FieldDescriptor[] response = new FieldDescriptor[]{
+            fieldWithPath("articleId").type(JsonFieldType.NUMBER).description("게시글 ID"),
+            fieldWithPath("articleTitle").type(JsonFieldType.STRING).description("게시글 제목"),
+            fieldWithPath("articlePrice").type(JsonFieldType.STRING).description("게시글 가격"),
+            fieldWithPath("sellingLocation").type(JsonFieldType.STRING).description(
+                "게시글에 등록한 판매지역"),
+            fieldWithPath("chatCount").type(JsonFieldType.NUMBER).description("게시글 채팅수"),
+            fieldWithPath("favoriteCount").type(JsonFieldType.NUMBER).description("게시글 관심수"),
+            fieldWithPath("beforeTime").type(JsonFieldType.STRING).description("등록한 시간 - 현재 시간"),
+            fieldWithPath("articleImage").type(JsonFieldType.STRING).description("판매자가 올린 이미지"),
+            fieldWithPath("bookStatus").type(JsonFieldType.STRING).description("책 상태 [LOWER, MIDDLE, UPPER, BEST]")
+        };
+
+        return document("user/findMyArticles",
+            preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()),
+            requestHeaders(
+                headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
+            ),
+            responseFields(fieldWithPath("[]").description("An arrays of articlesResponse"))
+                .andWithPrefix("[].", response)
+        );
+    }
+
     public static RestDocumentationResultHandler findArticle() {
         return document("article/findArticle",
             preprocessResponse(prettyPrint()),
@@ -132,13 +157,10 @@ public class ArticleDocumentation {
             fieldWithPath("beforeTime").type(JsonFieldType.STRING).description("등록한 시간 - 현재 시간"),
             fieldWithPath("sellingLocation").type(JsonFieldType.STRING).description(
                 "게시글에 등록한 판매지역"),
-            fieldWithPath("viewCount").type(JsonFieldType.NUMBER).description("게시글 조회수"),
+            fieldWithPath("chatCount").type(JsonFieldType.NUMBER).description("게시글 채팅수"),
             fieldWithPath("favoriteCount").type(JsonFieldType.NUMBER).description("게시글 관심수"),
             fieldWithPath("articleImage").type(JsonFieldType.STRING).description("판매자가 올린 이미지"),
-            fieldWithPath("articleStatus").type(JsonFieldType.STRING).description(
-                "게시글 상태 [SALE, RESERVED, SOLD_OUT]"),
-            fieldWithPath("description").type(JsonFieldType.STRING).description(
-                "판매자가 작성한 게시글 설명")
+            fieldWithPath("bookStatus").type(JsonFieldType.STRING).description("책 상태 [LOWER, MIDDLE, UPPER, BEST]"),
         };
 
         return document("article/findArticles",
@@ -148,9 +170,7 @@ public class ArticleDocumentation {
                 headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
             ),
             requestParameters(
-                parameterWithName("title").description("책 제목").optional(),
-                parameterWithName("author").description("저자").optional(),
-                parameterWithName("publisher").description("출판사").optional(),
+                parameterWithName("search").description("통합 검색 (책 제목, 판매글 제목, 작가)"),
                 parameterWithName("page").description("페이지(0부터 시작) (필수)"),
                 parameterWithName("size").description("한 페이지 내의 사이즈 (필수)")
             ),

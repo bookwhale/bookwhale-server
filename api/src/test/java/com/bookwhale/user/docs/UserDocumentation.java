@@ -120,18 +120,16 @@ public class UserDocumentation {
                 "게시글 가격"),
             fieldWithPath("articlesResponse.sellingLocation").type(JsonFieldType.STRING).description(
                 "게시글에 등록한 판매지역"),
-            fieldWithPath("articlesResponse.description").type(JsonFieldType.STRING).description(
-                "게시글에 작성한 설명"),
-            fieldWithPath("articlesResponse.viewCount").type(JsonFieldType.NUMBER).description(
-                "게시글 조회수"),
+            fieldWithPath("articlesResponse.chatCount").type(JsonFieldType.NUMBER).description(
+                "게시글 채팅수"),
             fieldWithPath("articlesResponse.favoriteCount").type(JsonFieldType.NUMBER).description(
                 "게시글 관심수"),
             fieldWithPath("articlesResponse.beforeTime").type(JsonFieldType.STRING).description(
                 "등록한 시간 - 현재 시간"),
             fieldWithPath("articlesResponse.articleImage").type(JsonFieldType.STRING).description(
                 "판매자가 올린 이미지"),
-            fieldWithPath("articlesResponse.articleStatus").type(JsonFieldType.STRING).description(
-                "게시글 상태 [SALE, RESERVED, SOLD_OUT]")
+            fieldWithPath("articlesResponse.bookStatus").type(JsonFieldType.STRING).description(
+                "책 상태 [LOWER, MIDDLE, UPPER, BEST]")
         };
 
         return document("user/findFavorites",
@@ -166,33 +164,6 @@ public class UserDocumentation {
             pathParameters(
                 parameterWithName("favoriteId").description("관심목록 ID")
             )
-        );
-    }
-
-    public static RestDocumentationResultHandler userFindMyArticles() {
-        FieldDescriptor[] response = new FieldDescriptor[]{
-            fieldWithPath("articleId").type(JsonFieldType.NUMBER).description("게시글 ID"),
-            fieldWithPath("articleTitle").type(JsonFieldType.STRING).description("게시글 제목"),
-            fieldWithPath("articlePrice").type(JsonFieldType.STRING).description("게시글 가격"),
-            fieldWithPath("sellingLocation").type(JsonFieldType.STRING).description(
-                "게시글에 등록한 판매지역"),
-            fieldWithPath("description").type(JsonFieldType.STRING).description("게시글에 작성한 설명"),
-            fieldWithPath("viewCount").type(JsonFieldType.NUMBER).description("게시글 조회수"),
-            fieldWithPath("favoriteCount").type(JsonFieldType.NUMBER).description("게시글 관심수"),
-            fieldWithPath("beforeTime").type(JsonFieldType.STRING).description("등록한 시간 - 현재 시간"),
-            fieldWithPath("articleImage").type(JsonFieldType.STRING).description("판매자가 올린 이미지"),
-            fieldWithPath("articleStatus").type(JsonFieldType.STRING).description(
-                "게시글 상태 [SALE, RESERVED, SOLD_OUT]")
-        };
-
-        return document("user/findMyArticles",
-            preprocessRequest(prettyPrint()),
-            preprocessResponse(prettyPrint()),
-            requestHeaders(
-                headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
-            ),
-            responseFields(fieldWithPath("[]").description("An arrays of articlesResponse"))
-                .andWithPrefix("[].", response)
         );
     }
 }
