@@ -19,7 +19,7 @@ public enum ErrorCode {
     METHOD_NOT_ALLOWED(405, "C_004", "적절하지 않은 HTTP 메소드입니다."),
 
     DUPLICATED_USER_IDENTITY(400, "U_001", "이미 존재하는 아이디입니다."),
-    INVALID_USER_PASSWORD(400, "U_002", "잘못된 비밀번호입니다."),
+    USER_NOT_FOUND(404, "U_002", "요청한 사용자 정보를 확인할 수 없습니다."),
 
     INVALID_ARTICLE_ID(400, "A_001", "잘못된 게시글 ID 입니다."),
     NOT_EXIST_ARTICLE_ID(400, "A_002", "존재하지 않는 게시글 ID 입니다."),

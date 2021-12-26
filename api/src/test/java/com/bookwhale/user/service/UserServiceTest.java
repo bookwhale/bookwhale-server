@@ -57,43 +57,6 @@ public class UserServiceTest {
             .build();
     }
 
-    @DisplayName("회원가입을 한다.")
-    @Test
-    void createUser_success() {
-        SignUpRequest signUpRequest = SignUpRequest.builder()
-            .identity("highright96")
-            .password("1234")
-            .name("남상우")
-            .email("highright96@email.com")
-            .phoneNumber("010-1234-1234")
-            .build();
-
-        when(userRepository.existsByEmail(any())).thenReturn(false);
-        when(userRepository.save(any())).thenReturn(user);
-
-        userService.createUser(signUpRequest);
-
-        verify(userRepository).existsByEmail(any());
-        verify(userRepository).save(any());
-    }
-
-    @DisplayName("회원가입을 할 때 중복된 아이디면 예외가 발생한다.")
-    @Test
-    void createUser_duplicatedIdentity_failure() {
-        SignUpRequest signUpRequest = SignUpRequest.builder()
-            .identity("highright96")
-            .password("1234")
-            .name("남상우")
-            .email("highright96@email.com")
-            .phoneNumber("010-1234-1234")
-            .build();
-
-        when(userRepository.existsByEmail(any())).thenReturn(true);
-        assertThatThrownBy(() -> userService.createUser(signUpRequest)).
-            isInstanceOf(CustomException.class)
-            .hasMessage(ErrorCode.DUPLICATED_USER_IDENTITY.getMessage());
-    }
-
     @DisplayName("내 정보를 수정한다.")
     @Test
     void updateMyInfo_success() {

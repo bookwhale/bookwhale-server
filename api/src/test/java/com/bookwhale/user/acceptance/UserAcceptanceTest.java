@@ -32,6 +32,7 @@ import org.springframework.util.MimeTypeUtils;
 public class UserAcceptanceTest extends AcceptanceTest {
 
     @DisplayName("내 정보를 조회한다.")
+    @Test
     void getMyInfo() {
         UserInfoFromToken userInfo = UserInfoFromToken.of(user);
         String token = UserAcceptanceStep.requestToLoginAndGetAccessToken(userInfo, jwt);
@@ -59,37 +60,6 @@ public class UserAcceptanceTest extends AcceptanceTest {
 
         AcceptanceStep.assertThatStatusIsOk(response);
         UserAcceptanceStep.assertThatUpdateMyInfo(userResponse, userUpdateRequest);
-    }
-
-    @DisplayName("비밀번호를 수정한다.")
-    @Test
-    void updatePassword() {
-        PasswordUpdateRequest req = new PasswordUpdateRequest(loginRequest.getPassword(), "12345");
-        LoginRequest newLoginReq = new LoginRequest(loginRequest.getIdentity(),
-            req.getNewPassword());
-
-        String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(UserInfoFromToken.of(user), jwt);
-
-        ExtractableResponse<Response> response = UserAcceptanceStep.requestToUpdatePassword(apiToken,
-            req);
-        ExtractableResponse<Response> newLoginResponse = UserAcceptanceStep.requestToLogin(
-            newLoginReq);
-
-        AcceptanceStep.assertThatStatusIsOk(response);
-        AcceptanceStep.assertThatStatusIsOk(newLoginResponse);
-    }
-
-    @DisplayName("비밀번호를 수정할 때 기존 비밀번호를 틀리게 입력하면 예외가 발생한다.")
-    @Test
-    void updatePassword_invalidPassword_failure() {
-        PasswordUpdateRequest req = new PasswordUpdateRequest("invalidPassword", "12345");
-
-        String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(UserInfoFromToken.of(user), jwt);
-
-        ExtractableResponse<Response> response = UserAcceptanceStep.requestToUpdatePassword(apiToken,
-            req);
-
-        AcceptanceStep.assertThatStatusIsBadRequest(response);
     }
 
     @DisplayName("프로필 사진을 업로드한다.")
