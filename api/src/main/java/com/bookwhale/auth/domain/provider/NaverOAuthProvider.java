@@ -1,7 +1,15 @@
 package com.bookwhale.auth.domain.provider;
 
+import com.bookwhale.article.dto.NaverBookRequest;
 import com.bookwhale.auth.domain.token.NaverOAuthToken;
+import com.bookwhale.common.exception.CustomException;
+import com.bookwhale.common.exception.ErrorCode;
 import com.google.common.hash.Hashing;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -83,6 +91,51 @@ public class NaverOAuthProvider implements OAuthProvider {
         String url = "https://openapi.naver.com/v1/nid/me";
 
         return restTemplate.exchange(url, HttpMethod.GET, request, String.class);
+    }
+
+    public String getBookInfoFromBookSearch(NaverBookRequest req) {
+        String apiURL, text, result;
+        String pageUrl = "&display=" + req.getDisplay() + "&start=" + req.getStart();
+        try {
+            String apiBaseURL = "https://openapi.naver.com/v1/search/book_adv.xml";
+            if (req.getTitle() != null) {
+                text = URLEncoder.encode(req.getTitle(), StandardCharsets.UTF_8);
+                apiURL = apiBaseURL + "?d_titl=" + text;
+            } else if (req.getIsbn() != null) {
+                text = URLEncoder.encode(req.getIsbn(), StandardCharsets.UTF_8);
+                apiURL = apiBaseURL + "?d_isbn=" + text;
+            } else {
+                text = URLEncoder.encode(req.getAuthor(), StandardCharsets.UTF_8);
+                apiURL = apiBaseURL + "?d_auth=" + text;
+            }
+            apiURL += pageUrl;
+            URL url = new URL(apiURL);
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("GET");
+            con.setRequestProperty("X-Naver-Client-Id", clientId);
+            con.setRequestProperty("X-Naver-Client-Secret", clientSecret);
+            con.setDoOutput(true);
+
+            int responseCode = con.getResponseCode();
+            BufferedReader br;
+            if (responseCode == 200) { // 정상 호출
+                br = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            } else {  // 에러 발생
+                br = new BufferedReader(new InputStreamReader(con.getErrorStream()));
+            }
+            String inputLine;
+            StringBuilder response = new StringBuilder();
+            while ((inputLine = br.readLine()) != null) {
+                response.append(inputLine);
+            }
+            br.close();
+            con.disconnect();
+            result = response.toString();
+        } catch (Exception e) {
+            log.error("naverBook error : {}", e.getMessage());
+            throw new CustomException(ErrorCode.INTERNAL_NAVER_SERVER_ERROR);
+        }
+        return result;
     }
 
 

@@ -12,6 +12,8 @@ import com.bookwhale.article.dto.ArticleUpdateRequest;
 import com.bookwhale.article.dto.ArticlesRequest;
 import com.bookwhale.article.dto.ArticlesResponse;
 import com.bookwhale.article.dto.BookRequest;
+import com.bookwhale.article.dto.BookResponse;
+import com.bookwhale.article.dto.NaverBookRequest;
 import com.bookwhale.auth.domain.info.UserInfoFromToken;
 import com.bookwhale.common.acceptance.AcceptanceTest;
 import com.bookwhale.common.acceptance.AcceptanceUtils;
@@ -63,7 +65,8 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
     @Test
     void createArticle() {
 
-        String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(UserInfoFromToken.of(user), jwt);
+        String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(
+            UserInfoFromToken.of(user), jwt);
         ExtractableResponse<Response> res = ArticleAcceptanceStep.requestToCreateArticle(apiToken,
             articleRequest);
         AcceptanceStep.assertThatStatusIsCreated(res);
@@ -90,10 +93,12 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
             .price("5000")
             .build();
 
-        String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(UserInfoFromToken.of(user), jwt);
+        String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(
+            UserInfoFromToken.of(user), jwt);
         ArticleAcceptanceStep.requestToCreateArticle(apiToken, articleRequest);
 
-        ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToFindMyArticles(apiToken);
+        ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToFindMyArticles(
+            apiToken);
         List<ArticlesResponse> articlesResponse = response.jsonPath()
             .getList(".", ArticlesResponse.class);
 
@@ -121,11 +126,14 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
             .price("5000")
             .build();
 
-        String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(UserInfoFromToken.of(user), jwt);
-        String anotherApiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(UserInfoFromToken.of(anotherUser), jwt);
+        String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(
+            UserInfoFromToken.of(user), jwt);
+        String anotherApiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(
+            UserInfoFromToken.of(anotherUser), jwt);
         ArticleAcceptanceStep.requestToCreateArticle(anotherApiToken, articleRequest);
 
-        ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToFindMyArticles(apiToken);
+        ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToFindMyArticles(
+            apiToken);
         List<ArticlesResponse> articlesResponse = response.jsonPath()
             .getList(".", ArticlesResponse.class);
 
@@ -136,12 +144,14 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
     @DisplayName("게시글을 상세 조회한다. (나의 게시글, 관심목록 X)")
     @Test
     void findArticle_isMyArticleAndIsNotMyFavorite() {
-        String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(UserInfoFromToken.of(user), jwt);
+        String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(
+            UserInfoFromToken.of(user), jwt);
 
         Long articleId = AcceptanceUtils.getIdFromResponse(
             ArticleAcceptanceStep.requestToCreateArticle(apiToken, articleRequest));
 
-        ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToFindArticle(apiToken,
+        ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToFindArticle(
+            apiToken,
             articleId);
         ArticleResponse articleResponse = response.jsonPath().getObject(".", ArticleResponse.class);
 
@@ -158,10 +168,12 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
         Long articleId = AcceptanceUtils.getIdFromResponse(
             ArticleAcceptanceStep.requestToCreateArticle(anotherApiToken, articleRequest));
 
-        String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(UserInfoFromToken.of(user), jwt);
+        String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(
+            UserInfoFromToken.of(user), jwt);
         UserAcceptanceStep.addFavorite(apiToken, new FavoriteRequest(articleId));
 
-        ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToFindArticle(apiToken,
+        ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToFindArticle(
+            apiToken,
             articleId);
         ArticleResponse articleResponse = response.jsonPath().getObject(".", ArticleResponse.class);
 
@@ -173,13 +185,15 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
     @DisplayName("게시글을 두번 상세 조회한다. (조회수 +2 확인)")
     @Test
     void findMyArticle_twice() {
-        String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(UserInfoFromToken.of(user), jwt);
+        String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(
+            UserInfoFromToken.of(user), jwt);
 
         Long articleId = AcceptanceUtils.getIdFromResponse(
             ArticleAcceptanceStep.requestToCreateArticle(apiToken, articleRequest));
 
         ArticleAcceptanceStep.requestToFindArticle(apiToken, articleId);
-        ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToFindArticle(apiToken,
+        ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToFindArticle(
+            apiToken,
             articleId);
         ArticleResponse articleResponse = response.jsonPath().getObject(".", ArticleResponse.class);
 
@@ -198,10 +212,12 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
 
         Pagination pagination = new Pagination(0, 10);
 
-        String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(UserInfoFromToken.of(user), jwt);
+        String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(
+            UserInfoFromToken.of(user), jwt);
         ArticleAcceptanceStep.requestToCreateArticle(apiToken, articleRequest);
 
-        ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToFindArticles(apiToken,
+        ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToFindArticles(
+            apiToken,
             articlesRequest, pagination);
         List<ArticlesResponse> articlesResponses = response.jsonPath()
             .getList(".", ArticlesResponse.class);
@@ -219,7 +235,8 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
 
         Pagination pagination = new Pagination(0, 10);
 
-        String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(UserInfoFromToken.of(user), jwt);
+        String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(
+            UserInfoFromToken.of(user), jwt);
         ArticleAcceptanceStep.requestToCreateArticle(apiToken, articleRequest);
 
         ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToFindArticles(
@@ -232,8 +249,6 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
         ArticleAcceptanceStep.assertThatFindArticles(articlesResponses, articleRequest);
     }
 
-    /*
-    TODO : 네이버 책 API 안됨
     @DisplayName("ISBN 으로 네이버 책(API)을 검색한다.")
     @Test
     void findNaverBooks_isbn() {
@@ -243,9 +258,11 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
             .start(1)
             .build();
 
-        String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
+        String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(
+            UserInfoFromToken.of(user), jwt);
 
-        ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToFindNaverBooks(jwt,
+        ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToFindNaverBooks(
+            apiToken,
             naverBookRequest);
         BookResponse bookResponse = response.jsonPath().getList(".", BookResponse.class).get(0);
 
@@ -262,24 +279,28 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
             .start(1)
             .build();
 
-        String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
+        String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(
+            UserInfoFromToken.of(user), jwt);
 
-        ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToFindNaverBooks(jwt,
+        ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToFindNaverBooks(
+            apiToken,
             naverBookRequest);
         List<BookResponse> bookResponses = response.jsonPath().getList(".", BookResponse.class);
 
         AcceptanceStep.assertThatStatusIsOk(response);
         assertThat(bookResponses.size()).isEqualTo(naverBookRequest.getDisplay());
-    }*/
+    }
 
     @DisplayName("게시글을 수정한다.")
     @Test
     void updateArticle() {
-        String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(UserInfoFromToken.of(user), jwt);
+        String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(
+            UserInfoFromToken.of(user), jwt);
 
         Long articleId = AcceptanceUtils.getIdFromResponse(
             ArticleAcceptanceStep.requestToCreateArticle(apiToken, articleRequest));
-        String deleteImgUrl = ArticleAcceptanceStep.requestToFindArticle(apiToken, articleId).jsonPath()
+        String deleteImgUrl = ArticleAcceptanceStep.requestToFindArticle(apiToken, articleId)
+            .jsonPath()
             .getObject(".", ArticleResponse.class).getImages().get(0);
 
         ArticleUpdateRequest updateRequest = ArticleUpdateRequest.builder()
@@ -299,11 +320,13 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
             .build();
         List<MultiPartSpecification> images = List.of(image);
 
-        ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToUpdateArticle(apiToken,
+        ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToUpdateArticle(
+            apiToken,
             articleId,
             updateRequest, images);
 
-        ArticleResponse articleResponse = ArticleAcceptanceStep.requestToFindArticle(apiToken, articleId)
+        ArticleResponse articleResponse = ArticleAcceptanceStep.requestToFindArticle(apiToken,
+                articleId)
             .jsonPath()
             .getObject(".", ArticleResponse.class);
 
@@ -317,13 +340,15 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
         ArticleStatusUpdateRequest request = new ArticleStatusUpdateRequest(
             ArticleStatus.RESERVED.toString());
 
-        String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(UserInfoFromToken.of(user), jwt);
+        String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(
+            UserInfoFromToken.of(user), jwt);
         Long articleId = AcceptanceUtils.getIdFromResponse(
             ArticleAcceptanceStep.requestToCreateArticle(apiToken, articleRequest));
 
         ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToUpdateArticleStatus(
             apiToken, articleId, request);
-        String articleStatus = ArticleAcceptanceStep.requestToFindArticle(apiToken, articleId).jsonPath()
+        String articleStatus = ArticleAcceptanceStep.requestToFindArticle(apiToken, articleId)
+            .jsonPath()
             .getObject(".", ArticleResponse.class).getArticleStatus();
 
         AcceptanceStep.assertThatStatusIsOk(response);
@@ -338,11 +363,13 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
             .search("스프링")
             .build();
 
-        String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(UserInfoFromToken.of(user), jwt);
+        String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(
+            UserInfoFromToken.of(user), jwt);
         Long articleId = AcceptanceUtils.getIdFromResponse(
             ArticleAcceptanceStep.requestToCreateArticle(apiToken, articleRequest));
 
-        ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToDeleteArticle(apiToken,
+        ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToDeleteArticle(
+            apiToken,
             articleId);
         List<ArticlesResponse> articlesResponses = ArticleAcceptanceStep.requestToFindArticles(
                 apiToken, articlesRequest, new Pagination(0, 10))
