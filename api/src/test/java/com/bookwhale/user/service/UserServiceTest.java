@@ -1,21 +1,17 @@
 package com.bookwhale.user.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.bookwhale.article.domain.ArticleRepository;
-import com.bookwhale.common.exception.CustomException;
-import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.common.upload.FileUploader;
 import com.bookwhale.favorite.domain.FavoriteRepository;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.domain.UserRepository;
 import com.bookwhale.user.dto.ProfileResponse;
-import com.bookwhale.user.dto.SignUpRequest;
 import com.bookwhale.user.dto.UserUpdateRequest;
+import java.util.Optional;
 import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -64,6 +60,9 @@ public class UserServiceTest {
             .nickname("테스터1")
             .build();
 
+        when(userRepository.findByEmail(any(String.class)))
+            .thenReturn(Optional.of(user));
+
         userService.updateMyInfo(user, userUpdateRequest);
 
         Assertions.assertAll(
@@ -79,6 +78,8 @@ public class UserServiceTest {
             "프로필 이미지 입니다.".getBytes());
         String uploadedImage = "uploadImage";
 
+        when(userRepository.findByEmail(any(String.class)))
+            .thenReturn(Optional.of(user));
         when(fileUploader.uploadFile(any())).thenReturn(uploadedImage);
 
         ProfileResponse profileResponse = userService.uploadProfileImage(user, image);
@@ -89,6 +90,9 @@ public class UserServiceTest {
     @DisplayName("프로필 사진을 삭제한다.")
     @Test
     void deleteProfileImage_success() {
+        when(userRepository.findByEmail(any(String.class)))
+            .thenReturn(Optional.of(user));
+
         userService.deleteProfileImage(user);
         assertThat(user.getProfileImage()).isEqualTo(null);
     }
