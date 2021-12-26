@@ -2,19 +2,23 @@ package com.bookwhale.auth.controller;
 
 import com.bookwhale.auth.domain.provider.OAuthProviderType;
 import com.bookwhale.auth.dto.OAuthLoginResponse;
+import com.bookwhale.auth.dto.OAuthRefreshLoginRequest;
 import com.bookwhale.auth.service.OauthService;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/api/auth")
+@RequestMapping("/api/oauth")
 @RestController
 public class OAuthController {
 
@@ -44,4 +48,12 @@ public class OAuthController {
 
         return ResponseEntity.ok(result);
     }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<OAuthLoginResponse> refreshLogin(
+        @Valid @RequestBody OAuthRefreshLoginRequest refreshRequest) {
+        OAuthLoginResponse response = oauthService.apiTokenRefresh(refreshRequest);
+        return ResponseEntity.ok(response);
+    }
+
 }
