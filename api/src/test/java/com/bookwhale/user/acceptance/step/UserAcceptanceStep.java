@@ -33,18 +33,13 @@ public class UserAcceptanceStep {
 
     public static void assertThatGetMyInfo(UserResponse userResponse, User user) {
         Assertions.assertAll(
-            () -> assertThat(userResponse.getIdentity()).isEqualTo(user.getIdentity()),
-            () -> assertThat(userResponse.getName()).isEqualTo(user.getName()),
-            () -> assertThat(userResponse.getPhoneNumber()).isEqualTo(user.getPhoneNumber()),
-            () -> assertThat(userResponse.getEmail()).isEqualTo(user.getEmail())
+            () -> assertThat(userResponse.getNickName()).isEqualTo(user.getNickname())
         );
     }
 
     public static void assertThatUpdateMyInfo(UserResponse res, UserUpdateRequest req) {
         Assertions.assertAll(
-            () -> assertThat(res.getEmail()).isEqualTo(req.getEmail()),
-            () -> assertThat(res.getName()).isEqualTo(req.getName()),
-            () -> assertThat(res.getPhoneNumber()).isEqualTo(req.getPhoneNumber())
+            () -> assertThat(res.getNickName()).isEqualTo(req.getNickname())
         );
     }
 

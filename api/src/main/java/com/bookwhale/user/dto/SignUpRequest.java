@@ -40,11 +40,8 @@ public class SignUpRequest {
 
     public User toEntity() {
         return User.builder()
-            .identity(identity)
             .email(email)
-            .name(name)
-            .phoneNumber(phoneNumber)
-            .role(Role.ROLE_USER)
+            .nickname(name)
             .build();
     }
 }

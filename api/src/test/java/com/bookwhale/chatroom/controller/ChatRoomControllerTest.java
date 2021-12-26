@@ -49,7 +49,7 @@ public class ChatRoomControllerTest extends CommonApiTest {
         doNothing().when(chatRoomService).createChatRoom(any(), any());
 
         mockMvc.perform(post("/api/room")
-                .header(HttpHeaders.AUTHORIZATION, "accessToken")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(header().string("location", "/api/room"))
@@ -75,7 +75,7 @@ public class ChatRoomControllerTest extends CommonApiTest {
         when(chatRoomService.findChatRooms(any())).thenReturn(of(response));
 
         mockMvc.perform(get("/api/room")
-                .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken"))
             .andExpect(status().isOk())
             .andDo(print())
             .andDo(ChatRoomDocumentations.findChatRooms());
@@ -90,7 +90,7 @@ public class ChatRoomControllerTest extends CommonApiTest {
         doNothing().when(chatRoomService).deleteChatRoom(any(), any());
 
         mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/room/{roomId}", roomId)
-                .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken"))
             .andExpect(status().isOk())
             .andDo(print())
             .andDo(ChatRoomDocumentations.deleteChatRoom());

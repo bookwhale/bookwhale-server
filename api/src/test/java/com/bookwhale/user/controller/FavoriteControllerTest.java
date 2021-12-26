@@ -63,7 +63,7 @@ public class FavoriteControllerTest extends CommonApiTest {
         when(favoriteService.findAllFavorites(any())).thenReturn(responses);
 
         mockMvc.perform(get("/api/user/me/favorites")
-                .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken"))
             .andExpect(status().isOk())
             .andDo(print())
             .andDo(UserDocumentation.userFindFavorites());
@@ -77,7 +77,7 @@ public class FavoriteControllerTest extends CommonApiTest {
         doNothing().when(favoriteService).addFavorite(any(), any());
 
         mockMvc.perform(post("/api/user/me/favorite")
-                .header(HttpHeaders.AUTHORIZATION, "accessToken")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(favoriteRequest)))
             .andExpect(status().isOk())
@@ -93,7 +93,7 @@ public class FavoriteControllerTest extends CommonApiTest {
 
         mockMvc.perform(
                 RestDocumentationRequestBuilders.delete("/api/user/me/favorite/{favoriteId}", 1L)
-                    .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken"))
             .andExpect(status().isOk())
             .andDo(print())
             .andDo(UserDocumentation.userDeleteFavorite());

@@ -61,11 +61,8 @@ public class AcceptanceTest {
 
     private User createUser() {
         User user = User.builder()
-            .identity("highright96")
-            .name("남상우")
+            .nickname("남상우")
             .email("highright96@gmail.com")
-            .phoneNumber("010-1234-1234")
-            .role(Role.ROLE_USER)
             .build();
         userRepository.save(user);
         return user;
@@ -73,11 +70,8 @@ public class AcceptanceTest {
 
     private User createAnotherUser() {
         User user = User.builder()
-            .identity("hose12")
-            .name("주호세")
+            .nickname("hose12")
             .email("hose12@email.com")
-            .phoneNumber("010-5678-5678")
-            .role(Role.ROLE_USER)
             .build();
         userRepository.save(user);
         return user;

@@ -6,16 +6,13 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.bookwhale.common.controller.CommonApiTest;
 import com.bookwhale.user.docs.UserDocumentation;
-import com.bookwhale.user.dto.PasswordUpdateRequest;
 import com.bookwhale.user.dto.ProfileResponse;
-import com.bookwhale.user.dto.SignUpRequest;
 import com.bookwhale.user.dto.UserUpdateRequest;
 import com.bookwhale.user.service.FavoriteService;
 import com.bookwhale.user.service.UserService;
@@ -39,40 +36,17 @@ public class UserControllerTest extends CommonApiTest {
     @MockBean
     FavoriteService favoriteService;
 
-    @DisplayName("유저 회원가입을 한다.")
-    @Test
-    void createUser() throws Exception {
-        SignUpRequest signUpRequest = SignUpRequest.builder()
-            .identity("highright96")
-            .password("1234")
-            .name("남상우")
-            .phoneNumber("010-1234-1234")
-            .email("highright96@email.com")
-            .build();
-
-        doNothing().when(userService).createUser(any());
-
-        mockMvc.perform(post("/api/user/signup")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(signUpRequest)))
-            .andExpect(status().isCreated())
-            .andDo(print())
-            .andDo(UserDocumentation.userSignup());
-    }
-
     @DisplayName("내 정보를 수정한다.")
     @Test
     void updateMyInfo() throws Exception {
         UserUpdateRequest userUpdateRequest = UserUpdateRequest.builder()
-            .name("주호세")
-            .email("hose@email.com")
-            .phoneNumber("010-5678-5678")
+            .nickname("hose12")
             .build();
 
         doNothing().when(userService).updateMyInfo(any(), any());
 
         mockMvc.perform(patch("/api/user/me")
-                .header(HttpHeaders.AUTHORIZATION, "accessToken")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(userUpdateRequest)))
             .andExpect(status().isOk())
@@ -92,7 +66,7 @@ public class UserControllerTest extends CommonApiTest {
 
         mockMvc.perform(MockMultipartPatchBuilder("/api/user/profile")
                 .file(image)
-                .header(HttpHeaders.AUTHORIZATION, "accessToken")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
                 .contentType(MediaType.MULTIPART_FORM_DATA))
             .andExpect(status().isOk())
             .andExpect(jsonPath("profileImage").value(path))
@@ -108,7 +82,7 @@ public class UserControllerTest extends CommonApiTest {
         when(userService.uploadProfileImage(any(), any())).thenReturn(new ProfileResponse());
 
         mockMvc.perform(MockMultipartPatchBuilder("/api/user/profile")
-                .header(HttpHeaders.AUTHORIZATION, "accessToken")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
                 .contentType(MediaType.MULTIPART_FORM_DATA))
             .andExpect(status().isBadRequest())
             .andDo(print());
@@ -121,7 +95,7 @@ public class UserControllerTest extends CommonApiTest {
         doNothing().when(userService).deleteProfileImage(any());
 
         mockMvc.perform(delete("/api/user/profile")
-                .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken"))
             .andExpect(status().isOk())
             .andDo(print())
             .andDo(UserDocumentation.userDeleteProfileImage());

@@ -58,18 +58,14 @@ public class ChatRoomServiceTest {
 
         buyer = User.builder()
             .id(1L)
-            .identity("highright96")
-            .name("남상우")
+            .nickname("남상우")
             .email("highright96@email.com")
-            .phoneNumber("010-1234-1234")
             .build();
 
         seller = User.builder()
             .id(2L)
-            .identity("hose12")
-            .name("주호세")
+            .nickname("hose12")
             .email("hose12@email.com")
-            .phoneNumber("010-5678-5678")
             .build();
 
         ;
@@ -170,13 +166,13 @@ public class ChatRoomServiceTest {
             () -> assertThat(responses.get(0).getArticleImage()).isEqualTo(
                 article.getImages().getFirstImageUrl()),
             () -> assertThat(responses.get(0).getOpponentIdentity()).isEqualTo(
-                seller.getIdentity()),
+                seller.getNickname()),
             () -> assertThat(responses.get(0).isOpponentDelete()).isEqualTo(false),
             () -> assertThat(responses.get(1).getArticleTitle()).isEqualTo(article.getTitle()),
             () -> assertThat(responses.get(1).getArticleImage()).isEqualTo(
                 article.getImages().getFirstImageUrl()),
             () -> assertThat(responses.get(1).getOpponentIdentity()).isEqualTo(
-                seller.getIdentity()),
+                seller.getNickname()),
             () -> assertThat(responses.get(1).isOpponentDelete()).isEqualTo(true)
         );
     }

@@ -16,7 +16,7 @@ import com.bookwhale.common.token.JWT;
 import com.bookwhale.common.token.JWT.Claims;
 import com.bookwhale.common.token.JWT.ClaimsForRefresh;
 import com.bookwhale.common.utils.RandomUtils;
-import com.bookwhale.user.domain.ApiUser;
+import com.bookwhale.user.domain.User;
 import java.io.IOException;
 import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
@@ -77,11 +77,14 @@ public class OauthService {
         return new OAuthLoginResponse(createdApiToken, refreshToken);
     }
 
-    public ApiUser getUserFromApiToken(String token) {
+    public User getUserFromApiToken(String token) {
         Claims userClaim = apiToken.verify(token);
 
-        return ApiUser.builder().name(userClaim.getName()).image(userClaim.getImage())
-            .email(userClaim.getEmail()).build();
+        return User.builder()
+            .email(userClaim.getEmail())
+            .nickname(userClaim.getName())
+            .profileImage(userClaim.getImage())
+            .build();
     }
 
     public OAuthLoginResponse apiTokenRefresh(OAuthRefreshLoginRequest refreshRequest) {

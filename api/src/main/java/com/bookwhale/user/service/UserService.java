@@ -5,7 +5,6 @@ import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.common.upload.FileUploader;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.domain.UserRepository;
-import com.bookwhale.user.dto.PasswordUpdateRequest;
 import com.bookwhale.user.dto.ProfileResponse;
 import com.bookwhale.user.dto.SignUpRequest;
 import com.bookwhale.user.dto.UserUpdateRequest;
@@ -36,7 +35,7 @@ public class UserService {
     }
 
     public void updateMyInfo(User user, UserUpdateRequest request) {
-        user.update(request.toEntity());
+        user.updateUserName(request.toEntity().getNickname());
         userRepository.save(user);
     }
 

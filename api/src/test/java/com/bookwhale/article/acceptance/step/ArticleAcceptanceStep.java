@@ -48,7 +48,7 @@ public class ArticleAcceptanceStep {
         boolean isMyArticle, boolean isMyFavorite) {
         Assertions.assertAll(
             () -> assertThat(res.getSellerId()).isEqualTo(seller.getId()),
-            () -> assertThat(res.getSellerIdentity()).isEqualTo(seller.getIdentity()),
+            () -> assertThat(res.getSellerIdentity()).isEqualTo(seller.getNickname()),
             () -> assertThat(res.getSellerProfileImage()).isEqualTo(seller.getProfileImage()),
             () -> assertThat(res.getTitle()).isEqualTo(req.getTitle()),
             () -> assertThat(res.getPrice()).isEqualTo(req.getPrice()),

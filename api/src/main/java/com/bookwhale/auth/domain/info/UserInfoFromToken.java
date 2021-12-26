@@ -17,7 +17,7 @@ public class UserInfoFromToken implements UserInfo {
 
     public static UserInfoFromToken of(User user) {
         return UserInfoFromToken.builder()
-            .name(user.getName())
+            .name(user.getNickname())
             .email(user.getEmail())
             .picture(user.getProfileImage())
             .build();

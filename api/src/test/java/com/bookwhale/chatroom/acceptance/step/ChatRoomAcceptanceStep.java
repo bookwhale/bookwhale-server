@@ -27,7 +27,7 @@ public class ChatRoomAcceptanceStep {
             () -> assertThat(responses.get(0).getArticleTitle()).isEqualTo(request.getTitle()),
             () -> assertThat(responses.get(0).getArticleImage()).isNotNull(),
             () -> assertThat(responses.get(0).getOpponentIdentity()).isEqualTo(
-                opponent.getIdentity()),
+                opponent.getNickname()),
             () -> assertThat(responses.get(0).getOpponentProfile()).isEqualTo(
                 opponent.getProfileImage())
         );

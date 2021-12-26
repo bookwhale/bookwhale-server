@@ -62,9 +62,7 @@ public class UserAcceptanceTest extends AcceptanceTest {
     @Test
     void updateMyInfo() {
         UserUpdateRequest userUpdateRequest = UserUpdateRequest.builder()
-            .name("주호세")
-            .phoneNumber("010-5678-5678")
-            .email("hose@email.com")
+            .nickname("hose12")
             .build();
 
         String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);

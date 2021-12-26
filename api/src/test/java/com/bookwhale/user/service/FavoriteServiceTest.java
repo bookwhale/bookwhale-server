@@ -49,11 +49,8 @@ public class FavoriteServiceTest {
 
         user = User.builder()
             .id(1L)
-            .identity("highright96")
-            .password("1234")
-            .name("남상우")
+            .nickname("남상우")
             .email("highright96@email.com")
-            .phoneNumber("010-1234-1234")
             .build();
     }
 

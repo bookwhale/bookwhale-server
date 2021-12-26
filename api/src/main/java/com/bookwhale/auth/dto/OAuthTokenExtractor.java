@@ -9,7 +9,7 @@ import org.springframework.util.StringUtils;
 public class OAuthTokenExtractor {
 
     public static String extract(HttpServletRequest request) {
-        String result = null;
+        String result;
         String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             result = bearerToken.substring(7);

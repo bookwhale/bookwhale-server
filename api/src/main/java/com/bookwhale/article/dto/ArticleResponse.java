@@ -76,7 +76,7 @@ public class ArticleResponse {
         return ArticleResponse.builder()
             .bookResponse(bookResponse)
             .sellerId(article.getSeller().getId())
-            .sellerIdentity(article.getSeller().getIdentity())
+            .sellerIdentity(article.getSeller().getNickname())
             .sellerProfileImage(article.getSeller().getProfileImage())
             .articleId(article.getId())
             .title(article.getTitle())

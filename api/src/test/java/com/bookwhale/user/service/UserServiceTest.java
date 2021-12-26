@@ -52,11 +52,8 @@ public class UserServiceTest {
 
         user = User.builder()
             .id(1L)
-            .identity("highright96")
-            .password("1234")
-            .name("남상우")
+            .nickname("남상우")
             .email("highright96@email.com")
-            .phoneNumber("010-1234-1234")
             .build();
     }
 
@@ -101,17 +98,13 @@ public class UserServiceTest {
     @Test
     void updateMyInfo_success() {
         UserUpdateRequest userUpdateRequest = UserUpdateRequest.builder()
-            .name("테스터1")
-            .phoneNumber("010-0000-0000")
-            .email("tester1@email.com")
+            .nickname("테스터1")
             .build();
 
         userService.updateMyInfo(user, userUpdateRequest);
 
         Assertions.assertAll(
-            () -> assertThat(user.getName()).isEqualTo(userUpdateRequest.getName()),
-            () -> assertThat(user.getEmail()).isEqualTo(userUpdateRequest.getEmail()),
-            () -> assertThat(user.getPhoneNumber()).isEqualTo(userUpdateRequest.getPhoneNumber())
+            () -> assertThat(user.getNickname()).isEqualTo(userUpdateRequest.getNickname())
         );
     }
 

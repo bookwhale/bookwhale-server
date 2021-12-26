@@ -82,7 +82,7 @@ public class ArticleControllerTest extends CommonApiTest {
 
         mockMvc.perform(get(format("/api/article/naver-book?title=%s&display=%d&start=%d",
                 request.getTitle(), request.getDisplay(), request.getStart()))
-                .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken"))
             .andExpect(status().isOk())
             .andDo(print())
             .andDo(ArticleDocumentation.findNaverBooks());
@@ -130,7 +130,7 @@ public class ArticleControllerTest extends CommonApiTest {
                 .file(image1)
                 .file(image2)
                 .file(json)
-                .header(HttpHeaders.AUTHORIZATION, "accessToken")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
                 .contentType(MediaType.MULTIPART_MIXED))
             .andExpect(header().string("location", "/api/article/1"))
             .andExpect(status().isCreated())
@@ -169,7 +169,7 @@ public class ArticleControllerTest extends CommonApiTest {
 
         mockMvc.perform(multipart("/api/article")
                 .file(json)
-                .header(HttpHeaders.AUTHORIZATION, "accessToken")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
                 .contentType(MediaType.MULTIPART_MIXED))
             .andExpect(status().isBadRequest())
             .andDo(print());
@@ -213,7 +213,7 @@ public class ArticleControllerTest extends CommonApiTest {
         when(articleService.findArticle(any(), any())).thenReturn(articleResponse);
 
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/article/{articleId}", 1L)
-                .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken"))
             .andExpect(status().isOk())
             .andDo(print())
             .andDo(ArticleDocumentation.findArticle());
@@ -238,7 +238,7 @@ public class ArticleControllerTest extends CommonApiTest {
         when(articleService.findMyArticles(any())).thenReturn(List.of(articlesResponse));
 
         mockMvc.perform(get("/api/articles/me")
-                .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken"))
             .andExpect(status().isOk())
             .andDo(print())
             .andDo(ArticleDocumentation.findMyArticles());
@@ -271,7 +271,7 @@ public class ArticleControllerTest extends CommonApiTest {
         mockMvc.perform(
                 get(format("/api/articles?search=%s&page=%d&size=%d", articlesRequest.getSearch(),
                     pagination.getPage(), pagination.getSize()))
-                    .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken"))
             .andExpect(status().isOk())
             .andDo(print())
             .andDo(ArticleDocumentation.findArticles());
@@ -333,7 +333,7 @@ public class ArticleControllerTest extends CommonApiTest {
         mockMvc.perform(MockMultipartPatchBuilder("/api/article/1")
                 .file(updateImage)
                 .file(json)
-                .header(HttpHeaders.AUTHORIZATION, "accessToken")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
                 .contentType(MediaType.MULTIPART_MIXED))
             .andExpect(status().isOk())
             .andDo(print())
@@ -349,7 +349,7 @@ public class ArticleControllerTest extends CommonApiTest {
 
         mockMvc.perform(
                 RestDocumentationRequestBuilders.patch("/api/article/{articleId}/status", 1L)
-                    .header(HttpHeaders.AUTHORIZATION, "accessToken")
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isOk())
