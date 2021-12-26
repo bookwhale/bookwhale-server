@@ -14,7 +14,6 @@ import com.bookwhale.auth.domain.CurrentUser;
 import com.bookwhale.common.dto.ConditionListResponse;
 import com.bookwhale.common.dto.Pagination;
 import com.bookwhale.user.domain.User;
-import com.bookwhale.user.service.UserService;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -40,14 +39,12 @@ public class ArticleController {
 
     private final ArticleService articleService;
     private final NaverBookAPIService naverBookAPIService;
-    private final UserService userService;
 
     @PostMapping("/article")
     public ResponseEntity<Void> createArticle(@CurrentUser User user,
         @Valid @RequestPart("articleRequest") ArticleRequest articleRequest,
         @RequestPart(name = "images") List<MultipartFile> images) throws URISyntaxException {
-        User targetUser = userService.findUserByEmail(user.getEmail());
-        Long articleId = articleService.createArticle(targetUser, articleRequest, images);
+        Long articleId = articleService.createArticle(user, articleRequest, images);
         return ResponseEntity.created(new URI("/api/article/" + articleId)).build();
     }
 
@@ -60,16 +57,14 @@ public class ArticleController {
 
     @GetMapping("/articles/me")
     public ResponseEntity<List<ArticlesResponse>> findMyArticles(@CurrentUser User user) {
-        User targetUser = userService.findUserByEmail(user.getEmail());
-        List<ArticlesResponse> response = articleService.findMyArticles(targetUser);
+        List<ArticlesResponse> response = articleService.findMyArticles(user);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/article/{articleId}")
     public ResponseEntity<ArticleResponse> findArticle(@CurrentUser User user,
         @PathVariable Long articleId) {
-        User targetUser = userService.findUserByEmail(user.getEmail());
-        return ResponseEntity.ok(articleService.findArticle(targetUser, articleId));
+        return ResponseEntity.ok(articleService.findArticle(user, articleId));
     }
 
     @GetMapping("/articles")
@@ -84,8 +79,7 @@ public class ArticleController {
         @PathVariable Long articleId,
         @Valid @RequestPart("articleUpdateRequest") ArticleUpdateRequest request,
         @RequestPart(name = "images", required = false) List<MultipartFile> images) {
-        User targetUser = userService.findUserByEmail(user.getEmail());
-        articleService.updateArticle(targetUser, articleId, request, images);
+        articleService.updateArticle(user, articleId, request, images);
         return ResponseEntity.ok().build();
     }
 
@@ -93,16 +87,14 @@ public class ArticleController {
     public ResponseEntity<Void> updateArticleStatus(@CurrentUser User user,
         @PathVariable Long articleId,
         @Valid @RequestBody ArticleStatusUpdateRequest request) {
-        User targetUser = userService.findUserByEmail(user.getEmail());
-        articleService.updateArticleStatus(targetUser, articleId, request);
+        articleService.updateArticleStatus(user, articleId, request);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/article/{articleId}")
     public ResponseEntity<Void> deleteArticle(@CurrentUser User user,
         @PathVariable Long articleId) {
-        User targetUser = userService.findUserByEmail(user.getEmail());
-        articleService.deleteArticle(targetUser, articleId);
+        articleService.deleteArticle(user, articleId);
         return ResponseEntity.ok().build();
     }
 
