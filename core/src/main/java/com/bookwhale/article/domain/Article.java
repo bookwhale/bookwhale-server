@@ -60,6 +60,8 @@ public class Article extends BaseEntity {
 
     private Long viewCount = 0L;
 
+    private Long chatCount = 0L;
+
     @Embedded
     private Book book;
 
@@ -67,9 +69,9 @@ public class Article extends BaseEntity {
     private final Images images = Images.empty();
 
     @Builder
-    public Article(Long id, User seller, String title, String price, String description,
-        ArticleStatus articleStatus, BookStatus bookStatus,
-        Location sellingLocation, Long favoriteCount, Long viewCount, Book book) {
+    public Article(Long id, User seller, String title, String price, String description, ArticleStatus articleStatus,
+        BookStatus bookStatus, Location sellingLocation, Long favoriteCount, Long viewCount, Long chatCount,
+        Book book) {
         this.id = id;
         this.seller = seller;
         this.title = title;
@@ -80,6 +82,7 @@ public class Article extends BaseEntity {
         this.sellingLocation = sellingLocation;
         this.favoriteCount = favoriteCount == null ? 0L : favoriteCount;
         this.viewCount = viewCount == null ? 0L : viewCount;
+        this.chatCount = chatCount == null ? 0L : chatCount;
         this.book = book;
     }
 
@@ -99,6 +102,7 @@ public class Article extends BaseEntity {
             .sellingLocation(article.getSellingLocation())
             .favoriteCount(article.getFavoriteCount())
             .viewCount(article.getViewCount())
+            .chatCount(article.getChatCount())
             .build();
     }
 

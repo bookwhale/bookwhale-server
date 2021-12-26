@@ -2,7 +2,6 @@ package com.bookwhale.article.dto;
 
 import com.bookwhale.article.domain.Article;
 import com.bookwhale.common.utils.TimeUtils;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,31 +17,25 @@ public class ArticlesResponse {
     private String articleImage;
     private String articleTitle;
     private String articlePrice;
-    private String articleStatus;
-    private String description;
+    private String bookStatus;
     private String sellingLocation;
-    private Long viewCount;
+    private Long chatCount;
     private Long favoriteCount;
     private String beforeTime;
 
     @Builder
-    public ArticlesResponse(Long articleId, String articleImage, String articleTitle,
-        String articlePrice, String articleStatus, String description, String bookTitle,
-        String bookAuthor, String bookPublisher, String sellingLocation, Long viewCount,
-        Long favoriteCount, String beforeTime) {
+    public ArticlesResponse(Long articleId, String articleImage, String articleTitle, String articlePrice,
+        String bookStatus, String sellingLocation, Long chatCount, Long favoriteCount, String beforeTime) {
         this.articleId = articleId;
         this.articleImage = articleImage;
         this.articleTitle = articleTitle;
         this.articlePrice = articlePrice;
-        this.articleStatus = articleStatus;
-        this.description = description;
+        this.bookStatus = bookStatus;
         this.sellingLocation = sellingLocation;
-        this.viewCount = viewCount;
+        this.chatCount = chatCount;
         this.favoriteCount = favoriteCount;
         this.beforeTime = beforeTime;
     }
-
-
 
     public static ArticlesResponse of(Article article, String articleImage, LocalDateTime currentTime) {
         return ArticlesResponse.builder()
@@ -50,19 +43,17 @@ public class ArticlesResponse {
             .articleImage(articleImage)
             .articleTitle(article.getTitle())
             .articlePrice(article.getPrice())
-            .articleStatus(article.getArticleStatus().getName())
-            .description(article.getDescription())
+            .bookStatus(article.getBookStatus().getName())
             .sellingLocation(article.getSellingLocation().getName())
-            .viewCount(article.getViewCount())
             .favoriteCount(article.getFavoriteCount())
+            .chatCount(article.getChatCount())
             .beforeTime(TimeUtils.BeforeTime(currentTime, article.getCreatedDate()))
             .build();
     }
 
     public static List<ArticlesResponse> listOf(List<Article> articles) {
-        LocalDateTime cur = LocalDateTime.now();
         return articles.stream()
-            .map(p -> ArticlesResponse.of(p, p.getImages().getFirstImageUrl(), cur))
+            .map(article -> ArticlesResponse.of(article, article.getImages().getFirstImageUrl(), LocalDateTime.now()))
             .collect(Collectors.toList());
     }
 }

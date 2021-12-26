@@ -9,11 +9,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.bookwhale.article.domain.BookStatus;
+import com.bookwhale.article.dto.ArticlesResponse;
 import com.bookwhale.common.controller.CommonApiTest;
 import com.bookwhale.common.domain.Location;
 import com.bookwhale.common.security.WithMockCustomUser;
-import com.bookwhale.article.dto.ArticlesResponse;
-import com.bookwhale.article.domain.ArticleStatus;
 import com.bookwhale.user.docs.UserDocumentation;
 import com.bookwhale.user.dto.FavoriteRequest;
 import com.bookwhale.user.dto.FavoriteResponse;
@@ -46,11 +46,10 @@ public class FavoriteControllerTest extends CommonApiTest {
                     .articleImage("이미지")
                     .articleTitle("책 팝니다~")
                     .articlePrice("20000원")
-                    .articleStatus(ArticleStatus.SALE.getName())
-                    .description("책 설명 보충합니다.")
+                    .bookStatus(BookStatus.BEST.getName())
                     .sellingLocation(Location.SEOUL.getName())
-                    .viewCount(1L)
-                    .favoriteCount(1L)
+                    .chatCount(1L)
+                    .favoriteCount(0L)
                     .beforeTime("15분 전")
                     .build()
             )

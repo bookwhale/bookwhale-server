@@ -3,14 +3,11 @@ package com.bookwhale.article.domain;
 import static com.bookwhale.article.domain.QArticle.article;
 import static com.bookwhale.user.domain.QUser.user;
 
-import com.bookwhale.common.domain.Location;
-import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 @RequiredArgsConstructor
@@ -28,43 +25,28 @@ public class ArticleCustomRepositoryImpl implements ArticleCustomRepository {
     }
 
     @Override
-    public Page<Article> findAllOrderByCreatedDateDesc(String title, String author, String publisher,
-        String sellingLocation, String articleStatus, Pageable pageable) {
-        QueryResults<Article> results = queryFactory
+    public List<Article> findAllBySearch(String search, Pageable page) {
+        return queryFactory
             .selectFrom(article)
             .where(
-                titleLike(title),
-                authorLike(author),
-                publisherLike(publisher),
-                sellingLocationEq(sellingLocation),
-                articleStatusEq(articleStatus)
+                bookTitleLike(search).or(articleTitleLike(search)).or(authorLike(search)),
+                article.articleStatus.eq(ArticleStatus.SALE)
             )
             .orderBy(article.createdDate.desc())
-            .offset(pageable.getOffset())
-            .limit(pageable.getPageSize())
-            .fetchResults();
-        return new PageImpl<>(results.getResults(), pageable, results.getTotal());
+            .offset(page.getOffset())
+            .limit(page.getPageSize())
+            .fetch();
     }
 
-    public static BooleanExpression titleLike(String title) {
-        return title != null ? article.book.bookTitle.like("%" + title + "%") : null;
+    public static BooleanExpression bookTitleLike(String bookTitle) {
+        return bookTitle != null ? article.book.bookTitle.like("%" + bookTitle + "%") : null;
+    }
+
+    public static BooleanExpression articleTitleLike(String articleTitle) {
+        return articleTitle != null ? article.title.like("%" + articleTitle + "%") : null;
     }
 
     public static BooleanExpression authorLike(String author) {
         return author != null ? article.book.bookAuthor.like("%" + author + "%") : null;
-    }
-
-    public static BooleanExpression publisherLike(String publisher) {
-        return publisher != null ? article.book.bookPublisher.like("%" + publisher + "%") : null;
-    }
-
-    public static BooleanExpression sellingLocationEq(String sellingLocation) {
-        return Optional.ofNullable(sellingLocation)
-            .map(keyword -> article.sellingLocation.eq(Location.valueOf(keyword))).orElse(null);
-    }
-
-    public static BooleanExpression articleStatusEq(String articleStatus) {
-        return Optional.ofNullable(articleStatus)
-            .map(keyword -> article.articleStatus.eq(ArticleStatus.valueOf(keyword))).orElse(null);
     }
 }

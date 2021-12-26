@@ -1,8 +1,8 @@
 package com.bookwhale.user.dto;
 
 import com.bookwhale.article.domain.Article;
-import com.bookwhale.favorite.domain.Favorite;
 import com.bookwhale.article.dto.ArticlesResponse;
+import com.bookwhale.favorite.domain.Favorite;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,9 +25,9 @@ public class FavoriteResponse {
 
     public static List<FavoriteResponse> listOf(List<Favorite> favorites) {
         LocalDateTime cur = LocalDateTime.now();
-        return favorites.stream().map(favoritedArticle -> {
-            Article article = favoritedArticle.getArticle();
-            return new FavoriteResponse(favoritedArticle.getId(),
+        return favorites.stream().map(favorite -> {
+            Article article = favorite.getArticle();
+            return new FavoriteResponse(favorite.getId(),
                 ArticlesResponse.of(article, article.getImages().getFirstImageUrl(), cur));
         }).collect(Collectors.toList());
     }
