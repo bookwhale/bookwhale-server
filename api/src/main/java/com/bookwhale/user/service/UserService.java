@@ -25,7 +25,6 @@ public class UserService {
     private final FileUploader fileUploader;
 
     public void createUser(UserInfo userInfo) {
-        validateIsDuplicateIdentity(userInfo);
         User user = User.builder()
             .email(userInfo.getEmail())
             .nickname(userInfo.getName())
@@ -34,10 +33,8 @@ public class UserService {
         userRepository.save(user);
     }
 
-    private void validateIsDuplicateIdentity(UserInfo userInfo) {
-        if (userRepository.existsByEmail(userInfo.getEmail())) {
-            throw new CustomException(ErrorCode.DUPLICATED_USER_IDENTITY);
-        }
+    public boolean checkUserExists(UserInfo userInfo) {
+        return userRepository.existsByEmail(userInfo.getEmail());
     }
 
     public UserResponse getUserInfo(User user){

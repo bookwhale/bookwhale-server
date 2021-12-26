@@ -65,7 +65,10 @@ public class OauthService {
 
         // step2 : 확인된 사용자 정보로 apiToken 생성
         // step2-1 : 확인된 사용자 정보 저장
-        userService.createUser(loginUserInfo);
+        boolean isCreatedUser = userService.checkUserExists(loginUserInfo);
+        if (!isCreatedUser) {
+            userService.createUser(loginUserInfo);
+        }
 
         // step2-2 : api token 생성
         String createdApiToken = OAuthObjectConverter.createApiToken(apiToken, loginUserInfo);
