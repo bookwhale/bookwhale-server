@@ -6,6 +6,7 @@ import com.bookwhale.article.acceptance.step.ArticleAcceptanceStep;
 import com.bookwhale.article.dto.ArticleRequest;
 import com.bookwhale.article.dto.ArticleResponse;
 import com.bookwhale.article.dto.BookRequest;
+import com.bookwhale.auth.domain.info.UserInfoFromToken;
 import com.bookwhale.common.acceptance.AcceptanceTest;
 import com.bookwhale.common.acceptance.AcceptanceUtils;
 import com.bookwhale.common.acceptance.step.AcceptanceStep;
@@ -30,28 +31,12 @@ import org.springframework.util.MimeTypeUtils;
 @DisplayName("유저 통합 테스트")
 public class UserAcceptanceTest extends AcceptanceTest {
 
-    @DisplayName("회원가입을 한다.")
-    @Test
-    void signUpTest() {
-        SignUpRequest signUpRequest = SignUpRequest.builder()
-            .identity("gentleDot")
-            .password("1234")
-            .name("백상일")
-            .email("gentleDot@email.com")
-            .phoneNumber("010-3456-3456")
-            .build();
-
-        ExtractableResponse<Response> response = UserAcceptanceStep.requestToSignUp(signUpRequest);
-
-        AcceptanceStep.assertThatStatusIsCreated(response);
-    }
-
     @DisplayName("내 정보를 조회한다.")
-    @Test
     void getMyInfo() {
-        String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
+        UserInfoFromToken userInfo = UserInfoFromToken.of(user);
+        String token = UserAcceptanceStep.requestToLoginAndGetAccessToken(userInfo, jwt);
 
-        ExtractableResponse<Response> response = UserAcceptanceStep.requestToGetMyInfo(jwt);
+        ExtractableResponse<Response> response = UserAcceptanceStep.requestToGetMyInfo(token);
         UserResponse userResponse = response.jsonPath().getObject(".", UserResponse.class);
 
         AcceptanceStep.assertThatStatusIsOk(response);
@@ -65,11 +50,11 @@ public class UserAcceptanceTest extends AcceptanceTest {
             .nickname("hose12")
             .build();
 
-        String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
+        String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(UserInfoFromToken.of(user), jwt);
 
-        ExtractableResponse<Response> response = UserAcceptanceStep.requestToUpdateMyInfo(jwt,
+        ExtractableResponse<Response> response = UserAcceptanceStep.requestToUpdateMyInfo(apiToken,
             userUpdateRequest);
-        UserResponse userResponse = UserAcceptanceStep.requestToGetMyInfo(jwt).jsonPath()
+        UserResponse userResponse = UserAcceptanceStep.requestToGetMyInfo(apiToken).jsonPath()
             .getObject(".", UserResponse.class);
 
         AcceptanceStep.assertThatStatusIsOk(response);
@@ -83,9 +68,9 @@ public class UserAcceptanceTest extends AcceptanceTest {
         LoginRequest newLoginReq = new LoginRequest(loginRequest.getIdentity(),
             req.getNewPassword());
 
-        String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
+        String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(UserInfoFromToken.of(user), jwt);
 
-        ExtractableResponse<Response> response = UserAcceptanceStep.requestToUpdatePassword(jwt,
+        ExtractableResponse<Response> response = UserAcceptanceStep.requestToUpdatePassword(apiToken,
             req);
         ExtractableResponse<Response> newLoginResponse = UserAcceptanceStep.requestToLogin(
             newLoginReq);
@@ -99,9 +84,9 @@ public class UserAcceptanceTest extends AcceptanceTest {
     void updatePassword_invalidPassword_failure() {
         PasswordUpdateRequest req = new PasswordUpdateRequest("invalidPassword", "12345");
 
-        String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
+        String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(UserInfoFromToken.of(user), jwt);
 
-        ExtractableResponse<Response> response = UserAcceptanceStep.requestToUpdatePassword(jwt,
+        ExtractableResponse<Response> response = UserAcceptanceStep.requestToUpdatePassword(apiToken,
             req);
 
         AcceptanceStep.assertThatStatusIsBadRequest(response);
@@ -117,11 +102,11 @@ public class UserAcceptanceTest extends AcceptanceTest {
             .fileName("profileImage.jpg")
             .build();
 
-        String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
+        String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(UserInfoFromToken.of(user), jwt);
 
-        ExtractableResponse<Response> response = UserAcceptanceStep.uploadProfileImage(jwt, image);
+        ExtractableResponse<Response> response = UserAcceptanceStep.uploadProfileImage(apiToken, image);
         ProfileResponse profileResponse = response.jsonPath().getObject(".", ProfileResponse.class);
-        UserResponse userResponse = UserAcceptanceStep.requestToGetMyInfo(jwt).jsonPath()
+        UserResponse userResponse = UserAcceptanceStep.requestToGetMyInfo(apiToken).jsonPath()
             .getObject(".", UserResponse.class);
 
         AcceptanceStep.assertThatStatusIsOk(response);
@@ -138,11 +123,11 @@ public class UserAcceptanceTest extends AcceptanceTest {
             .fileName("profileImage.jpg")
             .build();
 
-        String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
+        String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(UserInfoFromToken.of(user), jwt);
 
-        UserAcceptanceStep.uploadProfileImage(jwt, image);
-        ExtractableResponse<Response> response = UserAcceptanceStep.deleteProfileImage(jwt);
-        UserResponse userResponse = UserAcceptanceStep.requestToGetMyInfo(jwt).jsonPath()
+        UserAcceptanceStep.uploadProfileImage(apiToken, image);
+        ExtractableResponse<Response> response = UserAcceptanceStep.deleteProfileImage(apiToken);
+        UserResponse userResponse = UserAcceptanceStep.requestToGetMyInfo(apiToken).jsonPath()
             .getObject(".", UserResponse.class);
 
         AcceptanceStep.assertThatStatusIsOk(response);
@@ -170,13 +155,13 @@ public class UserAcceptanceTest extends AcceptanceTest {
             .price("5000")
             .build();
 
-        String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
+        String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(UserInfoFromToken.of(user), jwt);
         Long articleId = AcceptanceUtils.getIdFromResponse(
-            ArticleAcceptanceStep.requestToCreateArticle(jwt, articleRequest));
+            ArticleAcceptanceStep.requestToCreateArticle(apiToken, articleRequest));
 
-        ExtractableResponse<Response> response = UserAcceptanceStep.addFavorite(jwt,
+        ExtractableResponse<Response> response = UserAcceptanceStep.addFavorite(apiToken,
             new FavoriteRequest(articleId));
-        List<FavoriteResponse> favoriteRespons = UserAcceptanceStep.findFavorites(jwt).jsonPath()
+        List<FavoriteResponse> favoriteRespons = UserAcceptanceStep.findFavorites(apiToken).jsonPath()
             .getList(".", FavoriteResponse.class);
 
         AcceptanceStep.assertThatStatusIsOk(response);
@@ -204,24 +189,24 @@ public class UserAcceptanceTest extends AcceptanceTest {
             .price("5000")
             .build();
 
-        String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
+        String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(UserInfoFromToken.of(user), jwt);
         Long articleId = AcceptanceUtils.getIdFromResponse(
-            ArticleAcceptanceStep.requestToCreateArticle(jwt, articleRequest));
-        UserAcceptanceStep.addFavorite(jwt, new FavoriteRequest(articleId));
+            ArticleAcceptanceStep.requestToCreateArticle(apiToken, articleRequest));
+        UserAcceptanceStep.addFavorite(apiToken, new FavoriteRequest(articleId));
         List<FavoriteResponse> favoriteResponseAfterAddFavorite = UserAcceptanceStep.findFavorites(
-                jwt).jsonPath()
+                apiToken).jsonPath()
             .getList(".", FavoriteResponse.class);
         Long favoriteCount = favoriteResponseAfterAddFavorite.get(0).getArticlesResponse()
             .getFavoriteCount();
         Long favoriteId = favoriteResponseAfterAddFavorite.get(0).getFavoriteId();
 
         ExtractableResponse<Response> response = UserAcceptanceStep.deleteFavorite(
-            jwt, favoriteId);
-        List<FavoriteResponse> favoriteRespons = UserAcceptanceStep.findFavorites(jwt).jsonPath()
+            apiToken, favoriteId);
+        List<FavoriteResponse> favoriteRespons = UserAcceptanceStep.findFavorites(apiToken).jsonPath()
             .getList(".", FavoriteResponse.class);
 
         ExtractableResponse<Response> responseAfterDeleteFavorite = ArticleAcceptanceStep.requestToFindArticle(
-            jwt, articleId);
+            apiToken, articleId);
         ArticleResponse articleResponse = responseAfterDeleteFavorite.jsonPath()
             .getObject(".", ArticleResponse.class);
 

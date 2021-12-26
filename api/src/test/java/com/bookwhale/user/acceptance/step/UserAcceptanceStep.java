@@ -4,6 +4,11 @@ import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.bookwhale.article.dto.ArticleRequest;
+import com.bookwhale.auth.domain.OAuthObjectConverter;
+import com.bookwhale.auth.domain.info.UserInfo;
+import com.bookwhale.auth.domain.info.UserInfoFromToken;
+import com.bookwhale.common.token.JWT;
+import com.bookwhale.common.token.JWT.Claims;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.dto.FavoriteRequest;
 import com.bookwhale.user.dto.FavoriteResponse;
@@ -68,16 +73,6 @@ public class UserAcceptanceStep {
         );
     }
 
-    public static ExtractableResponse<Response> requestToSignUp(SignUpRequest signUpRequest) {
-        return given().log().all()
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .body(signUpRequest)
-            .when()
-            .post("/api/user/signup")
-            .then().log().all()
-            .extract();
-    }
-
     public static ExtractableResponse<Response> requestToLogin(LoginRequest loginRequest) {
         return given().log().all()
             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -88,11 +83,9 @@ public class UserAcceptanceStep {
             .extract();
     }
 
-    public static String requestToLoginAndGetAccessToken(LoginRequest loginRequest) {
-        LoginResponse loginResponse = requestToLogin(loginRequest).jsonPath()
-            .getObject(".", LoginResponse.class);
-        return loginResponse.getTokenType() + " " + loginResponse.getAccessToken();
-
+    public static String requestToLoginAndGetAccessToken(UserInfo userInfo, JWT jwt) {
+        String tokenPrefix = "Bearer ";
+        return tokenPrefix + OAuthObjectConverter.createApiToken(jwt, userInfo);
     }
 
     public static ExtractableResponse<Response> requestToGetMyInfo(String jwt) {

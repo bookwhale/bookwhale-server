@@ -29,7 +29,7 @@ public class UserService {
     }
 
     private void validateIsDuplicateIdentity(SignUpRequest request) {
-        if (userRepository.existsByIdentity(request.getIdentity())) {
+        if (userRepository.existsByEmail(request.getIdentity())) {
             throw new CustomException(ErrorCode.DUPLICATED_USER_IDENTITY);
         }
     }

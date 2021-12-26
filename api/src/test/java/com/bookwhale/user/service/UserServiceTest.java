@@ -68,12 +68,12 @@ public class UserServiceTest {
             .phoneNumber("010-1234-1234")
             .build();
 
-        when(userRepository.existsByIdentity(any())).thenReturn(false);
+        when(userRepository.existsByEmail(any())).thenReturn(false);
         when(userRepository.save(any())).thenReturn(user);
 
         userService.createUser(signUpRequest);
 
-        verify(userRepository).existsByIdentity(any());
+        verify(userRepository).existsByEmail(any());
         verify(userRepository).save(any());
     }
 
@@ -88,7 +88,7 @@ public class UserServiceTest {
             .phoneNumber("010-1234-1234")
             .build();
 
-        when(userRepository.existsByIdentity(any())).thenReturn(true);
+        when(userRepository.existsByEmail(any())).thenReturn(true);
         assertThatThrownBy(() -> userService.createUser(signUpRequest)).
             isInstanceOf(CustomException.class)
             .hasMessage(ErrorCode.DUPLICATED_USER_IDENTITY.getMessage());
