@@ -40,11 +40,8 @@ public class QuerydslTest {
         queryFactory = new JPAQueryFactory(em);
 
         user = User.builder()
-            .identity("highright96")
-            .password("1234")
-            .name("남상우")
+            .nickname("남상우")
             .email("highright96@email.com")
-            .phoneNumber("010-1234-1234")
             .build();
         userRepository.save(user);
     }
@@ -58,7 +55,7 @@ public class QuerydslTest {
 
         Assertions.assertAll(
             () -> assertThat(users.size()).isEqualTo(1),
-            () -> assertThat(users.get(0).getIdentity()).isEqualTo(user.getIdentity())
+            () -> assertThat(users.get(0).getNickname()).isEqualTo(user.getNickname())
         );
     }
 }
