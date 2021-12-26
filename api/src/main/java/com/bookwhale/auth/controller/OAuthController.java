@@ -1,9 +1,11 @@
 package com.bookwhale.auth.controller;
 
+import com.bookwhale.auth.domain.CurrentUser;
 import com.bookwhale.auth.domain.provider.OAuthProviderType;
 import com.bookwhale.auth.dto.OAuthLoginResponse;
 import com.bookwhale.auth.dto.OAuthRefreshLoginRequest;
 import com.bookwhale.auth.service.OauthService;
+import com.bookwhale.user.domain.User;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -57,6 +59,15 @@ public class OAuthController {
     public ResponseEntity<String> oAuthLogoutRequest(
         @Valid @RequestBody OAuthRefreshLoginRequest refreshRequest) {
         String result = oauthService.expireToken(refreshRequest);
+
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/withdrawal")
+    public ResponseEntity<String> withdrawalUser(
+        @CurrentUser User user,
+        @Valid @RequestBody OAuthRefreshLoginRequest refreshRequest) {
+        String result = oauthService.withdrawal(refreshRequest, user);
 
         return ResponseEntity.ok(result);
     }

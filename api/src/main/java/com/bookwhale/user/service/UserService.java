@@ -52,6 +52,11 @@ public class UserService {
             .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
+    public void withdrawalUser(User user){
+        User targetUser = findUserByEmail(user.getEmail());
+        userRepository.delete(targetUser);
+    }
+
     public ProfileResponse uploadProfileImage(User user, MultipartFile image) {
         User targetUser = findUserByEmail(user.getEmail());
         deleteImage(targetUser);
