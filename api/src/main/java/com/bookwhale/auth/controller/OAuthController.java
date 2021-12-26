@@ -32,7 +32,6 @@ public class OAuthController {
     @GetMapping(value = "/{providerType}")
     public void oAuthLoginRequest(
         @PathVariable(name = "providerType") OAuthProviderType providerType) {
-        log.info("사용자로부터 OAuth 로그인 요청 : {}", providerType);
         oauthService.sendLoginRequest(providerType);
     }
 
@@ -41,8 +40,6 @@ public class OAuthController {
         @PathVariable OAuthProviderType providerType,
         @RequestParam(name = "code") String accessCode,
         @RequestParam(name = "state", required = false) String state) {
-        log.info("전달받은 코드 확인 : {}", accessCode);
-        log.info("전달받은 상태 확인(naver) : {}", state);
 
         OAuthLoginResponse result = oauthService.loginProcess(providerType, accessCode);
 

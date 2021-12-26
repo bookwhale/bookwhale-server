@@ -101,7 +101,7 @@ public class OAuthObjectConverter {
                 oAuthToken = objectMapper.readValue(body, NaverOAuthToken.class);
             }
         } catch (JsonProcessingException e) {
-            log.debug("token converting failed.", e);
+            log.error("token converting failed.", e);
             throw new CustomException(ErrorCode.INVALID_TOKEN);
         }
 
@@ -129,10 +129,10 @@ public class OAuthObjectConverter {
                 userInfo = objectMapper.convertValue(infoMap, UserInfoFromNaver.class);
             }
         } catch (JsonProcessingException e) {
-            log.debug("token converting failed.", e);
+            log.error("token converting failed.", e);
             throw new CustomException(ErrorCode.INVALID_TOKEN);
         } catch (Exception e) {
-            log.debug("unexpected exception occurred.", e);
+            log.error("unexpected exception occurred.", e);
             throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
 

@@ -52,7 +52,7 @@ public class OauthService {
 
             response.sendRedirect(redirectUrl);
         } catch (IOException e) {
-            log.debug("로그인 페이지 redirection 실패", e);
+            log.error("로그인 페이지 redirection 실패", e);
         }
     }
 
