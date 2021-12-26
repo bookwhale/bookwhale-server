@@ -17,6 +17,7 @@ import com.bookwhale.common.token.JWT.Claims;
 import com.bookwhale.common.token.JWT.ClaimsForRefresh;
 import com.bookwhale.common.utils.RandomUtils;
 import com.bookwhale.user.domain.User;
+import com.bookwhale.user.service.UserService;
 import java.io.IOException;
 import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
@@ -34,6 +35,7 @@ public class OauthService {
     private final HttpServletResponse response;
     private final JWT apiToken;
     private final TokenRepository tokenRepository;
+    private final UserService userService;
 
     public void sendLoginRequest(OAuthProviderType providerType) {
         try {
@@ -62,6 +64,10 @@ public class OauthService {
             .orElseThrow(() -> new CustomException(ErrorCode.INFORMATION_NOT_FOUND));
 
         // step2 : 확인된 사용자 정보로 apiToken 생성
+        // step2-1 : 확인된 사용자 정보 저장
+        userService.createUser(loginUserInfo);
+
+        // step2-2 : api token 생성
         String createdApiToken = OAuthObjectConverter.createApiToken(apiToken, loginUserInfo);
 
         // step3 : 랜덤 문자열로 RefreshToken 생성
