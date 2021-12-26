@@ -53,4 +53,12 @@ public class OAuthController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<String> oAuthLogoutRequest(
+        @Valid @RequestBody OAuthRefreshLoginRequest refreshRequest) {
+        String result = oauthService.expireToken(refreshRequest);
+
+        return ResponseEntity.ok(result);
+    }
+
 }

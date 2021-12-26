@@ -21,10 +21,11 @@ import com.bookwhale.user.service.UserService;
 import java.io.IOException;
 import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
-import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -96,6 +97,7 @@ public class OauthService {
             .build();
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public OAuthLoginResponse apiTokenRefresh(OAuthRefreshLoginRequest refreshRequest) {
         // step1 : refresh token 확인
         String refreshToken = refreshRequest.getRefreshToken();
@@ -110,9 +112,27 @@ public class OauthService {
             throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
         }
 
-        // step2 : refresh token 으로 새로운 api token 생성
+        // step2 : 새로운 api token 생성
         String createdApiToken = apiToken.refreshApiToken(refreshRequest.getApiToken());
 
         return new OAuthLoginResponse(createdApiToken, refreshToken);
+    }
+
+    @Transactional
+    public String expireToken(OAuthRefreshLoginRequest refreshRequest) {
+        // step1 : refresh token 확인 후 삭제
+        String refreshToken = refreshRequest.getRefreshToken();
+        ClaimsForRefresh refreshClaim = apiToken.verifyForRefresh(refreshToken);
+        String email = refreshClaim.getEmail();
+
+        Token userRid = tokenRepository.findTokenByEmail(email)
+            .orElseThrow(() -> new CustomException(ErrorCode.FORBIDDEN));
+
+        tokenRepository.delete(userRid);
+
+        // step2 : apiToken 불용화
+        // TODO 해당 로직에 대해서는 cache형 db를 사용하여 가용한 토큰인지 정보를 보관할 수 있다면 추가작업이 가능할 것으로 판단됨.
+
+        return "로그아웃 되었습니다.";
     }
 }
