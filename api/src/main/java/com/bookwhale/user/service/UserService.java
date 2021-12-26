@@ -51,7 +51,7 @@ public class UserService {
         userRepository.save(targetUser);
     }
 
-    private User findUserByEmail(String userEmail) {
+    public User findUserByEmail(String userEmail) {
         return userRepository.findByEmail(userEmail)
             .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
