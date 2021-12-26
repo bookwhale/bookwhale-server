@@ -39,13 +39,16 @@ public class FavoriteServiceTest {
     @Mock
     private FavoriteRepository favoriteRepository;
 
+    @Mock
+    private UserService userService;
+
     FavoriteService favoriteService;
 
     User user;
 
     @BeforeEach
     void setUp() {
-        favoriteService = new FavoriteService(favoriteRepository, articleRepository);
+        favoriteService = new FavoriteService(favoriteRepository, articleRepository, userService);
 
         user = User.builder()
             .id(1L)

@@ -29,13 +29,6 @@ import org.springframework.http.MediaType;
 
 public class UserAcceptanceStep {
 
-    public static void assertThatLogin(LoginResponse loginResponse) {
-        Assertions.assertAll(
-            () -> assertThat(loginResponse.getAccessToken()).isNotNull(),
-            () -> assertThat(loginResponse.getTokenType()).isNotNull()
-        );
-    }
-
     public static void assertThatGetMyInfo(UserResponse userResponse, User user) {
         Assertions.assertAll(
             () -> assertThat(userResponse.getNickName()).isEqualTo(user.getNickname())

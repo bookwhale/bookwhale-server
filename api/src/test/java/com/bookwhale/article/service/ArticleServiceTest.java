@@ -29,6 +29,7 @@ import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.common.upload.FileUploader;
 import com.bookwhale.favorite.domain.FavoriteRepository;
 import com.bookwhale.user.domain.User;
+import com.bookwhale.user.service.UserService;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -55,6 +56,9 @@ public class ArticleServiceTest {
 
     @Mock
     FavoriteRepository favoriteRepository;
+    
+    @Mock
+    UserService userService;
 
     ArticleService articleService;
 
@@ -64,7 +68,7 @@ public class ArticleServiceTest {
 
     @BeforeEach
     void setUp() {
-        articleService = new ArticleService(articleRepository, fileUploader, favoriteRepository);
+        articleService = new ArticleService(articleRepository, fileUploader, favoriteRepository, userService);
 
         BookRequest bookRequest = BookRequest.builder()
             .bookSummary("설명")
