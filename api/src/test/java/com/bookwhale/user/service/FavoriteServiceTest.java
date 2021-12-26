@@ -79,9 +79,12 @@ public class FavoriteServiceTest {
             .bookStatus("BEST")
             .price("5000")
             .build();
+
+        when(userService.findUserByEmail(any(String.class)))
+            .thenReturn(user);
+
         Article article = Article.create(user, articleRequest.toEntity());
         article.setCreatedDate(LocalDateTime.now());
-
         when(favoriteRepository.findAllByUser(any())).thenReturn(List.of(
             Favorite.create(user, article)));
 
@@ -123,6 +126,10 @@ public class FavoriteServiceTest {
             .bookStatus("BEST")
             .price("5000")
             .build();
+
+        when(userService.findUserByEmail(any(String.class)))
+            .thenReturn(user);
+
         Article article = Article.create(user, articleRequest.toEntity());
 
         when(articleRepository.findById(any())).thenReturn(Optional.ofNullable(article));
@@ -166,6 +173,10 @@ public class FavoriteServiceTest {
             .bookStatus("BEST")
             .price("5000")
             .build();
+
+        when(userService.findUserByEmail(any(String.class)))
+            .thenReturn(user);
+
         Article article = Article.create(user, articleRequest.toEntity());
 
         when(favoriteRepository.findById(any())).thenReturn(Optional.of(
@@ -199,6 +210,10 @@ public class FavoriteServiceTest {
             .bookStatus("BEST")
             .price("5000")
             .build();
+
+        when(userService.findUserByEmail(any(String.class)))
+            .thenReturn(user);
+
         Article article = Article.create(user, articleRequest.toEntity());
         User otherUser = User.builder().id(2L).build();
 
