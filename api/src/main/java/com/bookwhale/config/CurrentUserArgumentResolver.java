@@ -26,7 +26,8 @@ public class CurrentUserArgumentResolver implements HandlerMethodArgumentResolve
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
         NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        HttpServletRequest httpServletRequest = webRequest.getNativeRequest(HttpServletRequest.class);
+        HttpServletRequest httpServletRequest = webRequest.getNativeRequest(
+            HttpServletRequest.class);
         if (httpServletRequest == null) {
             throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
         }

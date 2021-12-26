@@ -1,6 +1,5 @@
 package com.bookwhale.auth.domain.provider;
 
-import com.bookwhale.auth.domain.token.GoogleOAuthToken;
 import com.bookwhale.auth.domain.token.NaverOAuthToken;
 import com.google.common.hash.Hashing;
 import java.nio.charset.StandardCharsets;

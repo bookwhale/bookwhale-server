@@ -6,7 +6,6 @@ import com.bookwhale.article.domain.Book;
 import com.bookwhale.article.domain.BookStatus;
 import com.bookwhale.common.domain.Location;
 import com.bookwhale.common.validator.ValueOfEnum;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import lombok.Builder;

@@ -8,13 +8,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.bookwhale.article.domain.Article;
+import com.bookwhale.article.domain.ArticleRepository;
 import com.bookwhale.article.dto.ArticleRequest;
+import com.bookwhale.article.dto.BookRequest;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.favorite.domain.Favorite;
 import com.bookwhale.favorite.domain.FavoriteRepository;
-import com.bookwhale.article.domain.ArticleRepository;
-import com.bookwhale.article.dto.BookRequest;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.dto.FavoriteRequest;
 import com.bookwhale.user.dto.FavoriteResponse;

@@ -1,6 +1,5 @@
 package com.bookwhale.message.acceptance;
 
-import static java.lang.String.format;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 import com.bookwhale.config.StompWebSocketConfig;

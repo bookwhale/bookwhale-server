@@ -11,7 +11,6 @@ import com.bookwhale.common.dto.Pagination;
 import com.bookwhale.message.domain.Message;
 import com.bookwhale.message.domain.MessageRepository;
 import com.bookwhale.message.dto.MessageResponse;
-
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;

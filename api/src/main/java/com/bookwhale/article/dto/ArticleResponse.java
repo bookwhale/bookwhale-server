@@ -1,8 +1,8 @@
 package com.bookwhale.article.dto;
 
-import com.bookwhale.image.domain.Image;
 import com.bookwhale.article.domain.Article;
 import com.bookwhale.common.utils.TimeUtils;
+import com.bookwhale.image.domain.Image;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;

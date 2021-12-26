@@ -10,9 +10,9 @@ import com.bookwhale.article.dto.BookResponse;
 import com.bookwhale.article.dto.NaverBookRequest;
 import com.bookwhale.article.service.ArticleService;
 import com.bookwhale.article.service.NaverBookAPIService;
+import com.bookwhale.auth.domain.CurrentUser;
 import com.bookwhale.common.dto.ConditionListResponse;
 import com.bookwhale.common.dto.Pagination;
-import com.bookwhale.security.CurrentUser;
 import com.bookwhale.user.domain.User;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -69,7 +69,8 @@ public class ArticleController {
     }
 
     @GetMapping("/articles")
-    public ResponseEntity<List<ArticlesResponse>> findArticles(@Valid @ModelAttribute ArticlesRequest articlesRequest,
+    public ResponseEntity<List<ArticlesResponse>> findArticles(
+        @Valid @ModelAttribute ArticlesRequest articlesRequest,
         @Valid Pagination pagination) {
         return ResponseEntity.ok(articleService.findArticles(articlesRequest, pagination));
     }
@@ -84,14 +85,16 @@ public class ArticleController {
     }
 
     @PatchMapping("/article/{articleId}/status")
-    public ResponseEntity<Void> updateArticleStatus(@CurrentUser User user, @PathVariable Long articleId,
+    public ResponseEntity<Void> updateArticleStatus(@CurrentUser User user,
+        @PathVariable Long articleId,
         @Valid @RequestBody ArticleStatusUpdateRequest request) {
         articleService.updateArticleStatus(user, articleId, request);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/article/{articleId}")
-    public ResponseEntity<Void> deleteArticle(@CurrentUser User user, @PathVariable Long articleId) {
+    public ResponseEntity<Void> deleteArticle(@CurrentUser User user,
+        @PathVariable Long articleId) {
         articleService.deleteArticle(user, articleId);
         return ResponseEntity.ok().build();
     }

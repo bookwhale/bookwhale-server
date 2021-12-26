@@ -53,7 +53,8 @@ public class ChatRoomServiceTest {
 
     @BeforeEach
     void setUp() {
-        chatRoomService = new ChatRoomService(chatRoomRepository, userRepository, articleRepository);
+        chatRoomService = new ChatRoomService(chatRoomRepository, userRepository,
+            articleRepository);
 
         buyer = User.builder()
             .id(1L)

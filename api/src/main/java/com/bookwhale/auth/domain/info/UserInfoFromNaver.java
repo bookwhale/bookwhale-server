@@ -10,6 +10,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class UserInfoFromNaver implements UserInfo {
+
     private String id;
     private String nickname;
     private String name;

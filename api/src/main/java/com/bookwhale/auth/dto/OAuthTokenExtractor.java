@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.util.StringUtils;
 
 public class OAuthTokenExtractor {
+
     public static String extract(HttpServletRequest request) {
         String result = null;
         String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);

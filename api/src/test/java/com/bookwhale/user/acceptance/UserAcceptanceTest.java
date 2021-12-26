@@ -2,15 +2,13 @@ package com.bookwhale.user.acceptance;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.bookwhale.common.acceptance.AcceptanceTest;
-import com.bookwhale.common.acceptance.AcceptanceUtils;
-import com.bookwhale.common.acceptance.step.AcceptanceStep;
-import com.bookwhale.common.domain.Location;
 import com.bookwhale.article.acceptance.step.ArticleAcceptanceStep;
-import com.bookwhale.article.dto.ArticlesResponse;
 import com.bookwhale.article.dto.ArticleRequest;
 import com.bookwhale.article.dto.ArticleResponse;
 import com.bookwhale.article.dto.BookRequest;
+import com.bookwhale.common.acceptance.AcceptanceTest;
+import com.bookwhale.common.acceptance.AcceptanceUtils;
+import com.bookwhale.common.acceptance.step.AcceptanceStep;
 import com.bookwhale.user.acceptance.step.UserAcceptanceStep;
 import com.bookwhale.user.dto.FavoriteRequest;
 import com.bookwhale.user.dto.FavoriteResponse;
@@ -212,9 +210,11 @@ public class UserAcceptanceTest extends AcceptanceTest {
         Long articleId = AcceptanceUtils.getIdFromResponse(
             ArticleAcceptanceStep.requestToCreateArticle(jwt, articleRequest));
         UserAcceptanceStep.addFavorite(jwt, new FavoriteRequest(articleId));
-        List<FavoriteResponse> favoriteResponseAfterAddFavorite = UserAcceptanceStep.findFavorites(jwt).jsonPath()
+        List<FavoriteResponse> favoriteResponseAfterAddFavorite = UserAcceptanceStep.findFavorites(
+                jwt).jsonPath()
             .getList(".", FavoriteResponse.class);
-        Long favoriteCount = favoriteResponseAfterAddFavorite.get(0).getArticlesResponse().getFavoriteCount();
+        Long favoriteCount = favoriteResponseAfterAddFavorite.get(0).getArticlesResponse()
+            .getFavoriteCount();
         Long favoriteId = favoriteResponseAfterAddFavorite.get(0).getFavoriteId();
 
         ExtractableResponse<Response> response = UserAcceptanceStep.deleteFavorite(

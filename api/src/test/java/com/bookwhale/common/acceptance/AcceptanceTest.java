@@ -1,5 +1,6 @@
 package com.bookwhale.common.acceptance;
 
+import com.bookwhale.auth.service.OauthService;
 import com.bookwhale.common.DatabaseCleanUp;
 import com.bookwhale.user.domain.Role;
 import com.bookwhale.user.domain.User;
@@ -13,7 +14,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class AcceptanceTest {
@@ -25,10 +25,10 @@ public class AcceptanceTest {
     UserRepository userRepository;
 
     @Autowired
-    DatabaseCleanUp databaseCleanUp;
+    OauthService oauthService;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    DatabaseCleanUp databaseCleanUp;
 
     protected ObjectMapper objectMapper;
 
@@ -62,7 +62,6 @@ public class AcceptanceTest {
     private User createUser() {
         User user = User.builder()
             .identity("highright96")
-            .password(passwordEncoder.encode("1234"))
             .name("남상우")
             .email("highright96@gmail.com")
             .phoneNumber("010-1234-1234")
@@ -75,7 +74,6 @@ public class AcceptanceTest {
     private User createAnotherUser() {
         User user = User.builder()
             .identity("hose12")
-            .password(passwordEncoder.encode("1234"))
             .name("주호세")
             .email("hose12@email.com")
             .phoneNumber("010-5678-5678")

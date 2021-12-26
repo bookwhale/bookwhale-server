@@ -103,14 +103,16 @@ public class ArticleAcceptanceStep {
         );
     }
 
-    public static void assertThatUpdateArticle(ArticleResponse res, ArticleUpdateRequest req, int size) {
+    public static void assertThatUpdateArticle(ArticleResponse res, ArticleUpdateRequest req,
+        int size) {
         Assertions.assertAll(
             () -> assertThat(res.getTitle()).isEqualTo(req.getTitle()),
             () -> assertThat(res.getDescription()).isEqualTo(req.getDescription()),
             () -> assertThat(res.getPrice()).isEqualTo(req.getPrice()),
             () -> assertThat(res.getBookStatus()).isEqualTo(
                 BookStatus.valueOf(req.getBookStatus()).getName()),
-            () -> assertThat(res.getSellingLocation()).isEqualTo(Location.valueOf(req.getSellingLocation()).getName()),
+            () -> assertThat(res.getSellingLocation()).isEqualTo(
+                Location.valueOf(req.getSellingLocation()).getName()),
             () -> assertThat(res.getImages().size()).isEqualTo(size)
         );
     }
@@ -167,7 +169,8 @@ public class ArticleAcceptanceStep {
             .extract();
     }
 
-    public static ExtractableResponse<Response> requestToFindArticles(String jwt, ArticlesRequest req,
+    public static ExtractableResponse<Response> requestToFindArticles(String jwt,
+        ArticlesRequest req,
         Pagination page) {
         return given().log().all()
             .header(HttpHeaders.AUTHORIZATION, jwt)
@@ -217,7 +220,8 @@ public class ArticleAcceptanceStep {
             .extract();
     }
 
-    public static ExtractableResponse<Response> requestToUpdateArticleStatus(String jwt, Long articleId,
+    public static ExtractableResponse<Response> requestToUpdateArticleStatus(String jwt,
+        Long articleId,
         ArticleStatusUpdateRequest request) {
         return given().log().all()
             .header(HttpHeaders.AUTHORIZATION, jwt)

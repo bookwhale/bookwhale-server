@@ -2,10 +2,10 @@ package com.bookwhale.common;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.bookwhale.user.domain.User;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.bookwhale.user.domain.QUser;
+import com.bookwhale.user.domain.User;
 import com.bookwhale.user.domain.UserRepository;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.Assertions;

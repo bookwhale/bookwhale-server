@@ -24,8 +24,10 @@ public class ArticlesResponse {
     private String beforeTime;
 
     @Builder
-    public ArticlesResponse(Long articleId, String articleImage, String articleTitle, String articlePrice,
-        String bookStatus, String sellingLocation, Long chatCount, Long favoriteCount, String beforeTime) {
+    public ArticlesResponse(Long articleId, String articleImage, String articleTitle,
+        String articlePrice,
+        String bookStatus, String sellingLocation, Long chatCount, Long favoriteCount,
+        String beforeTime) {
         this.articleId = articleId;
         this.articleImage = articleImage;
         this.articleTitle = articleTitle;
@@ -37,7 +39,8 @@ public class ArticlesResponse {
         this.beforeTime = beforeTime;
     }
 
-    public static ArticlesResponse of(Article article, String articleImage, LocalDateTime currentTime) {
+    public static ArticlesResponse of(Article article, String articleImage,
+        LocalDateTime currentTime) {
         return ArticlesResponse.builder()
             .articleId(article.getId())
             .articleImage(articleImage)
@@ -53,7 +56,8 @@ public class ArticlesResponse {
 
     public static List<ArticlesResponse> listOf(List<Article> articles) {
         return articles.stream()
-            .map(article -> ArticlesResponse.of(article, article.getImages().getFirstImageUrl(), LocalDateTime.now()))
+            .map(article -> ArticlesResponse.of(article, article.getImages().getFirstImageUrl(),
+                LocalDateTime.now()))
             .collect(Collectors.toList());
     }
 }

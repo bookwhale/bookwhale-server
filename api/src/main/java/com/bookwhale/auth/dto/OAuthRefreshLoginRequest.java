@@ -8,6 +8,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @Getter
 @AllArgsConstructor
 public class OAuthRefreshLoginRequest {
+
     @NotBlank(message = "API token은 필수 입력입니다.")
     private final String apiToken;
     @NotBlank(message = "refresh token은 필수 입력입니다.")

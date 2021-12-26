@@ -13,6 +13,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @AllArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class NaverOAuthToken implements OAuthToken {
+
     private String accessToken;
     private String refreshToken;
     private String tokenType;

@@ -10,7 +10,6 @@ import com.bookwhale.user.dto.ProfileResponse;
 import com.bookwhale.user.dto.SignUpRequest;
 import com.bookwhale.user.dto.UserUpdateRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,14 +21,12 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    private final PasswordEncoder passwordEncoder;
-
     private final FileUploader fileUploader;
 
     public void createUser(SignUpRequest request) {
         validateIsDuplicateIdentity(request);
-        User user = User.create(request.toEntity(), passwordEncoder.encode(request.getPassword()));
-        userRepository.save(user);
+//        User user = User.create(request.toEntity(), passwordEncoder.encode(request.getPassword()));
+//        userRepository.save(user);
     }
 
     private void validateIsDuplicateIdentity(SignUpRequest request) {
@@ -66,18 +63,6 @@ public class UserService {
         if (image != null) {
             fileUploader.deleteFile(image);
             user.deleteProfile();
-        }
-    }
-
-    public void updatePassword(User user, PasswordUpdateRequest req) {
-        validateIsCorrectPassword(req.getOldPassword(), user.getPassword());
-        user.updatePassword(passwordEncoder.encode(req.getNewPassword()));
-        userRepository.save(user);
-    }
-
-    private void validateIsCorrectPassword(String password, String encodedPassword) {
-        if (!passwordEncoder.matches(password, encodedPassword)) {
-            throw new CustomException(ErrorCode.INVALID_USER_PASSWORD);
         }
     }
 }

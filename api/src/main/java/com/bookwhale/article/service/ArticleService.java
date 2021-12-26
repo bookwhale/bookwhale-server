@@ -74,7 +74,8 @@ public class ArticleService {
         updateImages(article, images, request.getDeleteImgUrls());
     }
 
-    public void updateImages(Article article, List<MultipartFile> images, List<String> deleteImgUrls) {
+    public void updateImages(Article article, List<MultipartFile> images,
+        List<String> deleteImgUrls) {
         if (deleteImgUrls != null && !deleteImgUrls.isEmpty()) {
             fileUploader.deleteFiles(deleteImgUrls);
             article.getImages().deleteImageUrls(deleteImgUrls);

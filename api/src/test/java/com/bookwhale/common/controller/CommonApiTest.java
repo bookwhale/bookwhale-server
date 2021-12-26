@@ -1,12 +1,12 @@
 package com.bookwhale.common.controller;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
+import com.bookwhale.auth.service.OauthService;
+import com.bookwhale.user.domain.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.bookwhale.user.domain.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -22,12 +22,14 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
-@ComponentScan(basePackages = {"com.bookwhale.security"})
 @ExtendWith(RestDocumentationExtension.class)
 public class CommonApiTest {
 
     @MockBean
     protected UserRepository userRepository;
+
+    @MockBean
+    protected OauthService oauthService;
 
     protected MockMvc mockMvc;
 
@@ -44,7 +46,6 @@ public class CommonApiTest {
             .webAppContextSetup(webApplicationContext)
             .addFilters(new CharacterEncodingFilter("UTF-8", true))
             .apply(documentationConfiguration(restDocumentation))
-            .apply(springSecurity())
             .build();
     }
 

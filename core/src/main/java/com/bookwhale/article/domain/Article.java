@@ -69,8 +69,10 @@ public class Article extends BaseEntity {
     private final Images images = Images.empty();
 
     @Builder
-    public Article(Long id, User seller, String title, String price, String description, ArticleStatus articleStatus,
-        BookStatus bookStatus, Location sellingLocation, Long favoriteCount, Long viewCount, Long chatCount,
+    public Article(Long id, User seller, String title, String price, String description,
+        ArticleStatus articleStatus,
+        BookStatus bookStatus, Location sellingLocation, Long favoriteCount, Long viewCount,
+        Long chatCount,
         Book book) {
         this.id = id;
         this.seller = seller;

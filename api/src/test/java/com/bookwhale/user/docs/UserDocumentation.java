@@ -113,12 +113,14 @@ public class UserDocumentation {
     public static RestDocumentationResultHandler userFindFavorites() {
         FieldDescriptor[] response = new FieldDescriptor[]{
             fieldWithPath("favoriteId").type(JsonFieldType.NUMBER).description("관심목록 ID"),
-            fieldWithPath("articlesResponse.articleId").type(JsonFieldType.NUMBER).description("게시글 ID"),
+            fieldWithPath("articlesResponse.articleId").type(JsonFieldType.NUMBER).description(
+                "게시글 ID"),
             fieldWithPath("articlesResponse.articleTitle").type(JsonFieldType.STRING).description(
                 "게시글 제목"),
             fieldWithPath("articlesResponse.articlePrice").type(JsonFieldType.STRING).description(
                 "게시글 가격"),
-            fieldWithPath("articlesResponse.sellingLocation").type(JsonFieldType.STRING).description(
+            fieldWithPath("articlesResponse.sellingLocation").type(
+                JsonFieldType.STRING).description(
                 "게시글에 등록한 판매지역"),
             fieldWithPath("articlesResponse.chatCount").type(JsonFieldType.NUMBER).description(
                 "게시글 채팅수"),

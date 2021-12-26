@@ -92,7 +92,8 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
         ArticleAcceptanceStep.requestToCreateArticle(jwt, articleRequest);
 
         ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToFindMyArticles(jwt);
-        List<ArticlesResponse> articlesResponse = response.jsonPath().getList(".", ArticlesResponse.class);
+        List<ArticlesResponse> articlesResponse = response.jsonPath()
+            .getList(".", ArticlesResponse.class);
 
         AcceptanceStep.assertThatStatusIsOk(response);
         ArticleAcceptanceStep.assertThatFindMyArticles(articlesResponse, articleRequest);
@@ -123,7 +124,8 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
         ArticleAcceptanceStep.requestToCreateArticle(anotherJwt, articleRequest);
 
         ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToFindMyArticles(jwt);
-        List<ArticlesResponse> articlesResponse = response.jsonPath().getList(".", ArticlesResponse.class);
+        List<ArticlesResponse> articlesResponse = response.jsonPath()
+            .getList(".", ArticlesResponse.class);
 
         AcceptanceStep.assertThatStatusIsOk(response);
         assertThat(articlesResponse.size()).isEqualTo(0);
@@ -137,11 +139,13 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
         Long articleId = AcceptanceUtils.getIdFromResponse(
             ArticleAcceptanceStep.requestToCreateArticle(jwt, articleRequest));
 
-        ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToFindArticle(jwt, articleId);
+        ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToFindArticle(jwt,
+            articleId);
         ArticleResponse articleResponse = response.jsonPath().getObject(".", ArticleResponse.class);
 
         AcceptanceStep.assertThatStatusIsOk(response);
-        ArticleAcceptanceStep.assertThatFindArticle(articleResponse, articleRequest, user, true, false);
+        ArticleAcceptanceStep.assertThatFindArticle(articleResponse, articleRequest, user, true,
+            false);
     }
 
     @DisplayName("게시글을 상세 조회한다. (다른 유저의 게시글, 관심목록 O)")
@@ -155,11 +159,13 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
         String jwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
         UserAcceptanceStep.addFavorite(jwt, new FavoriteRequest(articleId));
 
-        ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToFindArticle(jwt, articleId);
+        ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToFindArticle(jwt,
+            articleId);
         ArticleResponse articleResponse = response.jsonPath().getObject(".", ArticleResponse.class);
 
         AcceptanceStep.assertThatStatusIsOk(response);
-        ArticleAcceptanceStep.assertThatFindArticle(articleResponse, articleRequest, anotherUser, false, true);
+        ArticleAcceptanceStep.assertThatFindArticle(articleResponse, articleRequest, anotherUser,
+            false, true);
     }
 
     @DisplayName("게시글을 두번 상세 조회한다. (조회수 +2 확인)")
@@ -171,11 +177,13 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
             ArticleAcceptanceStep.requestToCreateArticle(jwt, articleRequest));
 
         ArticleAcceptanceStep.requestToFindArticle(jwt, articleId);
-        ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToFindArticle(jwt, articleId);
+        ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToFindArticle(jwt,
+            articleId);
         ArticleResponse articleResponse = response.jsonPath().getObject(".", ArticleResponse.class);
 
         AcceptanceStep.assertThatStatusIsOk(response);
-        ArticleAcceptanceStep.assertThatFindArticle(articleResponse, articleRequest, user, true, false);
+        ArticleAcceptanceStep.assertThatFindArticle(articleResponse, articleRequest, user, true,
+            false);
         assertThat(articleResponse.getViewCount()).isEqualTo(2L);
     }
 
@@ -289,10 +297,12 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
             .build();
         List<MultiPartSpecification> images = List.of(image);
 
-        ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToUpdateArticle(jwt, articleId,
+        ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToUpdateArticle(jwt,
+            articleId,
             updateRequest, images);
 
-        ArticleResponse articleResponse = ArticleAcceptanceStep.requestToFindArticle(jwt, articleId).jsonPath()
+        ArticleResponse articleResponse = ArticleAcceptanceStep.requestToFindArticle(jwt, articleId)
+            .jsonPath()
             .getObject(".", ArticleResponse.class);
 
         AcceptanceStep.assertThatStatusIsOk(response);
@@ -315,7 +325,8 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
             .getObject(".", ArticleResponse.class).getArticleStatus();
 
         AcceptanceStep.assertThatStatusIsOk(response);
-        assertThat(articleStatus).isEqualTo(ArticleStatus.valueOf(request.getArticleStatus()).getName());
+        assertThat(articleStatus).isEqualTo(
+            ArticleStatus.valueOf(request.getArticleStatus()).getName());
     }
 
     @DisplayName("게시글을 삭제한다.")

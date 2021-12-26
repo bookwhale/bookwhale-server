@@ -1,11 +1,11 @@
 package com.bookwhale.user.service;
 
 import com.bookwhale.article.domain.Article;
+import com.bookwhale.article.domain.ArticleRepository;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.favorite.domain.Favorite;
 import com.bookwhale.favorite.domain.FavoriteRepository;
-import com.bookwhale.article.domain.ArticleRepository;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.dto.FavoriteRequest;
 import com.bookwhale.user.dto.FavoriteResponse;
@@ -54,7 +54,7 @@ public class FavoriteService {
     /**
      * 사용자의 관심목록 중 선택한 관심을 취소 처리
      *
-     * @param user   현재 접속 중인 사용자
+     * @param user       현재 접속 중인 사용자
      * @param favoriteId 좋아요 id
      */
     @Transactional

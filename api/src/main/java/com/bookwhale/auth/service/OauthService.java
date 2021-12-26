@@ -17,7 +17,6 @@ import com.bookwhale.common.token.JWT.Claims;
 import com.bookwhale.common.token.JWT.ClaimsForRefresh;
 import com.bookwhale.common.utils.RandomUtils;
 import com.bookwhale.user.domain.ApiUser;
-import com.bookwhale.user.domain.UserRepository;
 import java.io.IOException;
 import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
@@ -35,7 +34,6 @@ public class OauthService {
     private final HttpServletResponse response;
     private final JWT apiToken;
     private final TokenRepository tokenRepository;
-    private final UserRepository userRepository;
 
     public void sendLoginRequest(OAuthProviderType providerType) {
         try {

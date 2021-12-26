@@ -35,7 +35,8 @@ public class GoogleOAuthProvider implements OAuthProvider {
     @Override
     public String getOAuthRedirectURL() {
         Map<String, Object> params = new HashMap<>();
-        params.put("scope", "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile");
+        params.put("scope",
+            "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile");
         params.put("response_type", "code");
         params.put("client_id", clientId);
         params.put("redirect_uri", callbackURL);

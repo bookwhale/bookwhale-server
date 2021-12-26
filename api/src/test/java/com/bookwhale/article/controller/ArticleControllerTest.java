@@ -5,6 +5,7 @@ import static java.util.List.of;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -28,10 +29,11 @@ import com.bookwhale.article.service.NaverBookAPIService;
 import com.bookwhale.common.controller.CommonApiTest;
 import com.bookwhale.common.domain.Location;
 import com.bookwhale.common.dto.Pagination;
-import com.bookwhale.common.security.WithMockCustomUser;
+import com.bookwhale.user.controller.UserController;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import org.apache.http.entity.ContentType;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -39,7 +41,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.filter.CharacterEncodingFilter;
 
 @DisplayName("게시글 단위 테스트(Controller)")
 @WebMvcTest(controllers = ArticleController.class)
@@ -53,7 +60,6 @@ public class ArticleControllerTest extends CommonApiTest {
 
     @Test
     @DisplayName("네이버 책 API")
-    @WithMockCustomUser
     public void findNaverBooksTest() throws Exception {
         NaverBookRequest request = NaverBookRequest.builder()
             .title("책 제목")
@@ -82,7 +88,7 @@ public class ArticleControllerTest extends CommonApiTest {
             .andDo(ArticleDocumentation.findNaverBooks());
     }
 
-    @WithMockCustomUser
+
     @DisplayName("게시글을 등록한다.")
     @Test
     void createArticle() throws Exception {
@@ -132,7 +138,7 @@ public class ArticleControllerTest extends CommonApiTest {
             .andDo(ArticleDocumentation.createArticle());
     }
 
-    @WithMockCustomUser
+
     @DisplayName("게시글을 등록할 때 이미지를 보내지 않으면 예외가 발생한다.")
     @Test
     void createArticle_notExistRequestPart_failure() throws Exception {
@@ -169,7 +175,7 @@ public class ArticleControllerTest extends CommonApiTest {
             .andDo(print());
     }
 
-    @WithMockCustomUser
+
     @DisplayName("게시글을 상세 조회한다.")
     @Test
     void findArticle() throws Exception {
@@ -213,7 +219,7 @@ public class ArticleControllerTest extends CommonApiTest {
             .andDo(ArticleDocumentation.findArticle());
     }
 
-    @WithMockCustomUser
+
     @DisplayName("내 판매글들을 조회한다.")
     @Test
     void findMyArticles() throws Exception {
@@ -238,7 +244,7 @@ public class ArticleControllerTest extends CommonApiTest {
             .andDo(ArticleDocumentation.findMyArticles());
     }
 
-    @WithMockCustomUser
+
     @DisplayName("로그인한 유저가 게시글을 전체 조회한다.")
     @Test
     void findArticles_loginUser() throws Exception {
@@ -262,9 +268,10 @@ public class ArticleControllerTest extends CommonApiTest {
 
         when(articleService.findArticles(any(), any())).thenReturn(of(articlesResponse));
 
-        mockMvc.perform(get(format("/api/articles?search=%s&page=%d&size=%d", articlesRequest.getSearch(),
-                pagination.getPage(), pagination.getSize()))
-                .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+        mockMvc.perform(
+                get(format("/api/articles?search=%s&page=%d&size=%d", articlesRequest.getSearch(),
+                    pagination.getPage(), pagination.getSize()))
+                    .header(HttpHeaders.AUTHORIZATION, "accessToken"))
             .andExpect(status().isOk())
             .andDo(print())
             .andDo(ArticleDocumentation.findArticles());
@@ -293,13 +300,14 @@ public class ArticleControllerTest extends CommonApiTest {
 
         when(articleService.findArticles(any(), any())).thenReturn(of(articlesResponse));
 
-        mockMvc.perform(get(format("/api/articles?search=%s&page=%d&size=%d", articlesRequest.getSearch(),
-                pagination.getPage(), pagination.getSize())))
+        mockMvc.perform(
+                get(format("/api/articles?search=%s&page=%d&size=%d", articlesRequest.getSearch(),
+                    pagination.getPage(), pagination.getSize())))
             .andExpect(status().isOk())
             .andDo(print());
     }
 
-    @WithMockCustomUser
+
     @DisplayName("게시글을 수정한다.")
     @Test
     void updateArticle_success() throws Exception {
@@ -332,17 +340,18 @@ public class ArticleControllerTest extends CommonApiTest {
             .andDo(ArticleDocumentation.updateArticle());
     }
 
-    @WithMockCustomUser
+
     @DisplayName("게시글 상태를 변경한다.")
     @Test
     void updateArticleStatus() throws Exception {
         ArticleStatusUpdateRequest request = new ArticleStatusUpdateRequest(
             ArticleStatus.SOLD_OUT.toString());
 
-        mockMvc.perform(RestDocumentationRequestBuilders.patch("/api/article/{articleId}/status", 1L)
-                .header(HttpHeaders.AUTHORIZATION, "accessToken")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
+        mockMvc.perform(
+                RestDocumentationRequestBuilders.patch("/api/article/{articleId}/status", 1L)
+                    .header(HttpHeaders.AUTHORIZATION, "accessToken")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isOk())
             .andDo(print())
             .andDo(ArticleDocumentation.updateArticleStatus());

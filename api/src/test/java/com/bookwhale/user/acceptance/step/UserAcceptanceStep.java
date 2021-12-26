@@ -3,9 +3,7 @@ package com.bookwhale.user.acceptance.step;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.bookwhale.article.domain.ArticleStatus;
 import com.bookwhale.article.dto.ArticleRequest;
-import com.bookwhale.article.dto.ArticlesResponse;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.dto.FavoriteRequest;
 import com.bookwhale.user.dto.FavoriteResponse;

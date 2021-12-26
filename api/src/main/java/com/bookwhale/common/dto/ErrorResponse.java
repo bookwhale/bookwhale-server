@@ -1,7 +1,6 @@
 package com.bookwhale.common.dto;
 
 import com.bookwhale.common.exception.ErrorCode;
-
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;

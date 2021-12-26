@@ -9,12 +9,13 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @Builder
 @Getter
 @AllArgsConstructor
-public class UserInfoFromToken implements UserInfo{
+public class UserInfoFromToken implements UserInfo {
+
     private String name;
     private String email;
     private String picture;
 
-    public static UserInfoFromToken of (User user){
+    public static UserInfoFromToken of(User user) {
         return UserInfoFromToken.builder()
             .name(user.getName())
             .email(user.getEmail())

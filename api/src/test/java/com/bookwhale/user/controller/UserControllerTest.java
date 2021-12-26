@@ -12,9 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.bookwhale.common.controller.CommonApiTest;
-import com.bookwhale.common.security.WithMockCustomUser;
 import com.bookwhale.user.docs.UserDocumentation;
-import com.bookwhale.user.dto.LoginRequest;
 import com.bookwhale.user.dto.PasswordUpdateRequest;
 import com.bookwhale.user.dto.ProfileResponse;
 import com.bookwhale.user.dto.SignUpRequest;
@@ -62,20 +60,6 @@ public class UserControllerTest extends CommonApiTest {
             .andDo(UserDocumentation.userSignup());
     }
 
-    @DisplayName("유저 로그인을 한다.")
-    @Test
-    void login() throws Exception {
-        LoginRequest loginRequest = new LoginRequest("highright96", "1234");
-
-        mockMvc.perform(post("/api/user/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(loginRequest)))
-            .andExpect(status().isUnauthorized())
-            .andDo(print())
-            .andDo(UserDocumentation.userLogin());
-    }
-
-    @WithMockCustomUser
     @DisplayName("내 정보를 수정한다.")
     @Test
     void updateMyInfo() throws Exception {
@@ -96,24 +80,6 @@ public class UserControllerTest extends CommonApiTest {
             .andDo(UserDocumentation.userUpdateMe());
     }
 
-    @WithMockCustomUser
-    @DisplayName("비밀번호를 수정한다.")
-    @Test
-    void updatePassword() throws Exception {
-        PasswordUpdateRequest request = new PasswordUpdateRequest("old password", "new password");
-
-        doNothing().when(userService).updatePassword(any(), any());
-
-        mockMvc.perform(patch("/api/user/password")
-                .header(HttpHeaders.AUTHORIZATION, "accessToken")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-            .andExpect(status().isOk())
-            .andDo(print())
-            .andDo(UserDocumentation.userUpdatePassword());
-    }
-
-    @WithMockCustomUser
     @DisplayName("프로필 사진을 업로드한다.")
     @Test
     void uploadProfileImage() throws Exception {
@@ -134,7 +100,7 @@ public class UserControllerTest extends CommonApiTest {
             .andDo(UserDocumentation.userUploadProfileImage());
     }
 
-    @WithMockCustomUser
+
     @DisplayName("프로필 사진을 업로드시 잘못된 RequestParam 을 보내면 예외가 발생한다.")
     @Test
     void uploadProfileImage_failure() throws Exception {
@@ -148,7 +114,7 @@ public class UserControllerTest extends CommonApiTest {
             .andDo(print());
     }
 
-    @WithMockCustomUser
+
     @DisplayName("프로필 사진을 삭제한다.")
     @Test
     void deleteProfileImage() throws Exception {

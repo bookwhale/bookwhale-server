@@ -1,10 +1,9 @@
 package com.bookwhale.chatroom.acceptance;
 
+import com.bookwhale.article.dto.ArticleRequest;
+import com.bookwhale.article.dto.BookRequest;
 import com.bookwhale.chatroom.acceptance.step.ChatRoomAcceptanceStep;
 import com.bookwhale.chatroom.dto.ChatRoomResponse;
-import com.bookwhale.article.dto.BookRequest;
-import com.bookwhale.article.dto.ArticleRequest;
-import com.bookwhale.common.domain.Location;
 import com.bookwhale.common.acceptance.AcceptanceTest;
 import com.bookwhale.common.acceptance.step.AcceptanceStep;
 import com.bookwhale.user.acceptance.step.UserAcceptanceStep;
@@ -81,7 +80,8 @@ public class ChatRoomAcceptanceTest extends AcceptanceTest {
         AcceptanceStep.assertThatStatusIsOk(loginUserRes);
         AcceptanceStep.assertThatStatusIsOk(anotherUserRes);
 
-        ChatRoomAcceptanceStep.assertThatFindChatRooms(loginUserRoomRes, articleRequest, anotherUser);
+        ChatRoomAcceptanceStep.assertThatFindChatRooms(loginUserRoomRes, articleRequest,
+            anotherUser);
         ChatRoomAcceptanceStep.assertThatFindChatRooms(anotherRoomRes, articleRequest, user);
     }
 
