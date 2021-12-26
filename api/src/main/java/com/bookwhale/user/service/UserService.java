@@ -7,11 +7,10 @@ import com.bookwhale.common.upload.FileUploader;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.domain.UserRepository;
 import com.bookwhale.user.dto.ProfileResponse;
-import com.bookwhale.user.dto.SignUpRequest;
 import com.bookwhale.user.dto.UserResponse;
 import com.bookwhale.user.dto.UserUpdateRequest;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -83,5 +82,9 @@ public class UserService {
             fileUploader.deleteFile(image);
             user.deleteProfile();
         }
+    }
+    
+    public Optional<User> findByUserId(Long userId) {
+        return userRepository.findById(userId);
     }
 }
