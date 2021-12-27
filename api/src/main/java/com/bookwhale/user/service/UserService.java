@@ -37,7 +37,7 @@ public class UserService {
         return userRepository.existsByEmail(userInfo.getEmail());
     }
 
-    public UserResponse getUserInfo(User user){
+    public UserResponse getUserInfo(User user) {
         return UserResponse.of(findUserByEmail(user.getEmail()));
     }
 
@@ -52,7 +52,7 @@ public class UserService {
             .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
-    public void withdrawalUser(User user){
+    public void withdrawalUser(User user) {
         User targetUser = findUserByEmail(user.getEmail());
         userRepository.delete(targetUser);
     }
@@ -85,7 +85,7 @@ public class UserService {
             user.deleteProfile();
         }
     }
-    
+
     public Optional<User> findByUserId(Long userId) {
         return userRepository.findById(userId);
     }

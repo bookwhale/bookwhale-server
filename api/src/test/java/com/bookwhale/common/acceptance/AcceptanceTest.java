@@ -1,9 +1,8 @@
 package com.bookwhale.common.acceptance;
 
+import com.bookwhale.auth.domain.JWT;
 import com.bookwhale.auth.service.OauthService;
 import com.bookwhale.common.DatabaseCleanUp;
-import com.bookwhale.common.token.JWT;
-import com.bookwhale.user.domain.Role;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.domain.UserRepository;
 import com.bookwhale.user.dto.LoginRequest;

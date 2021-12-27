@@ -1,6 +1,5 @@
-package com.bookwhale.auth.dto;
+package com.bookwhale.auth.dto.provider;
 
-import com.bookwhale.auth.domain.provider.OAuthProviderType;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 

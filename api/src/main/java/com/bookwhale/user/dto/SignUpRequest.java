@@ -1,6 +1,5 @@
 package com.bookwhale.user.dto;
 
-import com.bookwhale.user.domain.Role;
 import com.bookwhale.user.domain.User;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;

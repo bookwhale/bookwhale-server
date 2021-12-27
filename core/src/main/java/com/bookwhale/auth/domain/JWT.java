@@ -1,4 +1,4 @@
-package com.bookwhale.common.token;
+package com.bookwhale.auth.domain;
 
 import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.JWTVerifier;
