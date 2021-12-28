@@ -2,7 +2,7 @@ package com.bookwhale.article.service;
 
 import com.bookwhale.article.dto.BookResponse;
 import com.bookwhale.article.dto.NaverBookRequest;
-import com.bookwhale.auth.dto.provider.NaverOAuthProvider;
+import com.bookwhale.auth.service.provider.NaverOAuthProvider;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import java.io.ByteArrayInputStream;

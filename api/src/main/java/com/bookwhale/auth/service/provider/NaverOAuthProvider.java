@@ -1,4 +1,4 @@
-package com.bookwhale.auth.dto.provider;
+package com.bookwhale.auth.service.provider;
 
 import com.bookwhale.article.dto.NaverBookRequest;
 import com.bookwhale.auth.domain.token.NaverOAuthToken;

@@ -3,7 +3,7 @@ package com.bookwhale.auth.controller;
 import com.bookwhale.auth.domain.CurrentUser;
 import com.bookwhale.auth.dto.OAuthLoginResponse;
 import com.bookwhale.auth.dto.OAuthRefreshLoginRequest;
-import com.bookwhale.auth.dto.provider.OAuthProviderType;
+import com.bookwhale.auth.service.provider.OAuthProviderType;
 import com.bookwhale.auth.service.OauthService;
 import com.bookwhale.user.domain.User;
 import javax.validation.Valid;
