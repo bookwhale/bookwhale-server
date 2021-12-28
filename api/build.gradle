@@ -4,12 +4,10 @@ dependencies {
     //project
     implementation project(path: ':core', configuration: 'default')
     //spring
-    implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
     //auth
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     implementation 'io.jsonwebtoken:jjwt:0.5.1'
     implementation 'com.auth0:java-jwt:3.18.2'
     //mail
@@ -23,7 +21,6 @@ dependencies {
     implementation 'com.google.guava:guava:31.0.1-jre'
     //test
     testImplementation group: 'io.rest-assured', name: 'rest-assured', version: '4.3.3'
-    testImplementation 'org.springframework.security:spring-security-test'
     //api docs
     asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor'
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'

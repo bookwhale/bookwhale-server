@@ -1,7 +1,7 @@
 package com.bookwhale.user.controller;
 
+import com.bookwhale.auth.domain.CurrentUser;
 import com.bookwhale.common.exception.ErrorCode;
-import com.bookwhale.security.CurrentUser;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.dto.FavoriteRequest;
 import com.bookwhale.user.dto.FavoriteResponse;
@@ -57,7 +57,7 @@ public class FavoriteController {
     /**
      * 사용자의 관심목록 중 선택한 관심을 삭제한다.
      *
-     * @param user   현재 접속 중인 사용자
+     * @param user       현재 접속 중인 사용자
      * @param favoriteId 관심 고유값 (ID)
      * @return 요청 처리 성공 시 HttpStatus.OK (200)을 반환, 실패 시 Exception이 던져지며 ErrorCode를 반환
      * @see ErrorCode

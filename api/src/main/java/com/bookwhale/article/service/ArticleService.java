@@ -15,6 +15,7 @@ import com.bookwhale.common.upload.FileUploader;
 import com.bookwhale.favorite.domain.FavoriteRepository;
 import com.bookwhale.image.domain.Images;
 import com.bookwhale.user.domain.User;
+import com.bookwhale.user.service.UserService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -28,29 +29,31 @@ import org.springframework.web.multipart.MultipartFile;
 public class ArticleService {
 
     private final ArticleRepository articleRepository;
-
     private final FileUploader fileUploader;
-
     private final FavoriteRepository favoriteRepository;
+    private final UserService userService;
 
     public Long createArticle(User user, ArticleRequest request, List<MultipartFile> images) {
-        Article article = Article.create(user, request.toEntity());
+        User targetUser = userService.findUserByEmail(user.getEmail());
+        Article article = Article.create(targetUser, request.toEntity());
         saveAllImages(article, images);
         return articleRepository.save(article).getId();
     }
 
     @Transactional(readOnly = true)
     public List<ArticlesResponse> findMyArticles(User user) {
-        return ArticlesResponse.listOf(articleRepository.findAllBySeller(user));
+        User targetUser = userService.findUserByEmail(user.getEmail());
+        return ArticlesResponse.listOf(articleRepository.findAllBySeller(targetUser));
     }
 
     public ArticleResponse findArticle(User user, Long articleId) {
+        User targetUser = userService.findUserByEmail(user.getEmail());
         Article article = validateArticleIdAndGetArticleWithSeller(articleId);
         article.increaseOneViewCount();
         return ArticleResponse.of(
             article,
-            article.isMyArticle(user),
-            favoriteRepository.existsByUserAndArticle(user, article)
+            article.isMyArticle(targetUser),
+            favoriteRepository.existsByUserAndArticle(targetUser, article)
         );
     }
 
@@ -68,13 +71,15 @@ public class ArticleService {
 
     public void updateArticle(User user, Long articleId, ArticleUpdateRequest request,
         List<MultipartFile> images) {
+        User targetUser = userService.findUserByEmail(user.getEmail());
         Article article = getArticleByArticleId(articleId);
-        article.validateIsMyArticle(user);
+        article.validateIsMyArticle(targetUser);
         article.update(request.toEntity());
         updateImages(article, images, request.getDeleteImgUrls());
     }
 
-    public void updateImages(Article article, List<MultipartFile> images, List<String> deleteImgUrls) {
+    public void updateImages(Article article, List<MultipartFile> images,
+        List<String> deleteImgUrls) {
         if (deleteImgUrls != null && !deleteImgUrls.isEmpty()) {
             fileUploader.deleteFiles(deleteImgUrls);
             article.getImages().deleteImageUrls(deleteImgUrls);
@@ -90,8 +95,9 @@ public class ArticleService {
     }
 
     public void updateArticleStatus(User user, Long articleId, ArticleStatusUpdateRequest request) {
+        User targetUser = userService.findUserByEmail(user.getEmail());
         Article article = getArticleByArticleId(articleId);
-        article.validateIsMyArticle(user);
+        article.validateIsMyArticle(targetUser);
         article.updateArticleStatus(request.getArticleStatus());
     }
 
@@ -101,8 +107,9 @@ public class ArticleService {
     }
 
     public void deleteArticle(User user, Long articleId) {
+        User targetUser = userService.findUserByEmail(user.getEmail());
         Article article = getArticleByArticleId(articleId);
-        article.validateIsMyArticle(user);
+        article.validateIsMyArticle(targetUser);
         deleteAllImages(article);
         articleRepository.delete(article);
     }

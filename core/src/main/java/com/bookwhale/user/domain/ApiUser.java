@@ -8,6 +8,7 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 public class ApiUser {
+
     private String name;
     private String image;
     private String email;

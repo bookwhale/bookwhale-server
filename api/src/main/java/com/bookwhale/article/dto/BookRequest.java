@@ -1,7 +1,6 @@
 package com.bookwhale.article.dto;
 
 import com.bookwhale.article.domain.Book;
-
 import javax.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;

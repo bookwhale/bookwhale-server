@@ -1,11 +1,11 @@
 package com.bookwhale.chatroom.domain;
 
-import static com.bookwhale.chatroom.domain.QChatRoom.chatRoom;
 import static com.bookwhale.article.domain.QArticle.article;
+import static com.bookwhale.chatroom.domain.QChatRoom.chatRoom;
 import static com.bookwhale.user.domain.QUser.user;
 
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.bookwhale.user.domain.User;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 

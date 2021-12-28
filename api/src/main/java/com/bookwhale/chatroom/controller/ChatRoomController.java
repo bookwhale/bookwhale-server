@@ -1,9 +1,9 @@
 package com.bookwhale.chatroom.controller;
 
+import com.bookwhale.auth.domain.CurrentUser;
 import com.bookwhale.chatroom.dto.ChatRoomCreateRequest;
 import com.bookwhale.chatroom.dto.ChatRoomResponse;
 import com.bookwhale.chatroom.service.ChatRoomService;
-import com.bookwhale.security.CurrentUser;
 import com.bookwhale.user.domain.User;
 import java.net.URI;
 import java.net.URISyntaxException;

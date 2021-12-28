@@ -1,7 +1,6 @@
 package com.bookwhale.message.dto;
 
 import com.bookwhale.message.domain.Message;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;

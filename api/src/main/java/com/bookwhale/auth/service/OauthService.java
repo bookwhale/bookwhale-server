@@ -1,30 +1,32 @@
 package com.bookwhale.auth.service;
 
-import com.bookwhale.auth.domain.OAuthObjectConverter;
+import com.bookwhale.auth.domain.JWT;
+import com.bookwhale.auth.domain.JWT.Claims;
+import com.bookwhale.auth.domain.JWT.ClaimsForRefresh;
 import com.bookwhale.auth.domain.Token;
 import com.bookwhale.auth.domain.TokenRepository;
 import com.bookwhale.auth.domain.info.UserInfo;
-import com.bookwhale.auth.domain.provider.GoogleOAuthProvider;
-import com.bookwhale.auth.domain.provider.NaverOAuthProvider;
-import com.bookwhale.auth.domain.provider.OAuthProvider;
-import com.bookwhale.auth.domain.provider.OAuthProviderType;
 import com.bookwhale.auth.dto.OAuthLoginResponse;
+import com.bookwhale.auth.dto.OAuthObjectConverter;
 import com.bookwhale.auth.dto.OAuthRefreshLoginRequest;
+import com.bookwhale.auth.service.provider.GoogleOAuthProvider;
+import com.bookwhale.auth.service.provider.NaverOAuthProvider;
+import com.bookwhale.auth.service.provider.OAuthProvider;
+import com.bookwhale.auth.service.provider.OAuthProviderType;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
-import com.bookwhale.common.token.JWT;
-import com.bookwhale.common.token.JWT.Claims;
-import com.bookwhale.common.token.JWT.ClaimsForRefresh;
 import com.bookwhale.common.utils.RandomUtils;
-import com.bookwhale.user.domain.ApiUser;
-import com.bookwhale.user.domain.UserRepository;
+import com.bookwhale.user.domain.User;
+import com.bookwhale.user.service.UserService;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
 import javax.servlet.http.HttpServletResponse;
-import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -35,7 +37,7 @@ public class OauthService {
     private final HttpServletResponse response;
     private final JWT apiToken;
     private final TokenRepository tokenRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     public void sendLoginRequest(OAuthProviderType providerType) {
         try {
@@ -64,6 +66,13 @@ public class OauthService {
             .orElseThrow(() -> new CustomException(ErrorCode.INFORMATION_NOT_FOUND));
 
         // step2 : 확인된 사용자 정보로 apiToken 생성
+        // step2-1 : 확인된 사용자 정보 저장
+        boolean isCreatedUser = userService.checkUserExists(loginUserInfo);
+        if (!isCreatedUser) {
+            userService.createUser(loginUserInfo);
+        }
+
+        // step2-2 : api token 생성
         String createdApiToken = OAuthObjectConverter.createApiToken(apiToken, loginUserInfo);
 
         // step3 : 랜덤 문자열로 RefreshToken 생성
@@ -79,13 +88,17 @@ public class OauthService {
         return new OAuthLoginResponse(createdApiToken, refreshToken);
     }
 
-    public ApiUser getUserFromApiToken(String token) {
+    public User getUserFromApiToken(String token) {
         Claims userClaim = apiToken.verify(token);
 
-        return ApiUser.builder().name(userClaim.getName()).image(userClaim.getImage())
-            .email(userClaim.getEmail()).build();
+        return User.builder()
+            .email(userClaim.getEmail())
+            .nickname(userClaim.getName())
+            .profileImage(userClaim.getImage())
+            .build();
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public OAuthLoginResponse apiTokenRefresh(OAuthRefreshLoginRequest refreshRequest) {
         // step1 : refresh token 확인
         String refreshToken = refreshRequest.getRefreshToken();
@@ -100,9 +113,43 @@ public class OauthService {
             throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
         }
 
-        // step2 : refresh token 으로 새로운 api token 생성
+        // step2 : 새로운 api token 생성
         String createdApiToken = apiToken.refreshApiToken(refreshRequest.getApiToken());
 
         return new OAuthLoginResponse(createdApiToken, refreshToken);
+    }
+
+    @Transactional
+    public String expireToken(OAuthRefreshLoginRequest refreshRequest) {
+        // step1 : refresh token 확인 후 삭제
+        String refreshToken = refreshRequest.getRefreshToken();
+        ClaimsForRefresh refreshClaim = apiToken.verifyForRefresh(refreshToken);
+        String email = refreshClaim.getEmail();
+
+        Token userRid = tokenRepository.findTokenByEmail(email)
+            .orElseThrow(() -> new CustomException(ErrorCode.FORBIDDEN));
+
+        tokenRepository.delete(userRid);
+
+        // step2 : apiToken 불용화
+        // TODO 해당 로직에 대해서는 cache형 db를 사용하여 가용한 토큰인지 정보를 보관할 수 있다면 추가작업이 가능할 것으로 판단됨.
+
+        return "로그아웃 되었습니다.";
+    }
+
+    @Transactional
+    public String withdrawal(OAuthRefreshLoginRequest refreshRequest, User user) {
+        // step1 : refresh token 확인 후 삭제
+        String refreshToken = refreshRequest.getRefreshToken();
+        ClaimsForRefresh refreshClaim = apiToken.verifyForRefresh(refreshToken);
+        String email = refreshClaim.getEmail();
+
+        Optional<Token> userRid = tokenRepository.findTokenByEmail(email);
+        userRid.ifPresent(tokenRepository::delete);
+
+        // step2 : 사용자 정보 삭제
+        userService.withdrawalUser(user);
+
+        return "회원 탈퇴 완료되었습니다.";
     }
 }

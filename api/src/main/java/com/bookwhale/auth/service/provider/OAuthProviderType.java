@@ -1,4 +1,4 @@
-package com.bookwhale.auth.domain.provider;
+package com.bookwhale.auth.service.provider;
 
 public enum OAuthProviderType {
     GOOGLE("google"),

@@ -1,7 +1,8 @@
 package com.bookwhale.common.acceptance;
 
+import com.bookwhale.auth.domain.JWT;
+import com.bookwhale.auth.service.OauthService;
 import com.bookwhale.common.DatabaseCleanUp;
-import com.bookwhale.user.domain.Role;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.domain.UserRepository;
 import com.bookwhale.user.dto.LoginRequest;
@@ -13,7 +14,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class AcceptanceTest {
@@ -25,10 +25,13 @@ public class AcceptanceTest {
     UserRepository userRepository;
 
     @Autowired
+    OauthService oauthService;
+
+    @Autowired
     DatabaseCleanUp databaseCleanUp;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    protected JWT jwt;
 
     protected ObjectMapper objectMapper;
 
@@ -61,12 +64,8 @@ public class AcceptanceTest {
 
     private User createUser() {
         User user = User.builder()
-            .identity("highright96")
-            .password(passwordEncoder.encode("1234"))
-            .name("남상우")
+            .nickname("남상우")
             .email("highright96@gmail.com")
-            .phoneNumber("010-1234-1234")
-            .role(Role.ROLE_USER)
             .build();
         userRepository.save(user);
         return user;
@@ -74,12 +73,8 @@ public class AcceptanceTest {
 
     private User createAnotherUser() {
         User user = User.builder()
-            .identity("hose12")
-            .password(passwordEncoder.encode("1234"))
-            .name("주호세")
+            .nickname("hose12")
             .email("hose12@email.com")
-            .phoneNumber("010-5678-5678")
-            .role(Role.ROLE_USER)
             .build();
         userRepository.save(user);
         return user;

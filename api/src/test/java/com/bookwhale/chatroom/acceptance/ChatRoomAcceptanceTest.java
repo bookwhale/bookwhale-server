@@ -1,10 +1,10 @@
 package com.bookwhale.chatroom.acceptance;
 
+import com.bookwhale.article.dto.ArticleRequest;
+import com.bookwhale.article.dto.BookRequest;
+import com.bookwhale.auth.domain.info.UserInfoFromToken;
 import com.bookwhale.chatroom.acceptance.step.ChatRoomAcceptanceStep;
 import com.bookwhale.chatroom.dto.ChatRoomResponse;
-import com.bookwhale.article.dto.BookRequest;
-import com.bookwhale.article.dto.ArticleRequest;
-import com.bookwhale.common.domain.Location;
 import com.bookwhale.common.acceptance.AcceptanceTest;
 import com.bookwhale.common.acceptance.step.AcceptanceStep;
 import com.bookwhale.user.acceptance.step.UserAcceptanceStep;
@@ -51,8 +51,10 @@ public class ChatRoomAcceptanceTest extends AcceptanceTest {
     @DisplayName("채팅방을 생성한다.")
     @Test
     void createChatRoom() {
-        String loginUserJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
-        String sellerJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(anotherLoginRequest);
+        String loginUserJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(
+            UserInfoFromToken.of(user), jwt);
+        String sellerJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(
+            UserInfoFromToken.of(anotherUser), jwt);
 
         ExtractableResponse<Response> res = ChatRoomAcceptanceStep.createChatRoom(loginUserJwt,
             sellerJwt, articleRequest);
@@ -63,8 +65,10 @@ public class ChatRoomAcceptanceTest extends AcceptanceTest {
     @DisplayName("채팅방들을 조회한다.")
     @Test
     void findChatRooms() {
-        String loginUserJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
-        String sellerJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(anotherLoginRequest);
+        String loginUserJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(
+            UserInfoFromToken.of(user), jwt);
+        String sellerJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(
+            UserInfoFromToken.of(anotherUser), jwt);
 
         ChatRoomAcceptanceStep.createChatRoom(loginUserJwt, sellerJwt, articleRequest);
 
@@ -81,15 +85,18 @@ public class ChatRoomAcceptanceTest extends AcceptanceTest {
         AcceptanceStep.assertThatStatusIsOk(loginUserRes);
         AcceptanceStep.assertThatStatusIsOk(anotherUserRes);
 
-        ChatRoomAcceptanceStep.assertThatFindChatRooms(loginUserRoomRes, articleRequest, anotherUser);
+        ChatRoomAcceptanceStep.assertThatFindChatRooms(loginUserRoomRes, articleRequest,
+            anotherUser);
         ChatRoomAcceptanceStep.assertThatFindChatRooms(anotherRoomRes, articleRequest, user);
     }
 
     @DisplayName("상대방이 나간 채팅방은 isOpponentDelete 가 false 로 조회된다.")
     @Test
     void findChatRooms_opponentDelete() {
-        String loginUserJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
-        String sellerJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(anotherLoginRequest);
+        String loginUserJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(
+            UserInfoFromToken.of(user), jwt);
+        String sellerJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(
+            UserInfoFromToken.of(anotherUser), jwt);
 
         ChatRoomAcceptanceStep.createChatRoom(loginUserJwt, sellerJwt, articleRequest);
 
@@ -113,8 +120,10 @@ public class ChatRoomAcceptanceTest extends AcceptanceTest {
     @DisplayName("나간 채팅방은 조회되지 않는다.")
     @Test
     void findChatRooms_deleteRoom() {
-        String loginUserJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
-        String sellerJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(anotherLoginRequest);
+        String loginUserJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(
+            UserInfoFromToken.of(user), jwt);
+        String sellerJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(
+            UserInfoFromToken.of(anotherUser), jwt);
 
         ChatRoomAcceptanceStep.createChatRoom(loginUserJwt, sellerJwt, articleRequest);
 
@@ -135,8 +144,10 @@ public class ChatRoomAcceptanceTest extends AcceptanceTest {
     @DisplayName("채팅방을 삭제한 후 조회한다.")
     @Test
     void deleteChatRoom() {
-        String loginUserJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(loginRequest);
-        String sellerJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(anotherLoginRequest);
+        String loginUserJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(
+            UserInfoFromToken.of(user), jwt);
+        String sellerJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(
+            UserInfoFromToken.of(anotherUser), jwt);
 
         ChatRoomAcceptanceStep.createChatRoom(loginUserJwt, sellerJwt, articleRequest);
         Long roomId = ChatRoomAcceptanceStep.requestToFindChatRooms(loginUserJwt).jsonPath()

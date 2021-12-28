@@ -29,6 +29,7 @@ import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.common.upload.FileUploader;
 import com.bookwhale.favorite.domain.FavoriteRepository;
 import com.bookwhale.user.domain.User;
+import com.bookwhale.user.service.UserService;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -56,6 +57,9 @@ public class ArticleServiceTest {
     @Mock
     FavoriteRepository favoriteRepository;
 
+    @Mock
+    UserService userService;
+
     ArticleService articleService;
 
     ArticleRequest articleRequest;
@@ -64,7 +68,8 @@ public class ArticleServiceTest {
 
     @BeforeEach
     void setUp() {
-        articleService = new ArticleService(articleRepository, fileUploader, favoriteRepository);
+        articleService = new ArticleService(articleRepository, fileUploader, favoriteRepository,
+            userService);
 
         BookRequest bookRequest = BookRequest.builder()
             .bookSummary("설명")
@@ -88,10 +93,8 @@ public class ArticleServiceTest {
 
         user = User.builder()
             .id(1L)
-            .identity("highright96")
-            .name("남상우")
+            .nickname("남상우")
             .email("highright96@email.com")
-            .phoneNumber("010-1234-1234")
             .build();
     }
 
@@ -103,6 +106,8 @@ public class ArticleServiceTest {
 
         when(fileUploader.uploadFiles(any())).thenReturn(images);
         when(articleRepository.save(any())).thenReturn(article);
+        when(userService.findUserByEmail(any(String.class)))
+            .thenReturn(user);
 
         articleService.createArticle(user, articleRequest,
             of(new MockMultipartFile("images", "image".getBytes(StandardCharsets.UTF_8))));
@@ -121,6 +126,8 @@ public class ArticleServiceTest {
 
         when(articleRepository.findArticleWithSellerById(any())).thenReturn(Optional.of(article));
         when(favoriteRepository.existsByUserAndArticle(any(), any())).thenReturn(true);
+        when(userService.findUserByEmail(any(String.class)))
+            .thenReturn(user);
 
         ArticleResponse response = articleService.findArticle(user, 1L);
 
@@ -158,11 +165,16 @@ public class ArticleServiceTest {
     @DisplayName("다른 유저의 게시글을 상세 조회한다. (게시글 이미지 0개)")
     @Test
     void findNotMyArticle_success() {
-        User otherUser = User.builder().id(2L).build();
+        User otherUser = User.builder()
+            .id(2L)
+            .email("hose12@email.com")
+            .build();
         Article article = Article.create(user, articleRequest.toEntity());
         article.setCreatedDate(LocalDateTime.now());
 
         when(articleRepository.findArticleWithSellerById(any())).thenReturn(ofNullable(article));
+        when(userService.findUserByEmail(any(String.class)))
+            .thenReturn(otherUser);
 
         ArticleResponse response = articleService.findArticle(otherUser, 1L);
 
@@ -173,15 +185,20 @@ public class ArticleServiceTest {
         );
     }
 
-    @DisplayName("게시글을 상세 조회할 때 조회수가 +1 증가된다.")
+    @DisplayName("다른 유저가 게시글을 상세 조회할 때 조회수가 +1 증가된다.")
     @Test
     void increaseViewCountAfterFindArticle() {
-        User otherUser = User.builder().id(2L).build();
+        User otherUser = User.builder()
+            .id(2L)
+            .email("hose12@email.com")
+            .build();
         Article article = Article.create(user, articleRequest.toEntity());
         article.setCreatedDate(LocalDateTime.now());
         Long beforeViewCount = article.getViewCount();
 
         when(articleRepository.findArticleWithSellerById(any())).thenReturn(ofNullable(article));
+        when(userService.findUserByEmail(any(String.class)))
+            .thenReturn(otherUser);
 
         ArticleResponse response = articleService.findArticle(otherUser, 1L);
 
@@ -196,6 +213,9 @@ public class ArticleServiceTest {
     @Test
     void findArticle_invalidArticleId_failure() {
         when(articleRepository.findArticleWithSellerById(any())).thenReturn(empty());
+
+        when(userService.findUserByEmail(any(String.class)))
+            .thenReturn(user);
 
         assertThatThrownBy(() -> articleService.findArticle(user, 1L))
             .isInstanceOf(CustomException.class)
@@ -222,6 +242,8 @@ public class ArticleServiceTest {
 
         when(articleRepository.findById(any())).thenReturn(Optional.of(article));
         when(fileUploader.uploadFiles(any())).thenReturn(of("image1"));
+        when(userService.findUserByEmail(any(String.class)))
+            .thenReturn(user);
 
         articleService.updateArticle(user, 1L, request, images);
 
@@ -262,6 +284,8 @@ public class ArticleServiceTest {
         when(articleRepository.findById(any())).thenReturn(Optional.of(article));
         doNothing().when(fileUploader).deleteFiles(anyList());
         when(fileUploader.uploadFiles(any())).thenReturn(of("image4"));
+        when(userService.findUserByEmail(any(String.class)))
+            .thenReturn(user);
 
         articleService.updateArticle(user, 1L, request, images);
 
@@ -295,6 +319,8 @@ public class ArticleServiceTest {
 
         when(articleRepository.findById(any())).thenReturn(Optional.of(article));
         doNothing().when(fileUploader).deleteFiles(anyList());
+        when(userService.findUserByEmail(any(String.class)))
+            .thenReturn(user);
 
         articleService.updateArticle(user, 1L, request, emptyList());
 
@@ -318,6 +344,8 @@ public class ArticleServiceTest {
         List<MultipartFile> images = emptyList();
 
         when(articleRepository.findById(any())).thenReturn(Optional.empty());
+        when(userService.findUserByEmail(any(String.class)))
+            .thenReturn(user);
 
         assertThatThrownBy(() -> articleService.updateArticle(user, 1L, request, images))
             .isInstanceOf(CustomException.class)
@@ -329,9 +357,18 @@ public class ArticleServiceTest {
     void updateArticle_invalidUser_failure() {
         User otherUser = User.builder().id(2L).build();
         Article article = Article.create(otherUser, articleRequest.toEntity());
-        ArticleUpdateRequest request = ArticleUpdateRequest.builder().build();
+        ArticleUpdateRequest request = ArticleUpdateRequest.builder()
+            .title("이펙티브 자바")
+            .description("이펙티브 자바입니다.")
+            .price("15000")
+            .bookStatus("MIDDLE")
+            .sellingLocation("JEJU")
+            .deleteImgUrls(List.of("image2", "image3"))
+            .build();
         List<MultipartFile> images = emptyList();
 
+        when(userService.findUserByEmail(any(String.class)))
+            .thenReturn(user);
         when(articleRepository.findById(any())).thenReturn(Optional.ofNullable(article));
 
         assertThatThrownBy(() -> articleService.updateArticle(user, 1L, request, images))
@@ -347,6 +384,8 @@ public class ArticleServiceTest {
             ArticleStatus.SOLD_OUT.toString());
 
         when(articleRepository.findById(any())).thenReturn(Optional.ofNullable(article));
+        when(userService.findUserByEmail(any(String.class)))
+            .thenReturn(user);
 
         articleService.updateArticleStatus(user, 1L, request);
 
@@ -362,6 +401,8 @@ public class ArticleServiceTest {
             ArticleStatus.SOLD_OUT.toString());
 
         when(articleRepository.findById(any())).thenReturn(Optional.empty());
+        when(userService.findUserByEmail(any(String.class)))
+            .thenReturn(user);
 
         assertThatThrownBy(() -> articleService.updateArticleStatus(user, 1L, request))
             .isInstanceOf(CustomException.class)
@@ -374,9 +415,14 @@ public class ArticleServiceTest {
         Article article = Article.create(user, articleRequest.toEntity());
         ArticleStatusUpdateRequest request = new ArticleStatusUpdateRequest(
             ArticleStatus.SOLD_OUT.toString());
-        User otherUser = User.builder().id(2L).build();
+        User otherUser = User.builder()
+            .id(2L)
+            .email("hose12@email.com")
+            .build();
 
         when(articleRepository.findById(any())).thenReturn(Optional.ofNullable(article));
+        when(userService.findUserByEmail(any(String.class)))
+            .thenReturn(otherUser);
 
         assertThatThrownBy(() -> articleService.updateArticleStatus(otherUser, 1L, request))
             .isInstanceOf(CustomException.class)

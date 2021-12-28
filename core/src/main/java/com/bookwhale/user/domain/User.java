@@ -3,8 +3,6 @@ package com.bookwhale.user.domain;
 import com.bookwhale.common.domain.BaseEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -24,68 +22,31 @@ public class User extends BaseEntity {
     private Long id;
 
     @Column(nullable = false)
-    private String identity;
+    private String nickname;
 
-    private String password;
-
-    @Column(nullable = false)
-    private String name;
+    private String profileImage;
 
     @Column(nullable = false)
     private String email;
 
-    private String phoneNumber;
-
-    private String profileImage;
-
-    @Enumerated(EnumType.STRING)
-    private Role role;
-
-    @Enumerated(EnumType.STRING)
-    private AuthProvider provider;
-
-    public String getRoleName() {
-        return this.role.name();
-    }
-
     @Builder
-    public User(Long id, String identity, String password, String name, String email,
-        String phoneNumber, String profileImage, Role role, AuthProvider provider) {
+    protected User(Long id, String nickname, String profileImage, String email) {
         this.id = id;
-        this.identity = identity;
-        this.password = password;
-        this.name = name;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
+        this.nickname = nickname;
         this.profileImage = profileImage;
-        this.role = role;
-        this.provider = provider;
+        this.email = email;
     }
 
-    public static User create(User user, String encodedPassword) {
+    public static User create(User user) {
         return User.builder()
-            .identity(user.getIdentity())
-            .password(encodedPassword)
+            .nickname(user.getNickname())
             .email(user.getEmail())
-            .name(user.getName())
-            .phoneNumber(user.getPhoneNumber())
-            .role(Role.ROLE_USER)
-            .provider(AuthProvider.LOCAL)
+            .profileImage(user.getProfileImage())
             .build();
     }
 
-    public void update(User user) {
-        this.name = user.getName();
-        this.phoneNumber = user.getPhoneNumber();
-        this.email = user.getEmail();
-    }
-
-    public void updateSocialUser(String name) {
-        this.name = name;
-    }
-
-    public boolean isSameProvider(String provider) {
-        return this.provider.equals(AuthProvider.valueOf(provider.toUpperCase()));
+    public void updateUserName(String name) {
+        this.nickname = name;
     }
 
     public void uploadProfile(String profileImage) {
@@ -94,9 +55,5 @@ public class User extends BaseEntity {
 
     public void deleteProfile() {
         this.profileImage = null;
-    }
-
-    public void updatePassword(String encodedNewPassword) {
-        this.password = encodedNewPassword;
     }
 }

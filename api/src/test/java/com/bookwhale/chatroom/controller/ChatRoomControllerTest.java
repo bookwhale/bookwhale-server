@@ -10,12 +10,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.bookwhale.chatroom.docs.ChatRoomDocumentations;
 import com.bookwhale.chatroom.dto.ChatRoomCreateRequest;
 import com.bookwhale.chatroom.dto.ChatRoomResponse;
 import com.bookwhale.chatroom.service.ChatRoomService;
 import com.bookwhale.common.controller.CommonApiTest;
-import com.bookwhale.chatroom.docs.ChatRoomDocumentations;
-import com.bookwhale.common.security.WithMockCustomUser;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -31,7 +30,6 @@ public class ChatRoomControllerTest extends CommonApiTest {
     @MockBean
     ChatRoomService chatRoomService;
 
-    @WithMockCustomUser
     @DisplayName("거래 요청 메일을 보낸 후 채팅방을 생성한다.")
     @Test
     void createChatRoom() throws Exception {
@@ -43,7 +41,7 @@ public class ChatRoomControllerTest extends CommonApiTest {
         doNothing().when(chatRoomService).createChatRoom(any(), any());
 
         mockMvc.perform(post("/api/room")
-                .header(HttpHeaders.AUTHORIZATION, "accessToken")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
             .andExpect(header().string("location", "/api/room"))
@@ -52,7 +50,7 @@ public class ChatRoomControllerTest extends CommonApiTest {
             .andDo(ChatRoomDocumentations.createChatRoom());
     }
 
-    @WithMockCustomUser
+
     @DisplayName("채팅방들을 조회한다.")
     @Test
     void findChatRooms() throws Exception {
@@ -69,13 +67,13 @@ public class ChatRoomControllerTest extends CommonApiTest {
         when(chatRoomService.findChatRooms(any())).thenReturn(of(response));
 
         mockMvc.perform(get("/api/room")
-                .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken"))
             .andExpect(status().isOk())
             .andDo(print())
             .andDo(ChatRoomDocumentations.findChatRooms());
     }
 
-    @WithMockCustomUser
+
     @DisplayName("채팅방을 삭제한다.")
     @Test
     void deleteChatRoom() throws Exception {
@@ -84,7 +82,7 @@ public class ChatRoomControllerTest extends CommonApiTest {
         doNothing().when(chatRoomService).deleteChatRoom(any(), any());
 
         mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/room/{roomId}", roomId)
-                .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken"))
             .andExpect(status().isOk())
             .andDo(print())
             .andDo(ChatRoomDocumentations.deleteChatRoom());

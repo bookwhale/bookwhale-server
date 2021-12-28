@@ -86,7 +86,8 @@ public class ArticleDocumentation {
             fieldWithPath("favoriteCount").type(JsonFieldType.NUMBER).description("게시글 관심수"),
             fieldWithPath("beforeTime").type(JsonFieldType.STRING).description("등록한 시간 - 현재 시간"),
             fieldWithPath("articleImage").type(JsonFieldType.STRING).description("판매자가 올린 이미지"),
-            fieldWithPath("bookStatus").type(JsonFieldType.STRING).description("책 상태 [LOWER, MIDDLE, UPPER, BEST]")
+            fieldWithPath("bookStatus").type(JsonFieldType.STRING).description(
+                "책 상태 [LOWER, MIDDLE, UPPER, BEST]")
         };
 
         return document("user/findMyArticles",
@@ -160,7 +161,8 @@ public class ArticleDocumentation {
             fieldWithPath("chatCount").type(JsonFieldType.NUMBER).description("게시글 채팅수"),
             fieldWithPath("favoriteCount").type(JsonFieldType.NUMBER).description("게시글 관심수"),
             fieldWithPath("articleImage").type(JsonFieldType.STRING).description("판매자가 올린 이미지"),
-            fieldWithPath("bookStatus").type(JsonFieldType.STRING).description("책 상태 [LOWER, MIDDLE, UPPER, BEST]"),
+            fieldWithPath("bookStatus").type(JsonFieldType.STRING).description(
+                "책 상태 [LOWER, MIDDLE, UPPER, BEST]"),
         };
 
         return document("article/findArticles",

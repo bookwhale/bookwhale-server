@@ -21,7 +21,7 @@ import com.bookwhale.chatroom.dto.ChatRoomResponse;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.user.domain.User;
-import com.bookwhale.user.domain.UserRepository;
+import com.bookwhale.user.service.UserService;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -38,10 +38,10 @@ public class ChatRoomServiceTest {
     private ChatRoomRepository chatRoomRepository;
 
     @Mock
-    private UserRepository userRepository;
+    private ArticleRepository articleRepository;
 
     @Mock
-    private ArticleRepository articleRepository;
+    private UserService userService;
 
     ChatRoomService chatRoomService;
 
@@ -53,25 +53,20 @@ public class ChatRoomServiceTest {
 
     @BeforeEach
     void setUp() {
-        chatRoomService = new ChatRoomService(chatRoomRepository, userRepository, articleRepository);
+        chatRoomService = new ChatRoomService(chatRoomRepository, articleRepository,
+            userService);
 
         buyer = User.builder()
             .id(1L)
-            .identity("highright96")
-            .name("남상우")
+            .nickname("남상우")
             .email("highright96@email.com")
-            .phoneNumber("010-1234-1234")
             .build();
 
         seller = User.builder()
             .id(2L)
-            .identity("hose12")
-            .name("주호세")
+            .nickname("hose12")
             .email("hose12@email.com")
-            .phoneNumber("010-5678-5678")
             .build();
-
-        ;
 
         article = Article.create(seller,
             Article.builder()
@@ -98,14 +93,17 @@ public class ChatRoomServiceTest {
     void createArticle() {
         ChatRoom chatRoom = ChatRoom.create(article, buyer, seller);
 
-        when(userRepository.findById(any())).thenReturn(of(seller));
+        when(userService.findUserByEmail(any(String.class)))
+            .thenReturn(buyer);
+        when(userService.findByUserId(any()))
+            .thenReturn(of(seller));
         when(articleRepository.findById(any())).thenReturn(of(article));
         when(chatRoomRepository.save(any())).thenReturn(chatRoom);
 
         chatRoomService.createChatRoom(buyer,
             ChatRoomCreateRequest.builder().sellerId(1L).articleId(1L).build());
 
-        verify(userRepository).findById(any());
+        verify(userService).findByUserId(any());
         verify(articleRepository).findById(any());
         verify(chatRoomRepository).save(any());
     }
@@ -115,7 +113,10 @@ public class ChatRoomServiceTest {
     void createArticle_articleStatus_soldOut_failure() {
         article.updateArticleStatus(ArticleStatus.SOLD_OUT.toString());
 
-        when(userRepository.findById(any())).thenReturn(of(seller));
+        when(userService.findUserByEmail(any(String.class)))
+            .thenReturn(buyer);
+        when(userService.findByUserId(any()))
+            .thenReturn(of(seller));
         when(articleRepository.findById(any())).thenReturn(of(article));
 
         assertThatThrownBy(() -> chatRoomService.createChatRoom(buyer,
@@ -129,7 +130,10 @@ public class ChatRoomServiceTest {
     void createArticle_articleStatus_reserved_failure() {
         article.updateArticleStatus(ArticleStatus.RESERVED.toString());
 
-        when(userRepository.findById(any())).thenReturn(of(seller));
+        when(userService.findUserByEmail(any(String.class)))
+            .thenReturn(buyer);
+        when(userService.findByUserId(any()))
+            .thenReturn(of(seller));
         when(articleRepository.findById(any())).thenReturn(of(article));
 
         assertThatThrownBy(() -> chatRoomService.createChatRoom(buyer,
@@ -159,6 +163,8 @@ public class ChatRoomServiceTest {
         List<ChatRoom> rooms = List.of(chatRoom, chatRoomOpponentDelete, chatRoomUserDelete);
 
         when(chatRoomRepository.findAllByBuyerOrSellerCreatedDateDesc(any())).thenReturn(rooms);
+        when(userService.findUserByEmail(any(String.class)))
+            .thenReturn(buyer);
 
         List<ChatRoomResponse> responses = chatRoomService.findChatRooms(buyer);
 
@@ -169,13 +175,13 @@ public class ChatRoomServiceTest {
             () -> assertThat(responses.get(0).getArticleImage()).isEqualTo(
                 article.getImages().getFirstImageUrl()),
             () -> assertThat(responses.get(0).getOpponentIdentity()).isEqualTo(
-                seller.getIdentity()),
+                seller.getNickname()),
             () -> assertThat(responses.get(0).isOpponentDelete()).isEqualTo(false),
             () -> assertThat(responses.get(1).getArticleTitle()).isEqualTo(article.getTitle()),
             () -> assertThat(responses.get(1).getArticleImage()).isEqualTo(
                 article.getImages().getFirstImageUrl()),
             () -> assertThat(responses.get(1).getOpponentIdentity()).isEqualTo(
-                seller.getIdentity()),
+                seller.getNickname()),
             () -> assertThat(responses.get(1).isOpponentDelete()).isEqualTo(true)
         );
     }
@@ -190,6 +196,8 @@ public class ChatRoomServiceTest {
         ChatRoom chatRoom = ChatRoom.create(article, buyer, seller);
 
         when(chatRoomRepository.findById(any())).thenReturn(of(chatRoom));
+        when(userService.findUserByEmail(any(String.class)))
+            .thenReturn(buyer);
 
         chatRoomService.deleteChatRoom(buyer, 1L);
 
@@ -208,6 +216,8 @@ public class ChatRoomServiceTest {
         chatRoom.deleteChatRoom(seller);
 
         when(chatRoomRepository.findById(any())).thenReturn(of(chatRoom));
+        when(userService.findUserByEmail(any(String.class)))
+            .thenReturn(buyer);
 
         chatRoomService.deleteChatRoom(buyer, 1L);
 

@@ -100,9 +100,9 @@ public class ChatRoom {
 
     public Opponent getOpponent(User loginUser) {
         if (isLoginUserEqualBuyer(loginUser)) {
-            return new Opponent(this.seller.getIdentity(), this.seller.getProfileImage());
+            return new Opponent(this.seller.getNickname(), this.seller.getProfileImage());
         }
-        return new Opponent(this.buyer.getIdentity(), this.buyer.getProfileImage());
+        return new Opponent(this.buyer.getNickname(), this.buyer.getProfileImage());
     }
 }
 

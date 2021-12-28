@@ -1,8 +1,8 @@
 package com.bookwhale.common.advice;
 
+import com.bookwhale.common.dto.ErrorResponse;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
-import com.bookwhale.common.dto.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;

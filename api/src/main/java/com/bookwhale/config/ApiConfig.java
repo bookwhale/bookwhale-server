@@ -1,7 +1,7 @@
 package com.bookwhale.config;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.bookwhale.common.token.JWT;
+import com.bookwhale.auth.domain.JWT;
 import com.bookwhale.common.upload.AwsS3Uploader;
 import com.bookwhale.common.upload.FileUploader;
 import lombok.RequiredArgsConstructor;

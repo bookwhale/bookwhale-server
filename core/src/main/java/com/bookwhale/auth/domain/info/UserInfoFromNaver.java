@@ -1,25 +1,24 @@
 package com.bookwhale.auth.domain.info;
 
-import com.bookwhale.user.domain.User;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-@Builder
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class UserInfoFromToken implements UserInfo{
+public class UserInfoFromNaver implements UserInfo {
+
+    private String id;
+    private String nickname;
     private String name;
     private String email;
-    private String picture;
+    private String profile_image;
 
-    public static UserInfoFromToken of (User user){
-        return UserInfoFromToken.builder()
-            .name(user.getName())
-            .email(user.getEmail())
-            .picture(user.getProfileImage())
-            .build();
+    public String getPicture() {
+        return profile_image;
     }
 
     @Override
@@ -27,7 +26,7 @@ public class UserInfoFromToken implements UserInfo{
         return new ToStringBuilder(this)
             .append("name", name)
             .append("email", email)
-            .append("picture", picture)
+            .append("picture", profile_image)
             .toString();
     }
 }

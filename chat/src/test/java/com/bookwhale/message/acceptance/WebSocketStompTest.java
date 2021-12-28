@@ -9,7 +9,6 @@ import com.bookwhale.message.controller.MessageController;
 import com.bookwhale.message.dto.MessageRequest;
 import com.bookwhale.message.dto.MessageResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
-
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.LinkedBlockingDeque;

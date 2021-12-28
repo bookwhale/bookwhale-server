@@ -27,7 +27,7 @@ public class UserDocumentation {
             requestFields(
                 fieldWithPath("identity").type(JsonFieldType.STRING).description("아이디"),
                 fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호"),
-                fieldWithPath("name").type(JsonFieldType.STRING).description("이름"),
+                fieldWithPath("nickname").type(JsonFieldType.STRING).description("이름"),
                 fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
                 fieldWithPath("phoneNumber").type(JsonFieldType.STRING).description("전화번호")
             )
@@ -52,7 +52,7 @@ public class UserDocumentation {
             responseFields(
                 fieldWithPath("userId").type(JsonFieldType.NUMBER).description("유저 id"),
                 fieldWithPath("identity").type(JsonFieldType.STRING).description("아이디"),
-                fieldWithPath("name").type(JsonFieldType.STRING).description("이름"),
+                fieldWithPath("nickname").type(JsonFieldType.STRING).description("이름"),
                 fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
                 fieldWithPath("phoneNumber").type(JsonFieldType.STRING).description("전화번호"),
                 fieldWithPath("profileImage").type(JsonFieldType.STRING).description("프로필 이미지")
@@ -66,9 +66,7 @@ public class UserDocumentation {
                 headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
             ),
             requestFields(
-                fieldWithPath("name").type(JsonFieldType.STRING).description("이름"),
-                fieldWithPath("phoneNumber").type(JsonFieldType.STRING).description("전화번호"),
-                fieldWithPath("email").type(JsonFieldType.STRING).description("이메일")
+                fieldWithPath("nickname").type(JsonFieldType.STRING).description("이름")
             ));
     }
 
@@ -113,12 +111,14 @@ public class UserDocumentation {
     public static RestDocumentationResultHandler userFindFavorites() {
         FieldDescriptor[] response = new FieldDescriptor[]{
             fieldWithPath("favoriteId").type(JsonFieldType.NUMBER).description("관심목록 ID"),
-            fieldWithPath("articlesResponse.articleId").type(JsonFieldType.NUMBER).description("게시글 ID"),
+            fieldWithPath("articlesResponse.articleId").type(JsonFieldType.NUMBER).description(
+                "게시글 ID"),
             fieldWithPath("articlesResponse.articleTitle").type(JsonFieldType.STRING).description(
                 "게시글 제목"),
             fieldWithPath("articlesResponse.articlePrice").type(JsonFieldType.STRING).description(
                 "게시글 가격"),
-            fieldWithPath("articlesResponse.sellingLocation").type(JsonFieldType.STRING).description(
+            fieldWithPath("articlesResponse.sellingLocation").type(
+                JsonFieldType.STRING).description(
                 "게시글에 등록한 판매지역"),
             fieldWithPath("articlesResponse.chatCount").type(JsonFieldType.NUMBER).description(
                 "게시글 채팅수"),

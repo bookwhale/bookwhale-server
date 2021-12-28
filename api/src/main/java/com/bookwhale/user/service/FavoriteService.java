@@ -1,11 +1,11 @@
 package com.bookwhale.user.service;
 
 import com.bookwhale.article.domain.Article;
+import com.bookwhale.article.domain.ArticleRepository;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.favorite.domain.Favorite;
 import com.bookwhale.favorite.domain.FavoriteRepository;
-import com.bookwhale.article.domain.ArticleRepository;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.dto.FavoriteRequest;
 import com.bookwhale.user.dto.FavoriteResponse;
@@ -24,6 +24,7 @@ public class FavoriteService {
 
     private final FavoriteRepository favoriteRepository;
     private final ArticleRepository articleRepository;
+    private final UserService userService;
 
     /**
      * 현재 접속중인 사용자가 대상 판매글(article)에 관심 추가
@@ -33,10 +34,11 @@ public class FavoriteService {
      */
     @Transactional
     public void addFavorite(User user, FavoriteRequest request) {
+        User targetUser = userService.findUserByEmail(user.getEmail());
         Article article = getArticleById(request.getArticleId());
-        validateIsDuplicatedFavorite(user, article);
+        validateIsDuplicatedFavorite(targetUser, article);
 
-        favoriteRepository.save(Favorite.create(user, article));
+        favoriteRepository.save(Favorite.create(targetUser, article));
         article.increaseOneFavoriteCount();
     }
 
@@ -46,7 +48,8 @@ public class FavoriteService {
     }
 
     public void validateIsDuplicatedFavorite(User user, Article article) {
-        if (favoriteRepository.existsByUserAndArticle(user, article)) {
+        User targetUser = userService.findUserByEmail(user.getEmail());
+        if (favoriteRepository.existsByUserAndArticle(targetUser, article)) {
             throw new CustomException(ErrorCode.DUPLICATED_FAVORITE);
         }
     }
@@ -54,13 +57,14 @@ public class FavoriteService {
     /**
      * 사용자의 관심목록 중 선택한 관심을 취소 처리
      *
-     * @param user   현재 접속 중인 사용자
+     * @param user       현재 접속 중인 사용자
      * @param favoriteId 좋아요 id
      */
     @Transactional
     public void deleteFavorite(User user, Long favoriteId) {
+        User targetUser = userService.findUserByEmail(user.getEmail());
         Favorite favorite = getFavoriteById(favoriteId);
-        favorite.validateIsMyFavorite(user);
+        favorite.validateIsMyFavorite(targetUser);
 
         favoriteRepository.delete(favorite);
         favorite.getArticle().decreaseOneFavoriteCount();
@@ -79,6 +83,7 @@ public class FavoriteService {
      */
     @Transactional(readOnly = true)
     public List<FavoriteResponse> findAllFavorites(User user) {
-        return FavoriteResponse.listOf(favoriteRepository.findAllByUser(user));
+        User targetUser = userService.findUserByEmail(user.getEmail());
+        return FavoriteResponse.listOf(favoriteRepository.findAllByUser(targetUser));
     }
 }

@@ -3,17 +3,16 @@ package com.bookwhale.user.acceptance.step;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.bookwhale.article.domain.ArticleStatus;
 import com.bookwhale.article.dto.ArticleRequest;
-import com.bookwhale.article.dto.ArticlesResponse;
+import com.bookwhale.auth.domain.JWT;
+import com.bookwhale.auth.domain.info.UserInfo;
+import com.bookwhale.auth.dto.OAuthObjectConverter;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.dto.FavoriteRequest;
 import com.bookwhale.user.dto.FavoriteResponse;
 import com.bookwhale.user.dto.LoginRequest;
-import com.bookwhale.user.dto.LoginResponse;
 import com.bookwhale.user.dto.PasswordUpdateRequest;
 import com.bookwhale.user.dto.ProfileResponse;
-import com.bookwhale.user.dto.SignUpRequest;
 import com.bookwhale.user.dto.UserResponse;
 import com.bookwhale.user.dto.UserUpdateRequest;
 import io.restassured.response.ExtractableResponse;
@@ -26,27 +25,15 @@ import org.springframework.http.MediaType;
 
 public class UserAcceptanceStep {
 
-    public static void assertThatLogin(LoginResponse loginResponse) {
-        Assertions.assertAll(
-            () -> assertThat(loginResponse.getAccessToken()).isNotNull(),
-            () -> assertThat(loginResponse.getTokenType()).isNotNull()
-        );
-    }
-
     public static void assertThatGetMyInfo(UserResponse userResponse, User user) {
         Assertions.assertAll(
-            () -> assertThat(userResponse.getIdentity()).isEqualTo(user.getIdentity()),
-            () -> assertThat(userResponse.getName()).isEqualTo(user.getName()),
-            () -> assertThat(userResponse.getPhoneNumber()).isEqualTo(user.getPhoneNumber()),
-            () -> assertThat(userResponse.getEmail()).isEqualTo(user.getEmail())
+            () -> assertThat(userResponse.getNickName()).isEqualTo(user.getNickname())
         );
     }
 
     public static void assertThatUpdateMyInfo(UserResponse res, UserUpdateRequest req) {
         Assertions.assertAll(
-            () -> assertThat(res.getEmail()).isEqualTo(req.getEmail()),
-            () -> assertThat(res.getName()).isEqualTo(req.getName()),
-            () -> assertThat(res.getPhoneNumber()).isEqualTo(req.getPhoneNumber())
+            () -> assertThat(res.getNickName()).isEqualTo(req.getNickname())
         );
     }
 
@@ -75,16 +62,6 @@ public class UserAcceptanceStep {
         );
     }
 
-    public static ExtractableResponse<Response> requestToSignUp(SignUpRequest signUpRequest) {
-        return given().log().all()
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .body(signUpRequest)
-            .when()
-            .post("/api/user/signup")
-            .then().log().all()
-            .extract();
-    }
-
     public static ExtractableResponse<Response> requestToLogin(LoginRequest loginRequest) {
         return given().log().all()
             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -95,11 +72,9 @@ public class UserAcceptanceStep {
             .extract();
     }
 
-    public static String requestToLoginAndGetAccessToken(LoginRequest loginRequest) {
-        LoginResponse loginResponse = requestToLogin(loginRequest).jsonPath()
-            .getObject(".", LoginResponse.class);
-        return loginResponse.getTokenType() + " " + loginResponse.getAccessToken();
-
+    public static String requestToLoginAndGetAccessToken(UserInfo userInfo, JWT jwt) {
+        String tokenPrefix = "Bearer ";
+        return tokenPrefix + OAuthObjectConverter.createApiToken(jwt, userInfo);
     }
 
     public static ExtractableResponse<Response> requestToGetMyInfo(String jwt) {

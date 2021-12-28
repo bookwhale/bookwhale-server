@@ -13,7 +13,6 @@ import com.bookwhale.article.domain.BookStatus;
 import com.bookwhale.article.dto.ArticlesResponse;
 import com.bookwhale.common.controller.CommonApiTest;
 import com.bookwhale.common.domain.Location;
-import com.bookwhale.common.security.WithMockCustomUser;
 import com.bookwhale.user.docs.UserDocumentation;
 import com.bookwhale.user.dto.FavoriteRequest;
 import com.bookwhale.user.dto.FavoriteResponse;
@@ -35,7 +34,6 @@ public class FavoriteControllerTest extends CommonApiTest {
     @MockBean
     FavoriteService favoriteService;
 
-    @WithMockCustomUser
     @DisplayName("관심목록을 조회한다.")
     @Test
     void findFavorites() throws Exception {
@@ -58,13 +56,12 @@ public class FavoriteControllerTest extends CommonApiTest {
         when(favoriteService.findAllFavorites(any())).thenReturn(responses);
 
         mockMvc.perform(get("/api/user/me/favorites")
-                .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken"))
             .andExpect(status().isOk())
             .andDo(print())
             .andDo(UserDocumentation.userFindFavorites());
     }
 
-    @WithMockCustomUser
     @DisplayName("관심목록에 추가한다.")
     @Test
     void addFavorite() throws Exception {
@@ -73,7 +70,7 @@ public class FavoriteControllerTest extends CommonApiTest {
         doNothing().when(favoriteService).addFavorite(any(), any());
 
         mockMvc.perform(post("/api/user/me/favorite")
-                .header(HttpHeaders.AUTHORIZATION, "accessToken")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(favoriteRequest)))
             .andExpect(status().isOk())
@@ -81,7 +78,7 @@ public class FavoriteControllerTest extends CommonApiTest {
             .andDo(UserDocumentation.userAddFavorite());
     }
 
-    @WithMockCustomUser
+
     @DisplayName("관심목록에서 삭제한다.")
     @Test
     void deleteFavorite() throws Exception {
@@ -89,7 +86,7 @@ public class FavoriteControllerTest extends CommonApiTest {
 
         mockMvc.perform(
                 RestDocumentationRequestBuilders.delete("/api/user/me/favorite/{favoriteId}", 1L)
-                    .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken"))
             .andExpect(status().isOk())
             .andDo(print())
             .andDo(UserDocumentation.userDeleteFavorite());

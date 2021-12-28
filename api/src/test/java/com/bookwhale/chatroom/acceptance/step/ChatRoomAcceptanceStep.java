@@ -5,12 +5,12 @@ import static com.bookwhale.article.acceptance.step.ArticleAcceptanceStep.reques
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.bookwhale.chatroom.dto.ChatRoomCreateRequest;
-import com.bookwhale.chatroom.dto.ChatRoomResponse;
 import com.bookwhale.article.dto.ArticleRequest;
 import com.bookwhale.article.dto.ArticleResponse;
-import com.bookwhale.user.domain.User;
+import com.bookwhale.chatroom.dto.ChatRoomCreateRequest;
+import com.bookwhale.chatroom.dto.ChatRoomResponse;
 import com.bookwhale.common.acceptance.AcceptanceUtils;
+import com.bookwhale.user.domain.User;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.util.List;
@@ -27,7 +27,7 @@ public class ChatRoomAcceptanceStep {
             () -> assertThat(responses.get(0).getArticleTitle()).isEqualTo(request.getTitle()),
             () -> assertThat(responses.get(0).getArticleImage()).isNotNull(),
             () -> assertThat(responses.get(0).getOpponentIdentity()).isEqualTo(
-                opponent.getIdentity()),
+                opponent.getNickname()),
             () -> assertThat(responses.get(0).getOpponentProfile()).isEqualTo(
                 opponent.getProfileImage())
         );

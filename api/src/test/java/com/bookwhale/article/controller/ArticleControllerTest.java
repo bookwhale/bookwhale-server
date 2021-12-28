@@ -28,7 +28,6 @@ import com.bookwhale.article.service.NaverBookAPIService;
 import com.bookwhale.common.controller.CommonApiTest;
 import com.bookwhale.common.domain.Location;
 import com.bookwhale.common.dto.Pagination;
-import com.bookwhale.common.security.WithMockCustomUser;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import org.apache.http.entity.ContentType;
@@ -53,7 +52,6 @@ public class ArticleControllerTest extends CommonApiTest {
 
     @Test
     @DisplayName("네이버 책 API")
-    @WithMockCustomUser
     public void findNaverBooksTest() throws Exception {
         NaverBookRequest request = NaverBookRequest.builder()
             .title("책 제목")
@@ -76,13 +74,13 @@ public class ArticleControllerTest extends CommonApiTest {
 
         mockMvc.perform(get(format("/api/article/naver-book?title=%s&display=%d&start=%d",
                 request.getTitle(), request.getDisplay(), request.getStart()))
-                .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken"))
             .andExpect(status().isOk())
             .andDo(print())
             .andDo(ArticleDocumentation.findNaverBooks());
     }
 
-    @WithMockCustomUser
+
     @DisplayName("게시글을 등록한다.")
     @Test
     void createArticle() throws Exception {
@@ -124,7 +122,7 @@ public class ArticleControllerTest extends CommonApiTest {
                 .file(image1)
                 .file(image2)
                 .file(json)
-                .header(HttpHeaders.AUTHORIZATION, "accessToken")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
                 .contentType(MediaType.MULTIPART_MIXED))
             .andExpect(header().string("location", "/api/article/1"))
             .andExpect(status().isCreated())
@@ -132,7 +130,7 @@ public class ArticleControllerTest extends CommonApiTest {
             .andDo(ArticleDocumentation.createArticle());
     }
 
-    @WithMockCustomUser
+
     @DisplayName("게시글을 등록할 때 이미지를 보내지 않으면 예외가 발생한다.")
     @Test
     void createArticle_notExistRequestPart_failure() throws Exception {
@@ -163,13 +161,13 @@ public class ArticleControllerTest extends CommonApiTest {
 
         mockMvc.perform(multipart("/api/article")
                 .file(json)
-                .header(HttpHeaders.AUTHORIZATION, "accessToken")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
                 .contentType(MediaType.MULTIPART_MIXED))
             .andExpect(status().isBadRequest())
             .andDo(print());
     }
 
-    @WithMockCustomUser
+
     @DisplayName("게시글을 상세 조회한다.")
     @Test
     void findArticle() throws Exception {
@@ -207,13 +205,13 @@ public class ArticleControllerTest extends CommonApiTest {
         when(articleService.findArticle(any(), any())).thenReturn(articleResponse);
 
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/article/{articleId}", 1L)
-                .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken"))
             .andExpect(status().isOk())
             .andDo(print())
             .andDo(ArticleDocumentation.findArticle());
     }
 
-    @WithMockCustomUser
+
     @DisplayName("내 판매글들을 조회한다.")
     @Test
     void findMyArticles() throws Exception {
@@ -232,13 +230,13 @@ public class ArticleControllerTest extends CommonApiTest {
         when(articleService.findMyArticles(any())).thenReturn(List.of(articlesResponse));
 
         mockMvc.perform(get("/api/articles/me")
-                .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken"))
             .andExpect(status().isOk())
             .andDo(print())
             .andDo(ArticleDocumentation.findMyArticles());
     }
 
-    @WithMockCustomUser
+
     @DisplayName("로그인한 유저가 게시글을 전체 조회한다.")
     @Test
     void findArticles_loginUser() throws Exception {
@@ -262,9 +260,10 @@ public class ArticleControllerTest extends CommonApiTest {
 
         when(articleService.findArticles(any(), any())).thenReturn(of(articlesResponse));
 
-        mockMvc.perform(get(format("/api/articles?search=%s&page=%d&size=%d", articlesRequest.getSearch(),
-                pagination.getPage(), pagination.getSize()))
-                .header(HttpHeaders.AUTHORIZATION, "accessToken"))
+        mockMvc.perform(
+                get(format("/api/articles?search=%s&page=%d&size=%d", articlesRequest.getSearch(),
+                    pagination.getPage(), pagination.getSize()))
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken"))
             .andExpect(status().isOk())
             .andDo(print())
             .andDo(ArticleDocumentation.findArticles());
@@ -293,13 +292,14 @@ public class ArticleControllerTest extends CommonApiTest {
 
         when(articleService.findArticles(any(), any())).thenReturn(of(articlesResponse));
 
-        mockMvc.perform(get(format("/api/articles?search=%s&page=%d&size=%d", articlesRequest.getSearch(),
-                pagination.getPage(), pagination.getSize())))
+        mockMvc.perform(
+                get(format("/api/articles?search=%s&page=%d&size=%d", articlesRequest.getSearch(),
+                    pagination.getPage(), pagination.getSize())))
             .andExpect(status().isOk())
             .andDo(print());
     }
 
-    @WithMockCustomUser
+
     @DisplayName("게시글을 수정한다.")
     @Test
     void updateArticle_success() throws Exception {
@@ -325,24 +325,25 @@ public class ArticleControllerTest extends CommonApiTest {
         mockMvc.perform(MockMultipartPatchBuilder("/api/article/1")
                 .file(updateImage)
                 .file(json)
-                .header(HttpHeaders.AUTHORIZATION, "accessToken")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
                 .contentType(MediaType.MULTIPART_MIXED))
             .andExpect(status().isOk())
             .andDo(print())
             .andDo(ArticleDocumentation.updateArticle());
     }
 
-    @WithMockCustomUser
+
     @DisplayName("게시글 상태를 변경한다.")
     @Test
     void updateArticleStatus() throws Exception {
         ArticleStatusUpdateRequest request = new ArticleStatusUpdateRequest(
             ArticleStatus.SOLD_OUT.toString());
 
-        mockMvc.perform(RestDocumentationRequestBuilders.patch("/api/article/{articleId}/status", 1L)
-                .header(HttpHeaders.AUTHORIZATION, "accessToken")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
+        mockMvc.perform(
+                RestDocumentationRequestBuilders.patch("/api/article/{articleId}/status", 1L)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request)))
             .andExpect(status().isOk())
             .andDo(print())
             .andDo(ArticleDocumentation.updateArticleStatus());

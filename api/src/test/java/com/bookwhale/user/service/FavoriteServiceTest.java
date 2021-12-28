@@ -8,13 +8,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.bookwhale.article.domain.Article;
+import com.bookwhale.article.domain.ArticleRepository;
 import com.bookwhale.article.dto.ArticleRequest;
+import com.bookwhale.article.dto.BookRequest;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.favorite.domain.Favorite;
 import com.bookwhale.favorite.domain.FavoriteRepository;
-import com.bookwhale.article.domain.ArticleRepository;
-import com.bookwhale.article.dto.BookRequest;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.dto.FavoriteRequest;
 import com.bookwhale.user.dto.FavoriteResponse;
@@ -39,21 +39,21 @@ public class FavoriteServiceTest {
     @Mock
     private FavoriteRepository favoriteRepository;
 
+    @Mock
+    private UserService userService;
+
     FavoriteService favoriteService;
 
     User user;
 
     @BeforeEach
     void setUp() {
-        favoriteService = new FavoriteService(favoriteRepository, articleRepository);
+        favoriteService = new FavoriteService(favoriteRepository, articleRepository, userService);
 
         user = User.builder()
             .id(1L)
-            .identity("highright96")
-            .password("1234")
-            .name("남상우")
+            .nickname("남상우")
             .email("highright96@email.com")
-            .phoneNumber("010-1234-1234")
             .build();
     }
 
@@ -79,9 +79,12 @@ public class FavoriteServiceTest {
             .bookStatus("BEST")
             .price("5000")
             .build();
+
+        when(userService.findUserByEmail(any(String.class)))
+            .thenReturn(user);
+
         Article article = Article.create(user, articleRequest.toEntity());
         article.setCreatedDate(LocalDateTime.now());
-
         when(favoriteRepository.findAllByUser(any())).thenReturn(List.of(
             Favorite.create(user, article)));
 
@@ -123,6 +126,10 @@ public class FavoriteServiceTest {
             .bookStatus("BEST")
             .price("5000")
             .build();
+
+        when(userService.findUserByEmail(any(String.class)))
+            .thenReturn(user);
+
         Article article = Article.create(user, articleRequest.toEntity());
 
         when(articleRepository.findById(any())).thenReturn(Optional.ofNullable(article));
@@ -166,6 +173,10 @@ public class FavoriteServiceTest {
             .bookStatus("BEST")
             .price("5000")
             .build();
+
+        when(userService.findUserByEmail(any(String.class)))
+            .thenReturn(user);
+
         Article article = Article.create(user, articleRequest.toEntity());
 
         when(favoriteRepository.findById(any())).thenReturn(Optional.of(
@@ -199,6 +210,10 @@ public class FavoriteServiceTest {
             .bookStatus("BEST")
             .price("5000")
             .build();
+
+        when(userService.findUserByEmail(any(String.class)))
+            .thenReturn(user);
+
         Article article = Article.create(user, articleRequest.toEntity());
         User otherUser = User.builder().id(2L).build();
 

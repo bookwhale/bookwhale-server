@@ -1,6 +1,5 @@
 package com.bookwhale.user.dto;
 
-import com.bookwhale.user.domain.Role;
 import com.bookwhale.user.domain.User;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -40,11 +39,8 @@ public class SignUpRequest {
 
     public User toEntity() {
         return User.builder()
-            .identity(identity)
             .email(email)
-            .name(name)
-            .phoneNumber(phoneNumber)
-            .role(Role.ROLE_USER)
+            .nickname(name)
             .build();
     }
 }
