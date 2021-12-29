@@ -1,0 +1,66 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
+
+name: Backend Develop Deploy
+
+on:
+  push:
+    branches: [ develop-renewal ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    - name: JDK 11 버전 설정
+      uses: actions/setup-java@v2
+      with:
+        java-version: '11'
+        distribution: 'adopt'
+        
+    - name: API 서버 gradlew 권한 수정
+      working-directory: ./api
+      run: chmod +x gradlew
+      
+    - name: API 서버 빌드 진행
+      run: ./gradlew clean build
+      working-directory: ./api
+      
+    - name: API 서버 jar 파일 복사
+      run: cp ./api/build/libs/api-0.0.1-SNAPSHOT.jar ./deploy/api
+      working-directory: ./api
+      
+    - name: API 서버 도커 이미지 빌드
+      run: sudo docker build -t bookwhale-backend:latest .
+      working-directory: ./deploy/api
+      
+    - name: API 서버 도커 이미지 배포
+      run: docker run -d -p 8080:8080 --name bookwhale-backend -e BOOKWHALE_JASYPT_PASSWORD=${{ secrets.JASYPT_PASSWORD }} bookwhale-backend:latest
+      working-directory: ./deploy/api
+      
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
