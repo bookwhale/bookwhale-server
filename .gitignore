@@ -149,9 +149,6 @@ fabric.properties
 
 hs_err_pid*
 
-#auth
-application-auth.yml
-
 #docs
 api-docs.html
 
