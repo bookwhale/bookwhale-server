@@ -1,5 +1,5 @@
-bootJar { enabled = false }
-jar { enabled = true }
+bootJar { enabled = true }
+jar { enabled = false }
 
 apply plugin: 'com.ewerk.gradle.plugins.querydsl'
 
