@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: local
+    active: dev
     include: auth
   servlet:
     multipart:
