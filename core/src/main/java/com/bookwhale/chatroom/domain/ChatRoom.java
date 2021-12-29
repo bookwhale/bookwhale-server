@@ -5,9 +5,9 @@ import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.user.domain.User;
 import java.time.LocalDateTime;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,25 +25,22 @@ public class ChatRoom {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "room_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "article_id")
+    @JoinColumn(foreignKey = @ForeignKey(name = "article_fk_chatroom"))
     private Article article;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "buyer_id")
+    @JoinColumn(name = "buyer_id", foreignKey = @ForeignKey(name = "buyer_fk_chatroom"))
     private User buyer;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "seller_id")
+    @JoinColumn(name = "seller_id", foreignKey = @ForeignKey(name = "seller_fk_chatroom"))
     private User seller;
 
-    @Column(name = "buyer_delete_flag")
     private boolean isBuyerDelete;
 
-    @Column(name = "seller_delete_flag")
     private boolean isSellerDelete;
 
     @CreatedDate
