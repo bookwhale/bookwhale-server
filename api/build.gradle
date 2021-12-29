@@ -1,27 +1,22 @@
 apply plugin: 'org.asciidoctor.convert'
 
+bootJar { enabled = true }
+jar { enabled = false }
+
 dependencies {
-    //project
     implementation project(path: ':core', configuration: 'default')
-    //spring
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
-    //auth
     implementation 'io.jsonwebtoken:jjwt:0.5.1'
     implementation 'com.auth0:java-jwt:3.18.2'
-    //mail
     implementation 'org.springframework.boot:spring-boot-starter-mail'
-    //aws
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
-    // log
     implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16'
-    // util
     implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation 'com.google.guava:guava:31.0.1-jre'
-    //test
+    implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3'
     testImplementation group: 'io.rest-assured', name: 'rest-assured', version: '4.3.3'
-    //api docs
     asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor'
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 }
