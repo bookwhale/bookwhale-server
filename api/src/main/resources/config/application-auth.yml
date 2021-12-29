@@ -1,0 +1,37 @@
+# S3 image bucket
+cloud:
+  aws:
+    s3:
+      bucket: ENC(NbvLFTfTrn7rstFlukvjkBoXBcNomHXf)
+    region:
+      static: ap-northeast-2
+    credentials:
+      access-key: ENC(BWi7T33mSYbxlkutVpsVxWcedUqjbB62BPsQhRbt7SU=)
+      secret-key: ENC(7JgiB7WHHW/BeWqI8aDgIKUz7dwl3Ns1V/3ZbzeEA8fZ6MXoihBlw4Dh9Rz9TL42Lvpl1YPYTfA=)
+      instance-profile: true
+    stack:
+      auto: false
+
+# OAuth, Token
+external-api:
+  auth:
+    naver:
+      client-id: ENC(Tznm/ok9QEJ6iJU8i07QU9cjVDVFBHpX59c0ztp5fMI=)
+      client-key: ENC(nGQtzCp7nQFf+RfRkpZ4KvtIMo2plbCd)
+      base-url: https://nid.naver.com/oauth2.0/authorize
+      state: whale
+      callback-url: http://localhost:8080/api/oauth/naver/login
+      access-token-url: https://nid.naver.com/oauth2.0/token
+    google:
+      client-id: ENC(ky7Fs/NURcBOuo7ncPOWrIe0m6ifM0c4QTdnQxwysRSV/8M05qMUbXklav+TauYGmfMVKU7DrFuXo19gWit6yqYvEjZHXahVbSJk6rjAOyCL7fiqTIW8ig==)
+      client-key: ENC(afk3fc9o+Nj7mUZZe6OWI9A6IEkHNw28reztrSke9/cggJKgffehT314mJlMk5bm)
+      base-url: https://accounts.google.com/o/oauth2
+      callback-url: http://localhost:8080/api/oauth/google/login
+      access-token-url: https://oauth2.googleapis.com/token
+jwt:
+  token:
+    header: api_key
+    issuer: bookwhale_server
+    clientSecret: ENC(alIW2awsA5PjqVkn+DpVJI3P+9/Vxyfw)
+    expirySecond: 1800
+    expiryRefreshSecond: 604800
