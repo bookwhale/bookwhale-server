@@ -1,5 +1,8 @@
 apply plugin: 'org.asciidoctor.convert'
 
+bootJar { enabled = false }
+jar { enabled = true }
+
 dependencies {
     //project
     implementation project(path: ':core', configuration: 'default')

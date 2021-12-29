@@ -1,5 +1,8 @@
 apply plugin: 'org.asciidoctor.convert'
 
+bootJar { enabled = false }
+jar { enabled = true }
+
 dependencies {
     implementation project(path: ':core', configuration: 'default')
     implementation 'org.springframework.boot:spring-boot-starter-validation'
