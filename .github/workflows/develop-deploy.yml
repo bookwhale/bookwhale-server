@@ -7,7 +7,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/checkout@v2
     - name: JDK 11 버전 설정
@@ -15,19 +15,17 @@ jobs:
       with:
         java-version: '11'
         distribution: 'adopt'
-        
+
     - name: API 서버 gradlew 권한 수정
       working-directory: ./api
       run: chmod +x gradlew
-      
+
     - name: API 서버 빌드 진행
       run: ./gradlew clean build
-      working-directory: ./api
-      
+
     - name: API 서버 jar 파일 복사
       run: cp ./api/build/libs/api-0.0.1-SNAPSHOT.jar ./deploy/api
-      working-directory: ./api
-      
+
     - name: AWS EC2에 Repository 복사
       uses: appleboy/ssh-action@master
       with:
@@ -36,7 +34,7 @@ jobs:
         key: ${{ secrets.EC2_SSH_KEY }}
         source: '.'
         target: '/home/ubuntu/app/bookwhale-server'
-      
+
     - name: AWS EC2에 접속 후 API 서버 배포 스크립트 실행
       uses: appleboy/ssh-action@master
       with:
