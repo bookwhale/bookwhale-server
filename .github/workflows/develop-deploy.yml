@@ -22,11 +22,9 @@ jobs:
       
     - name: API 서버 빌드 진행
       run: ./gradlew clean build
-      working-directory: ./api
       
     - name: API 서버 jar 파일 복사
       run: cp ./api/build/libs/api-0.0.1-SNAPSHOT.jar ./deploy/api
-      working-directory: ./api
       
     - name: AWS EC2에 Repository 복사
       uses: appleboy/ssh-action@master
