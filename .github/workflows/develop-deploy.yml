@@ -1,10 +1,3 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
-
 name: Backend Develop Deploy
 
 on:
@@ -35,32 +28,22 @@ jobs:
       run: cp ./api/build/libs/api-0.0.1-SNAPSHOT.jar ./deploy/api
       working-directory: ./api
       
-    - name: API 서버 도커 이미지 빌드
-      run: sudo docker build -t bookwhale-backend:latest .
-      working-directory: ./deploy/api
+    - name: AWS EC2에 Repository 복사
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USERNAME }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        source: '.'
+        target: '/home/ubuntu/app/bookwhale-server'
       
-    - name: API 서버 도커 이미지 배포
-      run: docker run -d -p 8080:8080 --name bookwhale-backend -e BOOKWHALE_JASYPT_PASSWORD=${{ secrets.JASYPT_PASSWORD }} bookwhale-backend:latest
-      working-directory: ./deploy/api
-      
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    - name: AWS EC2에 접속 후 API 서버 배포 스크립트 실행
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USERNAME }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script: |
+          cd /home/ubuntu/app/bookwhale-server/deploy/api
+          sudo docker build -t bookwhale-server:latest .
+          docker run -d -p 8080:8080 --name bookwhale-server -e BOOKWHALE_JASYPT_PASSWORD=${{ secrets.JASYPT_PASSWORD }} bookwhale-server:latest
