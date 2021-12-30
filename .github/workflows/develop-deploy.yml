@@ -17,7 +17,6 @@ jobs:
         distribution: 'adopt'
         
     - name: API 서버 gradlew 권한 수정
-      working-directory: ./api
       run: chmod +x gradlew
       
     - name: API 서버 빌드 진행
