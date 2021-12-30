@@ -7,10 +7,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.bookwhale.auth.dto.OAuthRefreshLoginRequest;
 import com.bookwhale.common.controller.CommonApiTest;
-import javax.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -18,9 +16,6 @@ import org.springframework.http.MediaType;
 @DisplayName("사용자 인증 관련 단위 테스트(Controller)")
 @WebMvcTest(controllers = OAuthController.class)
 class OAuthControllerTest extends CommonApiTest {
-
-    @Mock
-    private HttpServletResponse response;
 
     @Test
     @DisplayName("provider명으로 요청하면 provider의 로그인 URL로 redirect 된다. (naver, google)")
