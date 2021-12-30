@@ -20,6 +20,8 @@ jobs:
       run: chmod +x gradlew
       
     - name: API 서버 빌드 진행
+      env:
+        BOOKWHALE_JASYPT_PASSWORD: ${{ secrets.JASYPT_PASSWORD }}
       run: ./gradlew clean build
       
     - name: API 서버 jar 파일 복사
