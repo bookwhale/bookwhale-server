@@ -3,8 +3,9 @@ package com.bookwhale.auth.controller;
 import com.bookwhale.auth.domain.CurrentUser;
 import com.bookwhale.auth.dto.OAuthLoginResponse;
 import com.bookwhale.auth.dto.OAuthRefreshLoginRequest;
-import com.bookwhale.auth.service.provider.OAuthProviderType;
+import com.bookwhale.auth.dto.OAuthResultResponse;
 import com.bookwhale.auth.service.OauthService;
+import com.bookwhale.auth.service.provider.OAuthProviderType;
 import com.bookwhale.user.domain.User;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,7 @@ public class OAuthController {
     /**
      * client에서 OAuth 로그인 요청을 providerType을 받아 처리
      *
-     * @param OAuthProviderType (GOOGLE, NAVER)
+     * @param providerType OAuth 로그인 기능 공급자 (provider : GOOGLE, NAVER)
      */
     @GetMapping(value = "/{providerType}")
     public void oAuthLoginRequest(
@@ -37,6 +38,14 @@ public class OAuthController {
         oauthService.sendLoginRequest(providerType);
     }
 
+    /**
+     * provider 에 로그인이 완료되면 전달받는 요청 키로 로그인 절차를 진행한다.
+     *
+     * @param providerType OAuth 로그인 기능 공급자(provider : GOOGLE, NAVER)
+     * @param accessCode   요청 키
+     * @param state        (optional) 네이버 상태값
+     * @return
+     */
     @GetMapping("/{providerType}/login")
     public ResponseEntity<OAuthLoginResponse> oAuthLoginProcess(
         @PathVariable OAuthProviderType providerType,
@@ -48,6 +57,12 @@ public class OAuthController {
         return ResponseEntity.ok(result);
     }
 
+    /**
+     * 발급한 refreshToken을 확인하여 새로운 apiToken을 생성한다.
+     *
+     * @param refreshRequest apiToken, refreshToken 문자열
+     * @return
+     */
     @PostMapping("/refresh")
     public ResponseEntity<OAuthLoginResponse> refreshLogin(
         @Valid @RequestBody OAuthRefreshLoginRequest refreshRequest) {
@@ -55,19 +70,32 @@ public class OAuthController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * 발급 시 저장했던 refreshToken 정보를 제거한다.
+     *
+     * @param refreshRequest apiToken, refreshToken 문자열
+     * @return
+     */
     @PostMapping("/logout")
-    public ResponseEntity<String> oAuthLogoutRequest(
+    public ResponseEntity<OAuthResultResponse> oAuthLogoutRequest(
         @Valid @RequestBody OAuthRefreshLoginRequest refreshRequest) {
-        String result = oauthService.expireToken(refreshRequest);
+        OAuthResultResponse result = oauthService.expireToken(refreshRequest);
 
         return ResponseEntity.ok(result);
     }
 
+    /**
+     * 로그인 사용자의 정보를 제거하고 발급 시 저장했던 refreshToken 정보를 제거한다.
+     *
+     * @param user           로그인 한 사용자 (token)
+     * @param refreshRequest apiToken, refreshToken 문자열
+     * @return
+     */
     @PostMapping("/withdrawal")
-    public ResponseEntity<String> withdrawalUser(
+    public ResponseEntity<OAuthResultResponse> withdrawalUser(
         @CurrentUser User user,
         @Valid @RequestBody OAuthRefreshLoginRequest refreshRequest) {
-        String result = oauthService.withdrawal(refreshRequest, user);
+        OAuthResultResponse result = oauthService.withdrawal(refreshRequest, user);
 
         return ResponseEntity.ok(result);
     }
