@@ -9,6 +9,7 @@ import com.bookwhale.auth.domain.info.UserInfo;
 import com.bookwhale.auth.dto.OAuthLoginResponse;
 import com.bookwhale.auth.dto.OAuthObjectConverter;
 import com.bookwhale.auth.dto.OAuthRefreshLoginRequest;
+import com.bookwhale.auth.dto.OAuthResultResponse;
 import com.bookwhale.auth.service.provider.GoogleOAuthProvider;
 import com.bookwhale.auth.service.provider.NaverOAuthProvider;
 import com.bookwhale.auth.service.provider.OAuthProvider;
@@ -120,7 +121,7 @@ public class OauthService {
     }
 
     @Transactional
-    public String expireToken(OAuthRefreshLoginRequest refreshRequest) {
+    public OAuthResultResponse expireToken(OAuthRefreshLoginRequest refreshRequest) {
         // step1 : refresh token 확인 후 삭제
         String refreshToken = refreshRequest.getRefreshToken();
         ClaimsForRefresh refreshClaim = apiToken.verifyForRefresh(refreshToken);
@@ -134,11 +135,11 @@ public class OauthService {
         // step2 : apiToken 불용화
         // TODO 해당 로직에 대해서는 cache형 db를 사용하여 가용한 토큰인지 정보를 보관할 수 있다면 추가작업이 가능할 것으로 판단됨.
 
-        return "로그아웃 되었습니다.";
+        return new OAuthResultResponse("로그아웃 되었습니다.");
     }
 
     @Transactional
-    public String withdrawal(OAuthRefreshLoginRequest refreshRequest, User user) {
+    public OAuthResultResponse withdrawal(OAuthRefreshLoginRequest refreshRequest, User user) {
         // step1 : refresh token 확인 후 삭제
         String refreshToken = refreshRequest.getRefreshToken();
         ClaimsForRefresh refreshClaim = apiToken.verifyForRefresh(refreshToken);
@@ -150,6 +151,6 @@ public class OauthService {
         // step2 : 사용자 정보 삭제
         userService.withdrawalUser(user);
 
-        return "회원 탈퇴 완료되었습니다.";
+        return new OAuthResultResponse("회원 탈퇴 완료되었습니다.");
     }
 }

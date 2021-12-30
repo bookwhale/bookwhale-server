@@ -32,98 +32,105 @@ API 공통적으로 사용되는 상태 코드이다.
 | 잘못된 HTTP 메소드로 요청한 경우.
 |===
 
-== 1. 유저
+== 1. 사용자 인증 관련 (OAuth)
 
-=== 1.1 회원가입
+=== 1.1 로그인
+- provider에 로그인 요청 (네이버에 로그인 요청 시)
 
-operation::user/signup[snippets='http-request,request-fields,http-response']
+operation::oauth/requestLogin[snippets='http-request,http-response']
 
-=== 1.2 로그인
+- 로그인 후 api token 생성 요청 (redirect)
 
-operation::user/userLogin[snippets='http-request,request-fields,http-response']
+operation::oauth/loginProcess[snippets='http-request,http-response,response-fields']
 
-=== 1.3 내 정보 조회
+=== 1.2 토큰 갱신 (refresh)
 
-operation::user/me[snippets='http-request,request-headers,http-response']
+operation::oauth/refresh[snippets='http-request,http-response,response-fields']
 
-=== 1.4 내 정보 수정
+=== 1.3 로그아웃
+
+operation::oauth/logout[snippets='http-request,request-headers,http-response,response-fields']
+
+=== 1.4 회원탈퇴
+
+operation::oauth/withdrawal[snippets='http-request,request-headers,http-response,response-fields']
+
+== 2. 유저
+
+=== 2.1 내 정보 수정
 
 operation::user/updateMe[snippets='http-request,request-headers,request-fields,http-response']
 
-=== 1.5 비밀번호 수정
-
-operation::user/updatePassword[snippets='http-request,request-headers,request-fields,http-response']
-
-=== 1.6 프로필 업로드
+=== 2.2 프로필 업로드
 
 operation::user/uploadProfileImage[snippets='http-request,request-headers,request-parts,http-response,response-fields']
 
-=== 1.7 프로필 삭제
+=== 2.3 프로필 삭제
 
 operation::user/deleteProfileImage[snippets='http-request,request-headers,http-response']
 
-=== 1.8 관심목록 추가
+=== 2.4 관심목록 추가
 
 operation::user/addFavorite[snippets='http-request,request-headers,request-fields,http-response']
 
-=== 1.9 관심목록 조회
+=== 2.5 관심목록 조회
 
 operation::user/findFavorites[snippets='http-request,request-headers,http-response,response-fields']
 
-=== 1.10 관심목록 삭제
+=== 2.6 관심목록 삭제
 
 operation::user/deleteFavorite[snippets='http-request,request-headers,path-parameters,http-response']
 
-=== 1.11 내 게시글 조회
+=== 2.7 내 게시글 조회
 
 operation::user/findMyArticles[snippets='http-request,request-headers,http-response,response-fields']
 
-== 2. 게시글
+== 3. 게시글
 
-=== 2.1 네이버 책 API
+=== 3.1 네이버 책 API
 
 operation::article/findNaverBooks[snippets='http-request,request-headers,request-parameters,http-response,response-fields']
 
-=== 2.2 게시글 등록
+=== 3.2 게시글 등록
 
 operation::article/createArticle[snippets='http-request,request-headers,request-part-articleRequest-fields,http-response']
 
-=== 2.3 게시글 상세 조회
+=== 3.3 게시글 상세 조회
 
 operation::article/findArticle[snippets='http-request,request-headers,path-parameters,http-response,response-fields']
 
-=== 2.4 게시글 전체 조회
+=== 3.4 게시글 전체 조회
 
 operation::article/findArticles[snippets='http-request,request-headers,request-parameters,http-response,response-fields']
 
-=== 2.5 게시글 수정
+=== 3.5 게시글 수정
 
 게시글 수정 API 는 문서화 X => 직접 물어봐주세요..
 
-=== 2.6 게시글 상태 변경
+=== 3.6 게시글 상태 변경
 
 operation::article/updateArticleStatus[snippets='http-request,request-headers,path-parameters,request-fields,http-response']
 
-=== 2.7 판매글 검색조건 - 판매상태
+=== 3.7 판매글 검색조건 - 판매상태
 
 operation::article/conditions/bookStatus[snippets='http-request,http-response,response-fields']
 
-=== 2.8 판매글 검색조건 - 판매지역
+=== 3.8 판매글 검색조건 - 판매지역
 * 설정된 판매지역은 대한민국의 17개 행정 구역을 기준으로 생성하였습니다.
 ** https://ko.wikipedia.org/wiki/%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%EC%9D%98_%ED%96%89%EC%A0%95_%EA%B5%AC%EC%97%AD[위키백과 - 대한민국의 행정 구역]
 
 operation::article/conditions/locations[snippets='http-request,http-response,response-fields']
 
-== 3. 채팅
+== 4. 채팅
 
-=== 3.1 채팅방 생성
+=== 4.1 채팅방 생성
 
 operation::chatRoom/createChatRoom[snippets='http-request,request-headers,request-fields,http-response']
 
-=== 3.2 채팅방 목록 조회
+=== 4.2 채팅방 목록 조회
 
 operation::chatRoom/findChatRooms[snippets='http-request,request-headers,http-response,response-fields']
 
-=== 3.3 채팅방 삭제
+=== 4.3 채팅방 삭제
 
 operation::chatRoom/deleteChatRoom[snippets='http-request,request-headers,path-parameters,http-response']

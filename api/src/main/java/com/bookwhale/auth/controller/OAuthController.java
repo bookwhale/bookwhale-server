@@ -3,6 +3,7 @@ package com.bookwhale.auth.controller;
 import com.bookwhale.auth.domain.CurrentUser;
 import com.bookwhale.auth.dto.OAuthLoginResponse;
 import com.bookwhale.auth.dto.OAuthRefreshLoginRequest;
+import com.bookwhale.auth.dto.OAuthResultResponse;
 import com.bookwhale.auth.service.OauthService;
 import com.bookwhale.auth.service.provider.OAuthProviderType;
 import com.bookwhale.user.domain.User;
@@ -76,9 +77,9 @@ public class OAuthController {
      * @return
      */
     @PostMapping("/logout")
-    public ResponseEntity<String> oAuthLogoutRequest(
+    public ResponseEntity<OAuthResultResponse> oAuthLogoutRequest(
         @Valid @RequestBody OAuthRefreshLoginRequest refreshRequest) {
-        String result = oauthService.expireToken(refreshRequest);
+        OAuthResultResponse result = oauthService.expireToken(refreshRequest);
 
         return ResponseEntity.ok(result);
     }
@@ -91,10 +92,10 @@ public class OAuthController {
      * @return
      */
     @PostMapping("/withdrawal")
-    public ResponseEntity<String> withdrawalUser(
+    public ResponseEntity<OAuthResultResponse> withdrawalUser(
         @CurrentUser User user,
         @Valid @RequestBody OAuthRefreshLoginRequest refreshRequest) {
-        String result = oauthService.withdrawal(refreshRequest, user);
+        OAuthResultResponse result = oauthService.withdrawal(refreshRequest, user);
 
         return ResponseEntity.ok(result);
     }

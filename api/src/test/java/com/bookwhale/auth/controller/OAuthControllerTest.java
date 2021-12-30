@@ -6,9 +6,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.bookwhale.auth.docs.AuthDocumentation;
+import com.bookwhale.auth.docs.OAuthDocumentation;
 import com.bookwhale.auth.dto.OAuthLoginResponse;
 import com.bookwhale.auth.dto.OAuthRefreshLoginRequest;
+import com.bookwhale.auth.dto.OAuthResultResponse;
 import com.bookwhale.common.controller.CommonApiTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,18 +28,24 @@ class OAuthControllerTest extends CommonApiTest {
         mockMvc.perform(RestDocumentationRequestBuilders.get("/api/oauth/{providerType}", "naver"))
             .andExpect(status().isOk())
             .andDo(print())
-            .andDo(AuthDocumentation.redirectProviderLogin());
+            .andDo(OAuthDocumentation.redirectProviderLogin());
     }
 
     @Test
     @DisplayName("provider 에 로그인이 완료되면 전달받는 요청 키로 로그인 절차를 진행한다.")
     void oAuthLoginProcessAfterProviderLogin() throws Exception {
+        var response = new OAuthLoginResponse("apiToken", "refreshToken");
+
+        when(oauthService.loginProcess(any(), any(String.class))).thenReturn(response);
+
         mockMvc.perform(
-                RestDocumentationRequestBuilders.get("/api/oauth/{providerType}/login", "google")
-                    .param("code", "accessCode"))
+                RestDocumentationRequestBuilders.get("/api/oauth/{providerType}/login", "naver")
+                    .param("code", "accessCode")
+                    .param("state", "stateString")
+            )
             .andExpect(status().isOk())
             .andDo(print())
-            .andDo(AuthDocumentation.loginProcess());
+            .andDo(OAuthDocumentation.loginProcess());
     }
 
     @Test
@@ -56,7 +63,7 @@ class OAuthControllerTest extends CommonApiTest {
                 .content(requestBody))
             .andExpect(status().isOk())
             .andDo(print())
-            .andDo(AuthDocumentation.refreshLoginProcess());
+            .andDo(OAuthDocumentation.refreshLoginProcess());
     }
 
     @Test
@@ -64,13 +71,17 @@ class OAuthControllerTest extends CommonApiTest {
     void logoutUser() throws Exception {
         var refreshRequest = new OAuthRefreshLoginRequest("apiToken", "refreshToken");
         String requestBody = objectMapper.writeValueAsString(refreshRequest);
+        var response = new OAuthResultResponse("로그아웃 되었습니다");
+
+        when(oauthService.expireToken(any())).thenReturn(response);
 
         mockMvc.perform(post("/api/oauth/logout")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(requestBody))
             .andExpect(status().isOk())
-            .andDo(print());
+            .andDo(print())
+            .andDo(OAuthDocumentation.logoutProcess());
     }
 
     @Test
@@ -78,13 +89,17 @@ class OAuthControllerTest extends CommonApiTest {
     void withdrawalUser() throws Exception {
         var refreshRequest = new OAuthRefreshLoginRequest("apiToken", "refreshToken");
         String requestBody = objectMapper.writeValueAsString(refreshRequest);
+        var response = new OAuthResultResponse("회원 탈퇴 완료되었습니다.");
+
+        when(oauthService.withdrawal(any(), any())).thenReturn(response);
 
         mockMvc.perform(post("/api/oauth/withdrawal")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(requestBody))
             .andExpect(status().isOk())
-            .andDo(print());
+            .andDo(print())
+            .andDo(OAuthDocumentation.withdrawalProcess());
     }
 
 }
