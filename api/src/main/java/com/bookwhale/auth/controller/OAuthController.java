@@ -3,8 +3,8 @@ package com.bookwhale.auth.controller;
 import com.bookwhale.auth.domain.CurrentUser;
 import com.bookwhale.auth.dto.OAuthLoginResponse;
 import com.bookwhale.auth.dto.OAuthRefreshLoginRequest;
-import com.bookwhale.auth.service.provider.OAuthProviderType;
 import com.bookwhale.auth.service.OauthService;
+import com.bookwhale.auth.service.provider.OAuthProviderType;
 import com.bookwhale.user.domain.User;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,7 @@ public class OAuthController {
     /**
      * client에서 OAuth 로그인 요청을 providerType을 받아 처리
      *
-     * @param providerType OAuth 로그인 기능 공급자(provider : GOOGLE, NAVER)
+     * @param providerType OAuth 로그인 기능 공급자 (provider : GOOGLE, NAVER)
      */
     @GetMapping(value = "/{providerType}")
     public void oAuthLoginRequest(
@@ -39,9 +39,10 @@ public class OAuthController {
 
     /**
      * provider 에 로그인이 완료되면 전달받는 요청 키로 로그인 절차를 진행한다.
+     *
      * @param providerType OAuth 로그인 기능 공급자(provider : GOOGLE, NAVER)
-     * @param accessCode 요청 키
-     * @param state (optional) 네이버 상태값
+     * @param accessCode   요청 키
+     * @param state        (optional) 네이버 상태값
      * @return
      */
     @GetMapping("/{providerType}/login")
@@ -57,6 +58,7 @@ public class OAuthController {
 
     /**
      * 발급한 refreshToken을 확인하여 새로운 apiToken을 생성한다.
+     *
      * @param refreshRequest apiToken, refreshToken 문자열
      * @return
      */
@@ -69,6 +71,7 @@ public class OAuthController {
 
     /**
      * 발급 시 저장했던 refreshToken 정보를 제거한다.
+     *
      * @param refreshRequest apiToken, refreshToken 문자열
      * @return
      */
@@ -82,7 +85,8 @@ public class OAuthController {
 
     /**
      * 로그인 사용자의 정보를 제거하고 발급 시 저장했던 refreshToken 정보를 제거한다.
-     * @param user 로그인 한 사용자 (token)
+     *
+     * @param user           로그인 한 사용자 (token)
      * @param refreshRequest apiToken, refreshToken 문자열
      * @return
      */

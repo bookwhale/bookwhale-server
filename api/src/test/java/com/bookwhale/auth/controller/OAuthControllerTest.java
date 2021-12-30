@@ -1,10 +1,13 @@
 package com.bookwhale.auth.controller;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.bookwhale.auth.docs.AuthDocumentation;
+import com.bookwhale.auth.dto.OAuthLoginResponse;
 import com.bookwhale.auth.dto.OAuthRefreshLoginRequest;
 import com.bookwhale.common.controller.CommonApiTest;
 import org.junit.jupiter.api.DisplayName;
@@ -12,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 
 @DisplayName("사용자 인증 관련 단위 테스트(Controller)")
 @WebMvcTest(controllers = OAuthController.class)
@@ -20,18 +24,21 @@ class OAuthControllerTest extends CommonApiTest {
     @Test
     @DisplayName("provider명으로 요청하면 provider의 로그인 URL로 redirect 된다. (naver, google)")
     void requestLoginForRedirectProviderLogin() throws Exception {
-        mockMvc.perform(get("/api/oauth/{providerType}", "naver"))
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/oauth/{providerType}", "naver"))
             .andExpect(status().isOk())
-            .andDo(print());
+            .andDo(print())
+            .andDo(AuthDocumentation.redirectProviderLogin());
     }
 
     @Test
     @DisplayName("provider 에 로그인이 완료되면 전달받는 요청 키로 로그인 절차를 진행한다.")
     void oAuthLoginProcessAfterProviderLogin() throws Exception {
-        mockMvc.perform(get("/api/oauth/{providerType}/login", "google")
-                .param("code", "accessCode"))
+        mockMvc.perform(
+                RestDocumentationRequestBuilders.get("/api/oauth/{providerType}/login", "google")
+                    .param("code", "accessCode"))
             .andExpect(status().isOk())
-            .andDo(print());
+            .andDo(print())
+            .andDo(AuthDocumentation.loginProcess());
     }
 
     @Test
@@ -40,11 +47,16 @@ class OAuthControllerTest extends CommonApiTest {
         var refreshRequest = new OAuthRefreshLoginRequest("apiToken", "refreshToken");
         String requestBody = objectMapper.writeValueAsString(refreshRequest);
 
+        var response = new OAuthLoginResponse("apiToken", "refreshToken");
+
+        when(oauthService.apiTokenRefresh(any())).thenReturn(response);
+
         mockMvc.perform(post("/api/oauth/refresh")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(requestBody))
             .andExpect(status().isOk())
-            .andDo(print());
+            .andDo(print())
+            .andDo(AuthDocumentation.refreshLoginProcess());
     }
 
     @Test
