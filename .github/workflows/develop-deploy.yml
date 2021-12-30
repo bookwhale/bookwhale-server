@@ -45,5 +45,8 @@ jobs:
         script: |
           cd /home/ubuntu/app/bookwhale-server/deploy/api
           sudo chmod 666 /var/run/docker.sock
+          sudo docker stop bookwhale-server
+          sudo docker rm bookwhale-server
+          sudo docker rmi bookwhale-server
           sudo docker build -t bookwhale-server:latest .
           sudo docker run -d -p 8080:8080 --name bookwhale-server -e BOOKWHALE_JASYPT_PASSWORD=${{ secrets.JASYPT_PASSWORD }} bookwhale-server:latest
