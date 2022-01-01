@@ -26,14 +26,24 @@ public class OAuthDocumentation {
             parameterWithName("providerType").description("OAuth 로그인 기능 공급자 (GOOGLE, NAVER)")));
     }
 
-    public static RestDocumentationResultHandler loginProcess() {
-        return document("oauth/loginProcess", preprocessRequest(prettyPrint()),
+    public static RestDocumentationResultHandler loginProcessAfterRedirct() {
+        return document("oauth/loginProcessAfterRedirct", preprocessRequest(prettyPrint()),
             preprocessResponse(prettyPrint()), pathParameters(
                 parameterWithName("providerType").description("OAuth 로그인 기능 공급자 (GOOGLE, NAVER)")),
             requestParameters(
                 parameterWithName("code").description("provider 에 로그인이 완료되면 전달받는 요청 키"),
                 parameterWithName("state").description("provider 에 로그인이 완료되면 전달받는 요청 키")
                     .optional()), responseFields(getTokenResponseFieldDescriptor()));
+    }
+
+    public static RestDocumentationResultHandler loginProcess() {
+        return document("oauth/loginProcess", preprocessRequest(prettyPrint()),
+            preprocessResponse(prettyPrint()), pathParameters(
+                parameterWithName("providerType").description("OAuth 로그인 기능 공급자 (GOOGLE, NAVER)")),
+            requestParameters(
+                parameterWithName("code").description("provider로 부터 전달받은 accessToken")
+                ),
+            responseFields(getTokenResponseFieldDescriptor()));
     }
 
     public static RestDocumentationResultHandler refreshLoginProcess() {

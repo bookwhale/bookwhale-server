@@ -39,9 +39,25 @@ class OAuthControllerTest extends CommonApiTest {
         when(oauthService.requestAccessTokenAndIssueApiToken(any(), any(String.class))).thenReturn(response);
 
         mockMvc.perform(
-                RestDocumentationRequestBuilders.get("/api/oauth/{providerType}/login", "naver")
+                RestDocumentationRequestBuilders.get("/api/oauth/{providerType}/issueToken", "naver")
                     .param("code", "accessCode")
                     .param("state", "stateString")
+            )
+            .andExpect(status().isOk())
+            .andDo(print())
+            .andDo(OAuthDocumentation.loginProcessAfterRedirct());
+    }
+
+    @Test
+    @DisplayName("전달받는 요청 키와 함께 요청하면 로그인 절차를 진행한다.")
+    void oAuthLoginProcessWithAccessToken() throws Exception {
+        var response = new OAuthLoginResponse("apiToken", "refreshToken");
+
+        when(oauthService.loginProcess(any(), any(String.class))).thenReturn(response);
+
+        mockMvc.perform(
+                RestDocumentationRequestBuilders.get("/api/oauth/{providerType}/login", "naver")
+                    .param("code", "accessToken")
             )
             .andExpect(status().isOk())
             .andDo(print())

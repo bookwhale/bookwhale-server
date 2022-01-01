@@ -39,7 +39,7 @@ API 공통적으로 사용되는 상태 코드이다.
 
 operation::oauth/requestLogin[snippets='http-request,http-response']
 
-- 로그인 후 api token 생성 요청 (redirect)
+- 로그인 후 api token 생성 요청 (provider로부터 accessToken을 발급 받는 절차가 선행되어야 합니다.)
 
 operation::oauth/loginProcess[snippets='http-request,http-response,response-fields']
 
