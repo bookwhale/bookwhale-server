@@ -62,7 +62,37 @@ public class OauthService {
     @Transactional
     public OAuthLoginResponse loginProcess(OAuthProviderType providerType, String accessCode) {
         // step1 : provider로부터 사용자 정보 확인
-        UserInfo loginUserInfo = OAuthObjectConverter.getOAuthLoginResponse(oAuthProviders,
+        UserInfo loginUserInfo = OAuthObjectConverter.getUserInfoResponseFromProvider(oAuthProviders,
+                providerType, accessCode)
+            .orElseThrow(() -> new CustomException(ErrorCode.INFORMATION_NOT_FOUND));
+
+        // step2 : 확인된 사용자 정보로 apiToken 생성
+        // step2-1 : 확인된 사용자 정보 저장
+        boolean isCreatedUser = userService.checkUserExists(loginUserInfo);
+        if (!isCreatedUser) {
+            userService.createUser(loginUserInfo);
+        }
+
+        // step2-2 : api token 생성
+        String createdApiToken = OAuthObjectConverter.createApiToken(apiToken, loginUserInfo);
+
+        // step3 : 랜덤 문자열로 RefreshToken 생성
+        String randomString = RandomUtils.createRandomString();
+        String userEmail = loginUserInfo.getEmail();
+        String refreshToken = OAuthObjectConverter.createRefreshToken(apiToken, randomString,
+            userEmail);
+
+        // step4 : 토큰 생성에 성공하면 랜덤 문자열을 서버에 저장 (RefreshToken)
+        Token refreshTokenInfo = Token.create(userEmail, randomString);
+        tokenRepository.save(refreshTokenInfo);
+
+        return new OAuthLoginResponse(createdApiToken, refreshToken);
+    }
+
+    @Transactional
+    public OAuthLoginResponse requestAccessTokenAndIssueApiToken(OAuthProviderType providerType, String accessCode) {
+        // step1 : provider로부터 사용자 정보 확인 (accessCode로 AccessToken 요청 + 사용자 정보 조회)
+        UserInfo loginUserInfo = OAuthObjectConverter.requestAccessTokenAndGetLoginUserInfo(oAuthProviders,
                 providerType, accessCode)
             .orElseThrow(() -> new CustomException(ErrorCode.INFORMATION_NOT_FOUND));
 

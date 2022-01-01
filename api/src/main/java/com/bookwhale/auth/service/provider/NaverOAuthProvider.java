@@ -81,10 +81,10 @@ public class NaverOAuthProvider implements OAuthProvider {
             String.class);
     }
 
-    public ResponseEntity<String> getUserInfoFromProvider(NaverOAuthToken oAuthToken) {
+    public ResponseEntity<String> getUserInfoFromProvider(String accessToken) {
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + oAuthToken.getAccessToken());
+        headers.add("Authorization", "Bearer " + accessToken);
 
         HttpEntity<Map<String, String>> request = new HttpEntity(headers);
 

@@ -39,6 +39,7 @@ public class OAuthController {
     }
 
     /**
+     * (redirectURL 처리 용도)
      * provider 에 로그인이 완료되면 전달받는 요청 키로 로그인 절차를 진행한다.
      *
      * @param providerType OAuth 로그인 기능 공급자(provider : GOOGLE, NAVER)
@@ -46,13 +47,30 @@ public class OAuthController {
      * @param state        (optional) 네이버 상태값
      * @return
      */
-    @GetMapping("/{providerType}/login")
+    @GetMapping("/{providerType}/issueToken")
     public ResponseEntity<OAuthLoginResponse> oAuthLoginProcess(
         @PathVariable OAuthProviderType providerType,
         @RequestParam(name = "code") String accessCode,
         @RequestParam(name = "state", required = false) String state) {
 
-        OAuthLoginResponse result = oauthService.loginProcess(providerType, accessCode);
+        OAuthLoginResponse result = oauthService.requestAccessTokenAndIssueApiToken(providerType, accessCode);
+
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * (provider로 부터 로그인 성공 후) provider에서 전달한 요청 키로 로그인 절차를 진행한다.
+     *
+     * @param providerType OAuth 로그인 기능 공급자(provider : GOOGLE, NAVER)
+     * @param accessToken   요청 키
+     * @return
+     */
+    @GetMapping("/{providerType}/login")
+    public ResponseEntity<OAuthLoginResponse> oAuthLoginProcess(
+        @PathVariable OAuthProviderType providerType,
+        @RequestParam(name = "code") String accessToken) {
+
+        OAuthLoginResponse result = oauthService.loginProcess(providerType, accessToken);
 
         return ResponseEntity.ok(result);
     }

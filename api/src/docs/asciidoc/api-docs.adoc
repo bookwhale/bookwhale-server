@@ -34,12 +34,17 @@ API 공통적으로 사용되는 상태 코드이다.
 
 == 1. 사용자 인증 관련 (OAuth)
 
-=== 1.1 로그인
+=== 1.1.1 로그인 (web용, redirect 방식)
 - provider에 로그인 요청 (네이버에 로그인 요청 시)
 
 operation::oauth/requestLogin[snippets='http-request,http-response']
 
 - 로그인 후 api token 생성 요청 (redirect)
+
+operation::oauth/loginProcessAfterRedirct[snippets='http-request,http-response,response-fields']
+
+=== 1.1.2 로그인 (provider의 accessToken으로 요청 시)
+- accessToken으로 api token 생성 요청
 
 operation::oauth/loginProcess[snippets='http-request,http-response,response-fields']
 
