@@ -61,10 +61,10 @@ public class GoogleOAuthProvider implements OAuthProvider {
         return restTemplate.postForEntity(accessTokenRequestURL, params, String.class);
     }
 
-    public ResponseEntity<String> getUserInfoFromProvider(GoogleOAuthToken oAuthToken) {
+    public ResponseEntity<String> getUserInfoFromProvider(String accessToken) {
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + oAuthToken.getAccessToken());
+        headers.add("Authorization", "Bearer " + accessToken);
 
         HttpEntity<Map<String, String>> request = new HttpEntity(headers);
 

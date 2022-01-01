@@ -30,16 +30,52 @@ public class OAuthObjectConverter {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public static Optional<UserInfo> getOAuthLoginResponse(
+    public static Optional<UserInfo> getUserInfoResponseFromProvider(
         Map<String, OAuthProvider> oAuthProviders, OAuthProviderType providerType,
-        String accessCode) {
+        String accessToken) {
+        UserInfo result = null;
+        if (providerType.equals(OAuthProviderType.GOOGLE)) {
+            GoogleOAuthProvider oAuthProvider = (GoogleOAuthProvider) oAuthProviders.get(
+                "GoogleOAuthProvider");
+
+            // 로그인된 사용자의 정보 요청
+            ResponseEntity<String> userInfoResponse = oAuthProvider.getUserInfoFromProvider(
+                accessToken);
+
+            if (!userInfoResponse.getStatusCode().equals(HttpStatus.OK)) {
+                throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
+            }
+
+            result = OAuthObjectConverter.getUserInfoFromProvider(userInfoResponse, providerType);
+
+        } else if (providerType.equals(OAuthProviderType.NAVER)) {
+            NaverOAuthProvider oAuthProvider = (NaverOAuthProvider) oAuthProviders.get(
+                "NaverOAuthProvider");
+
+            // 로그인된 사용자의 정보 요청
+            ResponseEntity<String> userInfoResponse = oAuthProvider.getUserInfoFromProvider(
+                accessToken);
+
+            if (!userInfoResponse.getStatusCode().equals(HttpStatus.OK)) {
+                throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
+            }
+
+            result = OAuthObjectConverter.getUserInfoFromProvider(userInfoResponse, providerType);
+        }
+
+        return Optional.ofNullable(result);
+    }
+
+    public static Optional<UserInfo> requestAccessTokenAndGetLoginUserInfo(
+        Map<String, OAuthProvider> oAuthProviders, OAuthProviderType providerType,
+        String accessCodeFromProvider) {
         UserInfo result = null;
         if (providerType.equals(OAuthProviderType.GOOGLE)) {
             // step 1 : accessToken 요청
             GoogleOAuthProvider oAuthProvider = (GoogleOAuthProvider) oAuthProviders.get(
                 "GoogleOAuthProvider");
             ResponseEntity<String> accessTokenResponse = oAuthProvider.requestAccessToken(
-                accessCode);
+                accessCodeFromProvider);
 
             if (!accessTokenResponse.getStatusCode().equals(HttpStatus.OK)) {
                 throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
@@ -50,7 +86,7 @@ public class OAuthObjectConverter {
 
             // step 2 : 로그인된 사용자의 정보 요청
             ResponseEntity<String> userInfoResponse = oAuthProvider.getUserInfoFromProvider(
-                accessToken);
+                accessToken.getAccessToken());
 
             if (!userInfoResponse.getStatusCode().equals(HttpStatus.OK)) {
                 throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
@@ -63,7 +99,7 @@ public class OAuthObjectConverter {
             NaverOAuthProvider oAuthProvider = (NaverOAuthProvider) oAuthProviders.get(
                 "NaverOAuthProvider");
             ResponseEntity<String> accessTokenResponse = oAuthProvider.requestAccessToken(
-                accessCode);
+                accessCodeFromProvider);
 
             if (!accessTokenResponse.getStatusCode().equals(HttpStatus.OK)) {
                 throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
@@ -74,7 +110,7 @@ public class OAuthObjectConverter {
 
             // step 2 : 로그인된 사용자의 정보 요청
             ResponseEntity<String> userInfoResponse = oAuthProvider.getUserInfoFromProvider(
-                accessToken);
+                accessToken.getAccessToken());
 
             if (!userInfoResponse.getStatusCode().equals(HttpStatus.OK)) {
                 throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
