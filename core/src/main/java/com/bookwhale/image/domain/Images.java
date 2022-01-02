@@ -35,7 +35,6 @@ public class Images {
     }
 
     public void addAll(Article article, List<String> imageUrls) {
-        //TODO : Bulk Insert
         for (String imagePath : imageUrls) {
             Image image = Image.createArticleImage(article, imagePath);
             this.images.add(image);
@@ -43,7 +42,6 @@ public class Images {
     }
 
     public void deleteAll() {
-        //TODO : Bulk Deletes
         images.clear();
     }
 

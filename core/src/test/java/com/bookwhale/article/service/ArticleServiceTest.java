@@ -34,7 +34,6 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -110,7 +109,7 @@ public class ArticleServiceTest {
             .thenReturn(user);
 
         articleService.createArticle(user, articleRequest,
-            of(new MockMultipartFile("images", "image".getBytes(StandardCharsets.UTF_8))));
+            List.of(new MockMultipartFile("images", "image".getBytes(StandardCharsets.UTF_8))));
 
         verify(articleRepository).save(any());
         verify(fileUploader).uploadFiles(any());
@@ -236,7 +235,7 @@ public class ArticleServiceTest {
             .sellingLocation("GWANGJU")
             .build();
 
-        List<MultipartFile> images = of(
+        List<MultipartFile> images = List.of(
             new MockMultipartFile("images", "image1".getBytes(StandardCharsets.UTF_8))
         );
 
@@ -256,7 +255,7 @@ public class ArticleServiceTest {
             () -> assertThat(article.getDescription()).isEqualTo(request.getDescription()),
             () -> assertThat(article.getSellingLocation().getName()).isEqualTo(
                 Location.valueOf(request.getSellingLocation()).getName()),
-            () -> Assertions.assertThat(article.getImages().getSize()).isEqualTo(2),
+            () -> assertThat(article.getImages().getSize()).isEqualTo(2),
             () -> assertThat(article.getBookStatus()).isEqualTo(
                 BookStatus.valueOf(request.getBookStatus()))
         );
@@ -277,7 +276,7 @@ public class ArticleServiceTest {
             .deleteImgUrls(List.of("image2"))
             .build();
 
-        List<MultipartFile> images = of(
+        List<MultipartFile> images = List.of(
             new MockMultipartFile("images", "image4".getBytes(StandardCharsets.UTF_8))
         );
 
@@ -296,7 +295,7 @@ public class ArticleServiceTest {
             () -> assertThat(article.getTitle()).isEqualTo(request.getTitle()),
             () -> assertThat(article.getPrice()).isEqualTo(request.getPrice()),
             () -> assertThat(article.getDescription()).isEqualTo(request.getDescription()),
-            () -> Assertions.assertThat(article.getImages().getSize()).isEqualTo(3),
+            () -> assertThat(article.getImages().getSize()).isEqualTo(3),
             () -> assertThat(article.getBookStatus()).isEqualTo(
                 BookStatus.valueOf(request.getBookStatus()))
         );
@@ -331,7 +330,7 @@ public class ArticleServiceTest {
             () -> assertThat(article.getTitle()).isEqualTo(request.getTitle()),
             () -> assertThat(article.getPrice()).isEqualTo(request.getPrice()),
             () -> assertThat(article.getDescription()).isEqualTo(request.getDescription()),
-            () -> Assertions.assertThat(article.getImages().getSize()).isEqualTo(1),
+            () -> assertThat(article.getImages().getSize()).isEqualTo(1),
             () -> assertThat(article.getBookStatus()).isEqualTo(
                 BookStatus.valueOf(request.getBookStatus()))
         );

@@ -5,7 +5,6 @@ import com.bookwhale.common.domain.BaseEntity;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.user.domain.User;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;

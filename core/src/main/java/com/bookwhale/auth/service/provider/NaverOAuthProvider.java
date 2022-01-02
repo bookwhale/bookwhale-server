@@ -1,7 +1,6 @@
 package com.bookwhale.auth.service.provider;
 
 import com.bookwhale.article.dto.NaverBookRequest;
-import com.bookwhale.auth.domain.token.NaverOAuthToken;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.google.common.hash.Hashing;

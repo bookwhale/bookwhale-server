@@ -4,23 +4,19 @@ bootJar { enabled = false }
 jar { enabled = true }
 
 dependencies {
-    //project
-
-    //database
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'mysql:mysql-connector-java'
-
-    //auth
     implementation 'io.jsonwebtoken:jjwt:0.5.1'
     implementation 'com.auth0:java-jwt:3.18.2'
-
-    // util
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+    implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16'
     implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation 'com.google.guava:guava:31.0.1-jre'
-
+    implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3'
     implementation 'com.querydsl:querydsl-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-
 }
 
 ext {

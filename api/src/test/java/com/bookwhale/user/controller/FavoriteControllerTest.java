@@ -16,7 +16,7 @@ import com.bookwhale.common.domain.Location;
 import com.bookwhale.user.docs.UserDocumentation;
 import com.bookwhale.user.dto.FavoriteRequest;
 import com.bookwhale.user.dto.FavoriteResponse;
-import com.bookwhale.user.service.FavoriteService;
+import com.bookwhale.favorite.service.FavoriteService;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
