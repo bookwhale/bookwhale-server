@@ -13,3 +13,9 @@ logging:
   config: classpath:logback/logback-dev.xml
   save-path: ./logs
   file-name: bookwhale-dev
+external-api:
+  auth:
+    naver:
+      callback-url: http://52.79.148.89:8080/api/oauth/naver/issueToken
+    google:
+      callback-url: http://52.79.148.89:8080/api/oauth/google/issueToken
