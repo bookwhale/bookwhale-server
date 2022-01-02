@@ -20,13 +20,13 @@ external-api:
       client-key: ENC(nGQtzCp7nQFf+RfRkpZ4KvtIMo2plbCd)
       base-url: https://nid.naver.com/oauth2.0/authorize
       state: whale
-      callback-url: http://localhost:8080/api/oauth/naver/issueToken
+      callback-url: http://52.79.148.89:8080/api/oauth/naver/issueToken
       access-token-url: https://nid.naver.com/oauth2.0/token
     google:
       client-id: ENC(ky7Fs/NURcBOuo7ncPOWrIe0m6ifM0c4QTdnQxwysRSV/8M05qMUbXklav+TauYGmfMVKU7DrFuXo19gWit6yqYvEjZHXahVbSJk6rjAOyCL7fiqTIW8ig==)
       client-key: ENC(afk3fc9o+Nj7mUZZe6OWI9A6IEkHNw28reztrSke9/cggJKgffehT314mJlMk5bm)
       base-url: https://accounts.google.com/o/oauth2
-      callback-url: http://localhost:8080/api/oauth/google/issueToken
+      callback-url: http://52.79.148.89:8080/api/oauth/google/issueToken
       access-token-url: https://oauth2.googleapis.com/token
 jwt:
   token:
