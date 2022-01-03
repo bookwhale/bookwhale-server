@@ -8,6 +8,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Pageable;
 
 @RequiredArgsConstructor
@@ -26,6 +27,14 @@ public class ArticleCustomRepositoryImpl implements ArticleCustomRepository {
 
     @Override
     public List<Article> findAllBySearch(String search, Pageable page) {
+        if (StringUtils.isBlank(search)) {
+            return queryFactory
+                .selectFrom(article)
+                .orderBy(article.createdDate.desc())
+                .offset(page.getOffset())
+                .limit(page.getPageSize())
+                .fetch();
+        }
         return queryFactory
             .selectFrom(article)
             .where(
@@ -39,14 +48,14 @@ public class ArticleCustomRepositoryImpl implements ArticleCustomRepository {
     }
 
     public static BooleanExpression bookTitleLike(String bookTitle) {
-        return bookTitle != null ? article.book.bookTitle.like("%" + bookTitle + "%") : null;
+        return article.book.bookTitle.like("%" + bookTitle + "%");
     }
 
     public static BooleanExpression articleTitleLike(String articleTitle) {
-        return articleTitle != null ? article.title.like("%" + articleTitle + "%") : null;
+        return article.title.like("%" + articleTitle + "%");
     }
 
     public static BooleanExpression authorLike(String author) {
-        return author != null ? article.book.bookAuthor.like("%" + author + "%") : null;
+        return article.book.bookAuthor.like("%" + author + "%");
     }
 }

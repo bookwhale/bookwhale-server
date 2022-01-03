@@ -62,14 +62,12 @@ public class ArticleController {
     }
 
     @GetMapping("/article/{articleId}")
-    public ResponseEntity<ArticleResponse> findArticle(@CurrentUser User user,
-        @PathVariable Long articleId) {
+    public ResponseEntity<ArticleResponse> findArticle(@CurrentUser User user, @PathVariable Long articleId) {
         return ResponseEntity.ok(articleService.findArticle(user, articleId));
     }
 
     @GetMapping("/articles")
-    public ResponseEntity<List<ArticlesResponse>> findArticles(
-        @Valid @ModelAttribute ArticlesRequest articlesRequest,
+    public ResponseEntity<List<ArticlesResponse>> findArticles(@ModelAttribute ArticlesRequest articlesRequest,
         @Valid Pagination pagination) {
         return ResponseEntity.ok(articleService.findArticles(articlesRequest, pagination));
     }

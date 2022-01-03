@@ -3,6 +3,7 @@ package com.bookwhale.article.domain;
 import static java.util.List.of;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.bookwhale.article.dto.ArticlesRequest;
 import com.bookwhale.common.TestConfig;
 import com.bookwhale.common.domain.Location;
 import java.util.List;
@@ -79,8 +80,9 @@ public class ArticleRepositoryTest {
     @DisplayName("책 제목에 스프링이 포함된 게시글들을 오름차순으로 찾는다.")
     @Test
     void findAllOrderByCreatedDateDesc_bookTitle() {
+        ArticlesRequest request = ArticlesRequest.builder().search("스프링").build();
         PageRequest pageRequest = PageRequest.of(0, 10);
-        List<Article> res = articleRepository.findAllBySearch("스프링", pageRequest);
+        List<Article> res = articleRepository.findAllBySearch(request.getSearch(), pageRequest);
 
         Assertions.assertAll(
             () -> assertThat(res.size()).isEqualTo(2),
@@ -94,8 +96,9 @@ public class ArticleRepositoryTest {
     @DisplayName("책 저자에 남상우가 포함된 게시글들을 오름차순으로 찾는다.")
     @Test
     void findAllOrderByCreatedDateDesc_bookAuthor() {
+        ArticlesRequest request = ArticlesRequest.builder().search("남상우").build();
         PageRequest pageRequest = PageRequest.of(0, 10);
-        List<Article> res = articleRepository.findAllBySearch("남상우", pageRequest);
+        List<Article> res = articleRepository.findAllBySearch(request.getSearch(), pageRequest);
 
         Assertions.assertAll(
             () -> assertThat(res.size()).isEqualTo(2),
@@ -104,6 +107,24 @@ public class ArticleRepositoryTest {
             () -> assertThat(res.get(1).getBook().getBookTitle()).isEqualTo(
                 hrSpringArticle.getBook().getBookTitle())
         );
+    }
+
+    @DisplayName("검색어가 null인 경우 모든 게시글들을 오름차순으로 찾는다.")
+    @Test
+    void findAllOrderByCreatedDateDesc_null() {
+        ArticlesRequest request = ArticlesRequest.builder().build();
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        List<Article> res = articleRepository.findAllBySearch(request.getSearch(), pageRequest);
+        assertThat(res.size()).isEqualTo(3);
+    }
+
+    @DisplayName("검색어가 공백인 경우 모든 게시글들을 오름차순으로 찾는다.")
+    @Test
+    void findAllOrderByCreatedDateDesc_whitespace() {
+        ArticlesRequest request = ArticlesRequest.builder().search(" ").build();
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        List<Article> res = articleRepository.findAllBySearch(request.getSearch(), pageRequest);
+        assertThat(res.size()).isEqualTo(3);
     }
 
     /*
@@ -186,8 +207,9 @@ public class ArticleRepositoryTest {
     @DisplayName("페이징이 옳바르게 작동하는지 확인한다.")
     @Test
     void findAllOrderByCreatedDateDesc_paging() {
+        ArticlesRequest request = ArticlesRequest.builder().search("남상우").build();
         PageRequest pageRequest = PageRequest.of(0, 2);
-        List<Article> res = articleRepository.findAllBySearch("남상우", pageRequest);
+        List<Article> res = articleRepository.findAllBySearch(request.getSearch(), pageRequest);
 
         Assertions.assertAll(
             () -> assertThat(res.size()).isEqualTo(2),
