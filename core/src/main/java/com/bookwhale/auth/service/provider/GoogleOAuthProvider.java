@@ -1,6 +1,5 @@
 package com.bookwhale.auth.service.provider;
 
-import com.bookwhale.auth.domain.token.GoogleOAuthToken;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;

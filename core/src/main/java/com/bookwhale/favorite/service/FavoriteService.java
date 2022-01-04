@@ -1,4 +1,4 @@
-package com.bookwhale.user.service;
+package com.bookwhale.favorite.service;
 
 import com.bookwhale.article.domain.Article;
 import com.bookwhale.article.domain.ArticleRepository;
@@ -9,6 +9,7 @@ import com.bookwhale.favorite.domain.FavoriteRepository;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.dto.FavoriteRequest;
 import com.bookwhale.user.dto.FavoriteResponse;
+import com.bookwhale.user.service.UserService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

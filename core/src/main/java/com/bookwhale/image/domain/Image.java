@@ -1,7 +1,6 @@
 package com.bookwhale.image.domain;
 
 import com.bookwhale.article.domain.Article;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;

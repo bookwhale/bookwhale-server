@@ -63,9 +63,9 @@ public class ArticleService {
     }
 
     @Transactional(readOnly = true)
-    public List<ArticlesResponse> findArticles(ArticlesRequest req, Pagination pagination) {
+    public List<ArticlesResponse> findArticles(ArticlesRequest request, Pagination pagination) {
         PageRequest pageable = PageRequest.of(pagination.getPage(), pagination.getSize());
-        List<Article> articles = articleRepository.findAllBySearch(req.getSearch(), pageable);
+        List<Article> articles = articleRepository.findAllBySearch(request.getSearch(), pageable);
         return ArticlesResponse.listOf(articles);
     }
 

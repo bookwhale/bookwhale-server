@@ -5,7 +5,7 @@ import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.dto.FavoriteRequest;
 import com.bookwhale.user.dto.FavoriteResponse;
-import com.bookwhale.user.service.FavoriteService;
+import com.bookwhale.favorite.service.FavoriteService;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;

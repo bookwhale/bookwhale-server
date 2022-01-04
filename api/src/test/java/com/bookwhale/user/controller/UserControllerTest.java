@@ -14,7 +14,7 @@ import com.bookwhale.common.controller.CommonApiTest;
 import com.bookwhale.user.docs.UserDocumentation;
 import com.bookwhale.user.dto.ProfileResponse;
 import com.bookwhale.user.dto.UserUpdateRequest;
-import com.bookwhale.user.service.FavoriteService;
+import com.bookwhale.favorite.service.FavoriteService;
 import com.bookwhale.user.service.UserService;
 import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.DisplayName;
