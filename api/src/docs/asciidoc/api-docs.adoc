@@ -241,11 +241,11 @@ API를 호출할 때 예외를 던지는 경우에 사용되는 코드이다.
 "code": "T_004",
 "errors": null
 } ```
-
 |===
 
-
 == 1. 사용자 인증 관련 (OAuth)
+- OAuth Provider로는 google, naver, kakao를 설정하였음.
+- provider로부터 사용자 정보를 요청할 수 있다.
 
 === 1.1.1 로그인 (web용, redirect 방식)
 - provider에 로그인 요청 (네이버에 로그인 요청 시)
