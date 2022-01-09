@@ -61,7 +61,7 @@ public class OAuthController {
     /**
      * (provider로 부터 로그인 성공 후) provider에서 전달한 요청 키로 로그인 절차를 진행한다.
      *
-     * @param providerType OAuth 로그인 기능 공급자(provider : GOOGLE, NAVER)
+     * @param providerType OAuth 로그인 기능 공급자(provider : GOOGLE, NAVER, KAKAO)
      * @param accessToken   요청 키
      * @return
      */

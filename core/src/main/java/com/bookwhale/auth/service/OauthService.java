@@ -11,6 +11,7 @@ import com.bookwhale.auth.dto.OAuthObjectConverter;
 import com.bookwhale.auth.dto.OAuthRefreshLoginRequest;
 import com.bookwhale.auth.dto.OAuthResultResponse;
 import com.bookwhale.auth.service.provider.GoogleOAuthProvider;
+import com.bookwhale.auth.service.provider.KakaoOAuthProvider;
 import com.bookwhale.auth.service.provider.NaverOAuthProvider;
 import com.bookwhale.auth.service.provider.OAuthProvider;
 import com.bookwhale.auth.service.provider.OAuthProviderType;
@@ -50,6 +51,9 @@ public class OauthService {
             } else if (providerType.equals(OAuthProviderType.NAVER)) {
                 NaverOAuthProvider oAuthProvider = (NaverOAuthProvider) oAuthProviders.get(
                     "NaverOAuthProvider");
+                redirectUrl = oAuthProvider.getOAuthRedirectURL();
+            } else if (providerType.equals(OAuthProviderType.KAKAO)) {
+                KakaoOAuthProvider oAuthProvider = (KakaoOAuthProvider) oAuthProviders.get("KakaoOAuthProvider");
                 redirectUrl = oAuthProvider.getOAuthRedirectURL();
             }
 
