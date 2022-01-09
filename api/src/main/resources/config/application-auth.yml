@@ -30,6 +30,7 @@ external-api:
       access-token-url: https://oauth2.googleapis.com/token
     kakao:
       client-id: ENC(x/JMCEbTBpKQz1KjHFp7DtECwtQBzfk/+4ZDIIWw67cLI7N3eK9Crx89xtJ28nvg)
+      client-key: ENC(c2JDQafDFQE8hHg/zq5vv46w7pJ46O4diXoGeiERgc5mec3l3elulc7kWcEt/Dyw)
       base-url: https://kauth.kakao.com/oauth
       state: whale
       callback-url: http://52.79.148.89:8080/api/oauth/kakao/issueToken
