@@ -42,7 +42,7 @@ public class OAuthController {
      * (redirectURL 처리 용도)
      * provider 에 로그인이 완료되면 전달받는 요청 키로 로그인 절차를 진행한다.
      *
-     * @param providerType OAuth 로그인 기능 공급자(provider : GOOGLE, NAVER)
+     * @param providerType OAuth 로그인 기능 공급자(provider : GOOGLE, NAVER, KAKAO)
      * @param accessCode   요청 키
      * @param state        (optional) 네이버 상태값
      * @return
