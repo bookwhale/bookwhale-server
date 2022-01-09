@@ -53,7 +53,8 @@ public class OauthService {
                     "NaverOAuthProvider");
                 redirectUrl = oAuthProvider.getOAuthRedirectURL();
             } else if (providerType.equals(OAuthProviderType.KAKAO)) {
-                KakaoOAuthProvider oAuthProvider = (KakaoOAuthProvider) oAuthProviders.get("KakaoOAuthProvider");
+                KakaoOAuthProvider oAuthProvider = (KakaoOAuthProvider) oAuthProviders.get(
+                    "KakaoOAuthProvider");
                 redirectUrl = oAuthProvider.getOAuthRedirectURL();
             }
 
@@ -66,7 +67,8 @@ public class OauthService {
     @Transactional
     public OAuthLoginResponse loginProcess(OAuthProviderType providerType, String accessCode) {
         // step1 : provider로부터 사용자 정보 확인
-        UserInfo loginUserInfo = OAuthObjectConverter.getUserInfoResponseFromProvider(oAuthProviders,
+        UserInfo loginUserInfo = OAuthObjectConverter.getUserInfoResponseFromProvider(
+                oAuthProviders,
                 providerType, accessCode)
             .orElseThrow(() -> new CustomException(ErrorCode.INFORMATION_NOT_FOUND));
 
@@ -94,9 +96,11 @@ public class OauthService {
     }
 
     @Transactional
-    public OAuthLoginResponse requestAccessTokenAndIssueApiToken(OAuthProviderType providerType, String accessCode) {
+    public OAuthLoginResponse requestAccessTokenAndIssueApiToken(OAuthProviderType providerType,
+        String accessCode) {
         // step1 : provider로부터 사용자 정보 확인 (accessCode로 AccessToken 요청 + 사용자 정보 조회)
-        UserInfo loginUserInfo = OAuthObjectConverter.requestAccessTokenAndGetLoginUserInfo(oAuthProviders,
+        UserInfo loginUserInfo = OAuthObjectConverter.requestAccessTokenAndGetLoginUserInfo(
+                oAuthProviders,
                 providerType, accessCode)
             .orElseThrow(() -> new CustomException(ErrorCode.INFORMATION_NOT_FOUND));
 

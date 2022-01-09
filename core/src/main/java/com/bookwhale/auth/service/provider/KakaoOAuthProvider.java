@@ -1,14 +1,6 @@
 package com.bookwhale.auth.service.provider;
 
-import com.bookwhale.article.dto.NaverBookRequest;
-import com.bookwhale.common.exception.CustomException;
-import com.bookwhale.common.exception.ErrorCode;
 import com.google.common.hash.Hashing;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
