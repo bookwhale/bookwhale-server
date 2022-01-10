@@ -168,9 +168,6 @@ public class ArticleDocumentation {
         return document("article/findArticles",
             preprocessRequest(prettyPrint()),
             preprocessResponse(prettyPrint()),
-            requestHeaders(
-                headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
-            ),
             requestParameters(
                 parameterWithName("search").description("통합 검색 (책 제목, 판매글 제목, 작가)"),
                 parameterWithName("page").description("페이지(0부터 시작) (필수)"),

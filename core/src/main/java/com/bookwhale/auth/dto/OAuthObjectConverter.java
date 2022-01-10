@@ -5,11 +5,14 @@ import com.bookwhale.auth.domain.JWT.Claims;
 import com.bookwhale.auth.domain.JWT.ClaimsForRefresh;
 import com.bookwhale.auth.domain.info.UserInfo;
 import com.bookwhale.auth.domain.info.UserInfoFromGoogle;
+import com.bookwhale.auth.domain.info.UserInfoFromKakao;
 import com.bookwhale.auth.domain.info.UserInfoFromNaver;
 import com.bookwhale.auth.domain.token.GoogleOAuthToken;
+import com.bookwhale.auth.domain.token.KakaoOAuthToken;
 import com.bookwhale.auth.domain.token.NaverOAuthToken;
 import com.bookwhale.auth.domain.token.OAuthToken;
 import com.bookwhale.auth.service.provider.GoogleOAuthProvider;
+import com.bookwhale.auth.service.provider.KakaoOAuthProvider;
 import com.bookwhale.auth.service.provider.NaverOAuthProvider;
 import com.bookwhale.auth.service.provider.OAuthProvider;
 import com.bookwhale.auth.service.provider.OAuthProviderType;
@@ -38,7 +41,7 @@ public class OAuthObjectConverter {
             GoogleOAuthProvider oAuthProvider = (GoogleOAuthProvider) oAuthProviders.get(
                 "GoogleOAuthProvider");
 
-            // 로그인된 사용자의 정보 요청
+            // 로그인을 통해 발급받은 accessToken으로 사용자 정보 조회 요청
             ResponseEntity<String> userInfoResponse = oAuthProvider.getUserInfoFromProvider(
                 accessToken);
 
@@ -52,7 +55,20 @@ public class OAuthObjectConverter {
             NaverOAuthProvider oAuthProvider = (NaverOAuthProvider) oAuthProviders.get(
                 "NaverOAuthProvider");
 
-            // 로그인된 사용자의 정보 요청
+            // 로그인을 통해 발급받은 accessToken으로 사용자 정보 조회 요청
+            ResponseEntity<String> userInfoResponse = oAuthProvider.getUserInfoFromProvider(
+                accessToken);
+
+            if (!userInfoResponse.getStatusCode().equals(HttpStatus.OK)) {
+                throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
+            }
+
+            result = OAuthObjectConverter.getUserInfoFromProvider(userInfoResponse, providerType);
+        } else if (providerType.equals(OAuthProviderType.KAKAO)) {
+            KakaoOAuthProvider oAuthProvider = (KakaoOAuthProvider) oAuthProviders.get(
+                "KakaoOAuthProvider");
+
+            // 로그인을 통해 발급받은 accessToken으로 사용자 정보 조회 요청
             ResponseEntity<String> userInfoResponse = oAuthProvider.getUserInfoFromProvider(
                 accessToken);
 
@@ -117,6 +133,29 @@ public class OAuthObjectConverter {
             }
 
             result = OAuthObjectConverter.getUserInfoFromProvider(userInfoResponse, providerType);
+        } else if (providerType.equals(OAuthProviderType.KAKAO)) {
+            // step 1 : accessToken 요청
+            KakaoOAuthProvider oAuthProvider = (KakaoOAuthProvider) oAuthProviders.get(
+                "KakaoOAuthProvider");
+            ResponseEntity<String> accessTokenResponse = oAuthProvider.requestAccessToken(
+                accessCodeFromProvider);
+
+            if (!accessTokenResponse.getStatusCode().equals(HttpStatus.OK)) {
+                throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
+            }
+
+            KakaoOAuthToken accessToken = (KakaoOAuthToken) OAuthObjectConverter.getTokenFromResponse(
+                accessTokenResponse, providerType);
+
+            // step 2 : 로그인된 사용자의 정보 요청
+            ResponseEntity<String> userInfoResponse = oAuthProvider.getUserInfoFromProvider(
+                accessToken.getAccessToken());
+
+            if (!userInfoResponse.getStatusCode().equals(HttpStatus.OK)) {
+                throw new CustomException(ErrorCode.UNAUTHORIZED_ACCESS);
+            }
+
+            result = OAuthObjectConverter.getUserInfoFromProvider(userInfoResponse, providerType);
         }
 
         return Optional.ofNullable(result);
@@ -135,6 +174,8 @@ public class OAuthObjectConverter {
                 oAuthToken = objectMapper.readValue(body, GoogleOAuthToken.class);
             } else if (providerType.equals(OAuthProviderType.NAVER)) {
                 oAuthToken = objectMapper.readValue(body, NaverOAuthToken.class);
+            } else if (providerType.equals(OAuthProviderType.KAKAO)) {
+                oAuthToken = objectMapper.readValue(body, KakaoOAuthToken.class);
             }
         } catch (JsonProcessingException e) {
             log.error("token converting failed.", e);
@@ -163,6 +204,20 @@ public class OAuthObjectConverter {
                 var infoMap = (LinkedHashMap<String, String>) map.get("response");
 
                 userInfo = objectMapper.convertValue(infoMap, UserInfoFromNaver.class);
+            } else if (providerType.equals(OAuthProviderType.KAKAO)) {
+                Map<String, Object> map = objectMapper.readValue(body, Map.class);
+
+                var id = (String) map.get("id").toString();
+                var properties = (Map<String, Object>) map.get("properties");
+                var nickname = (String) properties.get("nickname");
+                var profileImage = (String) properties.get("profile_image");
+                var account = (Map<String, Object>) map.get("kakao_account");
+                var email = (String) account.getOrDefault("account",
+                    new StringBuilder(id)
+                        .append("@")
+                        .append("bookwhale.com")
+                        .toString());
+                userInfo = new UserInfoFromKakao(id, nickname, email, profileImage);
             }
         } catch (JsonProcessingException e) {
             log.error("token converting failed.", e);

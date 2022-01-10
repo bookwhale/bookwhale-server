@@ -32,7 +32,220 @@ API 공통적으로 사용되는 상태 코드이다.
 | 잘못된 HTTP 메소드로 요청한 경우.
 |===
 
+== 오류 코드
+API를 호출할 때 예외를 던지는 경우에 사용되는 코드이다.
+
+=== Status 500
+|===
+| 오류 코드(Error code) | 용례(Usage) | 메시지(Response)
+
+| `S_001`
+| 서버에서 오류가 발생되는 경우 (대비되지 않은 예외 발생, 서버 장애 등)
+| ```{
+"status": 500,
+"message": "서버에 문제가 생겼습니다.",
+"code": "S_001",
+"errors": null
+} ```
+
+| `S_003`
+| 네이버 책 API 서버 사용하는 과정에서의 오류 발생 시
+| ```{
+"status": 500,
+"message": "네이버 책 API 서버에 문제가 생겼습니다.",
+"code": "S_003",
+"errors": null
+} ```
+
+| `S_004`
+| XML 파일을 변환하는 과정에서의 오류 발생 시
+| ```{
+"status": 500,
+"message": "XML 파일을 변환하는 과정에서 문제가 발생했습니다.",
+"code": "S_004",
+"errors": null
+} ```
+|===
+
+=== Status 400
+|===
+| 오류 코드(Error code) | 용례(Usage) | 메시지(Response)
+
+| `AU_001`
+| 로그인 없이 컨텐츠에 접근하는 경우
+| ```{
+"status": 401,
+"message": "해당 콘텐츠에 접근 권한이 없는 유저입니다.",
+"code": "AU_001",
+"errors": null
+} ```
+
+| `AU_002`
+| 로그인 없이 redirect 된 경우
+| ```{
+"status": 400,
+"message": "인증되지 않은 REDIRECT_URI 입니다.",
+"code": "AU_002",
+"errors": null
+} ```
+
+| `C_001`
+| 적절하지 않은 요청(request)을 받은 경우
+| ```{
+"status": 400,
+"message": "적절하지 않은 요청 값입니다.",
+"code": "C_001",
+"errors": null
+} ```
+
+| `C_002`
+| 적절하지 않은 요청(request)을 받은 경우
+| ```{
+"status": 400,
+"message": "요청 값의 타입이 잘못되었습니다.",
+"code": "C_002",
+"errors": null
+} ```
+
+| `C_003`
+| multipart/form-data 활용 시 requestPart를 확인할 수 없는 경우
+| ```{
+"status": 400,
+"message": "RequestPart는 필수 값입니다.",
+"code": "C_003",
+"errors": null
+} ```
+
+| `C_004`
+| 잘못된 http Method로 요청하는 경우
+| ```{
+"status": 405,
+"message": "적절하지 않은 HTTP 메소드입니다.",
+"code": "C_001",
+"errors": null
+} ```
+
+| `U_001`
+| 이미 존재하는 사용자인 경우
+| ```{
+"status": 400,
+"message": "이미 존재하는 아이디입니다.",
+"code": "U_001",
+"errors": null
+} ```
+
+| `U_002`
+| 요청한 사용자 정보가 조회되지 않은 경우 (서버 오류 제외)
+| ```{
+"status": 404,
+"message": "요청한 사용자 정보를 확인할 수 없습니다.",
+"code": "U_002",
+"errors": null
+} ```
+
+| `A_001`
+| 대상 게시글의 ID가 유효하지 않은 값인 경우
+| ```{
+"status": 400,
+"message": "잘못된 게시글 ID 입니다.",
+"code": "A_001",
+"errors": null
+} ```
+
+| `A_002`
+| 대상 게시글이 존재하지 않는 경우
+| ```{
+"status": 400,
+"message": "존재하지 않는 게시글 ID 입니다.",
+"code": "A_002",
+"errors": null
+} ```
+
+| `A_003`
+| 판매글이 없는 상태에서 채팅 기능을 요청한 경우
+| ```{
+"status": 400,
+"message": "판매중인 게시글만 판매자에게 채팅을 보낼 수 있습니다.",
+"code": "A_003",
+"errors": null
+} ```
+
+| `I_001`
+| 대상 관심 판매글의 ID가 유효하지 않은 값인 경우
+| ```{
+"status": 400,
+"message": "잘못된 관심목록 ID 입니다.",
+"code": "I_001",
+"errors": null
+} ```
+
+| `I_002`
+| 이전에 관심 판매글로 등록된 판매글인 경우 (중복)
+| ```{
+"status": 400,
+"message": "이미 관심목록에 등록된 게시글입니다.",
+"code": "I_002",
+"errors": null
+} ```
+
+| `CHAT_001`
+| 대상 채팅방 ID가 유효하지 않은 값인 경우
+| ```{
+"status": 400,
+"message": "잘못된 채팅방 ID 입니다.",
+"code": "CHAT_001",
+"errors": null
+} ```
+
+| `CHAT_002`
+| 대상 판매자 ID가 유효하지 않은 값인 경우
+| ```{
+"status": 400,
+"message": "잘못된 판매자 ID 입니다.",
+"code": "CHAT_002",
+"errors": null
+} ```
+
+| `T_001`
+| 토큰(Token) 형식이 유효하지 않은 경우
+| ```{
+"status": 400,
+"message": "유효하지 않은 토큰 입니다.",
+"code": "T_001",
+"errors": null
+} ```
+
+| `T_002`
+| OAuth Provider로부터 인증 실패된 경우 (유효한 접근 권한을 확인하지 못함)
+| ```{
+"status": 401,
+"message": "OAuth 로그인 인증에 실패하였습니다.",
+"code": "T_002",
+"errors": null
+} ```
+
+| `T_003`
+| OAuth Provider로부터 받은 접근 권한(AccessToken)으로 조회하지 못한 경우
+| ```{
+"status": 404,
+"message": "OAuth 요청으로 요청한 정보를 불러오지 못했습니다.",
+"code": "T_003",
+"errors": null
+} ```
+
+| `T_004`
+| 요청 시 확인된 ApiToken 으로 API 기능을 요청할 수 없는 경우 (토큰 만료 등)
+| ```{
+"status": 403,
+"message": "권한을 확인할 수 없습니다.",
+"code": "T_004",
+"errors": null
+} ```
+|===
+
 == 1. 사용자 인증 관련 (OAuth)
+- OAuth Provider로는 google, naver, kakao를 설정하였음.
+- provider로부터 사용자 정보를 요청할 수 있다.
 
 === 1.1.1 로그인 (web용, redirect 방식)
 - provider에 로그인 요청 (네이버에 로그인 요청 시)

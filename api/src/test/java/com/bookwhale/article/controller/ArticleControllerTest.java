@@ -262,8 +262,7 @@ public class ArticleControllerTest extends CommonApiTest {
 
         mockMvc.perform(
                 get(format("/api/articles?search=%s&page=%d&size=%d", articlesRequest.getSearch(),
-                    pagination.getPage(), pagination.getSize()))
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken"))
+                    pagination.getPage(), pagination.getSize())))
             .andExpect(status().isOk())
             .andDo(print())
             .andDo(ArticleDocumentation.findArticles());
