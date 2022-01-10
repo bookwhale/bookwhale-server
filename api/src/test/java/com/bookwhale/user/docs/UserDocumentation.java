@@ -51,10 +51,8 @@ public class UserDocumentation {
             ),
             responseFields(
                 fieldWithPath("userId").type(JsonFieldType.NUMBER).description("유저 id"),
-                fieldWithPath("identity").type(JsonFieldType.STRING).description("아이디"),
-                fieldWithPath("nickname").type(JsonFieldType.STRING).description("이름"),
+                fieldWithPath("nickName").type(JsonFieldType.STRING).description("닉네임"),
                 fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
-                fieldWithPath("phoneNumber").type(JsonFieldType.STRING).description("전화번호"),
                 fieldWithPath("profileImage").type(JsonFieldType.STRING).description("프로필 이미지")
             ));
     }

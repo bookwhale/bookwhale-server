@@ -303,6 +303,10 @@ operation::user/deleteFavorite[snippets='http-request,request-headers,path-param
 
 operation::user/findMyArticles[snippets='http-request,request-headers,http-response,response-fields']
 
+=== 2.8 내 정보 조회
+
+operation::user/me[snippets='http-request,request-headers,http-response,response-fields']
+
 == 3. 게시글
 
 === 3.1 네이버 책 API

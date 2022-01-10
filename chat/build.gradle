@@ -1,7 +1,21 @@
-apply plugin: 'org.asciidoctor.convert'
+plugins {
+    id "org.asciidoctor.jvm.convert" version "3.3.2"
+}
+ext {
+    snippetsDir = file('build/generated-snippets')
+}
 
-bootJar { enabled = true }
-jar { enabled = false }
+bootJar {
+    dependsOn asciidoctor
+    copy {
+        from "${asciidoctor.outputDir}"
+        into 'src/main/resources/static/docs'
+    }
+}
+
+configurations {
+    asciidoctorExtensions
+}
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -11,19 +25,31 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
     testImplementation group: 'io.rest-assured', name: 'rest-assured', version: '4.3.3'
     testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'
-    asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor'
-}
-
-ext {
-    snippetsDir = file('build/generated-snippets')
+    asciidoctorExtensions "org.springframework.restdocs:spring-restdocs-asciidoctor"
 }
 
 test {
+    useJUnitPlatform()
     outputs.dir snippetsDir
 }
 
 asciidoctor {
+    configurations "asciidoctorExtensions"
     inputs.dir snippetsDir
     dependsOn test
+}
+
+asciidoctor.doFirst {
+    delete file('src/main/resources/static/docs')
+}
+
+task copyDocument(type: Copy) {
+    dependsOn asciidoctor
+    from file("build/docs/asciidoc")
+    into file("src/main/resources/static/docs")
+}
+
+build {
+    dependsOn copyDocument
 }
 
