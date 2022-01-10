@@ -5,16 +5,18 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.bookwhale.common.controller.CommonApiTest;
+import com.bookwhale.favorite.service.FavoriteService;
 import com.bookwhale.user.docs.UserDocumentation;
 import com.bookwhale.user.dto.ProfileResponse;
+import com.bookwhale.user.dto.UserResponse;
 import com.bookwhale.user.dto.UserUpdateRequest;
-import com.bookwhale.favorite.service.FavoriteService;
 import com.bookwhale.user.service.UserService;
 import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.DisplayName;
@@ -35,6 +37,25 @@ public class UserControllerTest extends CommonApiTest {
 
     @MockBean
     FavoriteService favoriteService;
+
+    @DisplayName("내 정보를 조회한다.")
+    @Test
+    void getMyInfo() throws Exception {
+        UserResponse response = UserResponse.builder()
+            .userId(1L)
+            .nickName("닉네임")
+            .email("example@google.co.kr")
+            .profileImage("이미지 URL")
+            .build();
+
+        when(userService.getUserInfo(any())).thenReturn(response);
+
+        mockMvc.perform(get("/api/user/me")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken"))
+            .andExpect(status().isOk())
+            .andDo(print())
+            .andDo(UserDocumentation.userMe());
+    }
 
     @DisplayName("내 정보를 수정한다.")
     @Test
