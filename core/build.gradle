@@ -1,7 +1,16 @@
-apply plugin: 'com.ewerk.gradle.plugins.querydsl'
+plugins {
+    id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
+}
 
 bootJar { enabled = false }
 jar { enabled = true }
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+    querydsl.extendsFrom compileClasspath
+}
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -19,23 +28,16 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 }
 
-ext {
-    querydslDir = "$buildDir/generated/querydsl"
-}
+def querydslDir = "$buildDir/generated/querydsl"
 
 querydsl {
     jpa = true
     querydslSourcesDir = querydslDir
 }
-
 sourceSets {
     main.java.srcDir querydslDir
 }
-
-configurations {
-    querydsl.extendsFrom compileClasspath
-}
-
 compileQuerydsl {
+    delete file('build/generated')
     options.annotationProcessorPath = configurations.querydsl
 }

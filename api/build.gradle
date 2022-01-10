@@ -1,32 +1,49 @@
-apply plugin: 'org.asciidoctor.convert'
-
-bootJar { enabled = true }
-jar { enabled = false }
-
-dependencies {
-    implementation project(path: ':core', configuration: 'default')
-    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
-    testImplementation group: 'io.rest-assured', name: 'rest-assured', version: '4.3.3'
-    asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor'
-    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+plugins {
+    id "org.asciidoctor.jvm.convert" version "3.3.2"
 }
 
 ext {
     snippetsDir = file('build/generated-snippets')
 }
 
+bootJar {
+    dependsOn asciidoctor
+    copy {
+        from "${asciidoctor.outputDir}"
+        into 'src/main/resources/static/docs'
+    }
+}
+
+configurations {
+    asciidoctorExtensions
+}
+
+dependencies {
+    implementation project(path: ':core', configuration: 'default')
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+    testImplementation group: 'io.rest-assured', name: 'rest-assured', version: '4.3.3'
+    asciidoctorExtensions "org.springframework.restdocs:spring-restdocs-asciidoctor"
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+}
+
 test {
+    useJUnitPlatform()
     outputs.dir snippetsDir
 }
 
 asciidoctor {
+    configurations "asciidoctorExtensions"
     inputs.dir snippetsDir
     dependsOn test
 }
 
+asciidoctor.doFirst {
+    delete file('src/main/resources/static/docs')
+}
+
 task copyDocument(type: Copy) {
     dependsOn asciidoctor
-    from file("build/asciidoc/html5/")
+    from file("build/docs/asciidoc")
     into file("src/main/resources/static/docs")
 }
 
