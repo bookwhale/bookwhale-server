@@ -22,6 +22,9 @@
       <!-- 생성되는 로그 파일 정보 -->
       <fileNamePattern>${LOG_PATH}/${LOG_FILE_NAME}.%d{yyyy-MM-dd}.log
       </fileNamePattern>
+      <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+        <maxFileSize>10MB</maxFileSize>
+      </timeBasedFileNamingAndTriggeringPolicy>
     </rollingPolicy>
     <!-- 로그 패턴 -->
     <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
@@ -40,6 +43,6 @@
   </logger>
   <root level="INFO">
     <!-- 콘솔 로그 출력 -->
-    <appender-ref ref="console"/>
+    <appender-ref ref="FILE"/>
   </root>
 </configuration>
