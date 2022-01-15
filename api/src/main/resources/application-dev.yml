@@ -11,5 +11,5 @@ spring:
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
 logging:
   config: classpath:logback/logback-dev.xml
-  save-path: ./logs
+  save-path: /var/log
   file-name: bookwhale-dev
