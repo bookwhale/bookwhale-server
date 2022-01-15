@@ -29,7 +29,7 @@
     <!-- rolling 설정 -->
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
       <!-- 생성되는 로그 파일 정보 -->
-      <fileNamePattern>${LOG_PATH}/${LOG_FILE_NAME}.%d{yyyy-MM-dd}.log</fileNamePattern>
+      <fileNamePattern>${LOG_PATH}/${LOG_FILE_NAME}.%d{yyyy-MM-dd}_%i.log</fileNamePattern>
       <!-- 사이즈 제한 설정 -->
       <timeBasedFileNamingAndTriggeringPolicy
         class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
@@ -60,7 +60,7 @@
     <!-- rolling 설정 -->
     <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
       <!-- 생성되는 로그 파일 정보 -->
-      <fileNamePattern>${LOG_PATH}/${ERROR_LOG_FILE_NAME}.%d{yyyy-MM-dd}.log</fileNamePattern>
+      <fileNamePattern>${LOG_PATH}/${ERROR_LOG_FILE_NAME}.%d{yyyy-MM-dd}_%i.log</fileNamePattern>
       <!-- 사이즈 제한 설정 -->
       <timeBasedFileNamingAndTriggeringPolicy
         class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
