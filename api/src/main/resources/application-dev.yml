@@ -13,3 +13,4 @@ logging:
   config: classpath:logback/logback-dev.xml
   save-path: /var/log
   file-name: bookwhale-dev
+  error-file-name: bookwhale-dev-ERROR
