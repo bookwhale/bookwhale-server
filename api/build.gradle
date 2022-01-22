@@ -12,6 +12,7 @@ bootJar {
         from "${asciidoctor.outputDir}"
         into 'BOOT-INF/classes/static/docs'
     }
+    finalizedBy 'copyDocument'
 }
 
 configurations {
@@ -42,11 +43,7 @@ asciidoctor {
 }
 
 task copyDocument(type: Copy) {
-    dependsOn asciidoctor
+    dependsOn bootJar
     from file("build/docs/asciidoc")
     into file("src/main/resources/static/docs")
-}
-
-build {
-    dependsOn copyDocument
 }
