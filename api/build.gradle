@@ -36,10 +36,6 @@ asciidoctor {
     dependsOn test
 }
 
-asciidoctor.doFirst {
-    delete file('src/main/resources/static/docs')
-}
-
 task copyDocument(type: Copy) {
     dependsOn asciidoctor
     from file("build/docs/asciidoc")
@@ -47,5 +43,8 @@ task copyDocument(type: Copy) {
 }
 
 build {
+    doFirst {
+        delete file('src/main/resources/static/docs')
+    }
     dependsOn copyDocument
 }
