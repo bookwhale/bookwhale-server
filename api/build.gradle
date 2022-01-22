@@ -8,8 +8,9 @@ ext {
 
 bootJar {
     dependsOn asciidoctor
-    from ("${asciidoctor.outputDir}/html5") {
-        into 'static/docs'
+    copy {
+        from "${asciidoctor.outputDir}"
+        into 'BOOT-INF/classes/static/docs'
     }
 }
 
@@ -31,6 +32,10 @@ test {
 }
 
 asciidoctor {
+    doFirst {
+        delete file('src/main/resources/static/docs')
+    }
+
     configurations "asciidoctorExtensions"
     inputs.dir snippetsDir
     dependsOn test
@@ -43,8 +48,5 @@ task copyDocument(type: Copy) {
 }
 
 build {
-    doFirst {
-        delete file('src/main/resources/static/docs')
-    }
     dependsOn copyDocument
 }
