@@ -33,10 +33,6 @@ test {
 }
 
 asciidoctor {
-    doFirst {
-        delete file('src/main/resources/static/docs')
-    }
-
     configurations "asciidoctorExtensions"
     inputs.dir snippetsDir
     dependsOn test
