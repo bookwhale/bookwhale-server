@@ -9,7 +9,7 @@ ext {
 bootJar {
     dependsOn asciidoctor
     copy {
-        from "${asciidoctor.outputDir}"
+        from "build/docs/asciidoc"
         into "BOOT-INF/classes/static/docs"
     }
 }
