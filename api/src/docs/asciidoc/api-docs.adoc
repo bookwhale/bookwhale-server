@@ -356,3 +356,71 @@ operation::chatRoom/findChatRooms[snippets='http-request,request-headers,http-re
 === 4.3 채팅방 삭제
 
 operation::chatRoom/deleteChatRoom[snippets='http-request,request-headers,path-parameters,http-response']
+
+=== 4.4 채팅방 이전 메시지 조회
+
+[source,http,options="nowrap"]
+----
+GET /api/message/1?page=0&size=10 HTTP/1.1
+Host: localhost:8080
+
+----
+
+==== Path parameters
+.+/api/message/{roomId}+
+|===
+|Parameter|Description
+
+|`+roomId+`
+|채팅방 ID
+
+|===
+
+==== Request parameters
+|===
+|Parameter|Description
+
+|`+page+`
+|이전 채팅 내용 DB 조회 시 offset
+
+|`+size+`
+|이전 채팅 내용 DB 조회 시 limit
+
+|===
+
+==== HTTP response
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+Content-Length: 142
+
+[ {
+  "senderId" : 1,
+  "senderIdentity" : "highright96",
+  "content" : "안녕하세요.",
+  "createdDate" : "2022-01-28T23:00:06.771899"
+} ]
+----
+
+==== Response Fields
+|===
+|Path|Type|Description
+
+|`+[].senderId+`
+|`+Number+`
+|메시지를 전송한 사용자 ID
+
+|`+[].senderIdentity+`
+|`+String+`
+|메시지를 전송한 사용자 이름
+
+|`+[].content+`
+|`+String+`
+|메시지 내용
+
+|`+[].createdDate+`
+|`+String+`
+|메시지 생성일
+
+|===
