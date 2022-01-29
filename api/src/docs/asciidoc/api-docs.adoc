@@ -343,7 +343,7 @@ operation::article/conditions/bookStatus[snippets='http-request,http-response,re
 
 operation::article/conditions/locations[snippets='http-request,http-response,response-fields']
 
-== 4. 채팅
+== 4. 채팅 (API)
 
 === 4.1 채팅방 생성
 
@@ -482,4 +482,74 @@ Content-Length: 138
 |`+String+`
 |메시지 생성일
 
+|===
+
+
+== 5. 채팅 (CHAT)
+=== 참고자료
+- 웹 소켓에 대해 : https://tecoble.techcourse.co.kr/post/2021-09-05-web-socket-practice/
+- spring-guides/stomp-websocket : https://github.com/spring-guides/gs-messaging-stomp-websocket
+- spring Web MVC - WebSocket : https://docs.spring.io/spring-framework/docs/current/reference/html/web.html#websocket
+- spring WebSocket - SockJS와 STOMP : https://supawer0728.github.io/2018/03/30/spring-websocket/
+
+=== 5.1 채팅방 WebSocket 기본 설정
+- source : `http://localhost:8081/ws`
+- sockJS 설정 : new SockJS("http://localhost:8081/ws");
+    - `ws://` 또는 `wss://` 로 호출 (wss 권장)
+
+=== 5.2 채팅방 접속
+==== WebSocket request
+----
+STOMP /sub/chat/room/1 HTTP/1.1
+Host: localhost:8081
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Protocol: ws
+----
+
+==== Path parameters
+.+/sub/chat/room/{roomId}+
+|===
+|Parameter|Description
+
+|`+roomId+`
+|채팅방 ID
+
+|===
+
+=== 5.3 채팅방 메시지 전송
+
+==== WebSocket request
+[source,http,options="nowrap"]
+----
+STOMP /pub/chat/message HTTP/1.1
+Host: localhost:8081
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Protocol: ws
+Content-Type: application/json;charset=UTF-8
+
+{
+  "roomId" : 1,
+  "senderId" : 1,
+  "senderIdentity" : "highright96",
+  "content" : "Hello, World!"
+}
+----
+
+==== Request parameters
+|===
+|Parameter|Description
+
+|`+roomId+`
+|subscribe 된 채팅방 ID
+
+|`+senderId+`
+|채팅을 전송한 사용자 ID
+
+|`+senderIdentity+`
+|채팅을 전송한 사용자 이름
+
+|`+content+`
+|채팅 내용용
 |===
