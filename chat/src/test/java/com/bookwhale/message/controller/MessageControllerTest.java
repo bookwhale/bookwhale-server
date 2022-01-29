@@ -9,7 +9,6 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.requestParameters;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -63,11 +62,18 @@ public class MessageControllerTest {
         parameterWithName("size").description("이전 채팅 내용 DB 조회 시 limit")
     };
 
-    private final FieldDescriptor[] responseMessageFields = new FieldDescriptor[]{
+    private final FieldDescriptor[] responseMessagesFields = new FieldDescriptor[]{
         fieldWithPath("[].senderId").description("메시지를 전송한 사용자 ID"),
         fieldWithPath("[].senderIdentity").description("메시지를 전송한 사용자 이름"),
         fieldWithPath("[].content").description("메시지 내용"),
         fieldWithPath("[].createdDate").description("메시지 생성일")
+    };
+
+    private final FieldDescriptor[] responseMessageFields = new FieldDescriptor[]{
+        fieldWithPath("senderId").description("메시지를 전송한 사용자 ID"),
+        fieldWithPath("senderIdentity").description("메시지를 전송한 사용자 이름"),
+        fieldWithPath("content").description("메시지 내용"),
+        fieldWithPath("createdDate").description("메시지 생성일")
     };
 
     @BeforeEach
@@ -110,7 +116,7 @@ public class MessageControllerTest {
                 ), requestParameters(
                     requestMessageParams
                 ), responseFields(
-                    responseMessageFields
+                    responseMessagesFields
                 )
             ));
     }
@@ -128,8 +134,16 @@ public class MessageControllerTest {
 
         when(messageService.findLastMessage(any())).thenReturn(messageResponse);
 
-        mockMvc.perform(get("/api/message/{roomId}/last", roomId))
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/message/{roomId}/last", roomId))
             .andExpect(status().isOk())
-            .andDo(print());
+            .andDo(print())
+            .andDo(document("chats/lastMessage",
+                Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
+                pathParameters(
+                    parameterWithName("roomId").description("채팅방 ID")
+                ), responseFields(
+                    responseMessageFields
+                )
+            ));
     }
 }
