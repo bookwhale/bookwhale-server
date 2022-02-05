@@ -5,7 +5,6 @@ spring:
   data:
     mongodb:
       uri: ENC(uMQ15T05MUrjUg2ToydDW3nX0e4i7VIp4OkrhpuLxPfwnRLkpr43QNEDJiERvoDC6bp7A5PHfraJwwvrzMwlo6xCEG+wk2wzpDA3FGQbNzNRTtvocNpzpuL0jrH8GQsWP1ARnOzuNFRQGV5GYjqUhsq3MS6D4XYONZa1HerRkkA=)
-      database: bookwhale
   jpa:
     show-sql: true
     hibernate:
