@@ -363,7 +363,7 @@ operation::chatRoom/deleteChatRoom[snippets='http-request,request-headers,path-p
 [source,http,options="nowrap"]
 ----
 GET /api/message/1?page=0&size=10 HTTP/1.1
-Host: localhost:8080
+Host: localhost:8081
 
 ----
 
@@ -432,7 +432,7 @@ Content-Length: 142
 [source,http,options="nowrap"]
 ----
 GET /api/message/1/last HTTP/1.1
-Host: localhost:8080
+Host: localhost:8081
 
 ----
 
