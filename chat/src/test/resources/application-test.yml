@@ -1,0 +1,14 @@
+server:
+  port: 8081
+
+spring:
+  data:
+    mongodb:
+      uri: ENC(uMQ15T05MUrjUg2ToydDW3nX0e4i7VIp4OkrhpuLxPfwnRLkpr43QNEDJiERvoDC6bp7A5PHfraJwwvrzMwlo6xCEG+wk2wzpDA3FGQbNzNRTtvocNpzpuL0jrH8GQsWP1ARnOzuNFRQGV5GYjqUhsq3MS6D4XYONZa1HerRkkA=)
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+logging:
+  config: classpath:logback/logback-test.xml

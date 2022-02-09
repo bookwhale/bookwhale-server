@@ -28,18 +28,4 @@ public class ApiConfig {
         characterEncodingFilter.setForceEncoding(true);
         return characterEncodingFilter;
     }
-
-    @Value("${jwt.token.issuer}")
-    String issuer;
-    @Value("${jwt.token.clientSecret}")
-    String clientSecret;
-    @Value("${jwt.token.expirySecond}")
-    int expirySecond;
-    @Value("${jwt.token.expiryRefreshSecond}")
-    int expiryRefreshSecond;
-
-    @Bean
-    public JWT jwt() {
-        return new JWT(issuer, clientSecret, expirySecond, expiryRefreshSecond);
-    }
 }
