@@ -5,6 +5,7 @@
   <springProperty name="LOG_PATH" source="logging.save-path"/>
   <springProperty name="LOG_FILE_NAME" source="logging.file-name"/>
   <springProperty name="ERROR_LOG_FILE_NAME" source="logging.error-file-name"/>
+  <springProperty name="SLACK_WEBHOOK" source="logging.slack.webhook.url"/>
   <!-- pattern -->
   <property name="LOG_PATTERN"
     value="%-5level %d{yy-MM-dd HH:mm:ss} [%logger{0}:%line] - %msg%n"/>
@@ -71,6 +72,32 @@
     </rollingPolicy>
   </appender>
 
+  <!-- slack-appender -->
+  <appender name="SLACK" class="com.github.maricn.logback.SlackAppender">
+    <!-- Slack incoming webhook uri -->
+    <webhookUri>${SLACK_WEBHOOK}</webhookUri>
+    <!-- Channel that you want to post - default is #general -->
+    <channel>#application-log</channel>
+    <!-- Formatting (you can use Slack formatting - URL links, code formatting, etc.) -->
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <pattern>%-5level %d{yy-MM-dd HH:mm:ss} [%logger{0}:%line] - %msg%n</pattern>
+    </layout>
+    <!-- Username of the messages sender -->
+    <username>bookWhaleAPILog</username>
+    <!-- Emoji to be used for messages -->
+    <iconEmoji>:whale:</iconEmoji>
+    <!-- If color coding of log levels should be used -->
+    <colorCoding>true</colorCoding>
+  </appender>
+
+  <!-- Currently recommended way of using Slack appender -->
+  <appender name="ASYNC_SLACK" class="ch.qos.logback.classic.AsyncAppender">
+    <appender-ref ref="SLACK" />
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <level>WARN</level>
+    </filter>
+  </appender>
+
   <!-- jdbc or spring logging -->
   <logger name="jdbc.resultset" additivity="false">
     <level value="INFO"/>
@@ -89,5 +116,6 @@
     <appender-ref ref="console"/>
     <appender-ref ref="FILE"/>
     <appender-ref ref="ERROR"/>
+    <appender-ref ref="ASYNC_SLACK"/>
   </root>
 </configuration>
