@@ -37,6 +37,7 @@ subprojects {
     }
 
     dependencies {
+        implementation "com.github.maricn:logback-slack-appender:1.4.0"
         compileOnly 'org.projectlombok:lombok'
         testCompileOnly 'org.projectlombok:lombok'
         annotationProcessor 'org.projectlombok:lombok'
