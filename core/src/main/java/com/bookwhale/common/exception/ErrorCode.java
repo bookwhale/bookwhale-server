@@ -27,6 +27,7 @@ public enum ErrorCode {
 
     INVALID_FAVORITE_ID(400, "I_001", "잘못된 관심목록 ID 입니다."),
     DUPLICATED_FAVORITE(400, "I_002", "이미 관심목록에 등록된 게시글입니다."),
+    FAVORITE_NOT_FOUND(404, "I_003", "관심목록 ID를 찾을 수 없습니다."),
 
     INVALID_CHATROOM_ID(400, "CHAT_001", "잘못된 채팅방 ID 입니다."),
     INVALID_SELLER_ID(400, "CHAT_002", "잘못된 판매자 ID 입니다."),

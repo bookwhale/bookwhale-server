@@ -19,8 +19,10 @@ import com.bookwhale.common.acceptance.AcceptanceTest;
 import com.bookwhale.common.acceptance.AcceptanceUtils;
 import com.bookwhale.common.acceptance.step.AcceptanceStep;
 import com.bookwhale.common.dto.Pagination;
+import com.bookwhale.favorite.domain.Favorite;
 import com.bookwhale.user.acceptance.step.UserAcceptanceStep;
 import com.bookwhale.user.dto.FavoriteRequest;
+import com.bookwhale.user.dto.FavoriteResponse;
 import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -382,5 +384,98 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
 
         AcceptanceStep.assertThatStatusIsOk(response);
         assertThat(articlesResponses.size()).isEqualTo(0);
+    }
+
+    @DisplayName("게시글에 좋아요를 추가하면 좋아요 수가 +1 처리된다.")
+    @Test
+    void favoritePlusOneAndFindArticle() {
+        String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(
+            UserInfoFromToken.of(user), jwt);
+
+        Long articleId = AcceptanceUtils.getIdFromResponse(
+            ArticleAcceptanceStep.requestToCreateArticle(apiToken, articleRequest));
+
+        String anotherUserApiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(
+            UserInfoFromToken.of(anotherUser), jwt);
+
+        ArticleAcceptanceStep.requestAddFavoriteArticle(
+            anotherUserApiToken,
+            new FavoriteRequest(articleId)
+            ); // 게시글 좋아요 요청
+        ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToFindArticle(
+            anotherUserApiToken, articleId);
+        ArticleResponse articleResponse = response.jsonPath().getObject(".", ArticleResponse.class);
+
+        AcceptanceStep.assertThatStatusIsOk(response);
+        ArticleAcceptanceStep.assertThatFindArticle(articleResponse, articleRequest, user, false,
+            true);
+
+        assertThat(articleResponse.getViewCount()).isEqualTo(1L);
+        assertThat(articleResponse.getFavoriteCount()).isEqualTo(1L);
+    }
+
+    @DisplayName("게시글에 좋아요가 처리된 내용을 제거하면 좋아요 수가 감소한다.")
+    @Test
+    void removeFavoriteAndFindArticle() {
+        String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(
+            UserInfoFromToken.of(user), jwt);
+
+        Long articleId = AcceptanceUtils.getIdFromResponse(
+            ArticleAcceptanceStep.requestToCreateArticle(apiToken, articleRequest));
+
+        String anotherUserApiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(
+            UserInfoFromToken.of(anotherUser), jwt);
+
+        ArticleAcceptanceStep.requestAddFavoriteArticle(
+            anotherUserApiToken,
+            new FavoriteRequest(articleId)
+        ); // 게시글 좋아요 요청
+
+        ExtractableResponse<Response> articleFavorite = ArticleAcceptanceStep.getArticleFavorite(
+            anotherUserApiToken,
+            new FavoriteRequest(articleId));
+
+        FavoriteResponse favoriteByAnotherUser = articleFavorite.jsonPath().getObject(".", FavoriteResponse.class);
+
+        ArticleAcceptanceStep.requestRemoveFavoriteArticle(
+            anotherUserApiToken, favoriteByAnotherUser.getFavoriteId()
+        ); // 게시글 좋아요 제거 요청
+        ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToFindArticle(
+            anotherUserApiToken, articleId);
+        ArticleResponse articleResponse = response.jsonPath().getObject(".", ArticleResponse.class);
+
+        AcceptanceStep.assertThatStatusIsOk(response);
+        ArticleAcceptanceStep.assertThatFindArticle(articleResponse, articleRequest, user, false,
+            false);
+
+        assertThat(articleResponse.getViewCount()).isEqualTo(1L);
+        assertThat(articleResponse.getFavoriteCount()).isEqualTo(0);
+    }
+
+    @DisplayName("좋아요 목록을 조회한다.")
+    @Test
+    void getUserFavorites() {
+        String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(
+            UserInfoFromToken.of(user), jwt);
+
+        Long articleId = AcceptanceUtils.getIdFromResponse(
+            ArticleAcceptanceStep.requestToCreateArticle(apiToken, articleRequest));
+
+        String anotherUserApiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(
+            UserInfoFromToken.of(anotherUser), jwt);
+
+        ArticleAcceptanceStep.requestAddFavoriteArticle(
+            anotherUserApiToken,
+            new FavoriteRequest(articleId)
+        ); // 게시글 좋아요 요청
+
+        ExtractableResponse<Response> userFavories = ArticleAcceptanceStep.getUserFavories(
+            anotherUserApiToken);
+        List<FavoriteResponse> favoriteResponses = userFavories.jsonPath().getList(".", FavoriteResponse.class);
+
+        AcceptanceStep.assertThatStatusIsOk(userFavories);
+
+        assertThat(favoriteResponses.get(0).getFavoriteId()).isNotNull();
+        assertThat(favoriteResponses.get(0).getArticlesResponse().getArticleId()).isEqualTo(articleId);
     }
 }

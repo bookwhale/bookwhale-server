@@ -2,6 +2,7 @@ package com.bookwhale.user.controller;
 
 import com.bookwhale.auth.domain.CurrentUser;
 import com.bookwhale.common.exception.ErrorCode;
+import com.bookwhale.favorite.domain.Favorite;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.dto.FavoriteRequest;
 import com.bookwhale.user.dto.FavoriteResponse;
@@ -41,6 +42,12 @@ public class FavoriteController {
         @Valid @RequestBody FavoriteRequest request) {
         favoriteService.addFavorite(user, request);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/favorite")
+    public ResponseEntity<FavoriteResponse> findArticleFavorite(@CurrentUser User user,
+        @Valid @RequestBody FavoriteRequest request) {
+        return ResponseEntity.ok(favoriteService.findFavorite(user, request));
     }
 
     /**

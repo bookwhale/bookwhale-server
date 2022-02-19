@@ -41,6 +41,7 @@ public class FavoriteService {
 
         favoriteRepository.save(Favorite.create(targetUser, article));
         article.increaseOneFavoriteCount();
+        articleRepository.saveAndFlush(article);
     }
 
     public Article getArticleById(Long articleId) {
@@ -68,7 +69,9 @@ public class FavoriteService {
         favorite.validateIsMyFavorite(targetUser);
 
         favoriteRepository.delete(favorite);
-        favorite.getArticle().decreaseOneFavoriteCount();
+        Article article = favorite.getArticle();
+        article.decreaseOneFavoriteCount();
+        articleRepository.saveAndFlush(article);
     }
 
     private Favorite getFavoriteById(Long favoriteId) {
@@ -86,5 +89,13 @@ public class FavoriteService {
     public List<FavoriteResponse> findAllFavorites(User user) {
         User targetUser = userService.findUserByEmail(user.getEmail());
         return FavoriteResponse.listOf(favoriteRepository.findAllByUser(targetUser));
+    }
+
+    public FavoriteResponse findFavorite(User user, FavoriteRequest request) {
+        User targetUser = userService.findUserByEmail(user.getEmail());
+        Article article = getArticleById(request.getArticleId());
+        Favorite favorite = favoriteRepository.findByUserAndArticle(targetUser, article)
+            .orElseThrow(() -> new CustomException(ErrorCode.FAVORITE_NOT_FOUND));
+        return FavoriteResponse.of(favorite);
     }
 }
