@@ -158,6 +158,7 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
         AcceptanceStep.assertThatStatusIsOk(response);
         ArticleAcceptanceStep.assertThatFindArticle(articleResponse, articleRequest, user, true,
             false);
+        assertThat(articleResponse.getViewCount()).isEqualTo(0); // 자신의 판매글에는 viewCount가 증가하지 않도록 변경
     }
 
     @DisplayName("게시글을 상세 조회한다. (다른 유저의 게시글, 관심목록 O)")
@@ -180,6 +181,7 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
         AcceptanceStep.assertThatStatusIsOk(response);
         ArticleAcceptanceStep.assertThatFindArticle(articleResponse, articleRequest, anotherUser,
             false, true);
+        assertThat(articleResponse.getViewCount()).isNotEqualTo(0);
     }
 
     @DisplayName("게시글을 두번 상세 조회한다. (조회수 +2 확인)")
@@ -191,14 +193,17 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
         Long articleId = AcceptanceUtils.getIdFromResponse(
             ArticleAcceptanceStep.requestToCreateArticle(apiToken, articleRequest));
 
-        ArticleAcceptanceStep.requestToFindArticle(apiToken, articleId);
+        String anotherUserApiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(
+            UserInfoFromToken.of(anotherUser), jwt);
+
+        ArticleAcceptanceStep.requestToFindArticle(anotherUserApiToken, articleId);
         ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToFindArticle(
-            apiToken,
+            anotherUserApiToken,
             articleId);
         ArticleResponse articleResponse = response.jsonPath().getObject(".", ArticleResponse.class);
 
         AcceptanceStep.assertThatStatusIsOk(response);
-        ArticleAcceptanceStep.assertThatFindArticle(articleResponse, articleRequest, user, true,
+        ArticleAcceptanceStep.assertThatFindArticle(articleResponse, articleRequest, user, false,
             false);
         assertThat(articleResponse.getViewCount()).isEqualTo(2L);
     }

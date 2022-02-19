@@ -49,7 +49,7 @@ public class ArticleService {
     public ArticleResponse findArticle(User user, Long articleId) {
         User targetUser = userService.findUserByEmail(user.getEmail());
         Article article = validateArticleIdAndGetArticleWithSeller(articleId);
-        article.increaseOneViewCount();
+        article.increaseOneViewCount(targetUser);
         return ArticleResponse.of(
             article,
             article.isMyArticle(targetUser),

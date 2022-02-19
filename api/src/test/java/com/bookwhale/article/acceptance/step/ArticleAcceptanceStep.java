@@ -75,8 +75,7 @@ public class ArticleAcceptanceStep {
             () -> assertThat(res.getBookResponse().getBookPubDate()).isEqualTo(
                 req.getBookRequest().getBookPubDate()),
             () -> assertThat(res.getBookResponse().getBookListPrice()).isEqualTo(
-                req.getBookRequest().getBookListPrice()),
-            () -> assertThat(res.getViewCount()).isNotEqualTo(0L)
+                req.getBookRequest().getBookListPrice())
         );
     }
 
