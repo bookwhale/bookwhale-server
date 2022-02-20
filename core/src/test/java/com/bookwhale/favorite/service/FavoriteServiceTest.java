@@ -17,6 +17,7 @@ import com.bookwhale.favorite.domain.Favorite;
 import com.bookwhale.favorite.domain.FavoriteRepository;
 import com.bookwhale.favorite.service.FavoriteService;
 import com.bookwhale.user.domain.User;
+import com.bookwhale.user.dto.AddedFavoriteResponse;
 import com.bookwhale.user.dto.FavoriteRequest;
 import com.bookwhale.user.dto.FavoriteResponse;
 import com.bookwhale.user.service.UserService;
@@ -119,7 +120,6 @@ public class FavoriteServiceTest {
             .bookPublisher("출판사")
             .bookAuthor("이일민")
             .build();
-
         ArticleRequest articleRequest = ArticleRequest.builder()
             .bookRequest(bookRequest)
             .title("책 팝니다~")
@@ -128,19 +128,23 @@ public class FavoriteServiceTest {
             .bookStatus("BEST")
             .price("5000")
             .build();
+        Article article = Article.create(user, articleRequest.toEntity());
+        Favorite favorite = Favorite.create(user, article);
 
         when(userService.findUserByEmail(any(String.class)))
             .thenReturn(user);
-
-        Article article = Article.create(user, articleRequest.toEntity());
-
         when(articleRepository.findById(any())).thenReturn(Optional.ofNullable(article));
-        when(favoriteRepository.save(any())).thenReturn(Favorite.create(user, article));
+        when(favoriteRepository.save(any())).thenReturn(favorite);
 
-        favoriteService.addFavorite(user, new FavoriteRequest(1L));
+        long articleId = 1L;
+        AddedFavoriteResponse addedFavoriteResponse = favoriteService.addFavorite(user,
+            new FavoriteRequest(articleId));
+        addedFavoriteResponse.setFavoriteId(1L);
 
         verify(articleRepository).findById(any());
         verify(favoriteRepository).save(any());
+
+        assertThat(addedFavoriteResponse.getFavoriteId()).isEqualTo(articleId);
     }
 
     @DisplayName("잘못된 article_id 로 관심목록에 추가하면 예외가 발생한다.")

@@ -386,6 +386,29 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
         assertThat(articlesResponses.size()).isEqualTo(0);
     }
 
+    @DisplayName("게시글에 좋아요를 추가하는 기능 확인")
+    @Test
+    void favoriteToArticle() {
+        String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(
+            UserInfoFromToken.of(user), jwt);
+
+        Long articleId = AcceptanceUtils.getIdFromResponse(
+            ArticleAcceptanceStep.requestToCreateArticle(apiToken, articleRequest));
+
+        String anotherUserApiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(
+            UserInfoFromToken.of(anotherUser), jwt);
+
+        ExtractableResponse<Response> response = ArticleAcceptanceStep.requestAddFavoriteArticle(
+            anotherUserApiToken,
+            new FavoriteRequest(articleId)
+        );// 게시글 좋아요 요청
+
+        FavoriteResponse favoriteResponse = response.jsonPath()
+            .getObject(".", FavoriteResponse.class);
+
+        assertThat(favoriteResponse.getFavoriteId()).isNotNull();
+    }
+
     @DisplayName("게시글에 좋아요를 추가하면 좋아요 수가 +1 처리된다.")
     @Test
     void favoritePlusOneAndFindArticle() {

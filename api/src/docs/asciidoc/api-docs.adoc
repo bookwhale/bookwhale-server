@@ -289,7 +289,7 @@ operation::user/deleteProfileImage[snippets='http-request,request-headers,http-r
 
 === 2.4 관심목록 추가
 
-operation::user/addFavorite[snippets='http-request,request-headers,request-fields,http-response']
+operation::user/addFavorite[snippets='http-request,request-headers,request-fields,http-response,response-fields']
 
 === 2.5 관심목록 조회
 

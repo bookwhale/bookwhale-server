@@ -7,6 +7,7 @@ import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.favorite.domain.Favorite;
 import com.bookwhale.favorite.domain.FavoriteRepository;
 import com.bookwhale.user.domain.User;
+import com.bookwhale.user.dto.AddedFavoriteResponse;
 import com.bookwhale.user.dto.FavoriteRequest;
 import com.bookwhale.user.dto.FavoriteResponse;
 import com.bookwhale.user.service.UserService;
@@ -29,19 +30,22 @@ public class FavoriteService {
 
     /**
      * 현재 접속중인 사용자가 대상 판매글(article)에 관심 추가
-     *
      * @param user    현재 접속 중인 사용자
      * @param request 관심목록 추가 처리 요청
+     * @return {"favoriteId": 4}
      */
     @Transactional
-    public void addFavorite(User user, FavoriteRequest request) {
+    public AddedFavoriteResponse addFavorite(User user, FavoriteRequest request) {
         User targetUser = userService.findUserByEmail(user.getEmail());
         Article article = getArticleById(request.getArticleId());
         validateIsDuplicatedFavorite(targetUser, article);
 
-        favoriteRepository.save(Favorite.create(targetUser, article));
+        Favorite favorite = Favorite.create(targetUser, article);
+        favoriteRepository.save(favorite);
         article.increaseOneFavoriteCount();
         articleRepository.saveAndFlush(article);
+
+        return AddedFavoriteResponse.of(favorite);
     }
 
     public Article getArticleById(Long articleId) {
