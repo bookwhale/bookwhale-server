@@ -28,6 +28,7 @@ public class ArticleResponse {
     private BookResponse bookResponse;
     private boolean isMyArticle;
     private boolean isMyFavorite;
+    private Long myFavoriteId;
     private Long viewCount;
     private Long favoriteCount;
     private String beforeTime;
@@ -36,8 +37,8 @@ public class ArticleResponse {
     public ArticleResponse(Long sellerId, String sellerIdentity, String sellerProfileImage,
         Long articleId, String title, String price, String description, String bookStatus,
         String articleStatus, String sellingLocation, List<String> images,
-        BookResponse bookResponse, boolean isMyArticle, boolean isMyFavorite, Long viewCount,
-        Long favoriteCount, String beforeTime) {
+        BookResponse bookResponse, boolean isMyArticle, boolean isMyFavorite,
+        Long myFavoriteId, Long viewCount, Long favoriteCount, String beforeTime) {
         this.sellerId = sellerId;
         this.sellerIdentity = sellerIdentity;
         this.sellerProfileImage = sellerProfileImage;
@@ -52,13 +53,16 @@ public class ArticleResponse {
         this.bookResponse = bookResponse;
         this.isMyArticle = isMyArticle;
         this.isMyFavorite = isMyFavorite;
+        this.myFavoriteId = myFavoriteId;
         this.viewCount = viewCount;
         this.favoriteCount = favoriteCount;
         this.beforeTime = beforeTime;
     }
 
+
+
     public static ArticleResponse of(Article article, boolean isMyArticle,
-        boolean isMyFavorite) {
+        boolean isMyFavorite, Long MyFavoriteId) {
         BookResponse bookResponse = BookResponse.builder()
             .bookAuthor(article.getBook().getBookAuthor())
             .bookIsbn(article.getBook().getBookIsbn())
@@ -88,6 +92,7 @@ public class ArticleResponse {
             .images(imageResponse)
             .isMyArticle(isMyArticle)
             .isMyFavorite(isMyFavorite)
+            .myFavoriteId(MyFavoriteId)
             .viewCount(article.getViewCount())
             .favoriteCount(article.getFavoriteCount())
             .beforeTime(TimeUtils.BeforeTime(LocalDateTime.now(), article.getCreatedDate()))

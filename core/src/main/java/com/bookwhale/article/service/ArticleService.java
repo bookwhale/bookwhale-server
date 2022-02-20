@@ -12,11 +12,13 @@ import com.bookwhale.common.dto.Pagination;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.common.upload.FileUploader;
+import com.bookwhale.favorite.domain.Favorite;
 import com.bookwhale.favorite.domain.FavoriteRepository;
 import com.bookwhale.image.domain.Images;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.service.UserService;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -50,10 +52,17 @@ public class ArticleService {
         User targetUser = userService.findUserByEmail(user.getEmail());
         Article article = validateArticleIdAndGetArticleWithSeller(articleId);
         article.increaseOneViewCount(targetUser);
+        boolean isMyFavorite = favoriteRepository.existsByUserAndArticle(targetUser, article);
+        Optional<Favorite> myFavorite = favoriteRepository.findByUserAndArticle(targetUser,
+            article);
+        Long myFavoriteId = myFavorite.isEmpty() ? null : myFavorite.get().getId();
+        
+        articleRepository.saveAndFlush(article);
         return ArticleResponse.of(
             article,
             article.isMyArticle(targetUser),
-            favoriteRepository.existsByUserAndArticle(targetUser, article)
+            isMyFavorite,
+            myFavoriteId
         );
     }
 
