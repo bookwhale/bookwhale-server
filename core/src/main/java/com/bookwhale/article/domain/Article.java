@@ -135,8 +135,12 @@ public class Article extends BaseEntity {
         }
     }
 
-    public void increaseOneViewCount() {
-        this.viewCount += 1L;
+    public void increaseOneViewCount(User loginUser) {
+        Long sellerId = seller.getId();
+        Long loginUserId = loginUser.getId();
+        if (!sellerId.equals(loginUserId)) {
+            this.viewCount += 1L;
+        }
     }
 
     public void increaseOneFavoriteCount() {

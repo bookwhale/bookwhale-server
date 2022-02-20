@@ -23,6 +23,14 @@ public class FavoriteResponse {
         this.articlesResponse = articlesResponse;
     }
 
+    public static FavoriteResponse of(Favorite favorite) {
+        LocalDateTime cur = LocalDateTime.now();
+        Article article = favorite.getArticle();
+
+        return new FavoriteResponse(favorite.getId(),
+            ArticlesResponse.of(article, article.getImages().getFirstImageUrl(), cur));
+    }
+
     public static List<FavoriteResponse> listOf(List<Favorite> favorites) {
         LocalDateTime cur = LocalDateTime.now();
         return favorites.stream().map(favorite -> {

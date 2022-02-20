@@ -2,6 +2,7 @@ package com.bookwhale.user.controller;
 
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -13,7 +14,9 @@ import com.bookwhale.article.domain.BookStatus;
 import com.bookwhale.article.dto.ArticlesResponse;
 import com.bookwhale.common.controller.CommonApiTest;
 import com.bookwhale.common.domain.Location;
+import com.bookwhale.favorite.domain.Favorite;
 import com.bookwhale.user.docs.UserDocumentation;
+import com.bookwhale.user.dto.AddedFavoriteResponse;
 import com.bookwhale.user.dto.FavoriteRequest;
 import com.bookwhale.user.dto.FavoriteResponse;
 import com.bookwhale.favorite.service.FavoriteService;
@@ -67,7 +70,8 @@ public class FavoriteControllerTest extends CommonApiTest {
     void addFavorite() throws Exception {
         FavoriteRequest favoriteRequest = new FavoriteRequest(1L);
 
-        doNothing().when(favoriteService).addFavorite(any(), any());
+        when(favoriteService.addFavorite(any(), eq(favoriteRequest)))
+            .thenReturn(new AddedFavoriteResponse(1L));
 
         mockMvc.perform(post("/api/user/me/favorite")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")

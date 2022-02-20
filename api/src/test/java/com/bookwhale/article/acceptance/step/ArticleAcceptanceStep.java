@@ -16,6 +16,7 @@ import com.bookwhale.article.dto.NaverBookRequest;
 import com.bookwhale.common.domain.Location;
 import com.bookwhale.common.dto.Pagination;
 import com.bookwhale.user.domain.User;
+import com.bookwhale.user.dto.FavoriteRequest;
 import io.restassured.builder.MultiPartSpecBuilder;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -75,8 +76,7 @@ public class ArticleAcceptanceStep {
             () -> assertThat(res.getBookResponse().getBookPubDate()).isEqualTo(
                 req.getBookRequest().getBookPubDate()),
             () -> assertThat(res.getBookResponse().getBookListPrice()).isEqualTo(
-                req.getBookRequest().getBookListPrice()),
-            () -> assertThat(res.getViewCount()).isNotEqualTo(0L)
+                req.getBookRequest().getBookListPrice())
         );
     }
 
@@ -238,6 +238,49 @@ public class ArticleAcceptanceStep {
             .header(HttpHeaders.AUTHORIZATION, jwt)
             .when()
             .delete("/api/article/{articleId}", articleId)
+            .then().log().all()
+            .extract();
+    }
+
+    public static ExtractableResponse<Response> requestAddFavoriteArticle(String jwt,
+        FavoriteRequest request) {
+        return given().log().all()
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body(request)
+            .when()
+            .post("/api/user/me/favorite")
+            .then().log().all()
+            .extract();
+    }
+
+    public static ExtractableResponse<Response> requestRemoveFavoriteArticle(String jwt,
+        Long favoriteId) {
+        return given().log().all()
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .when()
+            .delete("/api/user/me/favorite/{favoriteId}", favoriteId)
+            .then().log().all()
+            .extract();
+    }
+
+    public static ExtractableResponse<Response> getArticleFavorite(String jwt,
+        FavoriteRequest request) {
+        return given().log().all()
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body(request)
+            .when()
+            .get("/api/user/me/favorite")
+            .then().log().all()
+            .extract();
+    }
+
+    public static ExtractableResponse<Response> getUserFavories(String jwt) {
+        return given().log().all()
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .when()
+            .get("/api/user/me/favorites")
             .then().log().all()
             .extract();
     }

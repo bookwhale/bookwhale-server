@@ -27,6 +27,7 @@ import com.bookwhale.common.domain.Location;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.common.upload.FileUploader;
+import com.bookwhale.favorite.domain.Favorite;
 import com.bookwhale.favorite.domain.FavoriteRepository;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.service.UserService;
@@ -123,12 +124,17 @@ public class ArticleServiceTest {
         article.getImages().addAll(article, images);
         article.setCreatedDate(LocalDateTime.now());
 
+        Favorite favorite = Favorite.create(user, article);
+
         when(articleRepository.findArticleWithSellerById(any())).thenReturn(Optional.of(article));
         when(favoriteRepository.existsByUserAndArticle(any(), any())).thenReturn(true);
         when(userService.findUserByEmail(any(String.class)))
             .thenReturn(user);
+        when(favoriteRepository.findByUserAndArticle(any(User.class), any(Article.class)))
+            .thenReturn(Optional.ofNullable(favorite));
 
         ArticleResponse response = articleService.findArticle(user, 1L);
+        response.setMyFavoriteId(1L); // DB에 저장된 favoriteId
 
         verify(articleRepository).findArticleWithSellerById(any());
         assertAll(

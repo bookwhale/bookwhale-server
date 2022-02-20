@@ -2,7 +2,9 @@ package com.bookwhale.user.controller;
 
 import com.bookwhale.auth.domain.CurrentUser;
 import com.bookwhale.common.exception.ErrorCode;
+import com.bookwhale.favorite.domain.Favorite;
 import com.bookwhale.user.domain.User;
+import com.bookwhale.user.dto.AddedFavoriteResponse;
 import com.bookwhale.user.dto.FavoriteRequest;
 import com.bookwhale.user.dto.FavoriteResponse;
 import com.bookwhale.favorite.service.FavoriteService;
@@ -33,14 +35,19 @@ public class FavoriteController {
      *
      * @param user    현재 접속 중인 사용자
      * @param request 관심목록 추가 처리 요청
-     * @return 요청 처리 성공 시 HttpStatus.OK (200)을 반환, 실패 시 Exception이 던져지며 ErrorCode를 반환
+     * @return 요청 처리 성공 시 HttpStatus.OK (200) 및 favoriteId를 반환, 실패 시 Exception이 던져지며 ErrorCode를 반환
      * @see ErrorCode
      */
     @PostMapping("/favorite")
-    public ResponseEntity<Void> addFavorite(@CurrentUser User user,
+    public ResponseEntity<AddedFavoriteResponse> addFavorite(@CurrentUser User user,
         @Valid @RequestBody FavoriteRequest request) {
-        favoriteService.addFavorite(user, request);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(favoriteService.addFavorite(user, request));
+    }
+
+    @GetMapping("/favorite")
+    public ResponseEntity<FavoriteResponse> findArticleFavorite(@CurrentUser User user,
+        @Valid @RequestBody FavoriteRequest request) {
+        return ResponseEntity.ok(favoriteService.findFavorite(user, request));
     }
 
     /**

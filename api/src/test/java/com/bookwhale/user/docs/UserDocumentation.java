@@ -149,6 +149,8 @@ public class UserDocumentation {
                 headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
             ), requestFields(
                 fieldWithPath("articleId").type(JsonFieldType.NUMBER).description("게시글 ID")
+            ), responseFields(
+                fieldWithPath("favoriteId").type(JsonFieldType.NUMBER).description("관심목록(좋아요) 생성된 ID")
             )
         );
     }
