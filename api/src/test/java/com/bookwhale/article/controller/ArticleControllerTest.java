@@ -196,6 +196,7 @@ public class ArticleControllerTest extends CommonApiTest {
             .bookResponse(bookResponse)
             .isMyArticle(true)
             .isMyFavorite(true)
+            .myFavoriteId(1L)
             .sellingLocation("서울")
             .viewCount(1L)
             .favoriteCount(0L)

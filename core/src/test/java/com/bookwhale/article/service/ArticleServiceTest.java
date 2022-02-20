@@ -134,6 +134,7 @@ public class ArticleServiceTest {
             .thenReturn(Optional.ofNullable(favorite));
 
         ArticleResponse response = articleService.findArticle(user, 1L);
+        response.setMyFavoriteId(1L); // DB에 저장된 favoriteId
 
         verify(articleRepository).findArticleWithSellerById(any());
         assertAll(
