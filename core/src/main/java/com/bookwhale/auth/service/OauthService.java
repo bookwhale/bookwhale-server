@@ -177,7 +177,7 @@ public class OauthService {
     }
 
     @Transactional
-    public OAuthResultResponse withdrawal(OAuthRefreshLoginRequest refreshRequest, User user) {
+    public OAuthResultResponse withdrawalUser(OAuthRefreshLoginRequest refreshRequest, User user) {
         // step1 : refresh token 확인 후 삭제
         String refreshToken = refreshRequest.getRefreshToken();
         ClaimsForRefresh refreshClaim = apiToken.verifyForRefresh(refreshToken);
