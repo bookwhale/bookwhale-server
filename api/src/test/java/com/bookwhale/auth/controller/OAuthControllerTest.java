@@ -107,7 +107,7 @@ class OAuthControllerTest extends CommonApiTest {
         String requestBody = objectMapper.writeValueAsString(refreshRequest);
         var response = new OAuthResultResponse("회원 탈퇴 완료되었습니다.");
 
-        when(oauthService.withdrawal(any(), any())).thenReturn(response);
+        when(oauthService.withdrawalUser(any(), any())).thenReturn(response);
 
         mockMvc.perform(post("/api/oauth/withdrawal")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")

@@ -4,6 +4,7 @@ import com.bookwhale.auth.domain.info.UserInfo;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.common.upload.FileUploader;
+import com.bookwhale.common.utils.HashingUtil;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.domain.UserRepository;
 import com.bookwhale.user.dto.ProfileResponse;
@@ -25,11 +26,8 @@ public class UserService {
     private final FileUploader fileUploader;
 
     public void createUser(UserInfo userInfo) {
-        User user = User.builder()
-            .email(userInfo.getEmail())
-            .nickname(userInfo.getName())
-            .profileImage(userInfo.getPicture())
-            .build();
+        User user = User.builder().email(userInfo.getEmail()).nickname(userInfo.getName())
+            .profileImage(userInfo.getPicture()).build();
         userRepository.save(user);
     }
 
@@ -53,8 +51,10 @@ public class UserService {
     }
 
     public void withdrawalUser(User user) {
-        User targetUser = findUserByEmail(user.getEmail());
-        userRepository.delete(targetUser);
+        String email = user.getEmail();
+        User targetUser = findUserByEmail(email);
+        targetUser.convertUnavailableUser(HashingUtil.sha256(email));
+        userRepository.saveAndFlush(targetUser);
     }
 
     public ProfileResponse uploadProfileImage(User user, MultipartFile image) {

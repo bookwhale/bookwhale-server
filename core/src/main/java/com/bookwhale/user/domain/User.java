@@ -55,4 +55,10 @@ public class User extends BaseEntity {
     public void deleteProfile() {
         this.profileImage = null;
     }
+
+    public void convertUnavailableUser(String hashedEmail) {
+        this.nickname = "** 탈퇴한 사용자 **";
+        this.email = hashedEmail;
+        deleteProfile();
+    }
 }
