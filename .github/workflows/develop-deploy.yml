@@ -61,4 +61,4 @@ jobs:
           sudo docker rm bookwhale-chat-server
           sudo docker rmi bookwhale-chat-server
           sudo docker build -t bookwhale-chat-server:latest .
-          sudo docker run -d -v /tmp/log:/var/log -p 9090:9090 --name bookwhale-chat-server -e BOOKWHALE_JASYPT_PASSWORD=${{ secrets.JASYPT_PASSWORD }} bookwhale-chat-server:latest
+          sudo docker run -d -v /tmp/log:/var/log -p 8081:8081 --name bookwhale-chat-server -e BOOKWHALE_JASYPT_PASSWORD=${{ secrets.JASYPT_PASSWORD }} bookwhale-chat-server:latest
