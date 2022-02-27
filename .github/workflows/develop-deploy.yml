@@ -30,7 +30,7 @@ jobs:
       run: cp ./api/build/libs/api-1.0.jar ./deploy/api
 
     - name: CHAT 서버 jar 파일 복사
-      run: cp ./chat/build/libs/chat-1.0.jar ./deploy/api
+      run: cp ./chat/build/libs/chat-1.0.jar ./deploy/chat
       
     - name: AWS EC2에 Repository 복사
       uses: appleboy/scp-action@master
@@ -54,4 +54,11 @@ jobs:
           sudo docker rm bookwhale-server
           sudo docker rmi bookwhale-server
           sudo docker build -t bookwhale-server:latest .
-          sudo docker run -d -v /tmp/log:/var/log -p 8080:8080 -p 9090:9090 --name bookwhale-server -e BOOKWHALE_JASYPT_PASSWORD=${{ secrets.JASYPT_PASSWORD }} bookwhale-server:latest
+          sudo docker run -d -v /tmp/log:/var/log -p 8080:8080 --name bookwhale-server -e BOOKWHALE_JASYPT_PASSWORD=${{ secrets.JASYPT_PASSWORD }} bookwhale-server:latest
+          cd /home/ubuntu/app/bookwhale-server/deploy/chat
+          sudo chmod 666 /var/run/docker.sock
+          sudo docker stop bookwhale-chat-server
+          sudo docker rm bookwhale-chat-server
+          sudo docker rmi bookwhale-chat-server
+          sudo docker build -t bookwhale-chat-server:latest .
+          sudo docker run -d -v /tmp/log:/var/log -p 9090:9090 --name bookwhale-chat-server -e BOOKWHALE_JASYPT_PASSWORD=${{ secrets.JASYPT_PASSWORD }} bookwhale-chat-server:latest
