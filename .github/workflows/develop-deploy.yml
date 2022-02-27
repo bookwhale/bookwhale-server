@@ -51,4 +51,4 @@ jobs:
           sudo docker rm bookwhale-server
           sudo docker rmi bookwhale-server
           sudo docker build -t bookwhale-server:latest .
-          sudo docker run -d -v /tmp/log:/var/log -p 8080:8080 --name bookwhale-server -e BOOKWHALE_JASYPT_PASSWORD=${{ secrets.JASYPT_PASSWORD }} bookwhale-server:latest
+          sudo docker run -d -v /tmp/log:/var/log -p 8080:8080 -p 8081:8081 --name bookwhale-server -e BOOKWHALE_JASYPT_PASSWORD=${{ secrets.JASYPT_PASSWORD }} bookwhale-server:latest
