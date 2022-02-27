@@ -28,6 +28,9 @@ jobs:
       
     - name: API 서버 jar 파일 복사
       run: cp ./api/build/libs/api-1.0.jar ./deploy/api
+
+    - name: CHAT 서버 jar 파일 복사
+      run: cp ./chat/build/libs/chat-1.0.jar ./deploy/api
       
     - name: AWS EC2에 Repository 복사
       uses: appleboy/scp-action@master
@@ -51,4 +54,4 @@ jobs:
           sudo docker rm bookwhale-server
           sudo docker rmi bookwhale-server
           sudo docker build -t bookwhale-server:latest .
-          sudo docker run -d -v /tmp/log:/var/log -p 8080:8080 -p 9090:8080 --name bookwhale-server -e BOOKWHALE_JASYPT_PASSWORD=${{ secrets.JASYPT_PASSWORD }} bookwhale-server:latest
+          sudo docker run -d -v /tmp/log:/var/log -p 8080:8080 -p 9090:9090 --name bookwhale-server -e BOOKWHALE_JASYPT_PASSWORD=${{ secrets.JASYPT_PASSWORD }} bookwhale-server:latest
