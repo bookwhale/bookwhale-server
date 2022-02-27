@@ -10,6 +10,8 @@ import com.bookwhale.user.domain.UserRepository;
 import com.bookwhale.user.dto.ProfileResponse;
 import com.bookwhale.user.dto.UserResponse;
 import com.bookwhale.user.dto.UserUpdateRequest;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -52,8 +54,10 @@ public class UserService {
 
     public void withdrawalUser(User user) {
         String email = user.getEmail();
+        String now = LocalDateTime.now()
+            .format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         User targetUser = findUserByEmail(email);
-        targetUser.convertUnavailableUser(HashingUtil.sha256(email));
+        targetUser.convertUnavailableUser(HashingUtil.sha256(email + now ));
         userRepository.saveAndFlush(targetUser);
     }
 
