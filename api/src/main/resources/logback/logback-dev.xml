@@ -113,8 +113,6 @@
   </logger>
   <root level="INFO">
     <!-- 콘솔 로그 출력 -->
-    <appender-ref ref="console"/>
-    <appender-ref ref="FILE"/>
     <appender-ref ref="ERROR"/>
     <appender-ref ref="ASYNC_SLACK"/>
   </root>
