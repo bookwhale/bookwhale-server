@@ -83,7 +83,7 @@
       <pattern>%-5level %d{yy-MM-dd HH:mm:ss} [%logger{0}:%line] - %msg%n</pattern>
     </layout>
     <!-- Username of the messages sender -->
-    <username>bookWhaleAPILog</username>
+    <username>bookWhale_APILog</username>
     <!-- Emoji to be used for messages -->
     <iconEmoji>:whale:</iconEmoji>
     <!-- If color coding of log levels should be used -->
