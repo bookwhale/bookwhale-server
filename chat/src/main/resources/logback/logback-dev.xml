@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration scan="false">
-  <property resource="../application-dev.yml"/>
+  <property resource="application-dev.yml"/>
   <springProperty name="LOG_PATH" source="logging.save-path"/>
   <springProperty name="LOG_FILE_NAME" source="logging.file-name"/>
+  <springProperty name="ERROR_LOG_FILE_NAME" source="logging.error-file-name"/>
+  <springProperty name="SLACK_WEBHOOK" source="logging.slack.webhook.url"/>
   <!-- pattern -->
   <property name="LOG_PATTERN"
     value="%-5level %d{yy-MM-dd HH:mm:ss} [%logger{0}:%line] - %msg%n"/>
@@ -17,29 +19,101 @@
   <!-- 로그 파일 생성 -->
   <appender name="FILE"
     class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <!-- file path 설정 -->
     <file>${LOG_PATH}/${LOG_FILE_NAME}.log</file>
-    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <!-- 생성되는 로그 파일 정보 -->
-      <fileNamePattern>${LOG_PATH}/${LOG_FILE_NAME}.%d{yyyy-MM-dd}.log
-      </fileNamePattern>
-    </rollingPolicy>
+
     <!-- 로그 패턴 -->
     <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
       <pattern>${LOG_PATTERN}</pattern>
     </encoder>
+
+    <!-- rolling 설정 -->
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <!-- 생성되는 로그 파일 정보 -->
+      <fileNamePattern>${LOG_PATH}/${LOG_FILE_NAME}.%d{yyyy-MM-dd}_%i.log</fileNamePattern>
+      <!-- 사이즈 제한 설정 -->
+      <timeBasedFileNamingAndTriggeringPolicy
+        class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+        <maxFileSize>10MB</maxFileSize>
+      </timeBasedFileNamingAndTriggeringPolicy>
+      <!-- 일자별 로그파일 최대 보관주기(일) -->
+      <maxHistory>30</maxHistory>
+    </rollingPolicy>
+  </appender>
+
+  <!-- 로그 파일 생성 -->
+  <appender name="ERROR"
+    class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+      <level>error</level>
+      <onMatch>ACCEPT</onMatch>
+      <onMismatch>DENY</onMismatch>
+    </filter>
+
+    <!-- file path 설정 -->
+    <file>${LOG_PATH}/${ERROR_LOG_FILE_NAME}.log</file>
+
+    <!-- 로그 패턴 -->
+    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+      <pattern>${LOG_PATTERN}</pattern>
+    </encoder>
+
+    <!-- rolling 설정 -->
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <!-- 생성되는 로그 파일 정보 -->
+      <fileNamePattern>${LOG_PATH}/${ERROR_LOG_FILE_NAME}.%d{yyyy-MM-dd}_%i.log</fileNamePattern>
+      <!-- 사이즈 제한 설정 -->
+      <timeBasedFileNamingAndTriggeringPolicy
+        class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+        <maxFileSize>10MB</maxFileSize>
+      </timeBasedFileNamingAndTriggeringPolicy>
+      <!-- 일자별 로그파일 최대 보관주기(일) -->
+      <maxHistory>45</maxHistory>
+    </rollingPolicy>
+  </appender>
+
+  <!-- slack-appender -->
+  <appender name="SLACK" class="com.github.maricn.logback.SlackAppender">
+    <!-- Slack incoming webhook uri -->
+    <webhookUri>${SLACK_WEBHOOK}</webhookUri>
+    <!-- Channel that you want to post - default is #general -->
+    <channel>#application-log</channel>
+    <!-- Formatting (you can use Slack formatting - URL links, code formatting, etc.) -->
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <pattern>%-5level %d{yy-MM-dd HH:mm:ss} [%logger{0}:%line] - %msg%n</pattern>
+    </layout>
+    <!-- Username of the messages sender -->
+    <username>bookWhaleCHATLog</username>
+    <!-- Emoji to be used for messages -->
+    <iconEmoji>:whale:</iconEmoji>
+    <!-- If color coding of log levels should be used -->
+    <colorCoding>true</colorCoding>
+  </appender>
+
+  <!-- Currently recommended way of using Slack appender -->
+  <appender name="ASYNC_SLACK" class="ch.qos.logback.classic.AsyncAppender">
+    <appender-ref ref="SLACK" />
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <level>WARN</level>
+    </filter>
   </appender>
 
   <!-- jdbc or spring logging -->
   <logger name="jdbc.resultset" additivity="false">
     <level value="INFO"/>
     <appender-ref ref="console"/>
+    <appender-ref ref="FILE"/>
+    <appender-ref ref="ERROR"/>
   </logger>
   <logger name="org.springframework" additivity="false">
     <level value="INFO"/>
     <appender-ref ref="console"/>
+    <appender-ref ref="FILE"/>
+    <appender-ref ref="ERROR"/>
   </logger>
   <root level="INFO">
     <!-- 콘솔 로그 출력 -->
-    <appender-ref ref="console"/>
+    <appender-ref ref="ERROR"/>
+    <appender-ref ref="ASYNC_SLACK"/>
   </root>
 </configuration>
