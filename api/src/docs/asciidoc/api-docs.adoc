@@ -336,7 +336,13 @@ operation::article/findArticles[snippets='http-request,request-parameters,http-r
 
 === 3.5 게시글 수정
 
-게시글 수정 API 는 문서화 X => 직접 물어봐주세요..
+※ 이미지(images)는 게시글 등록(3.2)하고 동일합니다(아래 예시에는 이미지 정보가 안들어가지네요).
+
+※ Request part-articlerequest-fields -> Request part-articleUpdaterequest-fields로 변경됐습니다.
+
+※Request part-articleUpdaterequest-fields은 아래를 참고해주시면 됩니다.
+
+operation::article/updateArticle[snippets='http-request,request-headers,request-part-articleUpdateRequest-fields,http-response']
 
 === 3.6 게시글 상태 변경
 

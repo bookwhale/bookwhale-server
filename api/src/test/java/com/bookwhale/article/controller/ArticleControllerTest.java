@@ -303,9 +303,13 @@ public class ArticleControllerTest extends CommonApiTest {
     @DisplayName("게시글을 수정한다.")
     @Test
     void updateArticle_success() throws Exception {
-        MockMultipartFile updateImage = new MockMultipartFile("images", "updateImage.jpg",
+        MockMultipartFile image1 = new MockMultipartFile("images", "updateImage.jpg",
             ContentType.IMAGE_JPEG.getMimeType(),
-            "수정된 이미지입니다.".getBytes());
+            "이미지입니다.".getBytes());
+
+        MockMultipartFile image2 = new MockMultipartFile("images", "updateImage.jpg",
+            ContentType.IMAGE_JPEG.getMimeType(),
+            "이미지입니다.".getBytes());
 
         ArticleUpdateRequest request = ArticleUpdateRequest.builder()
             .title("책 팝니다~ (가격 내림)")
@@ -323,7 +327,8 @@ public class ArticleControllerTest extends CommonApiTest {
         doNothing().when(articleService).updateArticle(any(), any(), any(), any());
 
         mockMvc.perform(MockMultipartPatchBuilder("/api/article/1")
-                .file(updateImage)
+                .file(image1)
+                .file(image2)
                 .file(json)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
                 .contentType(MediaType.MULTIPART_MIXED))
