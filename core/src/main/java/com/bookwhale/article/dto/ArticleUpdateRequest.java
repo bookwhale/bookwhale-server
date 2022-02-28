@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class ArticleUpdateRequest {
+public class  ArticleUpdateRequest {
 
     @NotBlank
     private String title;
