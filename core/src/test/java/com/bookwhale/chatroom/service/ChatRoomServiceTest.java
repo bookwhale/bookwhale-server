@@ -20,6 +20,8 @@ import com.bookwhale.chatroom.dto.ChatRoomCreateRequest;
 import com.bookwhale.chatroom.dto.ChatRoomResponse;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
+import com.bookwhale.message.domain.Message;
+import com.bookwhale.message.domain.MessageRepository;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.service.UserService;
 import java.util.List;
@@ -41,7 +43,11 @@ public class ChatRoomServiceTest {
     private ArticleRepository articleRepository;
 
     @Mock
+    private MessageRepository messageRepository;
+
+    @Mock
     private UserService userService;
+
 
     ChatRoomService chatRoomService;
 
@@ -54,7 +60,7 @@ public class ChatRoomServiceTest {
     @BeforeEach
     void setUp() {
         chatRoomService = new ChatRoomService(chatRoomRepository, articleRepository,
-            userService);
+            userService, messageRepository);
 
         buyer = User.builder()
             .id(1L)

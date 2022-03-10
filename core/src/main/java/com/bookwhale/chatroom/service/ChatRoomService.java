@@ -8,8 +8,11 @@ import com.bookwhale.chatroom.dto.ChatRoomCreateRequest;
 import com.bookwhale.chatroom.dto.ChatRoomResponse;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
+import com.bookwhale.message.domain.Message;
+import com.bookwhale.message.domain.MessageRepository;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.service.UserService;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +27,7 @@ public class ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
     private final ArticleRepository articleRepository;
     private final UserService userService;
+    private final MessageRepository messageRepository;
 
     public void createChatRoom(User user, ChatRoomCreateRequest request) {
         User loginUser = userService.findUserByEmail(user.getEmail());
@@ -52,13 +56,19 @@ public class ChatRoomService {
 
     private List<ChatRoomResponse> checkRoomsAndGetRoomResponses(List<ChatRoom> rooms,
         User loginUser) {
-        return rooms.stream()
-            //내가 떠난 채팅방은 제외
-            .filter(room -> !room.isLoginUserDelete(loginUser))
-            //상대방이 나간 채팅방인지 확인
-            .map(room -> ChatRoomResponse.of(room, room.getOpponent(loginUser),
-                room.isOpponentDelete(loginUser)))
-            .collect(Collectors.toList());
+        //내가 떠난 채팅방은 제외
+        //상대방이 나간 채팅방인지 확인
+        List<ChatRoomResponse> list = new ArrayList<>();
+        for (ChatRoom room : rooms) {
+            if (!room.isLoginUserDelete(loginUser)) {
+                Message lastMessage = messageRepository.findTopByRoomIdOrderByCreatedDateDesc(room.getId())
+                    .orElseGet(Message::createEmptyMessage);
+                ChatRoomResponse of = ChatRoomResponse.of(room, room.getOpponent(loginUser),
+                    room.isOpponentDelete(loginUser), lastMessage.getContent());
+                list.add(of);
+            }
+        }
+        return list;
     }
 
     public void deleteChatRoom(User user, Long roomId) {
