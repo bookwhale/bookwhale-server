@@ -22,12 +22,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
-    implementation "org.webjars:stomp-websocket:2.3.3-1"
-    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    implementation "org.webjars:stomp-websocket:2.3.4"
     testImplementation group: 'io.rest-assured', name: 'rest-assured', version: '4.3.3'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
     testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'
     asciidoctorExtensions "org.springframework.restdocs:spring-restdocs-asciidoctor"
-    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 }
 
 test {
