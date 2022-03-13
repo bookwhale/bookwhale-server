@@ -32,6 +32,10 @@ jobs:
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
           cd /home/ubuntu/app/bookwhale-server/deploy/api
+          sudo docker stop bookwhale-server
+          sudo docker rm bookwhale-server
           sudo docker run -d -v /tmp/log:/var/log -p 8080:8080 --name bookwhale-server -e BOOKWHALE_JASYPT_PASSWORD=${{ secrets.JASYPT_PASSWORD }} bookwhale-server:latest
           cd /home/ubuntu/app/bookwhale-server/deploy/chat
+          sudo docker stop bookwhale-chat-server
+          sudo docker rm bookwhale-chat-server
           sudo docker run -d -v /tmp/log:/var/log -p 8081:8081 --name bookwhale-chat-server -e BOOKWHALE_JASYPT_PASSWORD=${{ secrets.JASYPT_PASSWORD }} bookwhale-chat-server:latest
