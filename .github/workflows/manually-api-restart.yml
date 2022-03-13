@@ -1,0 +1,37 @@
+# This is a basic workflow that is manually triggered
+
+name: Backend App Restart
+
+# Controls when the action will run. Workflow runs when manually triggered using the UI
+# or API.
+on:
+  workflow_dispatch:
+    # Inputs the workflow accepts.
+    inputs:
+      name:
+        # Friendly description to be shown in the UI instead of 'name'
+        description: 'restart bookwhale-apps'
+        # Input has to be provided for the workflow to run
+        required: false
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "greet"
+  restart:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Runs a single command using the runners shell
+    - name: AWS EC2에 접속 후 API 서버 배포 스크립트 실행
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USERNAME }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script: |
+          cd /home/ubuntu/app/bookwhale-server/deploy/api
+          sudo docker run -d -v /tmp/log:/var/log -p 8080:8080 --name bookwhale-server -e BOOKWHALE_JASYPT_PASSWORD=${{ secrets.JASYPT_PASSWORD }} bookwhale-server:latest
+          cd /home/ubuntu/app/bookwhale-server/deploy/chat
+          sudo docker run -d -v /tmp/log:/var/log -p 8081:8081 --name bookwhale-chat-server -e BOOKWHALE_JASYPT_PASSWORD=${{ secrets.JASYPT_PASSWORD }} bookwhale-chat-server:latest
