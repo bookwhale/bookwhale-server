@@ -28,12 +28,17 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String email;
 
+    @Column
+    private String deviceToken;
+
     @Builder
-    protected User(Long id, String nickname, String profileImage, String email) {
+    protected User(Long id, String nickname, String profileImage, String email,
+        String deviceToken) {
         this.id = id;
         this.nickname = nickname;
         this.profileImage = profileImage;
         this.email = email;
+        this.deviceToken = deviceToken;
     }
 
     public static User create(User user) {
@@ -41,11 +46,16 @@ public class User extends BaseEntity {
             .nickname(user.getNickname())
             .email(user.getEmail())
             .profileImage(user.getProfileImage())
+            .deviceToken(user.getDeviceToken())
             .build();
     }
 
     public void updateUserName(String name) {
         this.nickname = name;
+    }
+
+    public void updateUserDeviceToken(String deviceToken) {
+        this.deviceToken = deviceToken;
     }
 
     public void uploadProfile(String profileImage) {

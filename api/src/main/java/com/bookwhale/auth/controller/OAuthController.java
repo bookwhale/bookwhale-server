@@ -66,11 +66,12 @@ public class OAuthController {
      * @return
      */
     @GetMapping("/{providerType}/login")
-    public ResponseEntity<OAuthLoginResponse> oAuthLoginProcess(
+    public ResponseEntity<OAuthLoginResponse> oAuthLoginProcessWithAccessToken(
         @PathVariable OAuthProviderType providerType,
-        @RequestParam(name = "code") String accessToken) {
+        @RequestParam(name = "code") String accessToken,
+        @RequestParam(required = false, name = "device") String deviceToken) {
 
-        OAuthLoginResponse result = oauthService.loginProcess(providerType, accessToken);
+        OAuthLoginResponse result = oauthService.loginProcess(providerType, accessToken, deviceToken);
 
         return ResponseEntity.ok(result);
     }

@@ -42,3 +42,7 @@ jwt:
     clientSecret: ENC(alIW2awsA5PjqVkn+DpVJI3P+9/Vxyfw)
     expirySecond: 1800
     expiryRefreshSecond: 604800
+
+firebase:
+  path: ENC(kFl4rysM0Dj4BxzIBZoNGWSRnr+rdVTBxmN+s5CQe43BrUz5e8VnOSjBKBZR9SeLWehjtt666XQMESsHS5aTW/ytiAAcpcV1)
+  url: ENC(A8OdtmA6hgR/rbwGRVr4tE4m86fn0m0l2IX3DgNnjyaMujdRx6PXYeBtKzNWYYmgfPyKJqVt3KIpNge9uS4NWbFm/kfzD2YIKL6JprYlo3A=)
