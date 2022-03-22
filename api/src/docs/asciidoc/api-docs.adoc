@@ -268,7 +268,7 @@ operation::oauth/loginProcessAfterRedirct[snippets='http-request,http-response,r
 === 1.1.2 로그인 (provider의 accessToken으로 요청 시)
 - accessToken으로 api token 생성 요청
 
-operation::oauth/loginProcess[snippets='http-request,http-response,response-fields']
+operation::oauth/loginProcess[snippets='http-request,path-parameters,request-parameters,http-response,response-fields']
 
 === 1.2 토큰 갱신 (refresh)
 
