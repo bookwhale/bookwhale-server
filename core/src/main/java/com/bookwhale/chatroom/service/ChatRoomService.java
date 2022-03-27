@@ -46,7 +46,7 @@ public class ChatRoomService {
             .body(String.format("채팅방이 생성되었습니다. / 판매글 : %s", article.getTitle()));
 
         try {
-            pushService.sendMessageTo(
+            pushService.sendMessageFromFCM(
                 createChatRoomPushMessage.targetToken(loginUser.getDeviceToken())
                     .build()
             );
