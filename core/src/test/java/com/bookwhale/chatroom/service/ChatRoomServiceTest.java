@@ -43,6 +43,9 @@ public class ChatRoomServiceTest {
     private ArticleRepository articleRepository;
 
     @Mock
+    private MessageRepository messageRepository;
+
+    @Mock
     private UserService userService;
 
     @Mock

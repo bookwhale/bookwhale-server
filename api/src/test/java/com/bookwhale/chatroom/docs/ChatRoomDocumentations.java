@@ -41,7 +41,9 @@ public class ChatRoomDocumentations {
             fieldWithPath("opponentIdentity").type(JsonFieldType.STRING).description("상대방 아이디"),
             fieldWithPath("opponentProfile").type(JsonFieldType.STRING).description("상대방 프로필 사진"),
             fieldWithPath("opponentDelete").type(JsonFieldType.BOOLEAN).description(
-                "상대방이 나간 채팅방 여부")
+                "상대방이 나간 채팅방 여부"),
+            fieldWithPath("lastContent").type(JsonFieldType.STRING).optional().description(
+                "채팅방의 마지막 메시지 (* 없는 경우에는 null)")
         };
 
         return document("chatRoom/findChatRooms",

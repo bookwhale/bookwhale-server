@@ -4,9 +4,6 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: ENC(bBQFbbVB6f/hLDkN2HnIGcFTBlCLu/1u)
     password: ENC(9YNuodQFXh77Oxjol6WqWdw68HXldwDY)
-  data:
-    mongodb:
-      uri: ENC(uMQ15T05MUrjUg2ToydDW3nX0e4i7VIp4OkrhpuLxPfwnRLkpr43QNEDJiERvoDC6bp7A5PHfraJwwvrzMwlo6xCEG+wk2wzpDA3FGQbNzNRTtvocNpzpuL0jrH8GQsWP1ARnOzuNFRQGV5GYjqUhsq3MS6D4XYONZa1HerRkkA=)
   jpa:
     show-sql: false
     hibernate:
@@ -14,9 +11,5 @@ spring:
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
 logging:
   config: classpath:logback/logback-dev.xml
-  save-path: /var/log
+  save-path: ./logs
   file-name: bookwhale-dev
-  error-file-name: bookwhale-dev-ERROR
-  slack:
-    webhook:
-      url: ENC(ioP3KNC/rHu1pwN7yPTJv05g8M7FQuljnIAJ1Lj1heZuJeyS24Qt7vQBJPzvAa/aWE0Ma6kaW5dqYSUgsXih1MsqUCWMPxV38N7pqMaeSjIFYSuK0IfJ3k7e8wF3gZ4J)
