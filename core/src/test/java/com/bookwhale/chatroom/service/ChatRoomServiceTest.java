@@ -22,6 +22,7 @@ import com.bookwhale.chatroom.dto.ChatRoomResponse;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.message.domain.MessageRepository;
+import com.bookwhale.push.dto.PushMessageParams;
 import com.bookwhale.push.service.PushService;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.service.UserService;
@@ -116,7 +117,9 @@ public class ChatRoomServiceTest {
         verify(userService).findByUserId(any());
         verify(articleRepository).findById(any());
         verify(chatRoomRepository).save(any());
-        verify(pushService, times(2)).sendMessageTo(any(String.class), any(String.class), any(String.class));
+//        verify(pushService, times(2)).sendMessageTo(any(PushMessageParams.class));
+        verify(pushService).sendMessageFromFCM(any(PushMessageParams.class));
+        verify(pushService).sendMessageTo(any(PushMessageParams.class));
     }
 
     @DisplayName("채팅방을 생성할 때 게시글 상태가 판매완료이면 예외가 발생한다.")
