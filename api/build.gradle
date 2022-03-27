@@ -23,7 +23,12 @@ dependencies {
     implementation project(path: ':core', configuration: 'default')
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
     testImplementation group: 'io.rest-assured', name: 'rest-assured', version: '4.3.3'
-    asciidoctorExtensions "org.springframework.restdocs:spring-restdocs-asciidoctor"
+    asciidoctorExtensions "org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.6.RELEASE"
+    constraints {
+        implementation('org.ysb33r.gradle:grolifant:0.16.2') {
+            because 'Could not resolve org.ysb33r.gradle:grolifant:0.16.1'
+        }
+    }
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
     testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'
 }
