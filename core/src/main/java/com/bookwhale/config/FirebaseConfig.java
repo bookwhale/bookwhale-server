@@ -64,6 +64,6 @@ public class FirebaseConfig {
         } catch (IOException e) {
             log.error("Credential can not created.", e);
         }
-        return new FireBaseAccess(serviceAccountCredentials, apiUrl);
+        return new FireBaseAccess(serviceAccountCredentials, projectId, apiUrl);
     }
 }
