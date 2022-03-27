@@ -62,6 +62,7 @@ public class ChatRoomControllerTest extends CommonApiTest {
             .opponentIdentity("highright96")
             .opponentProfile("profile")
             .isOpponentDelete(false)
+            .lastContent("안녕하세요.")
             .build();
 
         when(chatRoomService.findChatRooms(any())).thenReturn(of(response));

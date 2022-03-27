@@ -17,10 +17,13 @@ public class ChatRoomResponse {
     private String opponentIdentity;
     private String opponentProfile;
     private boolean isOpponentDelete;
+    private String lastContent;
 
     @Builder
-    public ChatRoomResponse(Long roomId, Long articleId, String articleTitle, String articleImage,
-        String opponentIdentity, String opponentProfile, boolean isOpponentDelete) {
+    public ChatRoomResponse(Long roomId, Long articleId, String articleTitle,
+        String articleImage, String opponentIdentity, String opponentProfile,
+        boolean isOpponentDelete,
+        String lastContent) {
         this.roomId = roomId;
         this.articleId = articleId;
         this.articleTitle = articleTitle;
@@ -28,10 +31,11 @@ public class ChatRoomResponse {
         this.opponentIdentity = opponentIdentity;
         this.opponentProfile = opponentProfile;
         this.isOpponentDelete = isOpponentDelete;
+        this.lastContent = lastContent;
     }
 
     public static ChatRoomResponse of(ChatRoom chatRoom, Opponent opponent,
-        boolean isOpponentDelete) {
+        boolean isOpponentDelete, String lastContent) {
         return ChatRoomResponse.builder()
             .roomId(chatRoom.getId())
             .articleId(chatRoom.getArticle().getId())
@@ -40,6 +44,7 @@ public class ChatRoomResponse {
             .opponentIdentity(opponent.getIdentity())
             .opponentProfile(opponent.getProfile())
             .isOpponentDelete(isOpponentDelete)
+            .lastContent(lastContent)
             .build();
     }
 }
