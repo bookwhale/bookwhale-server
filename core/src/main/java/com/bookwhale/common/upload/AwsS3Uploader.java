@@ -30,6 +30,7 @@ public class AwsS3Uploader extends FileUploader {
     public String uploadFile(MultipartFile multipartFile) {
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentType(multipartFile.getContentType());
+        objectMetadata.setContentLength(multipartFile.getSize());
         String uploadFileName = createUploadFileName(multipartFile.getOriginalFilename());
         try {
             amazonS3.putObject(

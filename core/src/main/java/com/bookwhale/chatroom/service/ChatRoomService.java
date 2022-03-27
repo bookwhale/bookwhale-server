@@ -10,6 +10,8 @@ import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.message.domain.Message;
 import com.bookwhale.message.domain.MessageRepository;
+import com.bookwhale.push.dto.PushMessageParams;
+import com.bookwhale.push.dto.PushMessageParams.PushMessageParamsBuilder;
 import com.bookwhale.push.service.PushService;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.service.UserService;
@@ -39,14 +41,18 @@ public class ChatRoomService {
         article.validateArticleStatus();
         chatRoomRepository.save(ChatRoom.create(article, loginUser, seller));
 
+        PushMessageParamsBuilder createChatRoomPushMessage = PushMessageParams.builder()
+            .title("채팅방 생성 알림")
+            .body(String.format("채팅방이 생성되었습니다. / 판매글 : %s", article.getTitle()));
+
         try {
-            pushService.sendMessageTo(loginUser.getDeviceToken(),
-                "채팅방 생성 알림",
-                String.format("채팅방이 생성되었습니다. / 판매글 : %s", article.getTitle())
+            pushService.sendMessageTo(
+                createChatRoomPushMessage.targetToken(loginUser.getDeviceToken())
+                    .build()
             );
-            pushService.sendMessageTo(seller.getDeviceToken(),
-                "채팅방 생성 알림",
-                String.format("채팅방이 생성되었습니다. / 판매글 : %s", article.getTitle())
+            pushService.sendMessageFromFCM(
+                createChatRoomPushMessage.targetToken(seller.getDeviceToken())
+                    .build()
             );
         } catch (Exception e) {
             log.error("채팅방 생성 알림 동작에 오류가 발생하였습니다.", e);
