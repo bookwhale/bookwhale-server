@@ -47,10 +47,17 @@ public class UserService {
         userRepository.save(targetUser);
     }
 
+    public void updateUserDeviceToken(String userEmail, String deviceToken){
+        User targetUser = findUserByEmail(userEmail);
+        targetUser.updateUserDeviceToken(deviceToken);
+        userRepository.saveAndFlush(targetUser);
+    }
+
     public User findUserByEmail(String userEmail) {
         return userRepository.findByEmail(userEmail)
             .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
+
 
     public void withdrawalUser(User user) {
         String email = user.getEmail();
@@ -81,6 +88,7 @@ public class UserService {
         deleteImage(targetUser);
         userRepository.save(targetUser);
     }
+
 
     private void deleteImage(User user) {
         String image = user.getProfileImage();

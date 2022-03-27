@@ -64,8 +64,8 @@ public class OauthService {
         }
     }
 
-    @Transactional
-    public OAuthLoginResponse loginProcess(OAuthProviderType providerType, String accessCode) {
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public OAuthLoginResponse loginProcess(OAuthProviderType providerType, String accessCode, String deviceToken) {
         // step1 : provider로부터 사용자 정보 확인
         UserInfo loginUserInfo = OAuthObjectConverter.getUserInfoResponseFromProvider(
                 oAuthProviders,
@@ -79,12 +79,14 @@ public class OauthService {
             userService.createUser(loginUserInfo);
         }
 
+        String userEmail = loginUserInfo.getEmail();
+        userService.updateUserDeviceToken(userEmail, deviceToken);
+
         // step2-2 : api token 생성
         String createdApiToken = OAuthObjectConverter.createApiToken(apiToken, loginUserInfo);
 
         // step3 : 랜덤 문자열로 RefreshToken 생성
         String randomString = RandomUtils.createRandomString();
-        String userEmail = loginUserInfo.getEmail();
         String refreshToken = OAuthObjectConverter.createRefreshToken(apiToken, randomString,
             userEmail);
 
@@ -104,19 +106,20 @@ public class OauthService {
                 providerType, accessCode)
             .orElseThrow(() -> new CustomException(ErrorCode.INFORMATION_NOT_FOUND));
 
-        // step2 : 확인된 사용자 정보로 apiToken 생성
-        // step2-1 : 확인된 사용자 정보 저장
+        // step2 : 확인된 사용자 정보 저장
         boolean isCreatedUser = userService.checkUserExists(loginUserInfo);
         if (!isCreatedUser) {
             userService.createUser(loginUserInfo);
         }
+        String userEmail = loginUserInfo.getEmail();
 
-        // step2-2 : api token 생성
+
+        // step3 : 확인된 사용자 정보로 apiToken 생성
+        // step3-1 : api token 생성
         String createdApiToken = OAuthObjectConverter.createApiToken(apiToken, loginUserInfo);
 
-        // step3 : 랜덤 문자열로 RefreshToken 생성
+        // step3-2 : 랜덤 문자열로 RefreshToken 생성
         String randomString = RandomUtils.createRandomString();
-        String userEmail = loginUserInfo.getEmail();
         String refreshToken = OAuthObjectConverter.createRefreshToken(apiToken, randomString,
             userEmail);
 

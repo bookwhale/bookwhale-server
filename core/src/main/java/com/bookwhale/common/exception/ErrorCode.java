@@ -9,6 +9,7 @@ public enum ErrorCode {
     FAILED_TO_SEND_MAIL(500, "S_002", "메일 전송에 실패했습니다."),
     INTERNAL_NAVER_SERVER_ERROR(500, "S_003", "네이버 책 API 서버에 문제가 생겼습니다."),
     FAILED_CONVERT_XML(500, "S_004", "XML 파일을 변환하는 과정에서 문제가 발생했습니다."),
+    FAILED_CONVERT_TO_JSON(500, "S_005", "JSON 형식으로 변환하는 과정에서 문제가 발생했습니다."),
 
     USER_ACCESS_DENIED(401, "AU_001", "해당 콘텐츠에 접근 권한이 없는 유저입니다."),
     UNAUTHORIZED_REDIRECT_URI(400, "AU_002", "인증되지 않은 REDIRECT_URI 입니다."),

@@ -53,11 +53,12 @@ class OAuthControllerTest extends CommonApiTest {
     void oAuthLoginProcessWithAccessToken() throws Exception {
         var response = new OAuthLoginResponse("apiToken", "refreshToken");
 
-        when(oauthService.loginProcess(any(), any(String.class))).thenReturn(response);
+        when(oauthService.loginProcess(any(), any(String.class), any(String.class))).thenReturn(response);
 
         mockMvc.perform(
                 RestDocumentationRequestBuilders.get("/api/oauth/{providerType}/login", "naver")
                     .param("code", "accessToken")
+                    .param("device", "deviceToken")
             )
             .andExpect(status().isOk())
             .andDo(print())

@@ -10,15 +10,17 @@ import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.message.domain.Message;
 import com.bookwhale.message.domain.MessageRepository;
+import com.bookwhale.push.service.PushService;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.service.UserService;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -26,8 +28,9 @@ public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
     private final ArticleRepository articleRepository;
-    private final UserService userService;
     private final MessageRepository messageRepository;
+    private final UserService userService;
+    private final PushService pushService;
 
     public void createChatRoom(User user, ChatRoomCreateRequest request) {
         User loginUser = userService.findUserByEmail(user.getEmail());
@@ -35,6 +38,20 @@ public class ChatRoomService {
         Article article = getArticleByArticleId(request.getArticleId());
         article.validateArticleStatus();
         chatRoomRepository.save(ChatRoom.create(article, loginUser, seller));
+
+        try {
+            pushService.sendMessageTo(loginUser.getDeviceToken(),
+                "채팅방 생성 알림",
+                String.format("채팅방이 생성되었습니다. / 판매글 : %s", article.getTitle())
+            );
+            pushService.sendMessageTo(seller.getDeviceToken(),
+                "채팅방 생성 알림",
+                String.format("채팅방이 생성되었습니다. / 판매글 : %s", article.getTitle())
+            );
+        } catch (Exception e) {
+            log.error("채팅방 생성 알림 동작에 오류가 발생하였습니다.", e);
+        }
+
     }
 
     public User getSellerUser(Long sellerId) {

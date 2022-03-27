@@ -41,7 +41,8 @@ public class OAuthDocumentation {
             preprocessResponse(prettyPrint()), pathParameters(
                 parameterWithName("providerType").description("OAuth 로그인 기능 공급자 (GOOGLE, NAVER)")),
             requestParameters(
-                parameterWithName("code").description("provider로 부터 전달받은 accessToken")
+                parameterWithName("code").description("provider로 부터 전달받은 accessToken"),
+                parameterWithName("device").description("로그인을 요청한 기기의 토큰값").optional()
                 ),
             responseFields(getTokenResponseFieldDescriptor()));
     }

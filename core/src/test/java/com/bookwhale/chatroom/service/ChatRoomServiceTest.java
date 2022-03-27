@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -20,8 +21,8 @@ import com.bookwhale.chatroom.dto.ChatRoomCreateRequest;
 import com.bookwhale.chatroom.dto.ChatRoomResponse;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
-import com.bookwhale.message.domain.Message;
 import com.bookwhale.message.domain.MessageRepository;
+import com.bookwhale.push.service.PushService;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.service.UserService;
 import java.util.List;
@@ -48,6 +49,8 @@ public class ChatRoomServiceTest {
     @Mock
     private UserService userService;
 
+    @Mock
+    private PushService pushService;
 
     ChatRoomService chatRoomService;
 
@@ -59,19 +62,20 @@ public class ChatRoomServiceTest {
 
     @BeforeEach
     void setUp() {
-        chatRoomService = new ChatRoomService(chatRoomRepository, articleRepository,
-            userService, messageRepository);
-
+        chatRoomService = new ChatRoomService(chatRoomRepository, articleRepository, messageRepository,
+            userService, pushService);
         buyer = User.builder()
             .id(1L)
             .nickname("남상우")
             .email("highright96@email.com")
+            .deviceToken("testDeviceToken1")
             .build();
 
         seller = User.builder()
             .id(2L)
             .nickname("hose12")
             .email("hose12@email.com")
+            .deviceToken("testDeviceToken2")
             .build();
 
         article = Article.create(seller,
@@ -94,9 +98,9 @@ public class ChatRoomServiceTest {
         );
     }
 
-    @DisplayName("거래 요청 메일을 보낸 후 채팅방을 생성한다.")
+    @DisplayName("채팅방을 생성하고 판매자와 구매(요청)자에게 push를 보낸다.")
     @Test
-    void createArticle() {
+    void createArticle() throws Exception {
         ChatRoom chatRoom = ChatRoom.create(article, buyer, seller);
 
         when(userService.findUserByEmail(any(String.class)))
@@ -112,6 +116,7 @@ public class ChatRoomServiceTest {
         verify(userService).findByUserId(any());
         verify(articleRepository).findById(any());
         verify(chatRoomRepository).save(any());
+        verify(pushService, times(2)).sendMessageTo(any(String.class), any(String.class), any(String.class));
     }
 
     @DisplayName("채팅방을 생성할 때 게시글 상태가 판매완료이면 예외가 발생한다.")

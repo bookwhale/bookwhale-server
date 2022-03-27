@@ -65,6 +65,15 @@ API를 호출할 때 예외를 던지는 경우에 사용되는 코드이다.
 "code": "S_004",
 "errors": null
 } ```
+
+| `S_005`
+| JSON 형식으로 변환하는 과정에서의 오류 발생 시
+| ```{
+"status": 500,
+"message": "JSON 형식으로 변환하는 과정에서 문제가 발생했습니다.",
+"code": "S_005",
+"errors": null
+} ```
 |===
 
 === Status 400
@@ -268,7 +277,7 @@ operation::oauth/loginProcessAfterRedirct[snippets='http-request,http-response,r
 === 1.1.2 로그인 (provider의 accessToken으로 요청 시)
 - accessToken으로 api token 생성 요청
 
-operation::oauth/loginProcess[snippets='http-request,http-response,response-fields']
+operation::oauth/loginProcess[snippets='http-request,path-parameters,request-parameters,http-response,response-fields']
 
 === 1.2 토큰 갱신 (refresh)
 
