@@ -27,6 +27,11 @@ dependencies {
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
     testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'
     asciidoctorExtensions "org.springframework.restdocs:spring-restdocs-asciidoctor"
+    constraints {
+        implementation('org.ysb33r.gradle:grolifant:0.16.2') {
+            because 'Could not resolve org.ysb33r.gradle:grolifant:0.16.1'
+        }
+    }
 }
 
 test {
