@@ -7,19 +7,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
-import java.util.List;
+import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.ClassPathResource;
 
 @Slf4j
 public class FireBaseAccess {
 
-    private final String firebaseConfigPath;
+    private final GoogleCredentials googleCredentials;
     private final String apiUrl;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public FireBaseAccess(String firebaseConfigPath, String apiUrl) {
-        this.firebaseConfigPath = firebaseConfigPath;
+    public FireBaseAccess(GoogleCredentials googleCredentials, String apiUrl) {
+        this.googleCredentials = googleCredentials;
         this.apiUrl = apiUrl;
     }
 
@@ -27,13 +26,13 @@ public class FireBaseAccess {
         return apiUrl;
     }
 
-    public String getAccessToken() throws Exception {
-        GoogleCredentials googleCredentials = GoogleCredentials.fromStream(
-                new ClassPathResource(firebaseConfigPath).getInputStream())
-            .createScoped(List.of("https://www.googleapis.com/auth/cloud-platform"));
-
+    public String getAccessToken(){
         // accessToken 생성
-        googleCredentials.refreshIfExpired();
+        try {
+            googleCredentials.refreshIfExpired();
+        } catch (IOException e) {
+            log.error("googleCredential refresh failed.", e);
+        }
 
         // GoogleCredential의 getAccessToken으로 토큰 받아온 뒤, getTokenValue로 최종적으로 받음
         // REST API로 FCM에 push 요청 보낼 때 Header에 설정하여 인증을 위해 사용

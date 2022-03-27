@@ -2,6 +2,7 @@ package com.bookwhale.push.service;
 
 import com.bookwhale.push.domain.FireBaseAccess;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -10,13 +11,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-public class FirebaseCloudMessageService {
+public class PushService {
 
     private final FireBaseAccess fireBaseAccess;
 
-    public ResponseEntity<String> sendMessageTo(String targetToken, String title, String body) throws Exception {
+    public void sendMessageTo(String targetToken, String title, String body) throws Exception {
         RestTemplate restTemplate = new RestTemplate();
         String message = fireBaseAccess.makeMessage(targetToken, title, body);
         HttpHeaders requestHeader = new HttpHeaders();
@@ -25,7 +27,10 @@ public class FirebaseCloudMessageService {
 
         HttpEntity<String> requestEntity = new HttpEntity<>(message, requestHeader);
 
-        return restTemplate.exchange(fireBaseAccess.getApiUrl(), HttpMethod.POST, requestEntity,
+        ResponseEntity<String> response = restTemplate.exchange(fireBaseAccess.getApiUrl(),
+            HttpMethod.POST, requestEntity,
             String.class);
+
+        log.info("push 알림 확인 : {}", response.getStatusCode());
     }
 }

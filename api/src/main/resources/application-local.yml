@@ -11,6 +11,3 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
 logging:
   config: classpath:logback/logback-local.xml
-firebase:
-  path: ENC(kFl4rysM0Dj4BxzIBZoNGWSRnr+rdVTBxmN+s5CQe43BrUz5e8VnOSjBKBZR9SeLWehjtt666XQMESsHS5aTW/ytiAAcpcV1)
-  url: ENC(A8OdtmA6hgR/rbwGRVr4tE4m86fn0m0l2IX3DgNnjyaMujdRx6PXYeBtKzNWYYmgfPyKJqVt3KIpNge9uS4NWbFm/kfzD2YIKL6JprYlo3A=)
