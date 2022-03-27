@@ -8,12 +8,13 @@ import com.bookwhale.chatroom.dto.ChatRoomCreateRequest;
 import com.bookwhale.chatroom.dto.ChatRoomResponse;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
+import com.bookwhale.message.domain.Message;
+import com.bookwhale.message.domain.MessageRepository;
 import com.bookwhale.push.service.PushService;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.service.UserService;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
     private final ArticleRepository articleRepository;
+    private final MessageRepository messageRepository;
     private final UserService userService;
     private final PushService pushService;
 

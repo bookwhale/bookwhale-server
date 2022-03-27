@@ -21,6 +21,7 @@ import com.bookwhale.chatroom.dto.ChatRoomCreateRequest;
 import com.bookwhale.chatroom.dto.ChatRoomResponse;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
+import com.bookwhale.message.domain.MessageRepository;
 import com.bookwhale.push.service.PushService;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.service.UserService;
@@ -61,9 +62,8 @@ public class ChatRoomServiceTest {
 
     @BeforeEach
     void setUp() {
-        chatRoomService = new ChatRoomService(chatRoomRepository, articleRepository,
+        chatRoomService = new ChatRoomService(chatRoomRepository, articleRepository, messageRepository,
             userService, pushService);
-
         buyer = User.builder()
             .id(1L)
             .nickname("남상우")
