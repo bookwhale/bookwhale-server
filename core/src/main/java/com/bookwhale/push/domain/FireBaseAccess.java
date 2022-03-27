@@ -24,16 +24,19 @@ public class FireBaseAccess {
     public FireBaseAccess(GoogleCredentials googleCredentials, String apiUrl) {
         this.googleCredentials = googleCredentials;
         this.apiUrl = apiUrl;
+        this.firebaseApp = null;
+    }
 
-        if (googleCredentials != null) {
-            FirebaseOptions options = FirebaseOptions.builder()
-                .setCredentials(this.googleCredentials)
-                .build();
+    public FireBaseAccess(GoogleCredentials googleCredentials, String projectId,
+        String apiUrl) {
+        this.googleCredentials = googleCredentials;
+        this.apiUrl = apiUrl;
+        FirebaseOptions options = FirebaseOptions.builder()
+            .setCredentials(googleCredentials)
+            .setProjectId(projectId)
+            .build();
 
-            this.firebaseApp = FirebaseApp.initializeApp(options);
-        } else {
-            this.firebaseApp = null;
-        }
+        this.firebaseApp = FirebaseApp.initializeApp(options);
     }
 
     public FirebaseApp getFirebaseApp() {
@@ -44,7 +47,7 @@ public class FireBaseAccess {
         return apiUrl;
     }
 
-    public String getAccessToken(){
+    public String getAccessToken() {
         // accessToken 생성
         try {
             googleCredentials.refreshIfExpired();
