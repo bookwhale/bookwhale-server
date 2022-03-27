@@ -117,9 +117,7 @@ public class ChatRoomServiceTest {
         verify(userService).findByUserId(any());
         verify(articleRepository).findById(any());
         verify(chatRoomRepository).save(any());
-//        verify(pushService, times(2)).sendMessageTo(any(PushMessageParams.class));
-        verify(pushService).sendMessageFromFCM(any(PushMessageParams.class));
-        verify(pushService).sendMessageTo(any(PushMessageParams.class));
+        verify(pushService, times(2)).sendMessageFromFCM(any(PushMessageParams.class));
     }
 
     @DisplayName("채팅방을 생성할 때 게시글 상태가 판매완료이면 예외가 발생한다.")
