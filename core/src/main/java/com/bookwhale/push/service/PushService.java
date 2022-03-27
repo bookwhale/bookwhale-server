@@ -31,6 +31,8 @@ public class PushService {
             HttpMethod.POST, requestEntity,
             String.class);
 
-        log.info("push 알림 확인 : {}", response.getStatusCode());
+        if (!response.getStatusCode().is2xxSuccessful()) {
+            log.error("send push Message failed. / device : {}", targetToken);
+        }
     }
 }
