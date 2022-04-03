@@ -11,6 +11,7 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import java.io.IOException;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -61,18 +62,28 @@ public class FireBaseAccess {
     }
 
     public Message makeMessage(String targetToken, String title, String body) {
+        return makeMessage(targetToken, title, body, null);
+    }
+
+    public Message makeMessage(String targetToken, String title, String body, Map<String ,String> dataMap) {
         Notification notification = Notification.builder()
             .setTitle(title)
             .setBody(body)
             .build();
 
-        return Message.builder()
+        Message generatedMessage = Message.builder()
             .setToken(targetToken)
             .setNotification(notification)
+            .putAllData(dataMap)
             .build();
+        return generatedMessage;
     }
 
     public String makeMessageJson(String targetToken, String title, String body) {
+        return makeMessageJson(targetToken, title, body, null);
+    }
+
+    public String makeMessageJson(String targetToken, String title, String body, Map<String ,String> dataMap) {
         FirebaseCloudMessage fcm = FirebaseCloudMessage.builder()
             .message(
                 FirebaseCloudMessage.Message.builder()
@@ -84,6 +95,7 @@ public class FireBaseAccess {
                             .image(null)
                             .build()
                     )
+                    .data(dataMap)
                     .build()
             ).build();
 

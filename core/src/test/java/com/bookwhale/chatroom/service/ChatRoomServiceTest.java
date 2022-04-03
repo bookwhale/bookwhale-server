@@ -23,10 +23,11 @@ import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.message.domain.MessageRepository;
 import com.bookwhale.push.dto.PushMessageParams;
-import com.bookwhale.push.service.PushService;
+import com.bookwhale.push.service.PushProcessor;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.service.UserService;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -51,7 +52,7 @@ public class ChatRoomServiceTest {
     private UserService userService;
 
     @Mock
-    private PushService pushService;
+    private PushProcessor pushProcessor;
 
     ChatRoomService chatRoomService;
 
@@ -64,7 +65,7 @@ public class ChatRoomServiceTest {
     @BeforeEach
     void setUp() {
         chatRoomService = new ChatRoomService(chatRoomRepository, articleRepository, messageRepository,
-            userService, pushService);
+            userService, pushProcessor);
         buyer = User.builder()
             .id(1L)
             .nickname("남상우")
@@ -109,15 +110,15 @@ public class ChatRoomServiceTest {
         when(userService.findByUserId(any()))
             .thenReturn(of(seller));
         when(articleRepository.findById(any())).thenReturn(of(article));
-        when(chatRoomRepository.save(any())).thenReturn(chatRoom);
+        when(chatRoomRepository.saveAndFlush(any())).thenReturn(chatRoom.getDummyChatRoom());
 
         chatRoomService.createChatRoom(buyer,
             ChatRoomCreateRequest.builder().sellerId(1L).articleId(1L).build());
 
         verify(userService).findByUserId(any());
         verify(articleRepository).findById(any());
-        verify(chatRoomRepository).save(any());
-        verify(pushService, times(2)).sendMessageFromFCM(any(PushMessageParams.class));
+        verify(chatRoomRepository).saveAndFlush(any());
+        verify(pushProcessor).pushMessageOfCreatedChatRoom(any(User.class), any(User.class), any(Article.class), any(ChatRoom.class));
     }
 
     @DisplayName("채팅방을 생성할 때 게시글 상태가 판매완료이면 예외가 발생한다.")

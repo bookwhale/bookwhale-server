@@ -10,9 +10,7 @@ import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.message.domain.Message;
 import com.bookwhale.message.domain.MessageRepository;
-import com.bookwhale.push.dto.PushMessageParams;
-import com.bookwhale.push.dto.PushMessageParams.PushMessageParamsBuilder;
-import com.bookwhale.push.service.PushService;
+import com.bookwhale.push.service.PushProcessor;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.service.UserService;
 import java.util.ArrayList;
@@ -32,32 +30,17 @@ public class ChatRoomService {
     private final ArticleRepository articleRepository;
     private final MessageRepository messageRepository;
     private final UserService userService;
-    private final PushService pushService;
+    private final PushProcessor pushProcessor;
 
     public void createChatRoom(User user, ChatRoomCreateRequest request) {
         User loginUser = userService.findUserByEmail(user.getEmail());
         User seller = getSellerUser(request.getSellerId());
         Article article = getArticleByArticleId(request.getArticleId());
         article.validateArticleStatus();
-        chatRoomRepository.save(ChatRoom.create(article, loginUser, seller));
+        ChatRoom chatRoom = ChatRoom.create(article, loginUser, seller);
+        ChatRoom savedChatRoom = chatRoomRepository.saveAndFlush(chatRoom);
 
-        PushMessageParamsBuilder createChatRoomPushMessage = PushMessageParams.builder()
-            .title("채팅방 생성 알림")
-            .body(String.format("채팅방이 생성되었습니다. / 판매글 : %s", article.getTitle()));
-
-        try {
-            pushService.sendMessageFromFCM(
-                createChatRoomPushMessage.targetToken(loginUser.getDeviceToken())
-                    .build()
-            );
-            pushService.sendMessageFromFCM(
-                createChatRoomPushMessage.targetToken(seller.getDeviceToken())
-                    .build()
-            );
-        } catch (Exception e) {
-            log.error("채팅방 생성 알림 동작에 오류가 발생하였습니다.", e);
-        }
-
+        pushProcessor.pushMessageOfCreatedChatRoom(loginUser, seller, article, savedChatRoom);
     }
 
     public User getSellerUser(Long sellerId) {
@@ -106,5 +89,9 @@ public class ChatRoomService {
     public ChatRoom validateRoomIdAndGetRoom(Long roomId) {
         return chatRoomRepository.findById(roomId)
             .orElseThrow(() -> new CustomException(ErrorCode.INVALID_CHATROOM_ID));
+    }
+
+    public void pushMessageFromChatRoom(Message message){
+        pushProcessor.pushMessageOfChatMessage(message);
     }
 }
