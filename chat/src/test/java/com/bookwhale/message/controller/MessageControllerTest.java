@@ -12,6 +12,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.requestP
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.bookwhale.chatroom.service.ChatRoomService;
 import com.bookwhale.common.dto.Pagination;
 import com.bookwhale.message.dto.MessageResponse;
 import com.bookwhale.message.service.MessageService;
@@ -53,6 +54,9 @@ public class MessageControllerTest {
 
     @MockBean
     protected MessageService messageService;
+
+    @MockBean
+    protected ChatRoomService chatRoomService;
 
     @MockBean
     protected SimpMessagingTemplate messagingTemplate;
