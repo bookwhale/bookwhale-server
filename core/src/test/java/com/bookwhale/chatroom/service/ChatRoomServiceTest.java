@@ -26,7 +26,9 @@ import com.bookwhale.push.dto.PushMessageParams;
 import com.bookwhale.push.service.PushService;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.service.UserService;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -117,7 +119,7 @@ public class ChatRoomServiceTest {
         verify(userService).findByUserId(any());
         verify(articleRepository).findById(any());
         verify(chatRoomRepository).save(any());
-        verify(pushService, times(2)).sendMessageFromFCM(any(PushMessageParams.class));
+        verify(pushService, times(2)).sendMessageFromFCM(any(PushMessageParams.class), any(Map.class));
     }
 
     @DisplayName("채팅방을 생성할 때 게시글 상태가 판매완료이면 예외가 발생한다.")

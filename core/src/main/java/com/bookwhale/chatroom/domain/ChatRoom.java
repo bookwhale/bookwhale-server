@@ -55,6 +55,10 @@ public class ChatRoom {
         this.isSellerDelete = isSellerDelete;
     }
 
+    public Long getId() {
+        return id == null ? 0 : id;
+    }
+
     public static ChatRoom create(Article article, User buyer, User seller) {
         return new ChatRoom(article, buyer, seller, false, false);
     }

@@ -68,6 +68,7 @@ public class AcceptanceTest {
         User user = User.builder()
             .nickname("남상우")
             .email("highright96@gmail.com")
+            .deviceToken("ft5MAjqSQ1OKaKxDKZ4OHX:APA91bE6almRHgPc6nnn8Xv7i0tmL2x6WJpWiSwrxbizO9o2GRy22tppT9cEepM6_jAt3jMkNF9vq9rbHciqCokXXBKtsvJqKKBW3H7P_TT8_KTYfFLEAwPHmr-uFKCDXCROpNmKXm5m")
             .build();
         userRepository.save(user);
         return user;
@@ -77,6 +78,7 @@ public class AcceptanceTest {
         User user = User.builder()
             .nickname("hose12")
             .email("hose12@email.com")
+            .deviceToken("ft5MAjqSQ1OKaKxDKZ4OHX:APA91bE6almRHgPc6nnn8Xv7i0tmL2x6WJpWiSwrxbizO9o2GRy22tppT9cEepM6_jAt3jMkNF9vq9rbHciqCokXXBKtsvJqKKBW3H7P_TT8_KTYfFLEAwPHmr-uFKCDXCROpNmKXm5m")
             .build();
         userRepository.save(user);
         return user;

@@ -16,11 +16,14 @@ import com.bookwhale.push.service.PushService;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.service.UserService;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.MultiValueMap;
 
 @Slf4j
 @Service
@@ -39,20 +42,26 @@ public class ChatRoomService {
         User seller = getSellerUser(request.getSellerId());
         Article article = getArticleByArticleId(request.getArticleId());
         article.validateArticleStatus();
-        chatRoomRepository.save(ChatRoom.create(article, loginUser, seller));
+        ChatRoom chatRoom = ChatRoom.create(article, loginUser, seller);
+        chatRoomRepository.save(chatRoom);
 
+        String message = String.format("채팅방이 생성되었습니다. / 판매글 : %s", article.getTitle());
         PushMessageParamsBuilder createChatRoomPushMessage = PushMessageParams.builder()
             .title("채팅방 생성 알림")
-            .body(String.format("채팅방이 생성되었습니다. / 판매글 : %s", article.getTitle()));
+            .body(message);
+
+        Map<String, String> dataMap = new HashMap<>();
+        dataMap.put("message ", message);
+        dataMap.put("roomId", chatRoom.getId().toString());
 
         try {
             pushService.sendMessageFromFCM(
                 createChatRoomPushMessage.targetToken(loginUser.getDeviceToken())
-                    .build()
+                    .build(), dataMap
             );
             pushService.sendMessageFromFCM(
                 createChatRoomPushMessage.targetToken(seller.getDeviceToken())
-                    .build()
+                    .build(), dataMap
             );
         } catch (Exception e) {
             log.error("채팅방 생성 알림 동작에 오류가 발생하였습니다.", e);
