@@ -48,15 +48,18 @@ public class ChatRoom {
 
     private ChatRoom(Article article, User buyer, User seller, boolean isBuyerDelete,
         boolean isSellerDelete) {
+        this(null, article, buyer, seller, isBuyerDelete, isSellerDelete, LocalDateTime.now());
+    }
+
+    private ChatRoom(Long id, Article article, User buyer, User seller, boolean isBuyerDelete,
+        boolean isSellerDelete, LocalDateTime createdDate) {
+        this.id = id;
         this.article = article;
         this.buyer = buyer;
         this.seller = seller;
         this.isBuyerDelete = isBuyerDelete;
         this.isSellerDelete = isSellerDelete;
-    }
-
-    public Long getId() {
-        return id == null ? 0 : id;
+        this.createdDate = createdDate;
     }
 
     public static ChatRoom create(Article article, User buyer, User seller) {
@@ -104,6 +107,10 @@ public class ChatRoom {
             return new Opponent(this.seller.getNickname(), this.seller.getProfileImage());
         }
         return new Opponent(this.buyer.getNickname(), this.buyer.getProfileImage());
+    }
+
+    public ChatRoom getDummyChatRoom(){
+        return new ChatRoom(0L, article, buyer, seller, isSellerDelete, isSellerDelete, null);
     }
 }
 

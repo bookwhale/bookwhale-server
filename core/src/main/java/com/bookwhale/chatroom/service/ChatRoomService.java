@@ -23,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.MultiValueMap;
 
 @Slf4j
 @Service
@@ -43,7 +42,7 @@ public class ChatRoomService {
         Article article = getArticleByArticleId(request.getArticleId());
         article.validateArticleStatus();
         ChatRoom chatRoom = ChatRoom.create(article, loginUser, seller);
-        chatRoomRepository.save(chatRoom);
+        ChatRoom savedChatRoom = chatRoomRepository.saveAndFlush(chatRoom);
 
         String message = String.format("채팅방이 생성되었습니다. / 판매글 : %s", article.getTitle());
         PushMessageParamsBuilder createChatRoomPushMessage = PushMessageParams.builder()
@@ -52,7 +51,7 @@ public class ChatRoomService {
 
         Map<String, String> dataMap = new HashMap<>();
         dataMap.put("message ", message);
-        dataMap.put("roomId", chatRoom.getId().toString());
+        dataMap.put("roomId", savedChatRoom.getId().toString());
 
         try {
             pushService.sendMessageFromFCM(

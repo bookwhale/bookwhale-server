@@ -111,7 +111,7 @@ public class ChatRoomServiceTest {
         when(userService.findByUserId(any()))
             .thenReturn(of(seller));
         when(articleRepository.findById(any())).thenReturn(of(article));
-        when(chatRoomRepository.save(any())).thenReturn(chatRoom);
+        when(chatRoomRepository.saveAndFlush(any())).thenReturn(chatRoom.getDummyChatRoom());
 
         chatRoomService.createChatRoom(buyer,
             ChatRoomCreateRequest.builder().sellerId(1L).articleId(1L).build());
