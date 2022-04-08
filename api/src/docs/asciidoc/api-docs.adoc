@@ -378,6 +378,21 @@ operation::chatRoom/createChatRoom[snippets='http-request,request-headers,reques
 operation::chatRoom/findChatRooms[snippets='http-request,request-headers,http-response,response-fields']
 
 === 4.3 채팅방 삭제
+* websocket 세션이 종료(close)되도록 요청 후 채팅방 삭제를 요청합니다.
+** websocket 종료에 대한 정보는 아래 링크들을 참조해주세요.
+*** https://stomp.github.io/stomp-specification-1.2.html#DISCONNECT
+*** https://stackoverflow.com/questions/4812686/closing-websocket-correctly-html5-javascript
+
+* 최신 브라우저의 경우 브라우저 종료 시 세션이 종료되도록 설정되는 것으로 보입니다.
+** https://developer.mozilla.org/ko/docs/web/api/websockets_api/writing_websocket_client_applications
+
+* StompProtocolAndroid 에서는 아래와 같이 세션을 종료할 수 있습니다.
+** https://github.com/NaikSoftware/StompProtocolAndroid#example-library-usage
+----
+    mStompClient.disconnect();
+----
+
+
 
 operation::chatRoom/deleteChatRoom[snippets='http-request,request-headers,path-parameters,http-response']
 
