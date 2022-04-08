@@ -38,9 +38,7 @@ public class ChatRoomService {
         Article article = getArticleByArticleId(request.getArticleId());
         article.validateArticleStatus();
         ChatRoom chatRoom = ChatRoom.create(article, loginUser, seller);
-        ChatRoom savedChatRoom = chatRoomRepository.saveAndFlush(chatRoom);
-
-        pushProcessor.pushMessageOfCreatedChatRoom(loginUser, seller, article, savedChatRoom);
+        chatRoomRepository.saveAndFlush(chatRoom);
     }
 
     public User getSellerUser(Long sellerId) {
