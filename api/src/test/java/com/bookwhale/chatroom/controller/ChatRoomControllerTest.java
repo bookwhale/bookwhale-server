@@ -15,6 +15,7 @@ import com.bookwhale.chatroom.dto.ChatRoomCreateRequest;
 import com.bookwhale.chatroom.dto.ChatRoomResponse;
 import com.bookwhale.chatroom.service.ChatRoomService;
 import com.bookwhale.common.controller.CommonApiTest;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -61,8 +62,10 @@ public class ChatRoomControllerTest extends CommonApiTest {
             .articleImage("이미지")
             .opponentIdentity("highright96")
             .opponentProfile("profile")
+            .roomCreateAt(LocalDateTime.of(2022, 3, 9, 11, 12, 13))
             .isOpponentDelete(false)
             .lastContent("안녕하세요.")
+            .lastContentCreateAt(LocalDateTime.of(2022, 3, 19, 11, 12, 13))
             .build();
 
         when(chatRoomService.findChatRooms(any())).thenReturn(of(response));
