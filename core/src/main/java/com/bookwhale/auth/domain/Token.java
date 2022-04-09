@@ -1,6 +1,7 @@
 package com.bookwhale.auth.domain;
 
 import com.bookwhale.common.domain.BaseEntity;
+import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -28,10 +29,12 @@ public class Token extends BaseEntity {
     }
 
     public static Token create(String email, String tokenValue) {
-        return Token.builder()
+        Token token = Token.builder()
             .email(email)
             .tokenValue(tokenValue)
             .build();
+        token.setCreatedDate(LocalDateTime.now());
+        return token;
     }
 
     @Override
