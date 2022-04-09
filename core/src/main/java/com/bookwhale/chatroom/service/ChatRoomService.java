@@ -65,10 +65,10 @@ public class ChatRoomService {
         List<ChatRoomResponse> list = new ArrayList<>();
         for (ChatRoom room : rooms) {
             if (!room.isLoginUserDelete(loginUser)) {
-                Message lastMessage = messageRepository.findTopByRoomIdOrderByCreatedDateDesc(room.getId())
+                Message lastMessage = messageRepository.findTopByRoomIdOrderByCreatedDateDesc(
+                        room.getId())
                     .orElseGet(Message::createEmptyMessage);
-                ChatRoomResponse of = ChatRoomResponse.of(room, room.getOpponent(loginUser),
-                    room.isOpponentDelete(loginUser), lastMessage.getContent());
+                ChatRoomResponse of = ChatRoomResponse.of(room, lastMessage, loginUser);
                 list.add(of);
             }
         }
@@ -89,7 +89,7 @@ public class ChatRoomService {
             .orElseThrow(() -> new CustomException(ErrorCode.INVALID_CHATROOM_ID));
     }
 
-    public void pushMessageFromChatRoom(Message message){
+    public void pushMessageFromChatRoom(Message message) {
         pushProcessor.pushMessageOfChatMessage(message);
     }
 }
