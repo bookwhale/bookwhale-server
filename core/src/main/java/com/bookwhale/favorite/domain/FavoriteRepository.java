@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
 
-    @Query(value = "select i from Favorite i join fetch i.article where i.user = ?1")
+    @Query(value = "select i from Favorite i join fetch i.article where i.user = ?1 and i.article.activeYn = 'Y'")
     List<Favorite> findAllByUser(User user);
 
     boolean existsByUserAndArticle(User user, Article article);

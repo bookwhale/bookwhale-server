@@ -213,6 +213,18 @@ public class ArticleDocumentation {
         );
     }
 
+    public static RestDocumentationResultHandler deleteArticle() {
+        return document("article/deleteArticle",
+            preprocessRequest(prettyPrint()),
+            requestHeaders(
+                headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
+            ),
+            pathParameters(
+                parameterWithName("articleId").description("게시글 ID")
+            )
+        );
+    }
+
     public static RestDocumentationResultHandler getSearchConditions(String kindOfCondition) {
         String conditionFlag = StringUtils.isEmpty(kindOfCondition) ? "" : kindOfCondition;
         FieldDescriptor[] response = new FieldDescriptor[]{

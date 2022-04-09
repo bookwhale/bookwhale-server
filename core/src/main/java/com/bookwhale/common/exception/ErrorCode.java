@@ -24,7 +24,8 @@ public enum ErrorCode {
 
     INVALID_ARTICLE_ID(400, "A_001", "잘못된 게시글 ID 입니다."),
     NOT_EXIST_ARTICLE_ID(400, "A_002", "존재하지 않는 게시글 ID 입니다."),
-    INVALID_ARTICLE_STATUS(400, "A_003", "판매중인 게시글만 판매자에게 채팅을 보낼 수 있습니다."),
+    INVALID_ARTICLE_STATUS_FOR_CREATE_CHATROOM(400, "A_003", "판매중인 게시글만 판매자에게 채팅을 보낼 수 있습니다."),
+    INVALID_ARTICLE_STATUS_FOR_DELETE_ARTICLE(400, "A_004", "판매중인 게시글만 삭제할 수 있습니다."),
 
     INVALID_FAVORITE_ID(400, "I_001", "잘못된 관심목록 ID 입니다."),
     DUPLICATED_FAVORITE(400, "I_002", "이미 관심목록에 등록된 게시글입니다."),

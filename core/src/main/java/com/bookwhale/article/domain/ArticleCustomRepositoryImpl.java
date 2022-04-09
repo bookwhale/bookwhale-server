@@ -3,6 +3,8 @@ package com.bookwhale.article.domain;
 import static com.bookwhale.article.domain.QArticle.article;
 import static com.bookwhale.user.domain.QUser.user;
 
+import com.bookwhale.common.domain.ActiveYn;
+import com.bookwhale.user.domain.User;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
@@ -20,7 +22,8 @@ public class ArticleCustomRepositoryImpl implements ArticleCustomRepository {
     public Optional<Article> findArticleWithSellerById(Long id) {
         Article result = queryFactory.selectFrom(article)
             .leftJoin(article.seller, user).fetchJoin()
-            .where(article.id.eq(id))
+            .where(article.id.eq(id),
+                article.activeYn.eq(ActiveYn.Y))
             .fetchOne();
         return Optional.ofNullable(result);
     }
@@ -30,6 +33,7 @@ public class ArticleCustomRepositoryImpl implements ArticleCustomRepository {
         if (StringUtils.isBlank(search)) {
             return queryFactory
                 .selectFrom(article)
+                .where(article.activeYn.eq(ActiveYn.Y))
                 .orderBy(article.createdDate.desc())
                 .offset(page.getOffset())
                 .limit(page.getPageSize())
@@ -39,11 +43,22 @@ public class ArticleCustomRepositoryImpl implements ArticleCustomRepository {
             .selectFrom(article)
             .where(
                 bookTitleLike(search).or(articleTitleLike(search)).or(authorLike(search)),
-                article.articleStatus.eq(ArticleStatus.SALE)
+                article.articleStatus.eq(ArticleStatus.SALE),
+                article.activeYn.eq(ActiveYn.Y)
             )
             .orderBy(article.createdDate.desc())
             .offset(page.getOffset())
             .limit(page.getPageSize())
+            .fetch();
+    }
+
+    @Override
+    public List<Article> findAllBySeller(User user) {
+        return queryFactory
+            .selectFrom(article)
+            .where(article.seller.eq(user),
+                article.activeYn.eq(ActiveYn.Y))
+            .orderBy(article.createdDate.desc())
             .fetch();
     }
 
