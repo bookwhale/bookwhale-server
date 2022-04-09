@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -22,12 +21,10 @@ import com.bookwhale.chatroom.dto.ChatRoomResponse;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.message.domain.MessageRepository;
-import com.bookwhale.push.dto.PushMessageParams;
 import com.bookwhale.push.service.PushProcessor;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.service.UserService;
 import java.util.List;
-import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -134,7 +131,7 @@ public class ChatRoomServiceTest {
         assertThatThrownBy(() -> chatRoomService.createChatRoom(buyer,
             ChatRoomCreateRequest.builder().sellerId(1L).articleId(1L).build()))
             .isInstanceOf(CustomException.class)
-            .hasMessage(ErrorCode.INVALID_ARTICLE_STATUS.getMessage());
+            .hasMessage(ErrorCode.INVALID_ARTICLE_STATUS_FOR_CREATE_CHATROOM.getMessage());
     }
 
     @DisplayName("채팅방을 생성할 때 게시글 상태가 예약중이면 예외가 발생한다.")
@@ -151,7 +148,7 @@ public class ChatRoomServiceTest {
         assertThatThrownBy(() -> chatRoomService.createChatRoom(buyer,
             ChatRoomCreateRequest.builder().sellerId(1L).articleId(1L).build()))
             .isInstanceOf(CustomException.class)
-            .hasMessage(ErrorCode.INVALID_ARTICLE_STATUS.getMessage());
+            .hasMessage(ErrorCode.INVALID_ARTICLE_STATUS_FOR_CREATE_CHATROOM.getMessage());
     }
 
     /*

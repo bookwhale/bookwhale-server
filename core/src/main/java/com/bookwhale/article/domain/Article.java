@@ -3,6 +3,7 @@ package com.bookwhale.article.domain;
 import static com.bookwhale.article.domain.ArticleStatus.RESERVED;
 import static com.bookwhale.article.domain.ArticleStatus.SOLD_OUT;
 
+import com.bookwhale.common.domain.ActiveYn;
 import com.bookwhale.common.domain.BaseEntity;
 import com.bookwhale.common.domain.Location;
 import com.bookwhale.common.exception.CustomException;
@@ -67,12 +68,14 @@ public class Article extends BaseEntity {
     @Embedded
     private final Images images = Images.empty();
 
+    @Enumerated(EnumType.STRING)
+    private ActiveYn activeYn = ActiveYn.Y;
+
     @Builder
     public Article(Long id, User seller, String title, String price, String description,
-        ArticleStatus articleStatus,
-        BookStatus bookStatus, Location sellingLocation, Long favoriteCount, Long viewCount,
-        Long chatCount,
-        Book book) {
+        ArticleStatus articleStatus, BookStatus bookStatus,
+        Location sellingLocation, Long favoriteCount, Long viewCount, Long chatCount,
+        Book book, ActiveYn activeYn) {
         this.id = id;
         this.seller = seller;
         this.title = title;
@@ -85,6 +88,7 @@ public class Article extends BaseEntity {
         this.viewCount = viewCount == null ? 0L : viewCount;
         this.chatCount = chatCount == null ? 0L : chatCount;
         this.book = book;
+        this.activeYn = activeYn == null ? ActiveYn.Y : activeYn;
     }
 
     public Location getSellingLocation() {
@@ -104,6 +108,7 @@ public class Article extends BaseEntity {
             .favoriteCount(article.getFavoriteCount())
             .viewCount(article.getViewCount())
             .chatCount(article.getChatCount())
+            .activeYn(ActiveYn.Y)
             .build();
     }
 
@@ -121,18 +126,16 @@ public class Article extends BaseEntity {
         }
     }
 
+    public boolean validateIsNotSaleStatus(){
+        return !ArticleStatus.SALE.equals(this.articleStatus);
+    }
+
     public boolean isMyArticle(User loginUser) {
         return this.seller.getId().equals(loginUser.getId());
     }
 
     public void updateArticleStatus(String articleStatus) {
         this.articleStatus = ArticleStatus.valueOf(articleStatus);
-    }
-
-    public void validateArticleStatus() {
-        if (this.articleStatus.equals(RESERVED) || this.articleStatus.equals(SOLD_OUT)) {
-            throw new CustomException(ErrorCode.INVALID_ARTICLE_STATUS);
-        }
     }
 
     public void increaseOneViewCount(User loginUser) {
@@ -151,6 +154,10 @@ public class Article extends BaseEntity {
         if (this.favoriteCount > 0L) {
             this.favoriteCount -= 1L;
         }
+    }
+
+    public void setDeactivate(){
+        this.activeYn = ActiveYn.N;
     }
 
     @Override

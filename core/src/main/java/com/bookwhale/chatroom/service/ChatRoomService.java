@@ -36,7 +36,9 @@ public class ChatRoomService {
         User loginUser = userService.findUserByEmail(user.getEmail());
         User seller = getSellerUser(request.getSellerId());
         Article article = getArticleByArticleId(request.getArticleId());
-        article.validateArticleStatus();
+        if (article.validateIsNotSaleStatus()){
+            throw new CustomException(ErrorCode.INVALID_ARTICLE_STATUS_FOR_CREATE_CHATROOM);
+        }
         ChatRoom chatRoom = ChatRoom.create(article, loginUser, seller);
         chatRoomRepository.saveAndFlush(chatRoom);
     }

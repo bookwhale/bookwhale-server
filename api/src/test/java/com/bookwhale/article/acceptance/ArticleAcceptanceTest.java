@@ -37,6 +37,7 @@ import org.springframework.util.MimeTypeUtils;
 public class ArticleAcceptanceTest extends AcceptanceTest {
 
     ArticleRequest articleRequest;
+    ArticleRequest articleRequestWithActiveN;
 
     @BeforeEach
     @Override
@@ -59,6 +60,15 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
             .description("책 설명")
             .bookStatus("BEST")
             .sellingLocation("BUSAN")
+            .price("5000")
+            .build();
+
+        articleRequestWithActiveN = ArticleRequest.builder()
+            .bookRequest(toby)
+            .title("토비의 스프링 2판 급처합니다.")
+            .description("책 설명")
+            .bookStatus("MIDDLE")
+            .sellingLocation("SEOUL")
             .price("5000")
             .build();
     }
@@ -98,6 +108,13 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
         String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(
             UserInfoFromToken.of(user), jwt);
         ArticleAcceptanceStep.requestToCreateArticle(apiToken, articleRequest);
+        Long deactivatedArticleId = AcceptanceUtils.getIdFromResponse(
+            ArticleAcceptanceStep.requestToCreateArticle(apiToken, articleRequestWithActiveN));
+
+        // 등록한 판매글 삭제 (토비의 스프링 2판)
+        ArticleAcceptanceStep.requestToDeleteArticle(
+            apiToken,
+            deactivatedArticleId);
 
         ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToFindMyArticles(
             apiToken);
@@ -223,6 +240,13 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
             UserInfoFromToken.of(user), jwt);
         ArticleAcceptanceStep.requestToCreateArticle(apiToken, articleRequest);
 
+        // 삭제된 판매글 구현을 위한 등록 및 삭제 처리
+        Long deactivatedArticleId = AcceptanceUtils.getIdFromResponse(
+            ArticleAcceptanceStep.requestToCreateArticle(apiToken, articleRequestWithActiveN));
+        ArticleAcceptanceStep.requestToDeleteArticle(
+            apiToken,
+            deactivatedArticleId);
+
         ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToFindArticles(
             apiToken,
             articlesRequest, pagination);
@@ -245,6 +269,13 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
         String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(
             UserInfoFromToken.of(user), jwt);
         ArticleAcceptanceStep.requestToCreateArticle(apiToken, articleRequest);
+
+        // 삭제된 판매글 구현을 위한 등록 및 삭제 처리
+        Long deactivatedArticleId = AcceptanceUtils.getIdFromResponse(
+            ArticleAcceptanceStep.requestToCreateArticle(apiToken, articleRequestWithActiveN));
+        ArticleAcceptanceStep.requestToDeleteArticle(
+            apiToken,
+            deactivatedArticleId);
 
         ExtractableResponse<Response> response = ArticleAcceptanceStep.requestToFindArticles(
             "anonymousUser",
@@ -363,7 +394,7 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
             ArticleStatus.valueOf(request.getArticleStatus()).getName());
     }
 
-    @DisplayName("게시글을 삭제한다.")
+    @DisplayName("게시글을 삭제한다. (activeYn = N 으로 변경)")
     @Test
     void deleteArticle() {
         ArticlesRequest articlesRequest = ArticlesRequest.builder()
@@ -484,6 +515,10 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
         Long articleId = AcceptanceUtils.getIdFromResponse(
             ArticleAcceptanceStep.requestToCreateArticle(apiToken, articleRequest));
 
+        // 삭제된 판매글 구현을 위한 등록 처리
+        Long deactivatedArticleId = AcceptanceUtils.getIdFromResponse(
+            ArticleAcceptanceStep.requestToCreateArticle(apiToken, articleRequestWithActiveN));
+
         String anotherUserApiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(
             UserInfoFromToken.of(anotherUser), jwt);
 
@@ -491,6 +526,15 @@ public class ArticleAcceptanceTest extends AcceptanceTest {
             anotherUserApiToken,
             new FavoriteRequest(articleId)
         ); // 게시글 좋아요 요청
+
+        ArticleAcceptanceStep.requestAddFavoriteArticle(
+            anotherUserApiToken,
+            new FavoriteRequest(articleId)
+        ); // 게시글 좋아요 요청 (삭제될 게시글)
+
+        ArticleAcceptanceStep.requestToDeleteArticle(
+            apiToken,
+            deactivatedArticleId); // 게시글 (논리) 삭제
 
         ExtractableResponse<Response> userFavories = ArticleAcceptanceStep.getUserFavories(
             anotherUserApiToken);

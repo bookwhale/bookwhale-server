@@ -5,6 +5,15 @@ import static java.util.List.of;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -39,6 +48,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.payload.JsonFieldType;
 
 @DisplayName("게시글 단위 테스트(Controller)")
 @WebMvcTest(controllers = ArticleController.class)
@@ -337,7 +347,6 @@ public class ArticleControllerTest extends CommonApiTest {
             .andDo(ArticleDocumentation.updateArticle());
     }
 
-
     @DisplayName("게시글 상태를 변경한다.")
     @Test
     void updateArticleStatus() throws Exception {
@@ -353,6 +362,19 @@ public class ArticleControllerTest extends CommonApiTest {
             .andDo(print())
             .andDo(ArticleDocumentation.updateArticleStatus());
     }
+
+    @DisplayName("게시글을 삭제한다.")
+    @Test
+    void deleteArticle() throws Exception {
+        mockMvc.perform(
+                RestDocumentationRequestBuilders.delete("/api/article/{articleId}", 1L)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
+                    .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andDo(print())
+            .andDo(ArticleDocumentation.deleteArticle());
+    }
+
 
     @DisplayName("검색조건에 사용될 판매글 상태 목록을 조회한다.")
     @Test

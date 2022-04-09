@@ -56,7 +56,7 @@ public class ArticleService {
         Optional<Favorite> myFavorite = favoriteRepository.findByUserAndArticle(targetUser,
             article);
         Long myFavoriteId = myFavorite.isEmpty() ? null : myFavorite.get().getId();
-        
+
         articleRepository.saveAndFlush(article);
         return ArticleResponse.of(
             article,
@@ -119,8 +119,13 @@ public class ArticleService {
         User targetUser = userService.findUserByEmail(user.getEmail());
         Article article = getArticleByArticleId(articleId);
         article.validateIsMyArticle(targetUser);
+        if (article.validateIsNotSaleStatus()) {
+            throw new CustomException(ErrorCode.INVALID_ARTICLE_STATUS_FOR_DELETE_ARTICLE);
+        }
+
         deleteAllImages(article);
-        articleRepository.delete(article);
+        article.setDeactivate();
+        articleRepository.saveAndFlush(article);
     }
 
     public void deleteAllImages(Article article) {

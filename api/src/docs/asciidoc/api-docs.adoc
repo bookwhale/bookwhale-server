@@ -179,6 +179,17 @@ API를 호출할 때 예외를 던지는 경우에 사용되는 코드이다.
 "errors": null
 } ```
 
+| `A_004`
+| 판매글 (ArticleStatus = SALE)이 아닌 상태에서 삭제를 요청한 경우
+| ```{
+"status": 400,
+"message": "판매중인 게시글만 삭제할 수 있습니다.",
+"code": "A_004",
+"errors": null
+} ```
+
+
+
 | `I_001`
 | 대상 관심 판매글의 ID가 유효하지 않은 값인 경우
 | ```{
@@ -317,7 +328,7 @@ operation::user/findFavorites[snippets='http-request,request-headers,http-respon
 
 operation::user/deleteFavorite[snippets='http-request,request-headers,path-parameters,http-response']
 
-=== 2.7 내 게시글 조회
+=== 2.7 내 판매글 조회
 
 operation::user/findMyArticles[snippets='http-request,request-headers,http-response,response-fields']
 
@@ -325,27 +336,27 @@ operation::user/findMyArticles[snippets='http-request,request-headers,http-respo
 
 operation::user/me[snippets='http-request,request-headers,http-response,response-fields']
 
-== 3. 게시글
+== 3. 판매글
 
 === 3.1 네이버 책 API
 
 operation::article/findNaverBooks[snippets='http-request,request-headers,request-parameters,http-response,response-fields']
 
-=== 3.2 게시글 등록
+=== 3.2 판매글 등록
 
 operation::article/createArticle[snippets='http-request,request-headers,request-part-articleRequest-fields,http-response']
 
-=== 3.3 게시글 상세 조회
+=== 3.3 판매글 상세 조회
 
 operation::article/findArticle[snippets='http-request,request-headers,path-parameters,http-response,response-fields']
 
-=== 3.4 게시글 전체 조회
+=== 3.4 판매글 전체 조회
 
 operation::article/findArticles[snippets='http-request,request-parameters,http-response,response-fields']
 
-=== 3.5 게시글 수정
+=== 3.5 판매글 수정
 
-※ 이미지(images)는 게시글 등록(3.2)하고 동일합니다(아래 예시에는 이미지 정보가 안들어가지네요).
+※ 이미지(images)는 판매글 등록(3.2)하고 동일합니다(아래 예시에는 이미지 정보가 안들어가지네요).
 
 ※ Request part-articlerequest-fields -> Request part-articleUpdaterequest-fields로 변경됐습니다.
 
@@ -353,7 +364,7 @@ operation::article/findArticles[snippets='http-request,request-parameters,http-r
 
 operation::article/updateArticle[snippets='http-request,request-headers,request-part-articleUpdateRequest-fields,http-response']
 
-=== 3.6 게시글 상태 변경
+=== 3.6 판매글 상태 변경
 
 operation::article/updateArticleStatus[snippets='http-request,request-headers,path-parameters,request-fields,http-response']
 
@@ -366,6 +377,17 @@ operation::article/conditions/bookStatus[snippets='http-request,http-response,re
 ** https://ko.wikipedia.org/wiki/%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%EC%9D%98_%ED%96%89%EC%A0%95_%EA%B5%AC%EC%97%AD[위키백과 - 대한민국의 행정 구역]
 
 operation::article/conditions/locations[snippets='http-request,http-response,response-fields']
+
+=== 3.9 판매글 삭제
+* 판매글 삭제는 아래의 제약조건을 가집니다.
+** 삭제하려는 판매글은 사용자 본인이 등록한 판매글이어야 합니다. (myArticle = true)
+** 상태가 [판매중]인 판매글만 가능합니다. (articleStatus = SALE)
+* 판매글이 삭제 처리되면 아래의 동작에서 확인되지 않습니다.
+** 판매글 목록 조회
+** 관심글 목록 조회
+** 내 판매글 목록 조회
+
+operation::article/deleteArticle[snippets='http-request,request-headers,path-parameters,http-response']
 
 == 4. 채팅 (API)
 
