@@ -31,7 +31,6 @@ public class BookRequest {
     @NotBlank
     private String bookPubDate;
 
-    @NotBlank
     private String bookSummary;
 
     @Builder
