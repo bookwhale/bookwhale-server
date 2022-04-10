@@ -3,17 +3,12 @@ package com.bookwhale.push.service;
 import com.bookwhale.article.domain.Article;
 import com.bookwhale.chatroom.domain.ChatRoom;
 import com.bookwhale.chatroom.domain.ChatRoomRepository;
-import com.bookwhale.chatroom.domain.Opponent;
-import com.bookwhale.common.exception.CustomException;
-import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.message.domain.Message;
 import com.bookwhale.push.dto.PushMessageParams;
 import com.bookwhale.push.dto.PushMessageParams.PushMessageParamsBuilder;
 import com.bookwhale.user.domain.User;
-import com.bookwhale.user.domain.UserRepository;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -64,17 +59,17 @@ public class PushProcessor {
             User seller = chatRoom.getSeller();
 
             Map<String, String> dataMap = new HashMap<>();
-            dataMap.put("message ", message);
+            dataMap.put("description ", message);
             dataMap.put("roomId", roomId.toString());
             dataMap.put("senderId", senderId.toString());
             dataMap.put("articleTitle", chatRoom.getArticle().getTitle());
 
             if (senderId.equals(buyer.getId())) {
-                pushService.sendMessageFromFCMWithoutNonitication(
+                pushService.sendMessageFromFCMWithoutNonitification(
                     seller.getDeviceToken(), dataMap
                 );
             } else {
-                pushService.sendMessageFromFCMWithoutNonitication(
+                pushService.sendMessageFromFCMWithoutNonitification(
                     buyer.getDeviceToken(), dataMap
                 );
             }

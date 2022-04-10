@@ -2,8 +2,6 @@ package com.bookwhale.push.service;
 
 import com.bookwhale.push.domain.FireBaseAccess;
 import com.bookwhale.push.dto.PushMessageParams;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import java.util.Map;
@@ -25,9 +23,11 @@ public class PushService {
 
     private final FireBaseAccess fireBaseAccess;
 
-    public void sendMessageTo(PushMessageParams pushMessageParams, Map<String ,String> dataMap) throws Exception {
+    public void sendMessageTo(PushMessageParams pushMessageParams, Map<String, String> dataMap)
+        throws Exception {
         RestTemplate restTemplate = new RestTemplate();
-        String message = fireBaseAccess.makeMessageJson(pushMessageParams.getTargetToken(), pushMessageParams.getTitle(), pushMessageParams.getBody(), dataMap);
+        String message = fireBaseAccess.makeMessageJson(pushMessageParams.getTargetToken(),
+            pushMessageParams.getTitle(), pushMessageParams.getBody(), dataMap);
         HttpHeaders requestHeader = new HttpHeaders();
         requestHeader.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
         requestHeader.add(HttpHeaders.AUTHORIZATION, "Bearer " + fireBaseAccess.getAccessToken());
@@ -39,11 +39,13 @@ public class PushService {
             String.class);
 
         if (!response.getStatusCode().is2xxSuccessful()) {
-            log.error("send push Message failed. / device : {}", pushMessageParams.getTargetToken());
+            log.error("send push Message failed. / device : {}",
+                pushMessageParams.getTargetToken());
         }
     }
 
-    public void sendMessageFromFCM(PushMessageParams pushMessageParams, Map<String ,String> dataMap) throws Exception {
+    public void sendMessageFromFCM(PushMessageParams pushMessageParams, Map<String, String> dataMap)
+        throws Exception {
         Message message = fireBaseAccess.makeMessage(pushMessageParams.getTargetToken(),
             pushMessageParams.getTitle(), pushMessageParams.getBody(), dataMap);
         String response = FirebaseMessaging.getInstance(fireBaseAccess.getFirebaseApp())
@@ -54,7 +56,8 @@ public class PushService {
         }
     }
 
-    public void sendMessageFromFCMWithoutNonitication(String deviceToken, Map<String ,String> dataMap) throws Exception {
+    public void sendMessageFromFCMWithoutNonitification(String deviceToken,
+        Map<String, String> dataMap) throws Exception {
         Message message = fireBaseAccess.makeMessageWithoutNotification(deviceToken, dataMap);
         String response = FirebaseMessaging.getInstance(fireBaseAccess.getFirebaseApp())
             .send(message);
