@@ -612,5 +612,44 @@ Content-Type: application/json;charset=UTF-8
 |채팅을 전송한 사용자 이름
 
 |`+content+`
-|채팅 내용용
+|채팅 내용
+|===
+
+=== 5.4 채팅방 메시지 전송 시 push message
+* 메시지 전송은 FCM 을 활용하였습니다.
+** https://firebase.blog/posts/2017/11/whats-new-with-fcm-customizing-messages
+** https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages
+* 메시지를 전송하면 채팅방에 속해있는 상대방(판매자 또는 구매자)에게 아래의 형식으로 메시지가 전송됩니다.
+----
+"message":{
+    "token":"bk3RNwTe3H0:CI2k_HHwgIpoDKCIZvvDMExUdFQ3P1...",
+    "data" : {
+      "articleTitle" : "책 팝니다",
+      "roomId" : "1"
+      "senderId" : "2",
+      "description" : "안녕하세요."
+    }
+  }
+}
+----
+
+==== Push message parameters
+|===
+|Parameter|Description
+
+|`+token+`
+|로그인시 등록된 기기 토큰
+
+|`+data.articleTitle+`
+|판매글 제목
+
+|`+data.roomId+`
+|생성된 채팅방 ID
+
+|`+data.senderId+`
+|메시지를 전송한 사용자 ID
+
+|`+data.description+`
+|전송한 메시지
+
 |===
