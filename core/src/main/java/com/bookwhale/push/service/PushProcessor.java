@@ -55,6 +55,10 @@ public class PushProcessor {
             ChatRoom chatRoom = chatRoomRepository.findById(roomId)
                 .orElseThrow(() -> new RuntimeException("room 확인 실패"));
 
+            PushMessageParamsBuilder createChatRoomPushMessage = PushMessageParams.builder()
+                .title(chatRoom.getArticle().getTitle())
+                .body(message);
+
             User buyer = chatRoom.getBuyer();
             User seller = chatRoom.getSeller();
 
@@ -65,12 +69,14 @@ public class PushProcessor {
             dataMap.put("articleTitle", chatRoom.getArticle().getTitle());
 
             if (senderId.equals(buyer.getId())) {
-                pushService.sendMessageFromFCMWithoutNonitification(
-                    seller.getDeviceToken(), dataMap
+                pushService.sendMessageFromFCM(
+                    createChatRoomPushMessage.targetToken(seller.getDeviceToken()).build(),
+                    dataMap
                 );
             } else {
-                pushService.sendMessageFromFCMWithoutNonitification(
-                    buyer.getDeviceToken(), dataMap
+                pushService.sendMessageFromFCM(
+                    createChatRoomPushMessage.targetToken(buyer.getDeviceToken()).build(),
+                    dataMap
                 );
             }
         } catch (Exception e) {
