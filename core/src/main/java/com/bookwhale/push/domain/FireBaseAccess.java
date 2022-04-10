@@ -65,7 +65,8 @@ public class FireBaseAccess {
         return makeMessage(targetToken, title, body, null);
     }
 
-    public Message makeMessage(String targetToken, String title, String body, Map<String ,String> dataMap) {
+    public Message makeMessage(String targetToken, String title, String body,
+        Map<String, String> dataMap) {
         Notification notification = Notification.builder()
             .setTitle(title)
             .setBody(body)
@@ -79,7 +80,7 @@ public class FireBaseAccess {
         return generatedMessage;
     }
 
-    public Message makeMessageWithoutNotification(String targetToken, Map<String ,String> dataMap) {
+    public Message makeMessageWithoutNotification(String targetToken, Map<String, String> dataMap) {
         return Message.builder()
             .setToken(targetToken)
             .putAllData(dataMap)
@@ -90,7 +91,8 @@ public class FireBaseAccess {
         return makeMessageJson(targetToken, title, body, null);
     }
 
-    public String makeMessageJson(String targetToken, String title, String body, Map<String ,String> dataMap) {
+    public String makeMessageJson(String targetToken, String title, String body,
+        Map<String, String> dataMap) {
         FirebaseCloudMessage fcm = FirebaseCloudMessage.builder()
             .message(
                 FirebaseCloudMessage.Message.builder()
