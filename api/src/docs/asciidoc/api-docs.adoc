@@ -623,10 +623,6 @@ Content-Type: application/json;charset=UTF-8
 ----
 "message":{
     "token":"bk3RNwTe3H0:CI2k_HHwgIpoDKCIZvvDMExUdFQ3P1...",
-    "notification":{
-      "title": "책 팝니다.",
-      "body": "안녕하세요."
-    },
     "data" : {
       "articleTitle" : "책 팝니다",
       "roomId" : "1"
@@ -643,12 +639,6 @@ Content-Type: application/json;charset=UTF-8
 
 |`+token+`
 |로그인시 등록된 기기 토큰
-
-|`+notification.title+`
-|알림 - 제목
-
-|`+notification.body+`
-|알림 - 메시지
 
 |`+data.articleTitle+`
 |판매글 제목
