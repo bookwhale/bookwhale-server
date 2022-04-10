@@ -53,4 +53,14 @@ public class PushService {
             log.error("send push Message failed. / response : {}", response);
         }
     }
+
+    public void sendMessageFromFCMWithoutNonitication(String deviceToken, Map<String ,String> dataMap) throws Exception {
+        Message message = fireBaseAccess.makeMessageWithoutNotification(deviceToken, dataMap);
+        String response = FirebaseMessaging.getInstance(fireBaseAccess.getFirebaseApp())
+            .send(message);
+
+        if (StringUtils.isEmpty(response)) {
+            log.error("send push Message failed. / response : {}", response);
+        }
+    }
 }

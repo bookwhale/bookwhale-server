@@ -79,6 +79,13 @@ public class FireBaseAccess {
         return generatedMessage;
     }
 
+    public Message makeMessageWithoutNotification(String targetToken, Map<String ,String> dataMap) {
+        return Message.builder()
+            .setToken(targetToken)
+            .putAllData(dataMap)
+            .build();
+    }
+
     public String makeMessageJson(String targetToken, String title, String body) {
         return makeMessageJson(targetToken, title, body, null);
     }
