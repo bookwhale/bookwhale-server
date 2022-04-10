@@ -59,7 +59,7 @@ public class PushProcessor {
             User seller = chatRoom.getSeller();
 
             Map<String, String> dataMap = new HashMap<>();
-            dataMap.put("description ", message);
+            dataMap.put("description", message);
             dataMap.put("roomId", roomId.toString());
             dataMap.put("senderId", senderId.toString());
             dataMap.put("articleTitle", chatRoom.getArticle().getTitle());
