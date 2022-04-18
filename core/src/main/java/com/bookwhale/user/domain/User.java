@@ -4,6 +4,8 @@ import com.bookwhale.common.domain.ActiveYn;
 import com.bookwhale.common.domain.BaseEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -33,6 +35,7 @@ public class User extends BaseEntity {
     private String deviceToken;
 
     @Column
+    @Enumerated(EnumType.STRING)
     private ActiveYn pushActivate;
 
     @Builder
