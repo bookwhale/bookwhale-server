@@ -78,7 +78,17 @@ public class User extends BaseEntity {
         deleteProfile();
     }
 
-    public void setPushActivate(ActiveYn pushActivate) {
+    public void togglePushActivate() {
+        if (ActiveYn.N.equals(this.pushActivate)) {
+            setPushActivate(ActiveYn.Y);
+        } else if (ActiveYn.Y.equals(this.pushActivate)){
+            setPushActivate(ActiveYn.N);
+        } else {
+            setPushActivate(ActiveYn.Y); // 설정되지 않은 경우 활성화 처리
+        }
+    }
+
+    private void setPushActivate(ActiveYn pushActivate) {
         this.pushActivate = pushActivate;
     }
 }

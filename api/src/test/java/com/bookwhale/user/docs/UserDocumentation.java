@@ -53,7 +53,8 @@ public class UserDocumentation {
                 fieldWithPath("userId").type(JsonFieldType.NUMBER).description("유저 id"),
                 fieldWithPath("nickName").type(JsonFieldType.STRING).description("닉네임"),
                 fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
-                fieldWithPath("profileImage").type(JsonFieldType.STRING).description("프로필 이미지")
+                fieldWithPath("profileImage").type(JsonFieldType.STRING).description("프로필 이미지").optional(),
+                fieldWithPath("pushActivate").type(JsonFieldType.STRING).description("push 알림 on/off 상태")
             ));
     }
 
@@ -165,5 +166,29 @@ public class UserDocumentation {
                 parameterWithName("favoriteId").description("관심목록 ID")
             )
         );
+    }
+
+    public static RestDocumentationResultHandler updateUserPushSetting() {
+        return document("user/updatePushSetting",
+            preprocessResponse(prettyPrint()),
+            requestHeaders(
+                headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
+            ),
+            responseFields(
+                fieldWithPath("userId").type(JsonFieldType.NUMBER).description("유저 id"),
+                fieldWithPath("pushActivate").type(JsonFieldType.STRING).description("push 알림 on/off 상태")
+            ));
+    }
+
+    public static RestDocumentationResultHandler getUserPushSetting() {
+        return document("user/getPushSetting",
+            preprocessResponse(prettyPrint()),
+            requestHeaders(
+                headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
+            ),
+            responseFields(
+                fieldWithPath("userId").type(JsonFieldType.NUMBER).description("유저 id"),
+                fieldWithPath("pushActivate").type(JsonFieldType.STRING).description("push 알림 on/off 상태")
+            ));
     }
 }

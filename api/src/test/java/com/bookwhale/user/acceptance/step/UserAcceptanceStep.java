@@ -159,4 +159,24 @@ public class UserAcceptanceStep {
             .then().log().all()
             .extract();
     }
+
+    public static ExtractableResponse<Response> requestToGetPushSetting(String jwt) {
+        return given().log().all()
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .when()
+            .get("/api/user/me/push-setting")
+            .then().log().all()
+            .extract();
+    }
+
+    public static ExtractableResponse<Response> requestToTogglePushSetting(String jwt) {
+        return given().log().all()
+            .header(HttpHeaders.AUTHORIZATION, jwt)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .when()
+            .patch("/api/user/me/push-setting")
+            .then().log().all()
+            .extract();
+    }
 }
