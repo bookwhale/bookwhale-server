@@ -1,5 +1,6 @@
 package com.bookwhale.push.service;
 
+import com.bookwhale.common.domain.ActiveYn;
 import com.bookwhale.push.domain.FireBaseAccess;
 import com.bookwhale.push.dto.PushMessageParams;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -46,13 +47,15 @@ public class PushService {
 
     public void sendMessageFromFCM(PushMessageParams pushMessageParams, Map<String, String> dataMap)
         throws Exception {
-        Message message = fireBaseAccess.makeMessage(pushMessageParams.getTargetToken(),
-            pushMessageParams.getTitle(), pushMessageParams.getBody(), dataMap);
-        String response = FirebaseMessaging.getInstance(fireBaseAccess.getFirebaseApp())
-            .send(message);
+        if (ActiveYn.Y.equals(pushMessageParams.getPushActivateStatus())) {
+            Message message = fireBaseAccess.makeMessage(pushMessageParams.getTargetToken(),
+                pushMessageParams.getTitle(), pushMessageParams.getBody(), dataMap);
+            String response = FirebaseMessaging.getInstance(fireBaseAccess.getFirebaseApp())
+                .send(message);
 
-        if (StringUtils.isEmpty(response)) {
-            log.error("send push Message failed. / response : {}", response);
+            if (StringUtils.isEmpty(response)) {
+                log.error("send push Message failed. / response : {}", response);
+            }
         }
     }
 

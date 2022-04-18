@@ -34,11 +34,15 @@ public class PushProcessor {
 
         try {
             pushService.sendMessageFromFCM(
-                createChatRoomPushMessage.targetToken(loginUser.getDeviceToken())
+                createChatRoomPushMessage
+                    .pushActivateStatus(loginUser.getPushActivate())
+                    .targetToken(loginUser.getDeviceToken())
                     .build(), dataMap
             );
             pushService.sendMessageFromFCM(
-                createChatRoomPushMessage.targetToken(seller.getDeviceToken())
+                createChatRoomPushMessage
+                    .pushActivateStatus(seller.getPushActivate())
+                    .targetToken(seller.getDeviceToken())
                     .build(), dataMap
             );
         } catch (Exception e) {
@@ -70,12 +74,16 @@ public class PushProcessor {
 
             if (senderId.equals(buyer.getId())) {
                 pushService.sendMessageFromFCM(
-                    createChatRoomPushMessage.targetToken(seller.getDeviceToken()).build(),
+                    createChatRoomPushMessage
+                        .pushActivateStatus(seller.getPushActivate())
+                        .targetToken(seller.getDeviceToken()).build(),
                     dataMap
                 );
             } else {
                 pushService.sendMessageFromFCM(
-                    createChatRoomPushMessage.targetToken(buyer.getDeviceToken()).build(),
+                    createChatRoomPushMessage
+                        .pushActivateStatus(buyer.getPushActivate())
+                        .targetToken(buyer.getDeviceToken()).build(),
                     dataMap
                 );
             }
