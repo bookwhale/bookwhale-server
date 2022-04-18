@@ -12,9 +12,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.bookwhale.common.controller.CommonApiTest;
+import com.bookwhale.common.domain.ActiveYn;
 import com.bookwhale.favorite.service.FavoriteService;
 import com.bookwhale.user.docs.UserDocumentation;
 import com.bookwhale.user.dto.ProfileResponse;
+import com.bookwhale.user.dto.UserPushSettingResponse;
 import com.bookwhale.user.dto.UserResponse;
 import com.bookwhale.user.dto.UserUpdateRequest;
 import com.bookwhale.user.service.UserService;
@@ -45,7 +47,7 @@ public class UserControllerTest extends CommonApiTest {
             .userId(1L)
             .nickName("닉네임")
             .email("example@google.co.kr")
-            .profileImage("이미지 URL")
+            .pushActivate(ActiveYn.Y)
             .build();
 
         when(userService.getUserInfo(any())).thenReturn(response);
@@ -120,5 +122,39 @@ public class UserControllerTest extends CommonApiTest {
             .andExpect(status().isOk())
             .andDo(print())
             .andDo(UserDocumentation.userDeleteProfileImage());
+    }
+
+    @DisplayName("push 설정을 조회한다.")
+    @Test
+    void getPushSettingStatus() throws Exception {
+        UserPushSettingResponse response = UserPushSettingResponse.builder()
+            .userId(1L)
+            .pushActivate(ActiveYn.Y)
+            .build();
+
+        when(userService.getUserPushSetting(any())).thenReturn(response);
+
+        mockMvc.perform(get("/api/user/me/push-setting")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken"))
+            .andExpect(status().isOk())
+            .andDo(print())
+            .andDo(UserDocumentation.getUserPushSetting());
+    }
+
+    @DisplayName("push 설정을 update 한다 (toggle)")
+    @Test
+    void updatePushSettingStatus() throws Exception {
+        UserPushSettingResponse response = UserPushSettingResponse.builder()
+            .userId(1L)
+            .pushActivate(ActiveYn.Y)
+            .build();
+
+        when(userService.updatePushSetting(any())).thenReturn(response);
+
+        mockMvc.perform(patch("/api/user/me/push-setting")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken"))
+            .andExpect(status().isOk())
+            .andDo(print())
+            .andDo(UserDocumentation.updateUserPushSetting());
     }
 }

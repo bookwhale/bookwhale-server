@@ -14,6 +14,7 @@ import com.bookwhale.user.acceptance.step.UserAcceptanceStep;
 import com.bookwhale.user.dto.FavoriteRequest;
 import com.bookwhale.user.dto.FavoriteResponse;
 import com.bookwhale.user.dto.ProfileResponse;
+import com.bookwhale.user.dto.UserPushSettingResponse;
 import com.bookwhale.user.dto.UserResponse;
 import com.bookwhale.user.dto.UserUpdateRequest;
 import io.restassured.builder.MultiPartSpecBuilder;
@@ -188,5 +189,25 @@ public class UserAcceptanceTest extends AcceptanceTest {
         AcceptanceStep.assertThatStatusIsOk(response);
         assertThat(favoriteRespons.size()).isEqualTo(0);
         assertThat(articleResponse.getFavoriteCount()).isEqualTo(favoriteCount - 1L);
+    }
+
+    @DisplayName("push 상태를 수정한다.")
+    @Test
+    void updateMyPushSettingStatus() {
+        String apiToken = UserAcceptanceStep.requestToLoginAndGetAccessToken(
+            UserInfoFromToken.of(user), jwt);
+
+        UserPushSettingResponse beforePushSettingResponse = UserAcceptanceStep.requestToGetPushSetting(
+                apiToken).jsonPath()
+            .getObject(".", UserPushSettingResponse.class);
+
+        ExtractableResponse<Response> response = UserAcceptanceStep.requestToTogglePushSetting(
+            apiToken);
+        UserPushSettingResponse afterPushSettingResponse = response.jsonPath()
+            .getObject(".", UserPushSettingResponse.class);
+
+        AcceptanceStep.assertThatStatusIsOk(response);
+        assertThat(beforePushSettingResponse.getPushActivate()).isNotEqualTo(
+            afterPushSettingResponse.getPushActivate());
     }
 }

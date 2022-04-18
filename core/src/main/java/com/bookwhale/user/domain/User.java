@@ -1,5 +1,6 @@
 package com.bookwhale.user.domain;
 
+import com.bookwhale.common.domain.ActiveYn;
 import com.bookwhale.common.domain.BaseEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,14 +32,18 @@ public class User extends BaseEntity {
     @Column
     private String deviceToken;
 
+    @Column
+    private ActiveYn pushActivate;
+
     @Builder
     protected User(Long id, String nickname, String profileImage, String email,
-        String deviceToken) {
+        String deviceToken, ActiveYn pushActivate) {
         this.id = id;
         this.nickname = nickname;
         this.profileImage = profileImage;
         this.email = email;
         this.deviceToken = deviceToken;
+        this.pushActivate = pushActivate;
     }
 
     public static User create(User user) {
@@ -47,6 +52,7 @@ public class User extends BaseEntity {
             .email(user.getEmail())
             .profileImage(user.getProfileImage())
             .deviceToken(user.getDeviceToken())
+            .pushActivate(ActiveYn.Y)
             .build();
     }
 
@@ -70,5 +76,19 @@ public class User extends BaseEntity {
         this.nickname = "** 탈퇴한 사용자 **";
         this.email = hashedEmail;
         deleteProfile();
+    }
+
+    public void togglePushActivate() {
+        if (ActiveYn.N.equals(this.pushActivate)) {
+            setPushActivate(ActiveYn.Y);
+        } else if (ActiveYn.Y.equals(this.pushActivate)){
+            setPushActivate(ActiveYn.N);
+        } else {
+            setPushActivate(ActiveYn.Y); // 설정되지 않은 경우 활성화 처리
+        }
+    }
+
+    private void setPushActivate(ActiveYn pushActivate) {
+        this.pushActivate = pushActivate;
     }
 }

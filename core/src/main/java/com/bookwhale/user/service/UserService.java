@@ -8,6 +8,7 @@ import com.bookwhale.common.utils.HashingUtil;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.domain.UserRepository;
 import com.bookwhale.user.dto.ProfileResponse;
+import com.bookwhale.user.dto.UserPushSettingResponse;
 import com.bookwhale.user.dto.UserResponse;
 import com.bookwhale.user.dto.UserUpdateRequest;
 import java.time.LocalDateTime;
@@ -41,6 +42,10 @@ public class UserService {
         return UserResponse.of(findUserByEmail(user.getEmail()));
     }
 
+    public UserPushSettingResponse getUserPushSetting(User user) {
+        return UserPushSettingResponse.of(findUserByEmail(user.getEmail()));
+    }
+
     public void updateMyInfo(User user, UserUpdateRequest request) {
         User targetUser = findUserByEmail(user.getEmail());
         targetUser.updateUserName(request.toEntity().getNickname());
@@ -51,6 +56,14 @@ public class UserService {
         User targetUser = findUserByEmail(userEmail);
         targetUser.updateUserDeviceToken(deviceToken);
         userRepository.saveAndFlush(targetUser);
+    }
+
+    public UserPushSettingResponse updatePushSetting(User user) {
+        User targetUser = findUserByEmail(user.getEmail());
+        targetUser.togglePushActivate();
+        userRepository.saveAndFlush(targetUser);
+
+        return UserPushSettingResponse.of(targetUser);
     }
 
     public User findUserByEmail(String userEmail) {
@@ -88,7 +101,6 @@ public class UserService {
         deleteImage(targetUser);
         userRepository.save(targetUser);
     }
-
 
     private void deleteImage(User user) {
         String image = user.getProfileImage();

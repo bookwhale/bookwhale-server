@@ -3,6 +3,7 @@ package com.bookwhale.user.controller;
 import com.bookwhale.auth.domain.CurrentUser;
 import com.bookwhale.user.domain.User;
 import com.bookwhale.user.dto.ProfileResponse;
+import com.bookwhale.user.dto.UserPushSettingResponse;
 import com.bookwhale.user.dto.UserResponse;
 import com.bookwhale.user.dto.UserUpdateRequest;
 import com.bookwhale.user.service.UserService;
@@ -35,6 +36,16 @@ public class UserController {
         @Valid @RequestBody UserUpdateRequest userUpdateRequest) {
         userService.updateMyInfo(user, userUpdateRequest);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/me/push-setting")
+    public ResponseEntity<UserPushSettingResponse> getMyPushSetting(@CurrentUser User user) {
+        return ResponseEntity.ok(userService.getUserPushSetting(user));
+    }
+
+    @PatchMapping("/me/push-setting")
+    public ResponseEntity<UserPushSettingResponse> toggleMyPushSetting(@CurrentUser User user) {
+        return ResponseEntity.ok(userService.updatePushSetting(user));
     }
 
     @PatchMapping("/profile")
