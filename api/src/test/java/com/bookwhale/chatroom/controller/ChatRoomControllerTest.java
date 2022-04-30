@@ -77,6 +77,32 @@ public class ChatRoomControllerTest extends CommonApiTest {
             .andDo(ChatRoomDocumentations.findChatRooms());
     }
 
+    @DisplayName("채팅방 ID로 채팅방을 조회한다.")
+    @Test
+    void findChatRoomByRoomId() throws Exception {
+        long roomId = 1L;
+        ChatRoomResponse response = ChatRoomResponse.builder()
+            .roomId(roomId)
+            .articleId(1L)
+            .articleTitle("토비의 스프링 팝니다.")
+            .articleImage("이미지")
+            .opponentIdentity("highright96")
+            .opponentProfile("profile")
+            .roomCreateAt(LocalDateTime.of(2022, 3, 9, 11, 12, 13))
+            .isOpponentDelete(false)
+            .lastContent("안녕하세요.")
+            .lastContentCreateAt(LocalDateTime.of(2022, 3, 19, 11, 12, 13))
+            .build();
+
+        when(chatRoomService.findChatRoomById(any(), any(Long.class)))
+            .thenReturn(response);
+
+        mockMvc.perform(get("/api/room/{roomId}", roomId)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken"))
+            .andExpect(status().isOk())
+            .andDo(print())
+            .andDo(ChatRoomDocumentations.findChatRoom());
+    }
 
     @DisplayName("채팅방을 삭제한다.")
     @Test

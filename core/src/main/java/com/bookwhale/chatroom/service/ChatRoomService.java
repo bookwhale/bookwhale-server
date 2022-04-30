@@ -15,6 +15,7 @@ import com.bookwhale.user.domain.User;
 import com.bookwhale.user.service.UserService;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -58,6 +59,26 @@ public class ChatRoomService {
         User loginUser = userService.findUserByEmail(user.getEmail());
         List<ChatRoom> rooms = chatRoomRepository.findAllByBuyerOrSellerCreatedDateDesc(loginUser);
         return checkRoomsAndGetRoomResponses(rooms, loginUser);
+    }
+
+
+    public ChatRoomResponse findChatRoomById(User user, Long roomId) {
+        User loginUser = userService.findUserByEmail(user.getEmail());
+        Optional<ChatRoom> chatRoomByRoomId = chatRoomRepository.findById(roomId);
+        if (chatRoomByRoomId.isEmpty()) {
+            throw new CustomException(ErrorCode.INVALID_CHATROOM_ID);
+        }
+        Long loginUserId = loginUser.getId();
+        ChatRoom chatRoom = chatRoomByRoomId.get();
+        if (!loginUserId.equals(chatRoom.getBuyer().getId()) &&
+        !loginUserId.equals(chatRoom.getSeller().getId())) {
+            throw new CustomException(ErrorCode.FORBIDDEN);
+        }
+
+        Message lastMessage = messageRepository.findTopByRoomIdOrderByCreatedDateDesc(
+                chatRoom.getId())
+            .orElseGet(Message::createEmptyMessage);
+        return ChatRoomResponse.of(chatRoom, lastMessage, loginUser);
     }
 
     private List<ChatRoomResponse> checkRoomsAndGetRoomResponses(List<ChatRoom> rooms,
