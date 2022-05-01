@@ -553,6 +553,8 @@ Content-Length: 138
 
 |===
 
+=== 4.6 채팅방 조회 (채팅방 ID를 통한)
+operation::chatRoom/findChatRoom[snippets='http-request,request-headers,path-parameters,http-response,response-fields']
 
 == 5. 채팅 (CHAT)
 === 참고자료
