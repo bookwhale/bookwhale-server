@@ -97,7 +97,7 @@ public class ChatRoomControllerTest extends CommonApiTest {
         when(chatRoomService.findChatRoomById(any(), any(Long.class)))
             .thenReturn(response);
 
-        mockMvc.perform(get("/api/room/{roomId}", roomId)
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/api/room/{roomId}", roomId)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken"))
             .andExpect(status().isOk())
             .andDo(print())

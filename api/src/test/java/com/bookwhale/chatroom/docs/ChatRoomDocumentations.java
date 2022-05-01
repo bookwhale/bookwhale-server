@@ -65,6 +65,9 @@ public class ChatRoomDocumentations {
             requestHeaders(
                 headerWithName(HttpHeaders.AUTHORIZATION).description("접속 인증 정보가 담긴 JWT")
             ),
+            pathParameters(
+                parameterWithName("roomId").description("채팅방 ID")
+            ),
             responseFields(
                 fieldWithPath("roomId").type(JsonFieldType.NUMBER).description("채팅방 ID"),
                 fieldWithPath("articleId").type(JsonFieldType.NUMBER).description("게시글 ID"),
