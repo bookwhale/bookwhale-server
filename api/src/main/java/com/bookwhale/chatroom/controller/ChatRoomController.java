@@ -38,6 +38,11 @@ public class ChatRoomController {
         return ResponseEntity.ok(chatRoomService.findChatRooms(user));
     }
 
+    @GetMapping("/{roomId}")
+    public ResponseEntity<ChatRoomResponse> findChatRoom(@CurrentUser User user, @PathVariable("roomId") Long roomId) {
+        return ResponseEntity.ok(chatRoomService.findChatRoomById(user, roomId));
+    }
+
     @DeleteMapping("/{roomId}")
     public ResponseEntity<Void> deleteChatRoom(@CurrentUser User user, @PathVariable Long roomId) {
         chatRoomService.deleteChatRoom(user, roomId);

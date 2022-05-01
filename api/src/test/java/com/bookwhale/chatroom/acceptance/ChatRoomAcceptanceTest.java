@@ -1,5 +1,8 @@
 package com.bookwhale.chatroom.acceptance;
 
+import static io.restassured.RestAssured.given;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.bookwhale.article.dto.ArticleRequest;
 import com.bookwhale.article.dto.BookRequest;
 import com.bookwhale.auth.domain.info.UserInfoFromToken;
@@ -15,6 +18,8 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 
 @DisplayName("채팅방 통합 테스트")
 public class ChatRoomAcceptanceTest extends AcceptanceTest {
@@ -90,6 +95,36 @@ public class ChatRoomAcceptanceTest extends AcceptanceTest {
         ChatRoomAcceptanceStep.assertThatFindChatRooms(anotherRoomRes, articleRequest, user);
     }
 
+    @DisplayName("채팅방을 조회한다.")
+    @Test
+    void findChatRoomById() {
+        String loginUserJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(
+            UserInfoFromToken.of(user), jwt);
+        String sellerJwt = UserAcceptanceStep.requestToLoginAndGetAccessToken(
+            UserInfoFromToken.of(anotherUser), jwt);
+
+        ChatRoomAcceptanceStep.createChatRoom(loginUserJwt, sellerJwt, articleRequest);
+
+        ExtractableResponse<Response> loginUserRes = ChatRoomAcceptanceStep.requestToFindChatRooms(
+            loginUserJwt);
+        List<ChatRoomResponse> loginUserRoomRes = loginUserRes.jsonPath()
+            .getList("", ChatRoomResponse.class);
+        Long roomId = loginUserRoomRes.get(0).getRoomId();
+
+        ExtractableResponse<Response> findChatRoomResponse = given().log().all()
+            .header(HttpHeaders.AUTHORIZATION, loginUserJwt)
+            .when()
+            .get("/api/room/{roomId}", roomId)
+            .then().log().all()
+            .extract();
+
+        ChatRoomResponse result = findChatRoomResponse.jsonPath()
+            .getObject("", ChatRoomResponse.class);
+
+        assertThat(findChatRoomResponse.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(result.getRoomId()).isEqualTo(roomId);
+    }
+
     @DisplayName("상대방이 나간 채팅방은 isOpponentDelete 가 false 로 조회된다.")
     @Test
     void findChatRooms_opponentDelete() {
@@ -114,7 +149,7 @@ public class ChatRoomAcceptanceTest extends AcceptanceTest {
         List<ChatRoomResponse> loginUserRoomRes = loginUserRes.jsonPath()
             .getList("", ChatRoomResponse.class);
         AcceptanceStep.assertThatStatusIsOk(loginUserRes);
-        Assertions.assertThat(loginUserRoomRes.get(0).isOpponentDelete()).isEqualTo(true);
+        assertThat(loginUserRoomRes.get(0).isOpponentDelete()).isEqualTo(true);
     }
 
     @DisplayName("나간 채팅방은 조회되지 않는다.")
@@ -138,7 +173,7 @@ public class ChatRoomAcceptanceTest extends AcceptanceTest {
             loginUserJwt);
         List<ChatRoomResponse> roomRes = res.jsonPath().getList("", ChatRoomResponse.class);
         AcceptanceStep.assertThatStatusIsOk(res);
-        Assertions.assertThat(roomRes.size()).isEqualTo(0);
+        assertThat(roomRes.size()).isEqualTo(0);
     }
 
     @DisplayName("채팅방을 삭제한 후 조회한다.")
