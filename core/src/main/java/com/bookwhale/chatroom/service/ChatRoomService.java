@@ -2,6 +2,7 @@ package com.bookwhale.chatroom.service;
 
 import com.bookwhale.article.domain.Article;
 import com.bookwhale.article.domain.ArticleRepository;
+import com.bookwhale.article.service.ArticleService;
 import com.bookwhale.chatroom.domain.ChatRoom;
 import com.bookwhale.chatroom.domain.ChatRoomRepository;
 import com.bookwhale.chatroom.dto.ChatRoomCreateRequest;
@@ -28,15 +29,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
-    private final ArticleRepository articleRepository;
     private final MessageRepository messageRepository;
     private final UserService userService;
+    private final ArticleService articleService;
     private final PushProcessor pushProcessor;
 
     public void createChatRoom(User user, ChatRoomCreateRequest request) {
         User loginUser = userService.findUserByEmail(user.getEmail());
         User seller = getSellerUser(request.getSellerId());
-        Article article = getArticleByArticleId(request.getArticleId());
+        Article article = articleService.getArticleByArticleId(request.getArticleId());
         if (article.validateIsNotSaleStatus()){
             throw new CustomException(ErrorCode.INVALID_ARTICLE_STATUS_FOR_CREATE_CHATROOM);
         }
@@ -47,11 +48,6 @@ public class ChatRoomService {
     public User getSellerUser(Long sellerId) {
         return userService.findByUserId(sellerId)
             .orElseThrow(() -> new CustomException(ErrorCode.INVALID_SELLER_ID));
-    }
-
-    public Article getArticleByArticleId(Long articleId) {
-        return articleRepository.findById(articleId)
-            .orElseThrow(() -> new CustomException(ErrorCode.INVALID_ARTICLE_ID));
     }
 
     @Transactional(readOnly = true)
