@@ -56,6 +56,7 @@
 ## 🛠 Project Architecture
 
 시스템 구성도
+![도메인 모델](images/domainModel.png)
 
 ## 🎥 Demo
 
