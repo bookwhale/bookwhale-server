@@ -10,10 +10,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.bookwhale.article.domain.Article;
-import com.bookwhale.article.domain.ArticleRepository;
 import com.bookwhale.article.domain.ArticleStatus;
 import com.bookwhale.article.domain.Book;
 import com.bookwhale.article.domain.BookStatus;
+import com.bookwhale.article.service.ArticleService;
 import com.bookwhale.chatroom.domain.ChatRoom;
 import com.bookwhale.chatroom.domain.ChatRoomRepository;
 import com.bookwhale.chatroom.dto.ChatRoomCreateRequest;
@@ -40,13 +40,13 @@ public class ChatRoomServiceTest {
     private ChatRoomRepository chatRoomRepository;
 
     @Mock
-    private ArticleRepository articleRepository;
-
-    @Mock
     private MessageRepository messageRepository;
 
     @Mock
     private UserService userService;
+
+    @Mock
+    private ArticleService articleService;
 
     @Mock
     private PushProcessor pushProcessor;
@@ -61,8 +61,8 @@ public class ChatRoomServiceTest {
 
     @BeforeEach
     void setUp() {
-        chatRoomService = new ChatRoomService(chatRoomRepository, articleRepository, messageRepository,
-            userService, pushProcessor);
+        chatRoomService = new ChatRoomService(chatRoomRepository, messageRepository,
+            userService, articleService, pushProcessor);
         buyer = User.builder()
             .id(1L)
             .nickname("남상우")
@@ -95,25 +95,26 @@ public class ChatRoomServiceTest {
                 .price("5000")
                 .build()
         );
+
     }
 
     @DisplayName("채팅방을 생성하고 판매자와 구매(요청)자에게 push를 보낸다.")
     @Test
-    void createArticle() throws Exception {
+    void createArticle() {
         ChatRoom chatRoom = ChatRoom.create(article, buyer, seller);
 
         when(userService.findUserByEmail(any(String.class)))
             .thenReturn(buyer);
         when(userService.findByUserId(any()))
             .thenReturn(of(seller));
-        when(articleRepository.findById(any())).thenReturn(of(article));
+        when(articleService.getArticleByArticleId(any())).thenReturn(article);
         when(chatRoomRepository.saveAndFlush(any())).thenReturn(chatRoom.getDummyChatRoom());
 
         chatRoomService.createChatRoom(buyer,
             ChatRoomCreateRequest.builder().sellerId(1L).articleId(1L).build());
 
         verify(userService).findByUserId(any());
-        verify(articleRepository).findById(any());
+        verify(articleService).getArticleByArticleId(any());
         verify(chatRoomRepository).saveAndFlush(any());
     }
 
@@ -126,7 +127,7 @@ public class ChatRoomServiceTest {
             .thenReturn(buyer);
         when(userService.findByUserId(any()))
             .thenReturn(of(seller));
-        when(articleRepository.findById(any())).thenReturn(of(article));
+        when(articleService.getArticleByArticleId(any())).thenReturn(article);
 
         assertThatThrownBy(() -> chatRoomService.createChatRoom(buyer,
             ChatRoomCreateRequest.builder().sellerId(1L).articleId(1L).build()))
@@ -143,7 +144,7 @@ public class ChatRoomServiceTest {
             .thenReturn(buyer);
         when(userService.findByUserId(any()))
             .thenReturn(of(seller));
-        when(articleRepository.findById(any())).thenReturn(of(article));
+        when(articleService.getArticleByArticleId(any())).thenReturn(article);
 
         assertThatThrownBy(() -> chatRoomService.createChatRoom(buyer,
             ChatRoomCreateRequest.builder().sellerId(1L).articleId(1L).build()))
