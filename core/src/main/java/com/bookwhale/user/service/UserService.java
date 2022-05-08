@@ -1,6 +1,7 @@
 package com.bookwhale.user.service;
 
 import com.bookwhale.auth.domain.info.UserInfo;
+import com.bookwhale.common.domain.ActiveYn;
 import com.bookwhale.common.exception.CustomException;
 import com.bookwhale.common.exception.ErrorCode;
 import com.bookwhale.common.upload.FileUploader;
@@ -29,8 +30,12 @@ public class UserService {
     private final FileUploader fileUploader;
 
     public void createUser(UserInfo userInfo) {
-        User user = User.builder().email(userInfo.getEmail()).nickname(userInfo.getName())
-            .profileImage(userInfo.getPicture()).build();
+        User user = User.builder()
+            .email(userInfo.getEmail())
+            .nickname(userInfo.getName())
+            .profileImage(userInfo.getPicture())
+            .pushActivate(ActiveYn.Y)
+            .build();
         userRepository.save(user);
     }
 
